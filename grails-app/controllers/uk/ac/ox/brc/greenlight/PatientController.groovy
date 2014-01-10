@@ -6,6 +6,6 @@ class PatientController {
         redirect(action: "consentDashboard")
     }
     def consentDashboard() {
-        [patients: Patient.all]
+        [patients: Patient.all, samples: LabSample.findAll("from LabSample l where l.dateOfProcessing > current_date()")]
     }
 }

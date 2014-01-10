@@ -1,4 +1,5 @@
 import uk.ac.ox.brc.greenlight.ConsentForm
+import uk.ac.ox.brc.greenlight.LabSample
 import uk.ac.ox.brc.greenlight.Patient
 import uk.ac.ox.brc.greenlight.PatientConsent
 
@@ -14,7 +15,13 @@ class BootStrap {
                 nhsNumber: "nhs2",
                 consents: [],
         ).addToConsents(
-                clinicianName: "Geoff Geoffries",
+                clinicianName: "Geoff Geoffries"
+        ).addToLabSamples(
+                sampleID: "SAMPLE_GEOFF_001",
+                dateOfProcessing: new Date("01/10/2013")
+        ).addToLabSamples(
+                sampleID: "SAMPLE_GEOFF_002",
+                dateOfProcessing: new Date() //today
         ).save(failOnError: true)
 
         def eric = new Patient(
@@ -25,6 +32,9 @@ class BootStrap {
                 hospitalNumber: "1001",
                 nhsNumber: "nhs2",
                 consents: [],
+        ).addToLabSamples(
+                sampleID: "SAMPLE_ERIC_001",
+                dateOfProcessing: new Date() //today
         ).save(failOnError: true)
 
     }

@@ -10,10 +10,9 @@ class Patient {
     String nhsNumber
     String hospitalNumber
 
-
-
     static hasMany = [
-            consents: PatientConsent
+            consents: PatientConsent,
+            labSamples: LabSample
     ]
     static constraints = {
     }
