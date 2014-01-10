@@ -1,0 +1,21 @@
+{
+  "name": "greenlight",
+  "version": "0.0.1",
+  "homepage": "https://github.com/OxBRCInformatics/greenlight",
+  "authors": [
+    "Ryan Brooks <ryanbrooksis@gmail.com>"
+  ],
+  "description": "ORB Consent System",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.0.3"
+  }
+}
