@@ -5,19 +5,19 @@ import uk.ac.ox.brc.greenlight.PatientConsent
 class BootStrap {
 
     def init = { servletContext ->
-        new Patient(
+        def billy = new Patient(
                 givenName: "Billy",
                 familyName: "Joel",
                 dateOfBirth: new Date("09/05/1949"),
                 gender: Patient.Gender.MALE,
                 hospitalNumber: "1001",
                 nhsNumber: "nhs2",
-                consents: [
-
-                ],
+                consents: [],
+        ).addToConsents(
+                clinicianName: "Geoff Geoffries",
         ).save(failOnError: true)
 
-        new Patient(
+        def eric = new Patient(
                 givenName: "Eric",
                 familyName: "Clapton",
                 dateOfBirth: new Date("30/03/1945"),
@@ -26,6 +26,7 @@ class BootStrap {
                 nhsNumber: "nhs2",
                 consents: [],
         ).save(failOnError: true)
+
     }
     def destroy = {
     }
