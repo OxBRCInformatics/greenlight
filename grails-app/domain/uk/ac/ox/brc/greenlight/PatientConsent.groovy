@@ -28,7 +28,7 @@ class PatientConsent {
 
     static constraints = {
         consentForm nullable: true //remove this later :)
-		
+        consentStatus nullable: true
 		
     }
 

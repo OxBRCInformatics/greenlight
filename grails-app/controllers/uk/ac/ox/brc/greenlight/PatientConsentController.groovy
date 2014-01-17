@@ -85,13 +85,13 @@ class PatientConsentController {
 		 request.withFormat {
             form {
                 flash.message = message(code: 'default.created.message', args: [message(code: 'patientInstance.label', default: 'Patient'), inputObj.patientInstance.id])
-                redirect inputObj.patientInstance
+                redirect (action:"create2")
             }
-            '*' { respond inputObj.patientInstance, [status: CREATED] }
+            '*' { redirect (action:"create2") }
         }
 		 
 	
-		
+		return
 	
         if (params.patientConsentInstance == null) {
             notFound()

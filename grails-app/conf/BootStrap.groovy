@@ -17,7 +17,7 @@ class BootStrap {
         ).addToConsents(
                 clinicianName: "Geoff Geoffries",
 				date:new Date(),
-				consentS =PatientConsent.ConsentStatus.ALL_CONSENTED
+
         ).addToLabSamples(
                 sampleID: "SAMPLE_GEOFF_001",
                 dateOfProcessing: new Date("01/10/2013")

@@ -10,5 +10,6 @@ class ConsentForm {
     ]
     static constraints = {
         patientConsent nullable: true
+        scannedForm maxSize: 1024*1024*1000
     }
 }
