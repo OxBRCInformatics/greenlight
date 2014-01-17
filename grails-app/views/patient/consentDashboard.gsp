@@ -26,18 +26,18 @@
         </tr>
     </thead>
     <tbody>
-        <g:each in="${samples}" var="sample">
-            <g:if test="${sample.patient.consents.empty}">
+        <g:each in="${patients}" var="patient">
+            <g:if test="${patients.empty}">
             <tr class="alert-danger">
             </g:if>
             <g:else>
             <tr>
             </g:else>
-                <td>${sample.id}</td>
-                <td>${sample.patient.givenName} ${sample.patient.familyName}</td>
-                <td>${sample.patient.nhsNumber}</td>
-                <td>${sample.patient.hospitalNumber}</td>
-                <td>${!sample.patient.consents.empty}</td>
+                <td>${id}</td>
+                <td>${patient.givenName} ${patient.familyName}</td>
+                <td>${patient.nhsNumber}</td>
+                <td>${patient.hospitalNumber}</td>
+                <td>${!patient.consents.empty}</td>
             </tr>
         </g:each>
     </tbody>

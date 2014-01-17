@@ -15,7 +15,9 @@ class BootStrap {
                 nhsNumber: "nhs2",
                 consents: [],
         ).addToConsents(
-                clinicianName: "Geoff Geoffries"
+                clinicianName: "Geoff Geoffries",
+				date:new Date(),
+
         ).addToLabSamples(
                 sampleID: "SAMPLE_GEOFF_001",
                 dateOfProcessing: new Date("01/10/2013")
