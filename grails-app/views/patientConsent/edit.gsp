@@ -1,41 +1,38 @@
-<%@ page import="uk.ac.ox.brc.greenlight.PatientConsent" %>
-<!DOCTYPE html>
+<%@ page import="uk.ac.ox.brc.greenlight.PatientConsent; uk.ac.ox.brc.greenlight.Patient" %>
+
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
-	<head>
-		<meta name="layout" content="main">
-		<g:set var="entityName" value="${message(code: 'patientConsent.label', default: 'PatientConsent')}" />
-		<title><g:message code="default.edit.label" args="[entityName]" /></title>
-	</head>
-	<body>
-		<a href="#edit-patientConsent" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
-		<div class="nav" role="navigation">
-			<ul>
-				<li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
-				<li><g:link class="list" action="index"><g:message code="default.list.label" args="[entityName]" /></g:link></li>
-				<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
-			</ul>
-		</div>
-		<div id="edit-patientConsent" class="content scaffold-edit" role="main">
-			<h1><g:message code="default.edit.label" args="[entityName]" /></h1>
-			<g:if test="${flash.message}">
-			<div class="message" role="status">${flash.message}</div>
-			</g:if>
-			<g:hasErrors bean="${patientConsentInstance}">
-			<ul class="errors" role="alert">
-				<g:eachError bean="${patientConsentInstance}" var="error">
-				<li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message error="${error}"/></li>
-				</g:eachError>
-			</ul>
-			</g:hasErrors>
-			<g:form url="[resource:patientConsentInstance, action:'update']" method="PUT" >
-				<g:hiddenField name="version" value="${patientConsentInstance?.version}" />
-				<fieldset class="form">
-					<g:render template="form"/>
-				</fieldset>
-				<fieldset class="buttons">
-					<g:actionSubmit class="save" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />
-				</fieldset>
-			</g:form>
-		</div>
-	</body>
+<head>
+    <meta name="layout" content="mainBootstrap">
+    <title></title>
+</head>
+
+<body>
+
+<div class="col-md-12 ">
+    <div class="panel panel-primary PageMainPanel">
+        <div class="panel-heading">Consent Form</div>
+
+        <div class="panel-body">
+            %{--<g:hasErrors>--}%
+            %{--<g:eachError><p>${it}</p></g:eachError>--}%
+            %{--</g:hasErrors>--}%
+            <div class="col-md-12">
+                <g:if test="${flash.created}">
+                    <div class="alert alert-success">${flash.created}</div>
+                </g:if>
+                <g:elseif test="${flash.error}">
+                    <div class="alert alert-danger">${flash.error}</div>
+                </g:elseif>
+            </div>
+            <g:form role="form" action="update" controller="patientConsent">
+                <g:render template="form"/>
+                <div class="col-md-12">
+                    <button type="submit" class="btn  btn-primary  ">Save</button>
+                </div>
+            </g:form>
+        </div>
+    </div>
+</div>
+</body>
 </html>

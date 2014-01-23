@@ -1,124 +1,138 @@
 <%@ page import="uk.ac.ox.brc.greenlight.PatientConsent" %>
+<%@ page import="uk.ac.ox.brc.greenlight.Patient" %>
+<%@ page import="uk.ac.ox.brc.greenlight.ConsentForm" %>
+
+<div class="col-md-12">
+    <div class="panel panel-primary PageMainPanel">
+        <div class="panel-body">
+
+            <div class="col-md-6 ">
+                <div class="form-group">
+                    <g:hiddenField name="patient.id" value="${patient?.id}"></g:hiddenField>
+                    <g:hiddenField name="patientConsent.id" value="${patientConsent?.id}"></g:hiddenField>
+                    <g:hiddenField name="consentForm.id" value="${consentForm?.id}"></g:hiddenField>
+
+
+                    <div class="form-group">
+                        <label for="patient.nhsNumber" class="required">NHS Number</label>
+                        <g:textField
+                                class="form-control  ${hasErrors(bean: patient, field: 'nhsNumber', 'invalidInput')}"
+                                id="patient.nhsNumber" name="patient.nhsNumber"
+                                value="${patient?.nhsNumber}"
+                                placeholder="NHS number  NNN-NNN-NNNN"/>
+                    </div>
+
+
+                    <label for="patient.givenName" class="required">Given Name</label>
+                    <g:textField
+                            class="form-control ${hasErrors(bean: patient, field: 'givenName', 'invalidInput')}"
+                            name="patient.givenName" value="${patient?.givenName}"
+                            placeholder="Given Name"/>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="patient.familyName" class="required">Family Name</label>
+                    <g:textField
+                            class="form-control  ${hasErrors(bean: patient, field: 'familyName', 'invalidInput')}"
+                            id="patient.familyName" name="patient.familyName"
+                            value="${patient?.familyName}"
+                            placeholder="Family Name"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="patientConsent.clinicianName" class="required">Clinician Name</label>
+                    <g:textField name="patientConsent.clinicianName" id="patientConsent.clinicianName"
+                                 class="form-control  ${hasErrors(bean: patientConsent, field: 'clinicianName', 'invalidInput')}"
+                                 value="${patientConsent?.clinicianName}"
+                                 placeholder="Enter Clinician Name"/>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="patient.gender">Gender</label>
+                    <g:select class="form-control" id="patient.gender"
+                              name="patient.gender"
+                              value="${patient?.gender}"
+                              from="${Patient?.Gender?.values()}"
+                              optionKey="key" optionValue="value"
+                               />
+                </div>
+
+                <div class="form-group">
+                    <label for="dateOfBirth">Date of Birth</label>
+                    <g:datePicker class="form-control" id="dateOfBirth" name="patient.dateOfBirth"
+                                  value="${patient?.dateOfBirth}"
+                                  placeholder="Date of Birth"
+                                  precision="day"/>
+                </div>
+
+            </div>
+
+            <div class="col-md-6 ">
+
+                <div class="form-group">
+                    <label for="patientConsent.consentStatus">Consent Status</label>
+                    <g:select class="form-control" id="patientConsent.consentStatus"
+                              name="patientConsent.consentStatus"
+                              value="${patientConsent?.consentStatus}"
+                              from="${PatientConsent?.ConsentStatus?.values()}"
+                              optionKey="key" optionValue="value"       />
+                </div>
 
 
 
-<div class="fieldcontain ${hasErrors(bean: patientConsentInstance, field: 'consentForm', 'error')} ">
-	<label for="consentForm">
-		<g:message code="patientConsent.consentForm.label" default="Consent Form" />
-		
-	</label>
-	<g:select id="consentForm" name="consentForm.id" from="${uk.ac.ox.brc.greenlight.ConsentForm.list()}" optionKey="id" value="${patientConsentInstance?.consentForm?.id}" class="many-to-one" noSelection="['null': '']"/>
+
+                <div class="form-group">
+                    <label for="patient.hospitalNumber" class="required">Hospital Number</label>
+                    <g:textField
+                            class="form-control  ${hasErrors(bean: patient, field: 'hospitalNumber', 'invalidInput')}"
+                            id="patient.nhsNumber" name="patient.hospitalNumber"
+                            value="${patient?.hospitalNumber}"
+                            placeholder="Hospital Number"/>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="ConsentDate">Consent Date</label>
+                    <g:datePicker class="form-control" id="ConsentDate"
+                                  name="patientConsent.consentDate"
+                                  value="${patientConsent?.consentDate}"
+                                  placeholder="Consent Date"
+                                  precision="day"/>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="fieldcontain ${hasErrors(bean: patientConsentInstance, field: 'answer1', 'error')} ">
-	<label for="answer1">
-		<g:message code="patientConsent.answer1.label" default="Answer1" />
-		
-	</label>
-	<g:checkBox name="answer1" value="${patientConsentInstance?.answer1}" />
-</div>
+<div class="col-md-12">
+    <div class="panel panel-primary PageMainPanel">
+        <div class="panel-body">
 
-<div class="fieldcontain ${hasErrors(bean: patientConsentInstance, field: 'answer10', 'error')} ">
-	<label for="answer10">
-		<g:message code="patientConsent.answer10.label" default="Answer10" />
-		
-	</label>
-	<g:checkBox name="answer10" value="${patientConsentInstance?.answer10}" />
-</div>
+            <div class="col-md-6">
+                <g:hiddenField name="consentForm.id" value="${consentForm?.id}"></g:hiddenField>
+                <img id="consentForm.scannedForm" style="margin: 4px; width:100%;height:100%;"
+                     class="Photo"
+                     src="${createLink(controller: 'consentForm', action: 'viewImage', id: "${consentForm?.id}")}"/>
+            </div>
+            <div class="col-md-6">
+                <g:if test="${!patientConsent?.answers?.isEmpty()}">
+                    <ul class="list-group">
+                        <g:each in="${patientConsent?.answers}" var="answer" status="index">
+                            <li class="list-group-item">
 
-<div class="fieldcontain ${hasErrors(bean: patientConsentInstance, field: 'answer2', 'error')} ">
-	<label for="answer2">
-		<g:message code="patientConsent.answer2.label" default="Answer2" />
-		
-	</label>
-	<g:checkBox name="answer2" value="${patientConsentInstance?.answer2}" />
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: patientConsentInstance, field: 'answer3', 'error')} ">
-	<label for="answer3">
-		<g:message code="patientConsent.answer3.label" default="Answer3" />
-		
-	</label>
-	<g:checkBox name="answer3" value="${patientConsentInstance?.answer3}" />
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: patientConsentInstance, field: 'answer4', 'error')} ">
-	<label for="answer4">
-		<g:message code="patientConsent.answer4.label" default="Answer4" />
-		
-	</label>
-	<g:checkBox name="answer4" value="${patientConsentInstance?.answer4}" />
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: patientConsentInstance, field: 'answer5', 'error')} ">
-	<label for="answer5">
-		<g:message code="patientConsent.answer5.label" default="Answer5" />
-		
-	</label>
-	<g:checkBox name="answer5" value="${patientConsentInstance?.answer5}" />
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: patientConsentInstance, field: 'answer6', 'error')} ">
-	<label for="answer6">
-		<g:message code="patientConsent.answer6.label" default="Answer6" />
-		
-	</label>
-	<g:checkBox name="answer6" value="${patientConsentInstance?.answer6}" />
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: patientConsentInstance, field: 'answer7', 'error')} ">
-	<label for="answer7">
-		<g:message code="patientConsent.answer7.label" default="Answer7" />
-		
-	</label>
-	<g:checkBox name="answer7" value="${patientConsentInstance?.answer7}" />
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: patientConsentInstance, field: 'answer8', 'error')} ">
-	<label for="answer8">
-		<g:message code="patientConsent.answer8.label" default="Answer8" />
-		
-	</label>
-	<g:checkBox name="answer8" value="${patientConsentInstance?.answer8}" />
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: patientConsentInstance, field: 'answer9', 'error')} ">
-	<label for="answer9">
-		<g:message code="patientConsent.answer9.label" default="Answer9" />
-		
-	</label>
-	<g:checkBox name="answer9" value="${patientConsentInstance?.answer9}" />
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: patientConsentInstance, field: 'clinicianName', 'error')} ">
-	<label for="clinicianName">
-		<g:message code="patientConsent.clinicianName.label" default="Clinician Name" />
-		
-	</label>
-	<g:textField name="clinicianName" value="${patientConsentInstance?.clinicianName}"/>
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: patientConsentInstance, field: 'consentStatus', 'error')} required">
-	<label for="consentStatus">
-		<g:message code="patientConsent.consentStatus.label" default="Consent Status" />
-		<span class="required-indicator">*</span>
-	</label>
-	<g:select name="consentStatus" from="${uk.ac.ox.brc.greenlight.PatientConsent$ConsentStatus?.values()}" keys="${uk.ac.ox.brc.greenlight.PatientConsent$ConsentStatus.values()*.name()}" required="" value="${patientConsentInstance?.consentStatus?.name()}"/>
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: patientConsentInstance, field: 'date', 'error')} required">
-	<label for="date">
-		<g:message code="patientConsent.date.label" default="Date" />
-		<span class="required-indicator">*</span>
-	</label>
-	<g:datePicker name="date" precision="day"  value="${patientConsentInstance?.date}"  />
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: patientConsentInstance, field: 'patient', 'error')} required">
-	<label for="patient">
-		<g:message code="patientConsent.patient.label" default="Patient" />
-		<span class="required-indicator">*</span>
-	</label>
-	<g:select id="patient" name="patient.id" from="${uk.ac.ox.brc.greenlight.Patient.list()}" optionKey="id" required="" value="${patientConsentInstance?.patient?.id}" class="many-to-one"/>
+                                <g:checkBox type="checkbox"
+                                            name="patientConsentAnswers.${index}"
+                                            checked="${answer}" >
+                                </g:checkBox>
+                                <g:if test="${!patientConsent?.questions?.isEmpty()}">${patientConsent?.questions[index]}</g:if>
+                            </li>
+                        </g:each></ul>
+                </g:if>
+            </div>
+        </div>
+    </div>
 </div>
 

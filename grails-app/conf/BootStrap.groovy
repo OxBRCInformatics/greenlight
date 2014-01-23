@@ -12,12 +12,11 @@ class BootStrap {
                 dateOfBirth: new Date("09/05/1949"),
                 gender: Patient.Gender.MALE,
                 hospitalNumber: "1001",
-                nhsNumber: "nhs2",
-                consents: [],
+                nhsNumber: "123-456-7890",
+                consents: []
         ).addToConsents(
                 clinicianName: "Geoff Geoffries",
-				date:new Date(),
-
+                consentDate:new Date()
         ).addToLabSamples(
                 sampleID: "SAMPLE_GEOFF_001",
                 dateOfProcessing: new Date("01/10/2013")
@@ -32,12 +31,32 @@ class BootStrap {
                 dateOfBirth: new Date("30/03/1945"),
                 gender: Patient.Gender.MALE,
                 hospitalNumber: "1001",
-                nhsNumber: "nhs2",
-                consents: [],
+                nhsNumber: "123-456-7891",
+                consents: []
         ).addToLabSamples(
                 sampleID: "SAMPLE_ERIC_001",
                 dateOfProcessing: new Date() //today
         ).save(failOnError: true)
+
+
+        def consentForm1=new ConsentForm(
+                dateOfScan:new Date(),
+                scannedForm:[]
+        ).save(failOnError: true);
+
+
+        def consentForm2=new ConsentForm(
+                dateOfScan:new Date(),
+                scannedForm:[]
+        ).save(failOnError: true);
+
+
+
+        def consentForm3=new ConsentForm(
+                dateOfScan:new Date(),
+                scannedForm:[],
+                patientConsent:billy.consents[0]
+        ).save(failOnError: true);
 
     }
     def destroy = {

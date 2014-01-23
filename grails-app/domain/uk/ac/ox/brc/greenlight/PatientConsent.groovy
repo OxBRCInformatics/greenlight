@@ -1,56 +1,38 @@
 package uk.ac.ox.brc.greenlight
 
 import java.util.Date;
-
 class PatientConsent {
 
     ConsentForm consentForm
     ConsentStatus consentStatus
-    Date date
-	
-	boolean answer1
-	boolean answer2
-	boolean answer3
-	boolean answer4
-	boolean answer5
-	boolean answer6
-	boolean answer7
-	boolean answer8
-	boolean answer9
-	boolean answer10
-	
-
+    Date consentDate
     String clinicianName
+
+    List<Boolean> answers
+    List<String> questions
+
 
     static belongsTo = [
             patient: Patient
     ]
 
+    static hasMany = [
+            answers:Boolean,
+            questions:String
+    ]
+
     static constraints = {
         consentForm nullable: true //remove this later :)
         consentStatus nullable: true
-		
     }
 
-    enum ConsentStatus
-    {
-        UNKOWN,
-        ALL_CONSENTED,
-        NOT_CONSENTED
+    enum ConsentStatus {
+        UNKOWN("Unknown"), ALL_CONSENTED("All Consented"),NOT_CONSENTED("Non Consented");
+        final String value;
+        ConsentStatus(String value) { this.value = value; }
+        String toString() { value; }
+        String getKey() { name(); }
     }
 
+
 }
-
-@grails.validation.Validateable
-class InputFormCommand {
-
-	
-	PatientConsent patientConsentInstance
-	ConsentForm consentFormInstance
-	Patient patientInstance
-	
-	
-	static constraints = {
-	}
-}
-

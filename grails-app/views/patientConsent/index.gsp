@@ -26,15 +26,15 @@
 					
 						<th><g:message code="patientConsent.consentForm.label" default="Consent Form" /></th>
 					
-						<g:sortableColumn property="answer1" title="${message(code: 'patientConsent.answer1.label', default: 'Answer1')}" />
+						<g:sortableColumn property="consentStatus" title="${message(code: 'patientConsent.consentStatus.label', default: 'Consent Status')}" />
 					
-						<g:sortableColumn property="answer10" title="${message(code: 'patientConsent.answer10.label', default: 'Answer10')}" />
+						<g:sortableColumn property="answers" title="${message(code: 'patientConsent.answers.label', default: 'Answers')}" />
 					
-						<g:sortableColumn property="answer2" title="${message(code: 'patientConsent.answer2.label', default: 'Answer2')}" />
+						<g:sortableColumn property="clinicianName" title="${message(code: 'patientConsent.clinicianName.label', default: 'Clinician Name')}" />
 					
-						<g:sortableColumn property="answer3" title="${message(code: 'patientConsent.answer3.label', default: 'Answer3')}" />
+						<g:sortableColumn property="consentDate" title="${message(code: 'patientConsent.consentDate.label', default: 'Consent Date')}" />
 					
-						<g:sortableColumn property="answer4" title="${message(code: 'patientConsent.answer4.label', default: 'Answer4')}" />
+						<th><g:message code="patientConsent.patient.label" default="Patient" /></th>
 					
 					</tr>
 				</thead>
@@ -44,15 +44,15 @@
 					
 						<td><g:link action="show" id="${patientConsentInstance.id}">${fieldValue(bean: patientConsentInstance, field: "consentForm")}</g:link></td>
 					
-						<td><g:formatBoolean boolean="${patientConsentInstance.answer1}" /></td>
+						<td>${fieldValue(bean: patientConsentInstance, field: "consentStatus")}</td>
 					
-						<td><g:formatBoolean boolean="${patientConsentInstance.answer10}" /></td>
+						<td>${fieldValue(bean: patientConsentInstance, field: "answers")}</td>
 					
-						<td><g:formatBoolean boolean="${patientConsentInstance.answer2}" /></td>
+						<td>${fieldValue(bean: patientConsentInstance, field: "clinicianName")}</td>
 					
-						<td><g:formatBoolean boolean="${patientConsentInstance.answer3}" /></td>
+						<td><g:formatDate date="${patientConsentInstance.consentDate}" /></td>
 					
-						<td><g:formatBoolean boolean="${patientConsentInstance.answer4}" /></td>
+						<td>${fieldValue(bean: patientConsentInstance, field: "patient")}</td>
 					
 					</tr>
 				</g:each>

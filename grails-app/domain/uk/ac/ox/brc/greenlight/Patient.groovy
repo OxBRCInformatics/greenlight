@@ -15,11 +15,15 @@ class Patient {
             labSamples: LabSample
     ]
     static constraints = {
+        nhsNumber matches: '\\d{3}\\-\\d{3}-\\d{4}'
     }
 
-    enum Gender{
-        MALE,
-        FEMALE,
-        OTHER
+     enum Gender {
+        MALE("Male"), FEMALE("Female"),OTHER("Other");
+        final String value;
+        Gender(String value) { this.value = value; }
+        String toString() { value; }
+        String getKey() { name(); }
     }
+
 }

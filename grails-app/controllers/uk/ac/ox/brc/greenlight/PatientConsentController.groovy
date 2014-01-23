@@ -1,180 +1,147 @@
 package uk.ac.ox.brc.greenlight
 
-
+import grails.converters.JSON
 
 import static org.springframework.http.HttpStatus.*
-
-import java.util.Date;
-
-import uk.ac.ox.brc.greenlight.Patient.Gender;
 import grails.transaction.Transactional
 
 @Transactional(readOnly = true)
 class PatientConsentController {
 
-    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+    def patientConsentService
 
-    def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        respond PatientConsent.list(params), model:[patientConsentInstanceCount: PatientConsent.count()]
+    def index() {
     }
 
-    def show(PatientConsent patientConsentInstance) {
-        respond patientConsentInstance
+    def show() {
+        def patientConsent = PatientConsent.get(params?.id);
+        if (!patientConsent) {
+            redirect(controller: 'ConsentForm', action: 'list')
+        }
+        [patientConsent: patientConsent, patient: patientConsent?.patient, consentForm: patientConsent?.consentForm]
+    }
+
+    def edit() {
+        def patientConsent = PatientConsent.get(params?.id);
+        if (!patientConsent) {
+            redirect(controller: 'ConsentForm', action: 'list')
+        }
+        [patientConsent: patientConsent, patient: patientConsent?.patient, consentForm: patientConsent?.consentForm]
+    }
+
+    def update() {
+        //Build Patient Object
+        def patient = Patient.get(params.patient.id);
+        patient.properties = params.patient;
+
+        def patientConsent = PatientConsent.get(params.patientConsent.id)
+        bindData(patientConsent, params.patientConsent, [exclude: ['questions']]);
+
+
+        patientConsent.answers.eachWithIndex() { answer, i ->
+            patientConsent.answers[i] = false;
+            if (params["patientConsentAnswers.${i}"])
+                patientConsent.answers[i] = true;
+        }
+
+        //Load the consent Form
+        def consentForm = ConsentForm.get(params.consentForm.id);
+
+        patientConsent.patient = patient;
+        patientConsent.consentForm = consentForm;
+
+        patient.validate()
+        patientConsent.validate()
+
+        if (patient.hasErrors() ||
+                patientConsent.hasErrors()) {
+            flash.error = "Error in input"
+            render model: [patientConsent: patientConsent, patient: patient, consentForm: consentForm], view: 'edit'
+            return
+        }
+
+        def result = patientConsentService.save(patient, patientConsent)
+        if (result) {
+            flash.created = "Patient Consent Form ${patientConsent.id} Updated"
+            redirect action: 'show', params: [id: patientConsent.id]
+            return
+        }
+
+        flash.error = "Error in saving Patient Consent"
+        render model: [patientConsent: patientConsent, patient: patient, consentForm: consentForm], view: 'edit'
+        return
+    }
+
+    def save() {
+        //Build Patient Object
+        def patient = new Patient();
+        patient.properties = params.patient;
+
+        def patientConsent = patientConsentService.buildORBConsent();
+        bindData(patientConsent, params.patientConsent, [exclude: ['questions']]);
+
+        patientConsent.answers.eachWithIndex() { answer, i ->
+            patientConsent.answers[i] = false;
+            if (params["patientConsentAnswers.${i}"])
+                patientConsent.answers[i] = true;
+        }
+
+        //Load the consent Form
+        def consentForm = ConsentForm.get(params.consentForm.id);
+
+
+        patientConsent.patient = patient;
+        patientConsent.consentForm = consentForm;
+
+        patient.validate()
+        patientConsent.validate()
+
+        if (patient.hasErrors() ||
+                patientConsent.hasErrors()) {
+            flash.error = "Error in input"
+            render model: [patientConsent: patientConsent, patient: patient, consentForm: consentForm], view: 'create'
+            return
+        }
+
+        def result = patientConsentService.save(patient, patientConsent)
+        if (result) {
+            flash.created = "Patient Consent Form ${patientConsent.id} Created"
+            redirect action: 'show', params: [id: patientConsent.id]
+            return
+        }
+
+        flash.error = "Error in saving Patient Consent"
+        render model: [patientConsent: patientConsent, patient: patient, consentForm: consentForm], view: 'create'
+        return
+    }
+
+    def delete() {
+        def patientConsent = PatientConsent.get(params.id);
+        def result = patientConsentService.delete(patientConsent)
+        if (result) {
+            redirect action: "list", controller: "consentForm"
+            return
+        }
+        else
+        {
+            //needs to Notfound page
+        }
     }
 
     def create() {
-		respond new PatientConsent(params)
-	}
-	
-	
-	
-	def create2() {
-		respond (model:[patientConsentInstance:new PatientConsent(params),
-			            consentFormInstance:new ConsentForm(params),
-						patientInstance :new Patient(params)
-						])
-	}
-	
-	
-	
-	
-	
-	@Transactional
-	def save(PatientConsent patientConsentInstance) {
-		if (patientConsentInstance == null) {
-			notFound()
-			return
-		}
-
-		if (patientConsentInstance.hasErrors()) {
-			respond patientConsentInstance.errors, view:'create'
-			return
-		}
-
-		patientConsentInstance.save flush:true
-
-		request.withFormat {
-			form {
-				flash.message = message(code: 'default.created.message', args: [message(code: 'patientConsentInstance.label', default: 'PatientConsent'), patientConsentInstance.id])
-				redirect patientConsentInstance
-			}
-			'*' { respond patientConsentInstance, [status: CREATED] }
-		}
-	}
-
-	
-	
-	
-
-    @Transactional
-    def save2(InputFormCommand inputObj) {
-			
-		def patient=new Patient();
-		patient.givenName  = inputObj.patientInstance.givenName;
-		patient.familyName = inputObj.patientInstance.familyName
-	    patient.gender= inputObj.patientInstance.gender
-		patient.dateOfBirth= inputObj.patientInstance.dateOfBirth	
-		patient.nhsNumber= inputObj.patientInstance.nhsNumber
-		patient.hospitalNumber= inputObj.patientInstance.hospitalNumber
-		
-		 
-		
-		
-		patient.save flush:true
-		 request.withFormat {
-            form {
-                flash.message = message(code: 'default.created.message', args: [message(code: 'patientInstance.label', default: 'Patient'), inputObj.patientInstance.id])
-                redirect (action:"create2")
-            }
-            '*' { redirect (action:"create2") }
-        }
-		 
-	
-		return
-	
-        if (params.patientConsentInstance == null) {
-            notFound()
+        def consentForm = ConsentForm.get(params.consentFormId);
+        if (!consentForm) {
+            render 'not found';
             return
         }
-
-        if (params.patientConsentInstance.hasErrors()) {
-            respond patientConsentInstance.errors, view:'create2'
+        /*
+        if(consentForm.patientConsent)
+        {
+            redirect action:'show', id:params.id
             return
-        }
-
-        patientConsentInstance.save flush:true
-
-        request.withFormat {
-            form {
-                flash.message = message(code: 'default.created.message', args: [message(code: 'patientConsentInstance.label', default: 'PatientConsent'), patientConsentInstance.id])
-                redirect patientConsentInstance
-            }
-            '*' { respond patientConsentInstance, [status: CREATED] }
-        }
-    }
-	
-	
-	
-	
-	
-	
-	
-	
-
-    def edit(PatientConsent patientConsentInstance) {
-        respond patientConsentInstance
-    }
-
-    @Transactional
-    def update(PatientConsent patientConsentInstance) {
-        if (patientConsentInstance == null) {
-            notFound()
-            return
-        }
-
-        if (patientConsentInstance.hasErrors()) {
-            respond patientConsentInstance.errors, view:'edit'
-            return
-        }
-
-        patientConsentInstance.save flush:true
-
-        request.withFormat {
-            form {
-                flash.message = message(code: 'default.updated.message', args: [message(code: 'PatientConsent.label', default: 'PatientConsent'), patientConsentInstance.id])
-                redirect patientConsentInstance
-            }
-            '*'{ respond patientConsentInstance, [status: OK] }
-        }
-    }
-
-    @Transactional
-    def delete(PatientConsent patientConsentInstance) {
-
-        if (patientConsentInstance == null) {
-            notFound()
-            return
-        }
-
-        patientConsentInstance.delete flush:true
-
-        request.withFormat {
-            form {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: 'PatientConsent.label', default: 'PatientConsent'), patientConsentInstance.id])
-                redirect action:"index", method:"GET"
-            }
-            '*'{ render status: NO_CONTENT }
-        }
-    }
-
-    protected void notFound() {
-        request.withFormat {
-            form {
-                flash.message = message(code: 'default.not.found.message', args: [message(code: 'patientConsentInstance.label', default: 'PatientConsent'), params.id])
-                redirect action: "index", method: "GET"
-            }
-            '*'{ render status: NOT_FOUND }
-        }
+        }*/
+        def patientConsent = patientConsentService.buildORBConsent()
+        def patient = new Patient();
+        [patientConsent: patientConsent, patient: patient, consentForm: consentForm]
     }
 }

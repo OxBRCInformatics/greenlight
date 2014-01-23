@@ -1,0 +1,25 @@
+/**
+ * Created by soheil on 20/01/14.
+ */
+
+.PageMainPanel
+{
+    margin-top:5px
+}
+
+
+.invalidInput {
+    border-color: red;
+    outline-color: red;
+}
+
+
+.required:after
+{
+    content:" *";
+}
+
+.linkButton
+{
+     text-decoration:none;
+}
