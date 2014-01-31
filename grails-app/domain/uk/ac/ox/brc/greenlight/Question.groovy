@@ -8,13 +8,11 @@ class Question {
             studyForm:ConsentFormTemplate]
 
     static constraints = {
+        name maxSize: 500
     }
 
-    enum QuestionType {
-        UNKOWN("Unknown"), YES_NO("Yes No"),DESCRIPTION("Description");
-        final String value;
-        QuestionType(String value) { this.value = value; }
-        String toString() { value; }
-        String getKey() { name(); }
-    }
+//    static mapping = {
+//        name type: 'text'
+//    }
+
 }

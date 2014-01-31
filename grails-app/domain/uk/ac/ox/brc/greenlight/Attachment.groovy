@@ -2,11 +2,10 @@ package uk.ac.ox.brc.greenlight
 
 class Attachment {
 
-    byte[] scannedForm
-    Date dateOfScan
-
-
-
+    byte[] content
+    Date dateOfUpload
+    AttachmentType attachmentType
+    String fileName
 
     static belongsTo = [
             consentForm: ConsentForm
@@ -14,6 +13,12 @@ class Attachment {
 
     static constraints = {
         consentForm nullable: true
-        scannedForm maxSize: 1024*1024*100
+        content maxSize: 1024*1024*100
+    }
+
+    enum AttachmentType{
+        IMAGE,
+        PDF
     }
 }
+

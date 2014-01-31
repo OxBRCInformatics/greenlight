@@ -19,6 +19,8 @@
     <r:require modules="customCSS"/>
     <g:javascript library="application"/>
     <g:javascript library="jquery"></g:javascript>
+    <g:javascript library="jqueryFormValidator"></g:javascript>
+
     <r:layoutResources />
     <g:layoutHead/>
 </head>
@@ -60,7 +62,23 @@
 </div>
 
 
+<script type="text/javascript">
+    $(function()
+    {
+        $('.bootstrapTooltip').tooltip()
 
+        jQuery.validator.addMethod("nhsNumber", function(value, element) {
+            return this.optional(element) || /^\d\d\d-\d\d\d-\d\d\d\d$/.test(value);
+        }, "NHS-Number must be in xxx-xxx-xxxxx format")
+
+
+
+        jQuery.validator.addMethod("ShouldNotSelected", function(value, element){
+            return 'null' != value;
+        }, "Please select one option.");
+
+    });
+</script>
 <div id="spinner" class="spinner" style="display:none;"><g:message code="spinner.alt" default="Loading&hellip;"/></div>
 <r:layoutResources />
 </body>

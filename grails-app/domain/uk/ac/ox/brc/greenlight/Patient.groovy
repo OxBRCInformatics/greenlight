@@ -5,7 +5,6 @@ class Patient {
     String givenName
     String familyName
     Date dateOfBirth
-
     String nhsNumber
     String hospitalNumber
 

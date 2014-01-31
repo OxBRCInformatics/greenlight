@@ -1,28 +1,55 @@
-<%@ page import="uk.ac.ox.brc.greenlight.Attachment" %>
+<div class="row">
+    <div class="col-md-12">
+        <g:if test="${attachments?.size()}">
+            <div class="panel panel-default" >
+                <div class="panel-heading">Upload Result</div>
+                <div class="panel-body">
 
+                    <div class="table-responsive">
+                        <table class="table able-bordered" id="uploadedFilesTable">
+                            <thead>
+                            <tr>
+                                <th>Upload Date</th>
+                                <th>File Name</th>
+                                <th>Preview</th>
+                            </tr>
+                            </thead>
+                            <tbody>
 
+                            <g:each in="${attachments}" var="attachment" status="i">
+                                <tr id="consentFormRow${attachment.id}">
 
-<div class="fieldcontain ${hasErrors(bean: consentFormInstance, field: 'attachedFormImage', 'error')} ">
-	<label for="patientConsent">
-		<g:message code="consentForm.patientConsent.label" default="Patient Consent" />
+                                    <td>"${attachment?.dateOfUpload}"</td>
+                                    <td>"${attachment?.fileName}"</td>
+                                    <td>
+                                        <p>
+                                            <g:link action="show" id="${attachment.id}"   class="linkButton">
+                                                <button type="button" class="btn btn-success">View</button>
+                                            </g:link>
+                                            <g:remoteLink action="delete" controller="attachment" id="${attachment.id}" onSuccess="deleteRow(data,textStatus)">
+                                                <button type="button" class="btn  btn-danger"  onclick="return confirm('Are you sure?')">Delete</button>
+                                            </g:remoteLink>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </g:each>
+                            </tbody>
+                        </table>
+                    </div>
 
-	</label>
-	<g:select id="patientConsent" name="patientConsent.id" from="${uk.ac.ox.brc.greenlight.ConsentForm.list()}" optionKey="id" value="${consentFormInstance?.patientConsent?.id}" class="many-to-one" noSelection="['null': '']"/>
+                </div>
+            </div>
+        </g:if>
+    </div>
 </div>
 
-<div class="fieldcontain ${hasErrors(bean: consentFormInstance, field: 'scannedForm', 'error')} required">
-	<label for="scannedForm">
-		<g:message code="consentForm.scannedForm.label" default="Scanned Form" />
-		<span class="required-indicator">*</span>
-	</label>
-	<input type="file" id="scannedForm" name="scannedForm" />
-</div>
 
-<div class="fieldcontain ${hasErrors(bean: consentFormInstance, field: 'dateOfScan', 'error')} required">
-	<label for="dateOfScan">
-		<g:message code="consentForm.dateOfScan.label" default="Date Of Scan" />
-		<span class="required-indicator">*</span>
-	</label>
-	<g:datePicker name="dateOfScan" precision="day"  value="${consentFormInstance?.dateOfScan}"  />
-</div>
+<g:javascript>
 
+    function deleteRow(data,textStatus)
+    {
+        var element=$("#consentFormRow"+data.id);
+        element.fadeOut(300, function(){ $(this).remove();});
+    }
+
+</g:javascript>

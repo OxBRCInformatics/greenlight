@@ -12,8 +12,14 @@ modules = {
         resource url: "bower_components/bootstrap/dist/css/bootstrap.min.css"
     }
 
-    knockout
+
+
+    jqueryFormValidator
             {
-                resource url:"js/knockout-3.0.0.js"
+                resource url:"js/formValidators/jquery.validate.min.js"
+                resource url:"js/formValidators/jquery.validate.Bootstrap.js"
+
             }
+
+
 }

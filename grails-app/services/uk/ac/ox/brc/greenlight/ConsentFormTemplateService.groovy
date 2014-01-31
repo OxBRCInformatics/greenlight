@@ -6,6 +6,6 @@ import grails.transaction.Transactional
 class ConsentFormTemplateService {
 
     def getAll() {
-        ConsentFormTemplate.getAll();
+        return ConsentFormTemplate.list();
     }
 }

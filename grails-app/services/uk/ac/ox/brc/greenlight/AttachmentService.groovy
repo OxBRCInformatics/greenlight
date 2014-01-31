@@ -6,9 +6,28 @@ import grails.transaction.Transactional
 class AttachmentService {
 
 
-    def getAllConsentForms()
+    def getAllAttachments()
     {
-          Attachment.list();
+         Attachment.list(sort:'dateOfUpload', order:'desc');
+
+        //Fixme try to use projection and
+        //do not load Content image files
+        //add a Boolean loadContent parameter to this method
+    }
+
+    def save( Attachment attachment ){
+        attachment.save(flush: true);
+     }
+
+
+
+    byte[] getContent(def id)
+    {
+        def attachment = Attachment.get(id)
+        byte[] content=null
+        if(attachment)
+            content= attachment?.content;
+        return content
     }
 
 }
