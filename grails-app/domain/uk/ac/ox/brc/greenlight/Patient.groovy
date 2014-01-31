@@ -11,8 +11,7 @@ class Patient {
     String hospitalNumber
 
     static hasMany = [
-            consents: PatientConsent,
-            labSamples: LabSample
+            consents: PatientConsent
     ]
     static constraints = {
         nhsNumber matches: '\\d{3}\\-\\d{3}-\\d{4}'

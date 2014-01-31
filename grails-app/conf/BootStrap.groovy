@@ -17,12 +17,6 @@ class BootStrap {
         ).addToConsents(
                 clinicianName: "Geoff Geoffries",
                 consentDate:new Date()
-        ).addToLabSamples(
-                sampleID: "SAMPLE_GEOFF_001",
-                dateOfProcessing: new Date("01/10/2013")
-        ).addToLabSamples(
-                sampleID: "SAMPLE_GEOFF_002",
-                dateOfProcessing: new Date() //today
         ).save(failOnError: true)
 
         def eric = new Patient(
@@ -33,9 +27,6 @@ class BootStrap {
                 hospitalNumber: "1001",
                 nhsNumber: "123-456-7891",
                 consents: []
-        ).addToLabSamples(
-                sampleID: "SAMPLE_ERIC_001",
-                dateOfProcessing: new Date() //today
         ).save(failOnError: true)
 
 
