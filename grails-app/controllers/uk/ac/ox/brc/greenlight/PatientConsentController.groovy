@@ -106,8 +106,7 @@ class PatientConsentController {
         def result = patientConsentService.save(patient, patientConsent)
         if (result) {
             flash.created = "Patient Consent Form ${patientConsent.id} Created"
-            redirect action: 'show', params: [id: patientConsent.id]
-            return
+            redirect controller: 'consentForm', action: 'list'
         }
 
         flash.error = "Error in saving Patient Consent"
