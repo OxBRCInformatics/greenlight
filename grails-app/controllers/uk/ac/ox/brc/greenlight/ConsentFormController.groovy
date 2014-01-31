@@ -130,12 +130,7 @@ class ConsentFormController {
             render 'not found';
             return
         }
-        /*
-        if(attachedFormImage.attachedFormImage)
-        {
-            redirect action:'show', id:params.id
-            return
-        }*/
+
         def consentForm = consentFormService.buildORBConsent()
         def patient = new Patient();
         [consentForm: consentForm, patient: patient, attachment: attachment]

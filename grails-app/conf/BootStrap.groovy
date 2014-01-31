@@ -1,4 +1,5 @@
 import uk.ac.ox.brc.greenlight.Attachment
+import uk.ac.ox.brc.greenlight.ConsentFormTemplate
 import uk.ac.ox.brc.greenlight.LabSample
 import uk.ac.ox.brc.greenlight.Patient
 import uk.ac.ox.brc.greenlight.ConsentForm
@@ -48,6 +49,19 @@ class BootStrap {
                 scannedForm:[],
                 patientConsent:billy.consents[0]
         ).save(failOnError: true);
+
+
+        def consentFormTemplate1 = new ConsentFormTemplate(
+                name: "ORB1",
+                version: "1.1"
+        ).save(failOnError: true)
+
+        def consentFormTemplate2 = new ConsentFormTemplate(
+                name: "ORB2",
+                version: "1.1"
+        ).save(failOnError: true)
+
+
 
     }
     def destroy = {
