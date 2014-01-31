@@ -1,9 +1,9 @@
-<%@ page import="uk.ac.ox.brc.greenlight.ConsentForm" %>
+<%@ page import="uk.ac.ox.brc.greenlight.Attachment" %>
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta name="layout" content="mainBootstrap">
-		<g:set var="entityName" value="${message(code: 'consentForm.label', default: 'ConsentForm')}" />
+		<g:set var="entityName" value="${message(code: 'attachedFormImage.label', default: 'Attachment')}" />
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
 	<body>
@@ -23,14 +23,14 @@
 			<thead>
 					<tr>
 						<th><g:message code="consentForm.patientConsent.label" default="Patient Consent" /></th>
-						<g:sortableColumn property="scannedForm" title="${message(code: 'consentForm.scannedForm.label', default: 'Scanned Form')}" />
-						<g:sortableColumn property="dateOfScan" title="${message(code: 'consentForm.dateOfScan.label', default: 'Date Of Scan')}" />
+						<g:sortableColumn property="scannedForm" title="${message(code: 'attachedFormImage.scannedForm.label', default: 'Scanned Form')}" />
+						<g:sortableColumn property="dateOfScan" title="${message(code: 'attachedFormImage.dateOfScan.label', default: 'Date Of Scan')}" />
 					</tr>
 				</thead>
 				<tbody>
 				<g:each in="${consentFormInstanceList}" status="i" var="consentFormInstance">
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
-						<td><g:link action="show" id="${consentFormInstance.id}">${fieldValue(bean: consentFormInstance, field: "patientConsent")}</g:link></td>
+						<td><g:link action="show" id="${consentFormInstance.id}">${fieldValue(bean: consentFormInstance, field: "attachedFormImage")}</g:link></td>
 						<td>${fieldValue(bean: consentFormInstance, field: "scannedForm")}</td>
 						<td><g:formatDate date="${consentFormInstance.dateOfScan}" /></td>
 					</tr>

@@ -4,10 +4,10 @@ import geb.Page
 
 
 class ConsnetFormListPage extends Page {
-    static url = "consentForm/list"
+    static url = "attachedFormImage/list"
 
     static at = {
-        url == "consentForm/list" &&
+        url == "attachedFormImage/list" &&
                 title == "Consent Forms"
     }
     static content = {

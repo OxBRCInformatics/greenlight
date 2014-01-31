@@ -1,8 +1,8 @@
-<%@ page import="uk.ac.ox.brc.greenlight.ConsentForm" %>
+<%@ page import="uk.ac.ox.brc.greenlight.Attachment" %>
 
 
 
-<div class="fieldcontain ${hasErrors(bean: consentFormInstance, field: 'patientConsent', 'error')} ">
+<div class="fieldcontain ${hasErrors(bean: consentFormInstance, field: 'attachedFormImage', 'error')} ">
 	<label for="patientConsent">
 		<g:message code="consentForm.patientConsent.label" default="Patient Consent" />
 

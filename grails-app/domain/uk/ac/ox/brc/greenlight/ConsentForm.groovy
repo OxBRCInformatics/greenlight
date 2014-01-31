@@ -2,18 +2,33 @@ package uk.ac.ox.brc.greenlight
 
 class ConsentForm {
 
-    byte[] scannedForm
-    Date dateOfScan
+    Attachment attachedFormImage
+    ConsentFormTemplate template
 
+    Date consentDate
+    String consentTakerName
+    String formID
 
+    FormStatus status = FormStatus.STANDARD
+    List<Response> responses
 
 
     static belongsTo = [
-            patientConsent: PatientConsent
+            patient: Patient
+    ]
+
+    static hasMany = [
+            responses:Response
     ]
 
     static constraints = {
-        patientConsent nullable: true
-        scannedForm maxSize: 1024*1024*100
+        attachedFormImage nullable: true //remove this later :)
+        formID matches: '[A-Z]{3}\\d{5}'
+    }
+
+    enum FormStatus {
+        INVALID,
+        DECLINED,
+        STANDARD
     }
 }

@@ -1,5 +1,5 @@
 
-<%@ page import="uk.ac.ox.brc.greenlight.ConsentForm" %>
+<%@ page import="uk.ac.ox.brc.greenlight.Attachment" %>
 <!DOCTYPE html>
 <html>
 	<head>

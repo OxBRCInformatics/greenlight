@@ -20,11 +20,11 @@ class ConsentFormController {
         redirect action:'list'
     }
 
-    def show(ConsentForm consentFormInstance) {
+    def show(Attachment consentFormInstance) {
         respond consentFormInstance
     }
 
-    def save(ConsentForm consentFormInstance) {
+    def save(Attachment consentFormInstance) {
 
         def uploadedFile=request.getFile('scannedForm');
 
@@ -56,7 +56,7 @@ class ConsentFormController {
 
         consentFormInstance.save flush:true
         flash.message = message(code: 'default.created.message', args: [
-                message(code: 'consentFormInstance.label', default: 'ConsentForm'),
+                message(code: 'consentFormInstance.label', default: 'Attachment'),
                 consentFormInstance.id
         ])
         redirect (action:"create")
@@ -80,7 +80,7 @@ class ConsentFormController {
 
 
     def delete() {
-        def consentFormInstance = ConsentForm.get(params.id);
+        def consentFormInstance = Attachment.get(params.id);
 
         if(consentFormInstance && !consentFormInstance.patientConsent)
         {
@@ -92,7 +92,7 @@ class ConsentFormController {
 
 
     def viewImage = {
-        def consentForm = ConsentForm.get( params.id )
+        def consentForm = Attachment.get( params.id )
         byte[] image = consentForm.scannedForm;
         response.outputStream << image
     }
@@ -117,7 +117,7 @@ class ConsentFormController {
                 if (!okContentTypes.contains(confType))
                     continue;
 
-                def consent=new ConsentForm();
+                def consent=new Attachment();
                 consent.scannedForm = file.bytes;
                 consent.dateOfScan = new Date();
                 consent.save(flush: true);

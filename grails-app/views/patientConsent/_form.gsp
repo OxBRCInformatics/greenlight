@@ -1,6 +1,6 @@
-<%@ page import="uk.ac.ox.brc.greenlight.PatientConsent" %>
+<%@ page import="uk.ac.ox.brc.greenlight.ConsentForm; uk.ac.ox.brc.greenlight.PatientConsent" %>
 <%@ page import="uk.ac.ox.brc.greenlight.Patient" %>
-<%@ page import="uk.ac.ox.brc.greenlight.ConsentForm" %>
+<%@ page import="uk.ac.ox.brc.greenlight.Attachment" %>
 
 <div class="col-md-12">
     <div class="panel panel-primary PageMainPanel">
@@ -43,21 +43,11 @@
                 <div class="form-group">
                     <label for="patientConsent.clinicianName" class="required">Clinician Name</label>
                     <g:textField name="patientConsent.clinicianName" id="patientConsent.clinicianName"
-                                 class="form-control  ${hasErrors(bean: patientConsent, field: 'clinicianName', 'invalidInput')}"
+                                 class="form-control  ${hasErrors(bean: patientConsent, field: 'consentTakerName', 'invalidInput')}"
                                  value="${patientConsent?.clinicianName}"
                                  placeholder="Enter Clinician Name"/>
                 </div>
 
-
-                <div class="form-group">
-                    <label for="patient.gender">Gender</label>
-                    <g:select class="form-control" id="patient.gender"
-                              name="patient.gender"
-                              value="${patient?.gender}"
-                              from="${Patient?.Gender?.values()}"
-                              optionKey="key" optionValue="value"
-                               />
-                </div>
 
                 <div class="form-group">
                     <label for="dateOfBirth">Date of Birth</label>
@@ -76,7 +66,7 @@
                     <g:select class="form-control" id="patientConsent.consentStatus"
                               name="patientConsent.consentStatus"
                               value="${patientConsent?.consentStatus}"
-                              from="${PatientConsent?.ConsentStatus?.values()}"
+                              from="${ConsentForm?.ConsentStatus?.values()}"
                               optionKey="key" optionValue="value"       />
                 </div>
 

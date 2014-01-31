@@ -4,7 +4,7 @@
 <html>
 	<head>
 		<meta name="layout" content="main">
-		<g:set var="entityName" value="${message(code: 'patientConsent.label', default: 'PatientConsent')}" />
+		<g:set var="entityName" value="${message(code: 'attachedFormImage.label', default: 'PatientConsent')}" />
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
 	<body>
@@ -26,13 +26,13 @@
 					
 						<th><g:message code="patientConsent.consentForm.label" default="Consent Form" /></th>
 					
-						<g:sortableColumn property="consentStatus" title="${message(code: 'patientConsent.consentStatus.label', default: 'Consent Status')}" />
+						<g:sortableColumn property="consentStatus" title="${message(code: 'attachedFormImage.consentStatus.label', default: 'Consent Status')}" />
 					
-						<g:sortableColumn property="answers" title="${message(code: 'patientConsent.answers.label', default: 'Answers')}" />
+						<g:sortableColumn property="answers" title="${message(code: 'attachedFormImage.answers.label', default: 'Answers')}" />
 					
-						<g:sortableColumn property="clinicianName" title="${message(code: 'patientConsent.clinicianName.label', default: 'Clinician Name')}" />
+						<g:sortableColumn property="clinicianName" title="${message(code: 'attachedFormImage.consentTakerName.label', default: 'Clinician Name')}" />
 					
-						<g:sortableColumn property="consentDate" title="${message(code: 'patientConsent.consentDate.label', default: 'Consent Date')}" />
+						<g:sortableColumn property="consentDate" title="${message(code: 'attachedFormImage.consentDate.label', default: 'Consent Date')}" />
 					
 						<th><g:message code="patientConsent.patient.label" default="Patient" /></th>
 					
@@ -42,13 +42,13 @@
 				<g:each in="${patientConsentInstanceList}" status="i" var="patientConsentInstance">
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
 					
-						<td><g:link action="show" id="${patientConsentInstance.id}">${fieldValue(bean: patientConsentInstance, field: "consentForm")}</g:link></td>
+						<td><g:link action="show" id="${patientConsentInstance.id}">${fieldValue(bean: patientConsentInstance, field: "attachedFormImage")}</g:link></td>
 					
 						<td>${fieldValue(bean: patientConsentInstance, field: "consentStatus")}</td>
 					
 						<td>${fieldValue(bean: patientConsentInstance, field: "answers")}</td>
 					
-						<td>${fieldValue(bean: patientConsentInstance, field: "clinicianName")}</td>
+						<td>${fieldValue(bean: patientConsentInstance, field: "consentTakerName")}</td>
 					
 						<td><g:formatDate date="${patientConsentInstance.consentDate}" /></td>
 					

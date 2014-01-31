@@ -8,7 +8,7 @@ class ConsentFormService {
 
     def getAllConsentForms()
     {
-          ConsentForm.list();
+          Attachment.list();
     }
 
 }

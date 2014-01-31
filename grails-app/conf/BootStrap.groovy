@@ -1,4 +1,4 @@
-import uk.ac.ox.brc.greenlight.ConsentForm
+import uk.ac.ox.brc.greenlight.Attachment
 import uk.ac.ox.brc.greenlight.LabSample
 import uk.ac.ox.brc.greenlight.Patient
 import uk.ac.ox.brc.greenlight.PatientConsent
@@ -10,12 +10,11 @@ class BootStrap {
                 givenName: "Billy",
                 familyName: "Joel",
                 dateOfBirth: new Date("09/05/1949"),
-                gender: Patient.Gender.MALE,
                 hospitalNumber: "1001",
                 nhsNumber: "123-456-7890",
                 consents: []
         ).addToConsents(
-                clinicianName: "Geoff Geoffries",
+                consentTakerName: "Geoff Geoffries",
                 consentDate:new Date()
         ).save(failOnError: true)
 
@@ -23,27 +22,26 @@ class BootStrap {
                 givenName: "Eric",
                 familyName: "Clapton",
                 dateOfBirth: new Date("30/03/1945"),
-                gender: Patient.Gender.MALE,
                 hospitalNumber: "1001",
                 nhsNumber: "123-456-7891",
                 consents: []
         ).save(failOnError: true)
 
 
-        def consentForm1=new ConsentForm(
+        def consentForm1=new Attachment(
                 dateOfScan:new Date(),
                 scannedForm:[]
         ).save(failOnError: true);
 
 
-        def consentForm2=new ConsentForm(
+        def consentForm2=new Attachment(
                 dateOfScan:new Date(),
                 scannedForm:[]
         ).save(failOnError: true);
 
 
 
-        def consentForm3=new ConsentForm(
+        def consentForm3=new Attachment(
                 dateOfScan:new Date(),
                 scannedForm:[],
                 patientConsent:billy.consents[0]

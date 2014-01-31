@@ -1,8 +1,5 @@
 package uk.ac.ox.brc.greenlight
 
-import grails.converters.JSON
-
-import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 
 @Transactional(readOnly = true)
@@ -18,15 +15,15 @@ class PatientConsentController {
         if (!patientConsent) {
             redirect(controller: 'ConsentForm', action: 'list')
         }
-        [patientConsent: patientConsent, patient: patientConsent?.patient, consentForm: patientConsent?.consentForm]
+        [patientConsent: patientConsent, patient: patientConsent?.patient, consentForm: patientConsent?.attachedFormImage]
     }
 
     def edit() {
-        def patientConsent = PatientConsent.get(params?.id);
+        def patientConsent = ConsentForm.get(params?.id);
         if (!patientConsent) {
             redirect(controller: 'ConsentForm', action: 'list')
         }
-        [patientConsent: patientConsent, patient: patientConsent?.patient, consentForm: patientConsent?.consentForm]
+        [patientConsent: patientConsent, patient: patientConsent?.patient, consentForm: patientConsent?.attachedFormImage]
     }
 
     def update() {
@@ -34,7 +31,7 @@ class PatientConsentController {
         def patient = Patient.get(params.patient.id);
         patient.properties = params.patient;
 
-        def patientConsent = PatientConsent.get(params.patientConsent.id)
+        def patientConsent = ConsentForm.get(params.patientConsent.id)
         bindData(patientConsent, params.patientConsent, [exclude: ['questions']]);
 
 
@@ -45,10 +42,10 @@ class PatientConsentController {
         }
 
         //Load the consent Form
-        def consentForm = ConsentForm.get(params.consentForm.id);
+        def consentForm = Attachment.get(params.consentForm.id);
 
         patientConsent.patient = patient;
-        patientConsent.consentForm = consentForm;
+        patientConsent.attachedFormImage = consentForm;
 
         patient.validate()
         patientConsent.validate()
@@ -87,7 +84,7 @@ class PatientConsentController {
         }
 
         //Load the consent Form
-        def consentForm = ConsentForm.get(params.consentForm.id);
+        def consentForm = Attachment.get(params.consentForm.id);
 
 
         patientConsent.patient = patient;
@@ -115,7 +112,7 @@ class PatientConsentController {
     }
 
     def delete() {
-        def patientConsent = PatientConsent.get(params.id);
+        def patientConsent = ConsentForm.get(params.id);
         def result = patientConsentService.delete(patientConsent)
         if (result) {
             redirect action: "list", controller: "consentForm"
@@ -128,13 +125,13 @@ class PatientConsentController {
     }
 
     def create() {
-        def consentForm = ConsentForm.get(params.consentFormId);
+        def consentForm = Attachment.get(params.consentFormId);
         if (!consentForm) {
             render 'not found';
             return
         }
         /*
-        if(consentForm.patientConsent)
+        if(attachedFormImage.attachedFormImage)
         {
             redirect action:'show', id:params.id
             return

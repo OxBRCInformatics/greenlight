@@ -7,10 +7,10 @@ import geb.Page
  */
 class ConsentFormUploadPage extends Page{
 
-    static url = "consentForm/upload"
+    static url = "attachedFormImage/upload"
 
     static at = {
-        url == "consentForm/upload" &&
+        url == "attachedFormImage/upload" &&
                 title == "Consent Forms Upload"
     }
     static content = {

@@ -1,11 +1,11 @@
 package uk.ac.ox.brc.greenlight
 
-class StudyFormQuestion {
+class Question {
 
     String name
 
     static belongsTo = [
-            studyForm:StudyForm]
+            studyForm:ConsentFormTemplate]
 
     static constraints = {
     }
