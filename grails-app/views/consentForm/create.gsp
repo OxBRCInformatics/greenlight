@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
-    <title></title>
+    <title>Consent Forms Upload</title>
     <meta name="layout" content="mainBootstrap">
 </head>
 
@@ -28,7 +28,7 @@
                                                 <p>
                                                     <input type="file" id="scannedForm" name="scannedForm" multiple="true" style="margin:3px" accept="'image/png', 'image/jpeg', 'image/jpg', 'image/gif'"/>
 
-                                                    <button type="submit" class="btn btn-primary" style="margin:3px;">Upload</button>
+                                                    <button id='btnUpload' type="submit" class="btn btn-primary" style="margin:3px;">Upload</button>
                                                 </p>
                                             </div>
                                         </g:form>
@@ -42,7 +42,7 @@
                                     <div class="panel panel-default" >
                                         <div class="panel-heading">Upload Result</div>
                                         <div class="panel-body">
-                                            <table class="table able-bordered">
+                                            <table class="table able-bordered" id="uploadedFilesTable">
                                                 <thead>
                                                 <tr>
                                                     <th>No.</th>

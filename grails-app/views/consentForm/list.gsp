@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta name="layout" content="mainBootstrap">
-    <title></title>
+    <title>Consent Forms</title>
 
 </head>
 
@@ -82,7 +82,7 @@
                         </tbody>
                     </table>
                     <g:link action="create">
-                        <button type="button" class="btn  btn-primary btn-sm" >Add Forms</button>
+                        <button type="button" class="btn  btn-primary btn-sm" id="btnAddForms" >Add Forms</button>
                     </g:link>
                 </div>
             </div>

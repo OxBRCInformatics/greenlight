@@ -1,0 +1,20 @@
+import geb.spock.GebReportingSpec
+
+class consentFormListSpec extends GebReportingSpec {
+
+
+    def setup()
+    {
+        to consentFormListPage
+    }
+
+
+    def "Be on main consent form list and press add form" ()
+    {
+        when: "On main consent form list"
+        addFormsButton.click()
+
+        then: "The Consent Forms Upload(Create) should be displayed"
+        at pages.consentFormCreatePage
+    }
+}
