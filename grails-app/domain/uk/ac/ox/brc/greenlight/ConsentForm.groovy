@@ -24,6 +24,7 @@ class ConsentForm {
     static constraints = {
         attachedFormImage nullable: true //remove this later :)
         formID matches: '[A-Z]{3}\\d{5}'
+        template nullable: true //FIXME remove this :)
     }
 
     enum FormStatus {

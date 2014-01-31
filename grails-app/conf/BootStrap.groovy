@@ -1,7 +1,7 @@
 import uk.ac.ox.brc.greenlight.Attachment
 import uk.ac.ox.brc.greenlight.LabSample
 import uk.ac.ox.brc.greenlight.Patient
-import uk.ac.ox.brc.greenlight.PatientConsent
+import uk.ac.ox.brc.greenlight.ConsentForm
 
 class BootStrap {
 
@@ -15,7 +15,9 @@ class BootStrap {
                 consents: []
         ).addToConsents(
                 consentTakerName: "Geoff Geoffries",
-                consentDate:new Date()
+                consentDate:new Date(),
+                formID: "GDP12345"
+
         ).save(failOnError: true)
 
         def eric = new Patient(

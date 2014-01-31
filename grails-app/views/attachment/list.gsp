@@ -34,26 +34,26 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <g:each in="${consentForms}" var="consentForm" status="index">
+                        <g:each in="${attachments}" var="attachment" status="index">
 
-                            <g:set var="assigned" value="${consentForm.patientConsent!=null}"></g:set>
+                            <g:set var="assigned" value="${attachment.consentForm!=null}"></g:set>
 
 
                             <g:if test="${assigned==true}" >
-                                <tr class="success" id="consentFormRow${consentForm.id}" >
+                                <tr class="success" id="consentFormRow${attachment.id}" >
                             </g:if>
                             <g:else>
-                                <tr id="consentFormRow${consentForm.id}"  >
+                                <tr id="consentFormRow${attachment.id}"  >
                             </g:else>
 
                             <td>${index+1}</td>
-                            <td>${consentForm?.id}</td>
-                            <td><g:formatDate format="yyyy-MM-dd HH:mm" date="${consentForm?.dateOfScan}"/></td>
-                            <g:if test="${consentForm?.patientConsent!=null}">
+                            <td>${attachment?.id}</td>
+                            <td><g:formatDate format="yyyy-MM-dd HH:mm" date="${attachment?.dateOfScan}"/></td>
+                            <g:if test="${attachment?.consentForm!=null}">
                                 <td> Yes</td>
-                                <td>${consentForm.patientConsent.patient.nhsNumber}</td>
+                                <td>${attachment.consentForm.patient.nhsNumber}</td>
                                 <td style="  text-align: left;">
-                                        <g:link action="show" id="${consentForm?.patientConsent?.id}" controller="patientConsent">
+                                        <g:link action="show" id="${attachment?.consentForm?.id}" controller="consentForm">
                                             <button type="button" class="btn btn-success btn-sm" style="width:50px">View</button>
                                         </g:link>
                                 </td>
@@ -64,12 +64,12 @@
                                 <td style="width:150px;text-align: left; ">
                                     <p>
 
-                                <g:link action="create" class="linkButton" controller="patientConsent" params="[consentFormId:"${consentForm.id}"]"  >
+                                <g:link action="create" class="linkButton" controller="consentForm" params="[attachmentId:"${attachment.id}"]"  >
 
                                         <button type="button" class="btn  btn-primary btn-sm " style="width:50px" >Fill</button>
                                 </g:link>
 
-                                        <g:remoteLink  class="btn  btn-danger btn-sm " controller="consentForm" action="delete" id="${consentForm.id}"  before="if(!confirm('Are you sure?')) return false" onSuccess="deleteRow(data,textStatus)">
+                                        <g:remoteLink  class="btn  btn-danger btn-sm " controller="attachment" action="delete" id="${attachment.id}"  before="if(!confirm('Are you sure?')) return false" onSuccess="deleteRow(data,textStatus)">
                                         Delete
                                         </g:remoteLink>
 

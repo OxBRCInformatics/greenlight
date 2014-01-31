@@ -9,5 +9,6 @@ class ConsentFormTemplate {
             questions:Question
     ]
     static constraints = {
+
     }
 }

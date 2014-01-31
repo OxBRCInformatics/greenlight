@@ -46,7 +46,7 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li class="active"><a href="${createLink(uri: '/')}">Home</a></li>
-                <li><g:link  controller="consentForm" action="list">Consent Forms</g:link></li>
+                <li><g:link  controller="attachment" action="list">Consent Forms</g:link></li>
                 <li><g:link  controller="patient" action="index">Patients</g:link></li>
 
             </ul>

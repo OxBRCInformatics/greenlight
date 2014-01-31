@@ -9,11 +9,11 @@ class Attachment {
 
 
     static belongsTo = [
-            patientConsent: PatientConsent
+            consentForm: ConsentForm
     ]
 
     static constraints = {
-        patientConsent nullable: true
+        consentForm nullable: true
         scannedForm maxSize: 1024*1024*100
     }
 }

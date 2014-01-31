@@ -1,29 +1,48 @@
+<%@ page import="uk.ac.ox.brc.greenlight.ConsentForm; uk.ac.ox.brc.greenlight.Patient" %>
 
-<%@ page import="uk.ac.ox.brc.greenlight.Attachment" %>
-<!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
-	<head>
-        <meta name="layout" content="mainBootstrap">
-	</head>
-	<body>
-    <div class="col-md-9 "  >
-        <div class="panel panel-primary PageMainPanel" >
-            <div class="panel-heading">Consent Form Detail</div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-9">
-                        Date of Scan:
-                        <g:formatDate date="${consentFormInstance.dateOfScan}" type="day"></g:formatDate>
+<head>
+    <meta name="layout" content="mainBootstrap">
+    <title></title>
+</head>
 
-                    </div>
-                    <div class="col-md-9">
-                        <img id="scannedForm" style="margin: 4px; width: 100%;height: 100%;" class="Photo"   src="${createLink(controller:'consentForm', action:'viewImage', id:"${consentFormInstance.id}")}" />
-                    </div>
-                </div>
+<body>
 
+<div class="col-md-12 ">
+    <div class="panel panel-primary PageMainPanel">
+        <div class="panel-heading">Consent Form</div>
+
+        <div class="panel-body">
+            %{--<g:hasErrors>--}%
+            %{--<g:eachError><p>${it}</p></g:eachError>--}%
+            %{--</g:hasErrors>--}%
+            <div class="col-md-12">
+                <g:if test="${flash.created}">
+                    <div class="alert alert-success">${flash.created}</div>
+                </g:if>
+                <g:elseif test="${flash.error}">
+                    <div class="alert alert-danger">${flash.error}</div>
+                </g:elseif>
             </div>
-        </div>
-        </div>
+            <g:form role="form" >
+                <g:render template="form"/>
+                <div class="col-md-12">
 
-    </body>
+
+                    <g:link   action="delete" controller="consentForm" id="${consentForm?.id}"  onclick="return confirm('Are you sure?');" >
+                        <button type="button" class="btn  btn-danger btn-sm" style="width:50px">Delete</button>
+                    </g:link>
+
+                    <g:link   action="edit" controller="consentForm" id="${consentForm?.id}" >
+                        <button type="button" class="btn  btn-primary btn-sm" style="width:50px">Edit</button>
+                    </g:link>
+
+
+                </div>
+            </g:form>
+        </div>
+    </div>
+</div>
+</body>
 </html>

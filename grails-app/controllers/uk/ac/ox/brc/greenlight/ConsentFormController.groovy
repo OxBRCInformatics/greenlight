@@ -1,135 +1,143 @@
 package uk.ac.ox.brc.greenlight
 
-import grails.converters.JSON
-import org.springframework.web.multipart.MultipartFile
-
-import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
-import org.springframework.web.multipart.MultipartHttpServletRequest
-import org.springframework.web.multipart.commons.CommonsMultipartFile
 
 @Transactional(readOnly = true)
 class ConsentFormController {
 
-
     def consentFormService
 
-
-
     def index() {
-        redirect action:'list'
     }
 
-    def show(Attachment consentFormInstance) {
-        respond consentFormInstance
+    def show() {
+        def consentForm = ConsentForm.get(params?.id);
+        if (!consentForm) {
+            redirect(controller: 'ConsentForm', action: 'list')
+        }
+        [consentForm: consentForm, patient: consentForm?.patient, attachment: consentForm?.attachedFormImage]
     }
 
-    def save(Attachment consentFormInstance) {
+    def edit() {
+        def consentForm = ConsentForm.get(params?.id);
+        if (!consentForm) {
+            redirect(controller: 'ConsentForm', action: 'list')
+        }
+        [consentForm: consentForm, patient: consentForm?.patient, attachment: consentForm?.attachedFormImage]
+    }
 
-        def uploadedFile=request.getFile('scannedForm');
+    def update() {
+        //Build Patient Object
+        def patient = Patient.get(params.patient.id);
+        patient.properties = params.patient;
+
+        def consentForm = ConsentForm.get(params.consentForm.id)
+        bindData(consentForm, params.consentForm, [exclude: ['questions']]);
 
 
-        if (uploadedFile.size==0) {
-            flash.message = 'File cannot be empty, Please select a file.'
-            render(view: 'create')
+        consentForm.answers.eachWithIndex() { answer, i ->
+            consentForm.answers[i] = false;
+            if (params["consentFormAnswers.${i}"])
+                consentForm.answers[i] = true;
+        }
+
+        //Load the consent Form
+        def attachment = Attachment.get(params.attachment.id);
+
+        consentForm.patient = patient;
+        consentForm.attachedFormImage = attachment;
+
+        patient.validate()
+        consentForm.validate()
+
+        if (patient.hasErrors() ||
+                consentForm.hasErrors()) {
+            flash.error = "Error in input"
+            render model: [consentForm: consentForm, patient: patient, attachment: attachment], view: 'edit'
             return
         }
 
-
-        if(request instanceof MultipartHttpServletRequest) {
-            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)request;
-            CommonsMultipartFile file = (CommonsMultipartFile)multiRequest.getFile("scannedForm");
-
-            consentFormInstance.scannedForm = file.bytes
-        }
-
-
-        if (consentFormInstance == null) {
-            notFound()
+        def result = consentFormService.save(patient, consentForm)
+        if (result) {
+            flash.created = "Patient Consent Form ${consentForm.id} Updated"
+            redirect action: 'show', params: [id: consentForm.id]
             return
         }
 
-        if (consentFormInstance.hasErrors()) {
-            respond consentFormInstance.errors, view:'create'
-            return
-        }
-
-        consentFormInstance.save flush:true
-        flash.message = message(code: 'default.created.message', args: [
-                message(code: 'consentFormInstance.label', default: 'Attachment'),
-                consentFormInstance.id
-        ])
-        redirect (action:"create")
+        flash.error = "Error in saving Patient Consent"
+        render model: [consentForm: consentForm, patient: patient, attachment: attachment], view: 'edit'
         return
-
-
-
-        request.withFormat {
-            form {
-                flash.message = message(code: 'default.created.message', args: [
-                        message(code: 'consentFormInstance.label', default: 'ConsentFormIns'),
-                        consentFormInstance.id
-                ])
-                redirect consentFormInstance
-            }
-            '*' { respond consentFormInstance, [status: CREATED] }
-        }
-
-
     }
 
+    def save() {
+        //Build Patient Object
+        def patient = new Patient();
+        patient.properties = params.patient;
+
+        def consentForm = consentFormService.buildORBConsent();
+        bindData(consentForm, params.consentForm, [exclude: ['questions']]);
+
+        consentForm.answers.eachWithIndex() { answer, i ->
+            consentForm.answers[i] = false;
+            if (params["consentFormAnswers.${i}"])
+                consentForm.answers[i] = true;
+        }
+
+        //Load the consent Form
+        def attachment = Attachment.get(params.attachment.id);
+
+
+        consentForm.patient = patient;
+        consentForm.attachment = attachment;
+
+        patient.validate()
+        consentForm.validate()
+
+        if (patient.hasErrors() ||
+                consentForm.hasErrors()) {
+            flash.error = "Error in input"
+            render model: [consentForm: consentForm, patient: patient, attachment: attachment], view: 'create'
+            return
+        }
+
+        def result = consentFormService.save(patient, consentForm)
+        if (result) {
+            flash.created = "Patient Consent Form ${consentForm.id} Created"
+            redirect controller: 'attachment', action: 'list'
+        }
+
+        flash.error = "Error in saving Patient Consent"
+        render model: [consentForm: consentForm, patient: patient, attachment: attachment], view: 'create'
+        return
+    }
 
     def delete() {
-        def consentFormInstance = Attachment.get(params.id);
-
-        if(consentFormInstance && !consentFormInstance.patientConsent)
+        def consentForm = ConsentForm.get(params.id);
+        def result = consentFormService.delete(consentForm)
+        if (result) {
+            redirect action: "list", controller: "attachment"
+            return
+        }
+        else
         {
-            consentFormInstance.delete flush:true
-            def result=[id:consentFormInstance.id, status:'success'];
-            render result as JSON;
+            //needs to Notfound page
         }
-    }
-
-
-    def viewImage = {
-        def consentForm = Attachment.get( params.id )
-        byte[] image = consentForm.scannedForm;
-        response.outputStream << image
-    }
-
-
-    def list()
-    {
-        [consentForms: consentFormService.getAllConsentForms()]
-    }
-
-    def upload()
-    {
-        def consentForms = []
-        if(request instanceof MultipartHttpServletRequest) {
-            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)request;
-            List<MultipartFile> files = multiRequest.getFiles("scannedForm");
-
-            for(file in files)
-            {
-                def okContentTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
-                def confType=file.getContentType();
-                if (!okContentTypes.contains(confType))
-                    continue;
-
-                def consent=new Attachment();
-                consent.scannedForm = file.bytes;
-                consent.dateOfScan = new Date();
-                consent.save(flush: true);
-                consentForms.add(consent);
-            }
-        }
-        render view:'create',model:[consentFormInstances:consentForms]
     }
 
     def create() {
-        def list=params?.consentFormInstances;
-        [consentFormInstances:list]
+        def attachment = Attachment.get(params.attachmentId);
+        if (!attachment) {
+            render 'not found';
+            return
+        }
+        /*
+        if(attachedFormImage.attachedFormImage)
+        {
+            redirect action:'show', id:params.id
+            return
+        }*/
+        def consentForm = consentFormService.buildORBConsent()
+        def patient = new Patient();
+        [consentForm: consentForm, patient: patient, attachment: attachment]
     }
-
 }

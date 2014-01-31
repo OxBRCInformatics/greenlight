@@ -1,4 +1,4 @@
-<%@ page import="uk.ac.ox.brc.greenlight.PatientConsent; uk.ac.ox.brc.greenlight.Patient" %>
+<%@ page import="uk.ac.ox.brc.greenlight.ConsentForm; uk.ac.ox.brc.greenlight.Patient" %>
 
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
@@ -25,20 +25,10 @@
                     <div class="alert alert-danger">${flash.error}</div>
                 </g:elseif>
             </div>
-            <g:form role="form" >
+            <g:form role="form" action="update" controller="consentForm">
                 <g:render template="form"/>
                 <div class="col-md-12">
-
-
-                    <g:link   action="delete" controller="patientConsent" id="${patientConsent?.id}"  onclick="return confirm('Are you sure?');" >
-                        <button type="button" class="btn  btn-danger btn-sm" style="width:50px">Delete</button>
-                    </g:link>
-
-                    <g:link   action="edit" controller="patientConsent" id="${patientConsent?.id}" >
-                        <button type="button" class="btn  btn-primary btn-sm" style="width:50px">Edit</button>
-                    </g:link>
-
-
+                    <button type="submit" class="btn  btn-primary  ">Save</button>
                 </div>
             </g:form>
         </div>
