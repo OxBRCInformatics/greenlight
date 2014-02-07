@@ -8,9 +8,13 @@ class ConsentForm {
     Date consentDate
     String consentTakerName
     String formID
+<<<<<<< HEAD
     FormStatus formStatus = FormStatus.NORMAL
 
     FormStatus status = FormStatus.NORMAL
+=======
+    FormStatus formStatus = FormStatus.STANDARD
+>>>>>>> d9df7640840b145cfe6c705558f1c943db9c254a
     List<Response> responses
 
     static auditable = true
@@ -24,9 +28,12 @@ class ConsentForm {
     ]
 
     static constraints = {
-        attachedFormImage nullable: true //remove this later :)
-        //formID matches: '[A-Z]{3}\\d{5}' //FIXME it latter '[A-Z]{3}\\d{5}'
-        template nullable: true //FIXME remove this :)
+        //attachedFormImage nullable: true //remove this later :)
+        formID matches: '[A-Z]{3}\\d{5}'
+        template nullable: true
+        consentDate nullable: true
+        consentTakerName nullable: true
+        patient nullable: true
     }
 
     enum FormStatus {

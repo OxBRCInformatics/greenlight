@@ -1,6 +1,5 @@
 package uk.ac.ox.brc.greenlight
 
-import org.codehaus.groovy.grails.plugins.web.api.ControllersApi
 
 class ConsentFormCompletionController {
 
