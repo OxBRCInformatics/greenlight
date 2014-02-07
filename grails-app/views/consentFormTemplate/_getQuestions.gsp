@@ -22,7 +22,7 @@ Apply to all:
 
             <g:select class="form-control" id="answers.${index}"
                       name="responses.${index}"
-                      value="${ responses ? responses[index]?.answer.key : null}"
+                      value="${ responses ? responses[index]?.answer.key : Response.ResponseValue.BLANK}"
                       from="${Response.ResponseValue?.values()}"
                       optionKey="key"
                       optionValue="value"
