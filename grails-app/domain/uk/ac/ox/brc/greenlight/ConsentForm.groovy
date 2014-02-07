@@ -10,6 +10,7 @@ class ConsentForm {
     String formID
     FormStatus formStatus = FormStatus.STANDARD
     List<Response> responses
+    String comment
 
     static auditable = true
 
@@ -28,6 +29,7 @@ class ConsentForm {
         consentDate nullable: true
         consentTakerName nullable: true
         patient nullable: true
+        comment nullable: true
     }
 
     enum FormStatus {

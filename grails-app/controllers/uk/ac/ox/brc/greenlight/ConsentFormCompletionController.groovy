@@ -10,8 +10,10 @@ class ConsentFormCompletionController {
 
         def create() {
             def attachment = Attachment.get(params?.attachmentId);
-            if (!attachment)
-                redirect  action:'notFound'
+            if (!attachment){
+                respond null
+                return
+            }
 
             ConsentFormCommand commandInstance =new ConsentFormCommand();
             commandInstance.attachment = attachment
@@ -94,7 +96,8 @@ class ConsentFormCompletionController {
             }
             else
             {
-               notFound()
+               respond null
+               return
             }
         }
 
@@ -172,7 +175,8 @@ class ConsentFormCompletionController {
 
         def notFound()
         {
-            render 'Not Found!'
+            respond null
+            return
         }
     }
 

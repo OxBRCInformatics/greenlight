@@ -23,6 +23,9 @@
                                     <td>"${attachment?.fileName}"</td>
                                     <td>
                                         <p>
+                                            <g:link action="create" class="linkButton" controller="consentFormCompletion" params="[attachmentId:"${attachment.id}"]"  >
+                                                <button type="button" class="btn  btn-primary" >Enter details</button>
+                                            </g:link>
                                             <g:link action="show" id="${attachment.id}"   class="linkButton">
                                                 <button type="button" class="btn btn-success">View</button>
                                             </g:link>
