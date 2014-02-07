@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta name="layout" content="mainBootstrap"/>
+		<meta name="layout" content="main"/>
 		<title>ORB Consent Form</title>
 
 	</head>
