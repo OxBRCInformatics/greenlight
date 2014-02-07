@@ -23,8 +23,8 @@ class ConsentForm {
     ]
 
     static constraints = {
-        //attachedFormImage nullable: true //remove this later :)
-        formID matches: '[A-Z]{3}\\d{5}'
+        attachedFormImage nullable: true //remove this later :)
+        formID matches: '[a-zA-Z]{3}\\d{5}'
         template nullable: true
         consentDate nullable: true
         consentTakerName nullable: true

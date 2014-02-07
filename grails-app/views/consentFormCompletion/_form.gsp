@@ -160,7 +160,7 @@
             </div>
             <div>
                 <div class="form-group">
-                    <label for="commandInstance.consentForm.comment" class="required">Comment</label>
+                    <label for="commandInstance.consentForm.comment">Comment</label>
                     <g:textArea
                             class="form-control  ${hasErrors(bean: consentForm, field: 'comment', 'invalidInput')}"
                             id="commandInstance.consentForm.comment" name="commandInstance.consentForm.comment"

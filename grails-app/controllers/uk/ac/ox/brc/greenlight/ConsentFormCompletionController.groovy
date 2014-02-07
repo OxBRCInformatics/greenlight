@@ -26,7 +26,7 @@ class ConsentFormCompletionController {
             def commandObj=new ConsentFormCommand();
 
             commandObj.patient = new Patient();
-            commandObj.patient.properties = params.commandInstance.patient;
+            commandObj.patient.properties = params.commandInstance?.patient;
 
             //Build Consent Form Object
             commandObj.consentForm =new ConsentForm();
@@ -34,7 +34,9 @@ class ConsentFormCompletionController {
             commandObj.consentForm.responses = [];
 
             //Load Selected Consent Template
-            commandObj.template = ConsentFormTemplate.get(params.commandInstance.consentFormTemplateId);
+            if(params.commandInstance.consentFormTemplateId != null && params.commandInstance.consentFormTemplateId != "null"){
+                commandObj.template = ConsentFormTemplate.get(params.commandInstance.consentFormTemplateId)
+            }
 
             //Load Attachment
             commandObj.attachment = Attachment.get(params.commandInstance.attachmentId);
@@ -57,6 +59,14 @@ class ConsentFormCompletionController {
 
         if (commandObj.patient.hasErrors() || commandObj.consentForm.hasErrors()) {
             flash.error = "Error in input"
+
+            commandObj.patient.errors.each { error ->
+                flash.error +="\n"+ error
+            }
+            commandObj.consentForm.errors.each { error ->
+                flash.error +="\n"+ error
+            }
+
             render view: 'create',  model:[commandInstance: commandObj]
             return
         }
