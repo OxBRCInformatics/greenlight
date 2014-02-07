@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-        <meta name="layout" content="mainBootstrap">
+        <meta name="layout" content="main">
 	</head>
 	<body>
     <div class="col-md-12 "  >

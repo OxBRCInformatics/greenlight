@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Consent Forms Upload</title>
-    <meta name="layout" content="mainBootstrap">
+    <meta name="layout" content="main">
 </head>
 
 <body>
