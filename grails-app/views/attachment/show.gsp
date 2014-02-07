@@ -12,7 +12,7 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-12">
-                        Date of Scan:
+                        Date of Upload:
                         <g:formatDate date="${attachment.dateOfUpload}" type="day"></g:formatDate>
 
                     </div>

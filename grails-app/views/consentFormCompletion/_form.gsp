@@ -100,9 +100,17 @@
             <div class="col-md-8">
 
                 <g:if test="${commandInstance?.attachment}">
-                    <img id="commandInstance.attachment" style="margin: 4px; width:100%;height:100%;"
-                     class="Photo"
-                     src="${createLink(controller: 'attachment', action: 'viewContent', id: "${commandInstance?.attachment?.id}")}"/>
+
+                        <a href="${createLink(action:'show',
+                            controller:'attachment',id: commandInstance?.attachment?.id)}" target="_blank">
+
+                        <img id="commandInstance.attachment" style="margin: 4px; width:100%;height:100%;"
+                         class="Photo"
+                         src="${createLink(controller: 'attachment', action: 'viewContent', id: "${commandInstance?.attachment?.id}")}"
+                        />
+
+                    </a>
+
                 </g:if>
             </div>
             <div class="col-md-4">
