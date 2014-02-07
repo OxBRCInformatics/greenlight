@@ -8,9 +8,9 @@ class ConsentForm {
     Date consentDate
     String consentTakerName
     String formID
-    FormStatus formStatus = FormStatus.STANDARD
+    FormStatus formStatus = FormStatus.NORMAL
 
-    FormStatus status = FormStatus.STANDARD
+    FormStatus status = FormStatus.NORMAL
     List<Response> responses
 
     static auditable = true
@@ -30,7 +30,7 @@ class ConsentForm {
     }
 
     enum FormStatus {
-        STANDARD("Standard"),INVALID("Invalid"), DECLINED("Declined");
+        NORMAL("Normal"),SPOILED("Spoiled"), DECLINED("Declined");
         final String value;
         FormStatus(String value) { this.value = value; }
         String toString() { value; }

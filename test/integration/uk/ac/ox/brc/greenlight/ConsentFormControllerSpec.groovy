@@ -77,7 +77,7 @@ class ConsentFormControllerSpec extends IntegrationSpec {
 //                  consentDate:new Date(),
 //                  consentTakerName:'Mr A',
 //                  formID :'123',
-//                  formStatus : ConsentForm.FormStatus.STANDARD
+//                  formStatus : ConsentForm.FormStatus.NORMAL
 //        ).addToResponses(new Response());
 
     }

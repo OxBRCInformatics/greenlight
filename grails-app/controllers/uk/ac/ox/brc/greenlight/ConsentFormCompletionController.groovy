@@ -16,7 +16,7 @@ class ConsentFormCompletionController {
 
             ConsentFormCommand commandInstance =new ConsentFormCommand();
             commandInstance.attachment = attachment
-            commandInstance.consentForm=new ConsentForm(formStatus: ConsentForm.FormStatus.STANDARD);
+            commandInstance.consentForm=new ConsentForm(formStatus: ConsentForm.FormStatus.NORMAL);
             respond  commandInstance, model:[commandInstance: commandInstance]
         }
 
