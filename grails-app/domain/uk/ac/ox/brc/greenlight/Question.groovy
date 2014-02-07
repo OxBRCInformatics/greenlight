@@ -4,6 +4,7 @@ class Question {
 
     String name
 
+    static auditable = true
     static belongsTo = [
             studyForm:ConsentFormTemplate]
 

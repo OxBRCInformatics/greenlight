@@ -8,6 +8,8 @@ class Patient {
     String nhsNumber
     String hospitalNumber
 
+    static auditable = true
+
     static hasMany = [
             consents: ConsentForm
     ]

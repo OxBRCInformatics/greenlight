@@ -13,6 +13,7 @@ class ConsentForm {
     FormStatus status = FormStatus.STANDARD
     List<Response> responses
 
+    static auditable = true
 
     static belongsTo = [
             patient: Patient

@@ -6,6 +6,7 @@ class Response {
     ResponseValue answer
     String description
 
+    static auditable = true
     static belongsTo = [
             consentForm: ConsentForm
     ]

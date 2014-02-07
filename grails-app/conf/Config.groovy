@@ -1,3 +1,5 @@
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+
 // locations to search for config files that get merged into the main config;
 // config files can be ConfigSlurper scripts, Java properties files, or classes
 // in the classpath in ConfigSlurper format
@@ -95,12 +97,6 @@ environments {
 
 // log4j configuration
 log4j = {
-    // Example of changing the log pattern for the default console appender:
-    //
-    //appenders {
-    //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-    //}
-
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
            'org.codehaus.groovy.grails.web.sitemesh',       // layouts
@@ -112,4 +108,78 @@ log4j = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
+}
+
+// Audit logging - grab user ID as well as changes
+auditLog {
+    actorClosure = { request, session ->
+        if (request.applicationContext.springSecurityService.principal instanceof java.lang.String){
+            return request.applicationContext.springSecurityService.principal
+        }
+        def username = request.applicationContext.springSecurityService.principal?.username
+        if (SpringSecurityUtils.isSwitched()){
+            username = SpringSecurityUtils.switchedUserOriginalUsername+" AS "+username
+        }
+        return username
+    }
+}
+
+
+grails{
+    plugins{
+        springsecurity{
+
+            // page to redirect to if a login attempt fails
+            failureHandler.defaultFailureUrl = '/login/authfail/?login_error=1'
+
+            // redirection page for success (including successful registration
+            //successHandler.defaultTargetUrl = '/dashboard/'
+
+            // Added by the Spring Security Core plugin:
+            userLookup.userDomainClassName = 'uk.ac.ox.brc.greenlight.auth.AppUser'
+            userLookup.authorityJoinClassName = 'uk.ac.ox.brc.greenlight.auth.UserRole'
+            authority.className = 'uk.ac.ox.brc.greenlight.auth.AppRole'
+
+            //disable to prevent double encryption of passwords
+            ui.encodePassword = false
+
+            // User registration: don't add user to any roles by default (this is done by an admin to approve the account)
+            ui.register.defaultRoleNames = ['ROLE_PENDING']
+
+            // Grails security password requirements
+            ui.password.minLength=8
+            ui.password.maxLength=64
+
+            securityConfigType = SecurityConfigType.InterceptUrlMap
+            useSecurityEventListener = true
+
+            securityConfigType = "Annotation"
+            controllerAnnotations.staticRules = [
+                    '/':                            ['IS_AUTHENTICATED_ANONYMOUSLY'],
+
+                    // Asset pipeline
+                    '/assets/**':           ['IS_AUTHENTICATED_ANONYMOUSLY'],
+
+                    // Javascript
+                    '/js/**':      			['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/js/vendor/**':  		['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/plugins/**/js/**':	['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    // CSS
+                    '/**/css/**':      		['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/css/**': 				['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/**/*.less':           ['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    // Images
+                    '/images/**': 			['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/img/**': 				['IS_AUTHENTICATED_ANONYMOUSLY'],
+
+                    // Anonymously acessible pages, e.g. registration & login
+                    '/login/*':    			['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/logout/*':    		['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/register/*':    		['IS_AUTHENTICATED_ANONYMOUSLY'],
+
+                    // Need to be logged in for anything else!
+                    '/**':         			["hasAnyRole('ROLE_USER', 'ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY']
+            ]
+        }
+    }
 }

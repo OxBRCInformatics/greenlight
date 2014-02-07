@@ -48,13 +48,13 @@ grails.project.dependency.resolution = {
         mavenLocal()
         grailsCentral()
         mavenCentral()
-        // uncomment these (or add new ones) to enable remote dependency resolution from public Maven repositories
-        //mavenRepo "http://repository.codehaus.org"
-        //mavenRepo "http://download.java.net/maven/2/"
-        //mavenRepo "http://repository.jboss.com/maven2/"
 
         // For Geb snapshot
         mavenRepo "http://oss.sonatype.org/content/repositories/snapshots"
+
+        // Spring Security
+        mavenRepo "http://download.java.net/maven/2/"
+        mavenRepo "http://repo.spring.io/milestone/"
     }
 
     dependencies {
@@ -90,10 +90,17 @@ grails.project.dependency.resolution = {
         runtime ":database-migration:1.3.8"
         runtime ":jquery:1.10.2.2"
         runtime ":resources:1.2.1"
-        // Uncomment these (or add new ones) to enable additional resources capabilities
-        //runtime ":zipped-resources:1.0.1"
-        //runtime ":cached-resources:1.1"
-        //runtime ":yui-minify-resources:0.1.5"
+
+        // Spring Security
+        compile ':spring-security-core:1.2.7.3'
+        compile ":spring-security-ui:0.2"
+        compile ":jquery:1.11.0"
+        compile ":jquery-ui:1.10.3"
+        compile ":famfamfam:1.0.1"
+        compile ":mail:1.0"
+
+        // Audit logging
+        compile ":audit-logging:0.5.5.3"
 
         test ":geb:$gebVersion"
     }

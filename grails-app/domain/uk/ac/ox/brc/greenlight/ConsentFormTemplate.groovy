@@ -4,10 +4,10 @@ class ConsentFormTemplate {
 
     String name
     String namePrefix
-
     String templateVersion
-
     List<Question> questions
+
+    static auditable = true
 
     static hasMany = [
             questions:Question
