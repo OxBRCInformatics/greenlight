@@ -5,10 +5,10 @@
 
     <g:if test="${questions && questions.size()>0}">
         <li class="list-group-item">
-
-            <button type="button" class="btn btn-success btn-sm" onclick="$('select[id^=answers]').val('YES')">All 'yes'</button>
-            <button type="button" class="btn btn-danger btn-sm" onclick="$('select[id^=answers]').val('NO')">All 'no'</button>
-            <button type="button" class="btn btn-primary btn-sm" onclick="$('select[id^=answers]').val('BLANK')">All 'blank'</button>
+Apply to all:
+            <button type="button" class="btn btn-success btn-sm" onclick="$('select[id^=answers]').val('YES')">Yes</button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="$('select[id^=answers]').val('NO')">No</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="$('select[id^=answers]').val('BLANK')">Blank</button>
 
         </li>
     </g:if>
