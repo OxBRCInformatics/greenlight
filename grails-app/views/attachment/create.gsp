@@ -26,7 +26,7 @@
                                                 <h5>Please select files:</h5>
 
                                                 <p>
-                                                    <input type="file" id="scannedForms" name="scannedForms" multiple="true" style="margin:3px" accept="'image/png', 'image/jpeg', 'image/jpg', 'image/gif'"/>
+                                                    <input type="file" id="scannedForms" name="scannedForms" multiple="true" style="margin:3px" accept="'image/png', 'image/jpeg', 'image/jpg', 'image/gif','application/pdf'"/>
 
                                                     <button id='btnUpload' type="submit" class="btn btn-primary" style="margin:3px;">Upload</button>
                                                 </p>

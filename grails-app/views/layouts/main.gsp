@@ -22,6 +22,9 @@
     <g:javascript library="application"/>
     <g:javascript library="jquery"></g:javascript>
     <g:javascript library="jqueryFormValidator"></g:javascript>
+    <g:javascript library="pdfViewer"></g:javascript>
+    <g:javascript library="fontawsome"></g:javascript>
+
 
     <r:layoutResources />
     <g:layoutHead/>
@@ -117,15 +120,15 @@
     {
         $('.bootstrapTooltip').tooltip()
 
-        jQuery.validator.addMethod("nhsNumber", function(value, element) {
-            return this.optional(element) || /^\d\d\d-\d\d\d-\d\d\d\d$/.test(value);
-        }, "NHS-Number must be in xxx-xxx-xxxxx format")
+        $.validator.addMethod(
+                "regex",
+                function(value, element, regexp) {
+                    var re = new RegExp(regexp);
+                    return this.optional(element) || re.test(value);
+                },
+                "Not a valid format."
+        );
 
-
-
-        jQuery.validator.addMethod("ShouldNotSelected", function(value, element){
-            return 'null' != value;
-        }, "Please select one option.");
 
     });
 </script>

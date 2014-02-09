@@ -11,7 +11,7 @@ Apply to all:
             <button type="button" class="btn btn-primary btn-sm" onclick="$('select[id^=answers]').val('BLANK')">Blank</button>
 
         </li>
-    </g:if>
+
     <g:each in="${questions}" var="question" status="index">
 
         <li class="list-group-item">
@@ -35,5 +35,6 @@ Apply to all:
         </li>
 
     </g:each>
+    </g:if>
 </ul>
 

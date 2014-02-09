@@ -60,14 +60,12 @@ class BootStrap {
         ).save(failOnError: true)
 
 
-        new ConsentFormTemplate(
-                name: "ORB2",
-                namePrefix: "ABC",
-                templateVersion: "1.1"
-        ).addToQuestions(new Question(name: 'I read2...')
-        ).addToQuestions(new Question(name: 'I read2...')
-        ).addToQuestions(new Question(name: 'I read2...')
-        ).save(failOnError: true)
+//        new ConsentFormTemplate(
+//                name: "ORB Verbal Consent Form",
+//                namePrefix: "ABC",
+//                templateVersion: "1"
+//        ).addToQuestions(new Question(name: 'I confirm that the patient has given previous written consent to ORB and that I have verbally reconfirmed that consent prior to taking a sample. I have answered any questions the patient had.')
+//        ).save(failOnError: true)
 
     }
     def destroy = {
