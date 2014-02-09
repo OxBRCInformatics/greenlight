@@ -23,6 +23,8 @@
     <g:javascript library="jquery"></g:javascript>
     <g:javascript library="jqueryFormValidator"></g:javascript>
     <g:javascript library="pdfViewer"></g:javascript>
+    <g:javascript library="fontawsome"></g:javascript>
+
 
     <r:layoutResources />
     <g:layoutHead/>

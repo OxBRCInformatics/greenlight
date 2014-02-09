@@ -25,4 +25,8 @@ modules = {
     }
 
 
+    fontawsome
+            {
+                resource url:"css/font-awesome-4.0.3/css/font-awesome.min.css"
+            }
 }

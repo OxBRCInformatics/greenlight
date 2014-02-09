@@ -83,33 +83,11 @@
                         <tfoot>
                          <tr>
                              <td colspan="8" style="text-align: center;">
-
-
-                                 %{--<ul class="pagination" style="margin: 0px;">--}%
-
-                                     %{--<g:set var="max" value="${params.max}"   />--}%
-
-
-
-                                     %{--<g:if test="${params.offset!='0'}">--}%
-                                        %{--<li><a href="#">&laquo;</a></li>--}%
-                                     %{--</g:if>--}%
-                                     %{--<g:each var="offsetId" in="${ (0..<'100'.toInteger()/'10'.toInteger()) }">--}%
-                                         %{--<li><a href="#"> ${offsetId+1} </a></li>--}%
-                                     %{--</g:each>--}%
-                                 %{--</ul>--}%
-
-
-
                              </td>
-
                          </tr>
 
                         </tfoot>
                     </table>
-                        %{--<div class="pagination" style="align-content: center;">--}%
-                            %{--<g:paginate total="25" />--}%
-                        %{--</div>--}%
 
                     </div>
                     <g:link action="create">

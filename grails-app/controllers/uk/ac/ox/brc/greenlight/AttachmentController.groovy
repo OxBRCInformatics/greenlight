@@ -10,9 +10,6 @@ class AttachmentController {
 
     def attachmentService
 
-
-
-
     def list()
     {
         def result = attachmentService.getAllAttachments()
@@ -33,7 +30,7 @@ class AttachmentController {
         def attachment = Attachment.get(params?.id);
         if(!attachment)
         {
-            respond null
+            render "not found"
         }
 
         if(!attachment.consentForm)
@@ -62,12 +59,9 @@ class AttachmentController {
     }
 
     def create() {
-        //def list=params?.attachments;
-        //[attachments:list]
     }
 
     def showUploaded() {
-
     }
 
     def save()
