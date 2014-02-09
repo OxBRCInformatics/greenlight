@@ -34,7 +34,7 @@ class ConsentFormCompletionController {
             commandObj.consentForm.responses = [];
 
             //Load Selected Consent Template
-            if(params.commandInstance.consentFormTemplateId != null && params.commandInstance.consentFormTemplateId != "null"){
+            if(params.commandInstance.consentFormTemplateId != null && params.commandInstance.consentFormTemplateId != "-1"){
                 commandObj.template = ConsentFormTemplate.get(params.commandInstance.consentFormTemplateId)
             }
 
@@ -83,18 +83,21 @@ class ConsentFormCompletionController {
         def show() {
             def consentForm = ConsentForm.get(params?.id);
             if (!consentForm) {
-                redirect(controller: 'ConsentForm', action: 'list')
+                redirect(controller: 'attachment', action: 'list')
+                return;
             }
+            def command =new ConsentFormCommand([
+                    consentForm:consentForm,
+                    patient : consentForm.patient,
+                    attachment : consentForm.attachedFormImage,
+                    template: consentForm?.template,
+                    questions: consentForm?.template?.questions,
+                    responses: consentForm?.responses
+            ]);
 
-            def command =new ConsentFormCommand();
-            command.consentForm = consentForm;
-            command.patient = consentForm.patient;
-            command.attachment = consentForm.attachedFormImage;
-            command.template= consentForm.template;
-            command.questions= consentForm.template.questions;
-            command.responses= consentForm.responses;
-
-            respond command , model:[commandInstance: command]
+            respond command , model:[commandInstance: command,
+                                     questions:consentForm?.template?.questions,
+                                     responses :consentForm?.responses]
         }
 
         def delete() {
@@ -121,8 +124,7 @@ class ConsentFormCompletionController {
                     attachment: consentForm.attachedFormImage,
                     consentForm:consentForm,
                     patient: consentForm.patient,
-                    template: consentForm.template
-
+                    template: consentForm?.template
             ]);
 
             respond  commandInstance, model:[commandInstance: commandInstance]
@@ -143,7 +145,9 @@ class ConsentFormCompletionController {
             commandObj.consentForm.responses = [];
 
             //Load Selected Consent Template
-            commandObj.template = ConsentFormTemplate.get(params.commandInstance.consentFormTemplateId);
+            if(params.commandInstance.consentFormTemplateId != null && params.commandInstance.consentFormTemplateId != "-1"){
+                commandObj.template = ConsentFormTemplate.get(params.commandInstance.consentFormTemplateId)
+            }
 
             //Load Attachment
             commandObj.attachment = Attachment.get(params.commandInstance.attachmentId);
@@ -172,11 +176,12 @@ class ConsentFormCompletionController {
             }
 
             def result = consentFormService.save(commandObj.patient, commandObj.consentForm)
-            if (result)
-                flash.created = "Patient Consent Form ${commandObj.consentForm.id} Created"
-            else
-                flash.error = "Error in saving Patient Consent"
+           // if (result)
+            //    flash.created = "Patient Consent Form ${commandObj.consentForm.id} Created"
+           // else
+             //   flash.error = "Error in saving Patient Consent"
 
+            //redirect controller:'consentFormCompletion',  action:'show', id:commandObj?.consentForm?.id
             redirect controller:'attachment',  action:'list'
 
         }

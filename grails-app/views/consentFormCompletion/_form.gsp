@@ -76,7 +76,7 @@
                             class="form-control  ${hasErrors(bean: consentForm, field: 'formID', 'invalidInput')}"
                             id="commandInstance.consentForm.formID" name="commandInstance.consentForm.formID"
                             value="${commandInstance?.consentForm?.formID}"
-                            placeholder="Consent Form Id"/>
+                            placeholder="Consent Form Id (like GEN12345)"/>
                 </div>
                 <div class="form-group">
                     <label for="commandInstance.consentForm.ConsentDate">Consent Date</label>
@@ -104,12 +104,29 @@
                         <a href="${createLink(action:'show',
                             controller:'attachment',id: commandInstance?.attachment?.id)}" target="_blank">
 
-                        <img id="commandInstance.attachment" style="margin: 4px; width:100%;height:100%;"
-                         class="Photo"
-                         src="${createLink(controller: 'attachment', action: 'viewContent', id: "${commandInstance?.attachment?.id}")}"
-                        />
+                        %{--<img id="commandInstance.attachment" style="margin: 4px; width:100%;height:100%;"--}%
+                         %{--class="Photo"--}%
+                         %{--src="${createLink(controller: 'attachment', action: 'viewContent', id: "${commandInstance?.attachment?.id}")}"--}%
+                        %{--/>--}%
 
-                    </a>
+
+                            <g:if test="${commandInstance?.attachment?.attachmentType == Attachment.AttachmentType.IMAGE}">
+
+                                <img id="scannedForm" style="margin: 4px; width: 100%;height: 100%" class="Photo"
+                                     src="${createLink(controller: 'attachment', action: 'viewContent', id: "${commandInstance?.attachment?.id}")}"/>
+
+                            </g:if>
+                            <g:elseif test="${commandInstance?.attachment?.attachmentType == Attachment.AttachmentType.PDF}">
+
+                                <div style="width: 100%">
+                                <g:render  template="/attachment/pdfViewer"         model="[attachmentId:commandInstance?.attachment?.id]" >
+                                </g:render>
+                                </div>
+
+                            </g:elseif>
+
+
+                                    </a>
 
                 </g:if>
             </div>
@@ -124,7 +141,7 @@
                           from="${ConsentFormTemplate.list()}"
                           optionKey="id"
                           optionValue="${name}"
-                          noSelection="${[null: 'Select one ...']}"
+                          noSelection="${['-1': 'Select one ...']}"
                           onchange="  ${
                               remoteFunction(
                                   action: 'getQuestions',
@@ -136,14 +153,13 @@
 </div>
                 <div class="form-group">
                    <label for="commandInstance.consentForm.formStatus">Form Status</label>
-                   <g:select id="commandInstance?.consentForm.formStatus"
+                   <g:select id="commandInstance.consentForm.formStatus"
                              name="commandInstance.consentForm.formStatus"
                              class="form-control"
                              value="${commandInstance?.consentForm?.formStatus}"
                              from="${ConsentForm?.FormStatus?.values()}"
                              optionKey="key"
                              optionValue="value"
-                             noSelection="${[null: 'Select one ...']}"
                    />
                 </div>
 
@@ -158,7 +174,7 @@
                 </div>
 
             </div>
-            <div>
+            <div class="col-md-12">
                 <div class="form-group">
                     <label for="commandInstance.consentForm.comment">Comment</label>
                     <g:textArea
@@ -167,6 +183,8 @@
                             value="${commandInstance?.consentForm?.comment}"
                             placeholder="Comment"/>
                 </div>
+
+
             </div>
 
         </div>
@@ -186,32 +204,16 @@
     {
         $('form').validate({
             rules: {
-                'commandInstance.patient.givenName':{
-                    required:true
-                },
-                'commandInstance.patient.familyName':{
-                    required:true
-                },
-                'commandInstance.consentForm.consentTakerName':{
-                    required:true
-                },
-
-                'commandInstance.consentForm.formID':{
-                    required:true
-                },
-                'commandInstance.patient.hospitalNumber':
-                {
-                    required:true
-                },
                 'commandInstance.patient.nhsNumber':{
-                    nhsNumber: true,
-                    required: true
+                    regex: /^\d\d\d-\d\d\d-\d\d\d\d$/
                 },
-                'commandInstance.consentFormTemplate':
+                'commandInstance.consentForm.formID':
                 {
-                    ShouldNotSelected: true
+                    required:true,
+                    regex:/^[a-zA-Z]{3}\d{5}$/
                 }
-            },
+           },
+
             highlight: function(element) {
                 $(element).closest('.form-group').addClass('has-error');
             },

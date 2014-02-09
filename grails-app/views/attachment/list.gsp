@@ -60,12 +60,12 @@
                             <g:else>
                                 <td></td>
                                 <td></td>
-                                <td style="width:150px;text-align: left; ">
+                                <td style="width:200px;text-align: left; ">
                                     <p>
 
-                                <g:link action="create" class="linkButton" controller="consentFormCompletion" params="[attachmentId:"${attachment.id}"]"  >
+                                <g:link action="create" class="linkButton" style="text-decoration:none;" controller="consentFormCompletion" params="[attachmentId:"${attachment.id}"]"  >
 
-                                        <button type="button" class="btn  btn-primary btn-sm " style="width:50px" >Assign</button>
+                                        <button type="button" class="btn  btn-primary btn-sm "   >Enter Details</button>
                                 </g:link>
 
                                         <g:remoteLink  class="btn  btn-danger btn-sm " controller="attachment" action="delete" id="${attachment.id}"  before="if(!confirm('Are you sure?')) return false" onSuccess="deleteRow(data,textStatus)">

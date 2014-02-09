@@ -18,8 +18,11 @@ modules = {
             {
                 resource url:"js/formValidators/jquery.validate.min.js"
                 resource url:"js/formValidators/jquery.validate.Bootstrap.js"
-
             }
+
+    pdfViewer {
+        resource url:"js/PDF/pdf.js"
+    }
 
 
 }

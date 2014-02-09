@@ -26,7 +26,7 @@
                 </g:elseif>
             </div>
 
-            <g:form id="consentFormCompletion" role="form" action="update" controller="consentFormCompletion" >
+            <g:form  role="form" action="update" controller="consentFormCompletion" >
                 <g:render template="form"/>
                 <div class="col-md-12">
                     <button type="submit" class="btn  btn-primary  ">Save</button>

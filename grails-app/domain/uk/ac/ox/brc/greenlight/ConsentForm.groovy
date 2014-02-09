@@ -8,17 +8,12 @@ class ConsentForm {
     Date consentDate
     String consentTakerName
     String formID
-<<<<<<< HEAD
     FormStatus formStatus = FormStatus.NORMAL
 
-    FormStatus status = FormStatus.NORMAL
-=======
-    FormStatus formStatus = FormStatus.STANDARD
->>>>>>> d9df7640840b145cfe6c705558f1c943db9c254a
     List<Response> responses
     String comment
 
-    static auditable = true
+    //static auditable = true
 
     static belongsTo = [
             patient: Patient

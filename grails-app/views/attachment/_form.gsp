@@ -23,13 +23,13 @@
                                     <td>"${attachment?.fileName}"</td>
                                     <td>
                                         <p>
-                                            <g:link action="create" class="linkButton" controller="consentFormCompletion" params="[attachmentId:"${attachment.id}"]"  >
+                                            <g:link action="create" class="linkButton" style="text-decoration:none;" controller="consentFormCompletion" params="[attachmentId:"${attachment.id}"]"  >
                                                 <button type="button" class="btn  btn-primary" >Enter details</button>
                                             </g:link>
-                                            <g:link action="show" id="${attachment.id}"   class="linkButton">
+                                            <g:link action="show" id="${attachment.id}"   class="linkButton" style="text-decoration:none;">
                                                 <button type="button" class="btn btn-success">View</button>
                                             </g:link>
-                                            <g:remoteLink action="delete" controller="attachment" id="${attachment.id}" onSuccess="deleteRow(data,textStatus)">
+                                            <g:remoteLink action="delete" controller="attachment" style="text-decoration:none;" id="${attachment.id}" onSuccess="deleteRow(data,textStatus)">
                                                 <button type="button" class="btn  btn-danger"  onclick="return confirm('Are you sure?')">Delete</button>
                                             </g:remoteLink>
                                         </p>

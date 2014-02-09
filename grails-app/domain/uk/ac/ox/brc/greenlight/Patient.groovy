@@ -8,13 +8,17 @@ class Patient {
     String nhsNumber
     String hospitalNumber
 
-   // static auditable = true
+    // static auditable = true
 
     static hasMany = [
             consents: ConsentForm
     ]
     static constraints = {
-        nhsNumber matches: '\\d{3}\\-\\d{3}-\\d{4}'
+        nhsNumber nullable: true, matches: '\\d{3}\\-\\d{3}-\\d{4}'
+        givenName nullable: true
+        familyName nullable: true
+        dateOfBirth nullable: true
+        hospitalNumber nullable: true
     }
 
 }
