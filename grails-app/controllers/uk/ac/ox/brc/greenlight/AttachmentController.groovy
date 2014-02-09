@@ -33,7 +33,7 @@ class AttachmentController {
         def attachment = Attachment.get(params?.id);
         if(!attachment)
         {
-            render 'Can not find the attachment'
+            respond null
         }
 
         if(!attachment.consentForm)
