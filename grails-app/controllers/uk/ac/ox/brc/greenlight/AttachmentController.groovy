@@ -86,6 +86,8 @@ class AttachmentController {
                 else
                     attachment.attachmentType=Attachment.AttachmentType.IMAGE;
                 attachment.dateOfUpload=new Date();
+
+
                 attachmentService.save(attachment)
                 attachments.add(attachment);
             }

@@ -23,6 +23,9 @@
 
                 <div class="panel-body">
                     <div class="table-responsive">
+                        <g:link action="create">
+                            <button type="button" class="btn  btn-primary btn-sm" id="btnAddForms" style="margin-bottom: 2px;">Add Forms</button>
+                        </g:link>
                     <table class="table  table-hover table-bordered " >
                         <thead>
                         <tr>
@@ -90,9 +93,7 @@
                     </table>
 
                     </div>
-                    <g:link action="create">
-                        <button type="button" class="btn  btn-primary btn-sm" id="btnAddForms" >Add Forms</button>
-                    </g:link>
+
                 </div>
             </div>
 

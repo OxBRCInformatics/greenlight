@@ -13,11 +13,15 @@ modules = {
     }
 
 
+    jquery
+            {
+                resource url:"bower_components/jquery/jquery.min.js"
+            }
 
     jqueryFormValidator
             {
-                resource url:"js/formValidators/jquery.validate.min.js"
-                resource url:"js/formValidators/jquery.validate.Bootstrap.js"
+                resource url:"js/FormValidators/jquery.validate.min.js"
+                resource url:"js/FormValidators/jquery.validate.Bootstrap.js"
             }
 
     pdfViewer {
