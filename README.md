@@ -1,4 +1,3 @@
-
 Greenlight 
 =======
 
@@ -6,13 +5,10 @@ Greenlight
 Open Source consent management tool
 ------------
 
-Paragraphs are separated
-by a blank line.
 
 Text attributes *italic*,
 **bold**, `monospace`.
 
-A [link](http://example.com).
 
 Shopping list:
 
@@ -25,8 +21,14 @@ Numbered list:
   1. apples
   2. oranges
   3. pears
+  4. 
+  
 
-The rain---not the reign---in
-Spain.
+ Running the application
+ =======================
+ 
+
+
+
 
 
