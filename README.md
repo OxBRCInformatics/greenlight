@@ -11,7 +11,7 @@ A number of libraries such as JQuery, Bootstrap,... are also used.
 
 ## Deploying the application
 Current production version uses PostgreSQL. 
-To run the deployed war file, you need to configure the 'greenlight-config.groovy' file and set up your credentials to access the target PostgreSQL database.
+To run the deployed war file, you need to configure the 'greenlight-config.groovy' file, save it in 'userHome/.grails/' and set up your credentials in this file to access the target PostgreSQL database.
 
 
 
