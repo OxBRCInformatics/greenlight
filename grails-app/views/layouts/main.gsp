@@ -63,11 +63,11 @@
                         <ul class="dropdown-menu">
 
                             <li class="dropdown-header">Roles</li>
-                            <li><g:link controller="user" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
-                            <li><g:link controller="user" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
-                            <li class="dropdown-header">Users</li>
                             <li><g:link controller="role" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
                             <li><g:link controller="role" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
+                            <li class="dropdown-header">Users</li>
+                            <li><g:link controller="user" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
+                            <li><g:link controller="user" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
                             <li class="divider"></li>
                             <g:if test='${SpringSecurityUtils.securityConfig.securityConfigType == SecurityConfigType.Requestmap}'>
                                 <li class="dropdown-header"><g:message code="spring.security.ui.menu.requestmaps"/></li>
