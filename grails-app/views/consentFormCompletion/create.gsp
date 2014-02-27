@@ -29,7 +29,7 @@
             <g:form role="form" action="save" controller="consentFormCompletion" >
                 <g:render template="form"/>
                 <div class="col-md-12">
-                    <button type="submit" class="btn  btn-primary  ">Save</button>
+                    <button type="submit" class="btn  btn-primary">Save</button>
                 </div>
             </g:form>
         </div>

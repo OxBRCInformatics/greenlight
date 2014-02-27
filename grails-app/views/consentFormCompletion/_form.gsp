@@ -71,12 +71,12 @@
                             placeholder="Hospital Number"/>
                 </div>
                 <div class="form-group">
-                    <label for="commandInstance.consentForm.formID" class="required">Form Id</label>
+                    <label for="commandInstance.consentForm.formID" class="required">Form Id<span id="templatePrefix"></span></label>
                     <g:textField
                             class="form-control  ${hasErrors(bean: consentForm, field: 'formID', 'invalidInput')}"
                             id="commandInstance.consentForm.formID" name="commandInstance.consentForm.formID"
                             value="${commandInstance?.consentForm?.formID}"
-                            placeholder="Consent Form Id (like GEN12345)"/>
+                            placeholder="Consent Form Id like GEN12345"/>
                 </div>
                 <div class="form-group">
                     <label for="commandInstance.consentForm.ConsentDate">Consent Date</label>
@@ -148,7 +148,7 @@
                                   controller: 'ConsentFormTemplate',
                                   params:'\'templateId=\' + this.value',
                                   update: [success: 'questionList', failure: ''],
-                                  onSuccess: "FixQuestionStyle()"
+                                  onSuccess: "formTemplateChanged()"
                           )}"></g:select>
 </div>
                 <div class="form-group">
@@ -194,11 +194,45 @@
 
 <g:javascript>
 
-    function FixQuestionStyle()
+    function formTemplateChanged()
     {
-        $('.bootstrapTooltip').tooltip()
+       $('.bootstrapTooltip').tooltip()
+
+       var tempId= $("select[id='commandInstance.consentFormTemplate']").find(":selected").val()
+
+       if(tempId==-1)
+        {
+            blankForm();
+            return;
+        }
+        var link= "${createLink(action:'show', controller:'ConsentFormTemplate')}";
+        $.ajax({
+           type: 'POST',
+           url: link+"/"+tempId+".json",
+           success: function (data) {
+                   $('#templatePrefix').html(" ("+data.namePrefix+")");
+                   var placeholder= "Consent Form Id (like "+data.namePrefix+"12345)";
+                   $("input[id='commandInstance.consentForm.formID']").attr('placeholder',placeholder);
+                   //$("input[id='commandInstance.consentForm.formID']").val(data.namePrefix);
+
+                   $("input[id='commandInstance.consentForm.formID']").rules('remove');
+                   var rule = new RegExp("^"+data.namePrefix+"\\d{5}$");
+                   $("input[id='commandInstance.consentForm.formID']").rules('add',{required: true,regex:rule });
+
+            }
+        });
     }
 
+    function blankForm()
+    {
+        $('#templatePrefix').html(" ");
+        $("input[id='commandInstance.consentForm.formID']").attr('placeholder',"Consent Form Id like GEN12345");
+        $("input[id='commandInstance.consentForm.formID']").val('')
+
+        $("input[id='commandInstance.consentForm.formID']").rules('remove');
+        var rule = new RegExp("^[a-zA-Z]{3}\\d{5}$");
+        $("input[id='commandInstance.consentForm.formID']").rules('add',{required: true,regex:rule });
+    }
 
     function applyFormValidation()
     {
@@ -207,12 +241,11 @@
                 'commandInstance.patient.nhsNumber':{
                     regex: /^\d\d\d-\d\d\d-\d\d\d\d$/
                 },
-                'commandInstance.consentForm.formID':
-                {
+                'commandInstance.consentForm.formID':{
                     required:true,
                     regex:/^[a-zA-Z]{3}\d{5}$/
                 }
-           },
+            },
 
             highlight: function(element) {
                 $(element).closest('.form-group').addClass('has-error');
