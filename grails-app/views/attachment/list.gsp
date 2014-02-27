@@ -29,9 +29,9 @@
                     <table class="table  table-hover table-bordered " >
                         <thead>
                         <tr>
-
                             <th>Upload Date</th>
                             <th>Form Status</th>
+                            <th>Form Type</th>
                             <th>NHS#</th>
                             <th style="width:50px; "></th>
                         </tr>
@@ -40,8 +40,6 @@
                         <g:each in="${attachments}" var="attachment" status="index">
 
                             <g:set var="assigned" value="${attachment?.consentForm!=null}"></g:set>
-
-
                             <g:if test="${assigned==true}" >
                                 <tr class="success" id="consentFormRow${attachment.id}"   >
                             </g:if>
@@ -50,9 +48,12 @@
                             </g:else>
 
 
-                            <td><g:formatDate format="yyyy-MM-dd HH:mm" date="${attachment?.dateOfUpload}"/></td>
+                            <td>
+                                <g:formatDate format="yyyy-MM-dd HH:mm" date="${attachment?.dateOfUpload}"/>
+                            </td>
                             <g:if test="${attachment?.consentForm!=null}">
                                 <td>${attachment?.consentForm?.formStatus}</td>
+                                <td>${attachment?.consentForm?.template?.namePrefix}</td>
                                 <td>${attachment?.consentForm?.patient.nhsNumber}</td>
                                 <td style="  text-align: left;">
                                         <g:link action="show" id="${attachment?.consentForm?.id}" controller="consentFormCompletion">
@@ -61,6 +62,7 @@
                                 </td>
                             </g:if>
                             <g:else>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td style="width:200px;text-align: left; ">
