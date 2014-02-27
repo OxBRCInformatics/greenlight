@@ -46,4 +46,11 @@ class ConsentFormTemplateController extends RestfulController {
         // respond questions, model:[questions:questions]
     }
 
+    def show(ConsentFormTemplate consentFormTemplate)
+    {
+        if(request.xhr)
+            render consentFormTemplate as JSON
+        else
+            respond  consentFormTemplate, model:[consentFormTemplate:consentFormTemplate]
+    }
 }
