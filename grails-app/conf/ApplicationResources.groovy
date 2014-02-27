@@ -33,4 +33,17 @@ modules = {
             {
                 resource url:"css/font-awesome-4.0.3/css/font-awesome.min.css"
             }
+
+    zoomMagnifier
+            {
+                resource url:"css/magnifier.css"
+                resource url:"js/zoomMagnifier.js"
+            }
+    canvas2Image
+            {
+                resource url:"js/Canvas2Image/base64.js"
+                resource url:"js/Canvas2Image/canvas2image.js"
+            }
+
+
 }

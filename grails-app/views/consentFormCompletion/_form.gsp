@@ -116,9 +116,10 @@
 
                             <g:if test="${commandInstance?.attachment?.attachmentType == Attachment.AttachmentType.IMAGE}">
 
-                                <img id="scannedForm" style="margin: 4px; width: 100%;height: 100%" class="Photo"
+                                <div class="magnify">
+                                      <img class="thumb" id="scannedForm" style="margin: 4px; width: 100%;height: 100%" class="Photo"
                                      src="${createLink(controller: 'attachment', action: 'viewContent', id: "${commandInstance?.attachment?.id}")}"/>
-
+                                </div>
                             </g:if>
                             <g:elseif test="${commandInstance?.attachment?.attachmentType == Attachment.AttachmentType.PDF}">
 
@@ -243,7 +244,7 @@
         $('form').validate({
             rules: {
                 'commandInstance.patient.nhsNumber':{
-                    regex: /^(\d{10})|(\d\d\d-\d\d\d-\d\d\d\d)$/
+                    regex: /^\d{10}$/
                 },
                 'commandInstance.consentForm.formID':{
                     required:true,

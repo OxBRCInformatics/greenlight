@@ -1,6 +1,6 @@
 
 
-<canvas id="the-canvas"   width="100%" height="100%" style="width: 100%;height: 100%;"></canvas>
+    <canvas id="the-canvas" width="100%" height="100%" style="width: 100%;height: 100%;"></canvas>
 
 
 <g:javascript>

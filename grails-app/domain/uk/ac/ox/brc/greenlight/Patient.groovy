@@ -14,7 +14,7 @@ class Patient {
             consents: ConsentForm
     ]
     static constraints = {
-        nhsNumber nullable: true, matches: '\\d{3}\\-\\d{3}-\\d{4}'
+        nhsNumber nullable: true, matches: '\\d{10}'
         givenName nullable: true
         familyName nullable: true
         dateOfBirth nullable: true
