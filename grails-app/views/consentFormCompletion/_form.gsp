@@ -27,7 +27,7 @@
                                 class="form-control  ${hasErrors(bean: patient, field: 'nhsNumber', 'invalidInput')}"
                                 id="commandInstance.patient.nhsNumber" name="commandInstance.patient.nhsNumber"
                                 value="${commandInstance?.patient?.nhsNumber}"
-                                placeholder="NHS number  NNN-NNN-NNNN"/>
+                                placeholder="NHS number like 1234567890"/>
                     </div>
 
                     <label for="commandInstance.patient.givenName" class="required">Given Name</label>
@@ -72,11 +72,15 @@
                 </div>
                 <div class="form-group">
                     <label for="commandInstance.consentForm.formID" class="required">Form Id<span id="templatePrefix"></span></label>
+
                     <g:textField
                             class="form-control  ${hasErrors(bean: consentForm, field: 'formID', 'invalidInput')}"
                             id="commandInstance.consentForm.formID" name="commandInstance.consentForm.formID"
                             value="${commandInstance?.consentForm?.formID}"
-                            placeholder="Consent Form Id like GEN12345"/>
+                            placeholder="Consent Form Id like GEN12345"
+                            onblur="checkDuplicate()"
+                    />
+
                 </div>
                 <div class="form-group">
                     <label for="commandInstance.consentForm.ConsentDate">Consent Date</label>
@@ -211,7 +215,7 @@
            url: link+"/"+tempId+".json",
            success: function (data) {
                    $('#templatePrefix').html(" ("+data.namePrefix+")");
-                   var placeholder= "Consent Form Id (like "+data.namePrefix+"12345)";
+                   var placeholder= "Consent Form Id like "+data.namePrefix+"12345";
                    $("input[id='commandInstance.consentForm.formID']").attr('placeholder',placeholder);
                    //$("input[id='commandInstance.consentForm.formID']").val(data.namePrefix);
 
@@ -239,11 +243,12 @@
         $('form').validate({
             rules: {
                 'commandInstance.patient.nhsNumber':{
-                    regex: /^\d\d\d-\d\d\d-\d\d\d\d$/
+                    regex: /^(\d{10})|(\d\d\d-\d\d\d-\d\d\d\d)$/
                 },
                 'commandInstance.consentForm.formID':{
                     required:true,
-                    regex:/^[a-zA-Z]{3}\d{5}$/
+                    regex:/^[a-zA-Z]{3}\d{5}$/,
+                    checkDuplicateFormId:true
                 }
             },
 
@@ -258,6 +263,31 @@
     }
 
     $(function(){
+
+     %{--$.validator.addMethod(--}%
+                %{--"checkDuplicateFormId",--}%
+                %{--function(value, element) {--}%
+
+                %{--var link= "${createLink(action:'show', controller:'ConsentFormCompletion')}";--}%
+                %{--$.ajax({--}%
+                   %{--type: 'POST',--}%
+                   %{--url: link+"/"+value+".json",--}%
+                   %{--success: function (data) {--}%
+                           %{--$('#templatePrefix').html(" ("+data.namePrefix+")");--}%
+                           %{--var placeholder= "Consent Form Id like "+data.namePrefix+"12345";--}%
+                           %{--$("input[id='commandInstance.consentForm.formID']").attr('placeholder',placeholder);--}%
+                           %{--//$("input[id='commandInstance.consentForm.formID']").val(data.namePrefix);--}%
+
+                           %{--$("input[id='commandInstance.consentForm.formID']").rules('remove');--}%
+                           %{--var rule = new RegExp("^"+data.namePrefix+"\\d{5}$");--}%
+                           %{--$("input[id='commandInstance.consentForm.formID']").rules('add',{required: true,regex:rule });--}%
+
+                    %{--}--}%
+                  %{--});--}%
+                %{--},--}%
+                %{--"FormId already exists"--}%
+        %{--);--}%
+
         applyFormValidation();
     });
 

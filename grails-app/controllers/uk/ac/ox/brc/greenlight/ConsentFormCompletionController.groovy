@@ -1,5 +1,7 @@
 package uk.ac.ox.brc.greenlight
 
+import grails.converters.JSON
+
 
 class ConsentFormCompletionController {
 
@@ -56,6 +58,13 @@ class ConsentFormCompletionController {
 
     def show() {
         def consentForm = ConsentForm.get(params?.id);
+
+        if(request.xhr)
+        {
+           render consentForm as JSON
+           return
+        }
+
         if (!consentForm) {
             redirect(controller: 'attachment', action: 'list')
             return;
@@ -132,6 +141,8 @@ class ConsentFormCompletionController {
         respond "Not found"
         return
     }
+
+
 }
 
 class ConsentFormCommand {
