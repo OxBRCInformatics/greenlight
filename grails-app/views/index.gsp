@@ -49,7 +49,7 @@
 
     <div id="footer">
         <div class="container">
-            <p class="text-muted">2013 &copy; BRC</p>
+            <p class="text-muted">2014 &copy; BRC</p>
         </div>
     </div>
 </div>
