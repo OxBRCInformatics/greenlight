@@ -9,6 +9,9 @@ grails.config.locations = [ "classpath:${appName}-config.properties",
                              "file:${userHome}/.grails/${appName}-config.properties",
                              "file:${userHome}/.grails/${appName}-config.groovy"]
 
+// Some JavaScript references will fail if this is changed. An example is the IE7 polyfill for Bootstrap3.
+grails.app.context = "/"
+
 // if (System.properties["${appName}.config.location"]) {
 //    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
 // }

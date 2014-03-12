@@ -19,7 +19,7 @@
 
 <g:if test="${attachment?.attachmentType == Attachment.AttachmentType.IMAGE}">
     <div class="col-md-12">
-        <img id="scannedForm" style="margin: 4px; width: 100%;height: 800px;" class="Photo"
+        <img id="scannedForm" style="margin: 4px; width: 100%;" class="Photo"
              src="${createLink(controller: 'attachment', action: 'viewContent', id: "${attachment.id}")}"/>
         %{--<embed  id="scannedForm"   style="margin: 4px; width: 100%;height: 800px;" class="Photo"   src="${createLink(controller:'attachment', action:'viewContent', id:"${attachment.id}")}" />--}%
         %{--<object   type="application/pdf"   style="margin: 4px; width: 100%;height: 600px"  data="${createLink(controller:'attachment', action:'viewContent', id:"${attachment.id}")}" />--}%

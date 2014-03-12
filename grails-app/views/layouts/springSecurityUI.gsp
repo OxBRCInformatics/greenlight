@@ -46,6 +46,10 @@
         background-position: 4px center;
     }
     </style>
+
+    <!--[if lt IE 8]>
+        <link href="${resource(dir:'bower_components/bootstrap-ie7/css',file:'bootstrap-ie7.css')}" rel="stylesheet">
+    <![endif]-->
 </head>
 
 

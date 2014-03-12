@@ -1,3 +1,4 @@
+
 /**
  * Created by soheil on 20/01/14.
  */
@@ -29,11 +30,23 @@
 
 }
 
-.homepagePanel
- {
-     -moz-border-radius: 10px;
-     -webkit-border-radius: 10px;
-     border-radius: 10px;
-     -khtml-border-radius: 10px;
- }
+.dashboard-panel{
+    padding: 0.5em;
+}
 
+.colored-box{
+    background-color: #5cb85c;
+    border-radius: 10px;
+    padding: 0.5em;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -khtml-border-radius: 10px;
+    height: 300px;
+}
+.dashboard-panel a{
+    color: #000;
+}
+
+.extra-large{
+    font-size: 4em;
+}

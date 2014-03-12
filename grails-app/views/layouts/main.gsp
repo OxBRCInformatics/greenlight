@@ -1,6 +1,9 @@
 <%@ page import="org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils"%>
 <%@ page import="grails.plugins.springsecurity.SecurityConfigType"%>
 <!DOCTYPE html>
+
+
+
 <!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
 <!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
 <!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
@@ -20,13 +23,18 @@
     <r:require modules="bootstrap"/>
     <r:require modules="customCSS"/>
     <r:require modules="zoomMagnifier"/>
-    <r:require modules="canvas2Image"/>
-    <g:javascript library="application"/>
     <g:javascript library="jquery"></g:javascript>
     <g:javascript library="jqueryFormValidator"></g:javascript>
-    <g:javascript library="pdfViewer"></g:javascript>
+
     <g:javascript library="fontawsome"></g:javascript>
 
+    <!--[if lt IE 8]>
+    <link href="${resource(dir:'bower_components/bootstrap-ie7/css',file:'bootstrap-ie7.css')}" rel="stylesheet">
+    <![endif]-->
+    <!--[if lt IE 9]>
+    <script src="${resource(dir:'bower_components/html5shiv/dist/',file:'html5shiv.js')}"></script>
+    <script src="${resource(dir:'bower_components/respond/dest/',file:'respond.min.js')}"></script>
+    <![endif]-->
 
     <r:layoutResources />
     <g:layoutHead/>
