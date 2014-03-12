@@ -24,16 +24,6 @@ modules = {
                 resource url:"js/FormValidators/jquery.validate.Bootstrap.js"
             }
 
-    pdfViewer {
-        resource url:"js/PDF/pdf.js"
-    }
-
-
-    fontawsome
-            {
-                resource url:"css/font-awesome-4.0.3/css/font-awesome.min.css"
-            }
-
     zoomMagnifier
             {
                 resource url:"css/magnifier.css"
