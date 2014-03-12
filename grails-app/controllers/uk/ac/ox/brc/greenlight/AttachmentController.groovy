@@ -1,9 +1,14 @@
 package uk.ac.ox.brc.greenlight
 
 import grails.converters.JSON
+import org.apache.pdfbox.pdmodel.PDDocument
+import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.tomcat.jni.Shm
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
+
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
 
 class AttachmentController {
 
@@ -71,25 +76,39 @@ class AttachmentController {
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)request;
             List<MultipartFile> files = multiRequest.getFiles("scannedForms");
 
-            for(file in files)
-            {
+			files.each{ MultipartFile file ->
                 def okContentTypes = ['image/png', 'image/jpeg', 'image/pjpeg', 'image/jpg', 'image/gif','application/pdf'];
                 def confType=file.getContentType();
-                if (!okContentTypes.contains(confType))
-                    continue;
+                if (okContentTypes.contains(confType) && file.size > 0){
 
-                def attachment= new Attachment();
-                attachment.fileName = file?.originalFilename;
-                attachment.content = file?.bytes;
-                if(confType=='application/pdf')
-                    attachment.attachmentType=Attachment.AttachmentType.PDF;
-                else
-                    attachment.attachmentType=Attachment.AttachmentType.IMAGE;
-                attachment.dateOfUpload=new Date();
+					// If it's a PDF split the pages out and convert to an image first
+					if(confType=='application/pdf'){
+						PDDocument document = PDDocument.load(file.inputStream)
+						document.getDocumentCatalog().getAllPages().eachWithIndex{ PDPage page, pageNumber ->
+							BufferedImage bufferedImage = page.convertToImage()
+							ByteArrayOutputStream baos = new ByteArrayOutputStream()
+							ImageIO.write(bufferedImage, "jpg", baos)
 
+							def attachment= new Attachment();
+							attachment.fileName = file?.originalFilename + "_p" + pageNumber
+							attachment.content = baos.toByteArray()
+							attachment.attachmentType=Attachment.AttachmentType.IMAGE
+							attachment.dateOfUpload=new Date()
+							attachmentService.save(attachment)
+							attachments.add(attachment)
+						}
 
-                attachmentService.save(attachment)
-                attachments.add(attachment);
+					}
+					else{
+						def attachment= new Attachment();
+						attachment.fileName = file?.originalFilename
+						attachment.content = file?.bytes
+						attachment.attachmentType=Attachment.AttachmentType.IMAGE
+						attachment.dateOfUpload=new Date()
+						attachmentService.save(attachment)
+						attachments.add(attachment)
+					}
+				}
             }
         }else{
 			log.error("Attachment save request isn't multipart, ignoring")
