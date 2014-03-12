@@ -10,9 +10,7 @@ env:
   global:
   - secure: kH9ARMnDE9Hc27erG++RD+QIqK4WnByJKjD9giOFKJuDy5rnU6IM3NUb/0ppB0Tw9fggQqJcm20RZVaOnmmbSgvZoctCTzHdir9H6MaS9ggxPmeAIH9Xq9j7m+ELtDqN8M42k1FTnxEg2ayyQCb8lXVH0KeOq8m4rxL0v+ourRU=
   - secure: VjUJlnSD1y/zGU+frWFv+rzelAQXGT+6WAZk7BsiLAtMFm/rqjFNsQylCAOLOWu098/bCE48hTJ38n7KoQXdv0gZT7/foqRO1EiZJdAxX703Y8+XBVUc8dqGwDbG7uZutTRjIsU0XcCCTuZHoe2yhu3uXVfiwzvO3XpPACHKrP4=
-install:
-- TERM=dumb ./gradlew assemble
-script: npm install && bower install && ./grailsw refresh-dependencies && ./grailsw test-app -Dgeb.env=sauce --plain-output
+script: ./grailsw refresh-dependencies && ./grailsw test-app
 deploy:
   provider: heroku
   api_key:
