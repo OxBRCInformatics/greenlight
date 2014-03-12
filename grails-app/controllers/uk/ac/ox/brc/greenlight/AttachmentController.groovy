@@ -73,7 +73,7 @@ class AttachmentController {
 
             for(file in files)
             {
-                def okContentTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif','application/pdf'];
+                def okContentTypes = ['image/png', 'image/jpeg', 'image/pjpeg', 'image/jpg', 'image/gif','application/pdf'];
                 def confType=file.getContentType();
                 if (!okContentTypes.contains(confType))
                     continue;
@@ -91,7 +91,9 @@ class AttachmentController {
                 attachmentService.save(attachment)
                 attachments.add(attachment);
             }
-        }
+        }else{
+			log.error("Attachment save request isn't multipart, ignoring")
+		}
         render view: 'showUploaded',model:[attachments:attachments]
     }
 

@@ -23,9 +23,7 @@
 
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <g:link action="create">
-                            <button type="button" class="btn  btn-primary btn-sm" id="btnAddForms" style="margin-bottom: 2px;">Add Forms</button>
-                        </g:link>
+                        <g:link action="create" class="btn btn-primary btn-sm" >Add Forms</g:link>
                     <table class="table  table-hover table-bordered " >
                         <thead>
                         <tr>
@@ -56,9 +54,7 @@
                                 <td>${attachment?.consentForm?.template?.namePrefix}</td>
                                 <td>${attachment?.consentForm?.patient.nhsNumber}</td>
                                 <td style="  text-align: left;">
-                                        <g:link action="show" id="${attachment?.consentForm?.id}" controller="consentFormCompletion">
-                                            <button type="button" class="btn btn-success btn-sm" style="width:50px">View</button>
-                                        </g:link>
+                                        <g:link action="show" class="btn" id="${attachment?.consentForm?.id}" controller="consentFormCompletion">View</g:link>
                                 </td>
                             </g:if>
                             <g:else>
@@ -66,19 +62,8 @@
                                 <td></td>
                                 <td></td>
                                 <td style="width:200px;text-align: left; ">
-                                    <p>
-
-                                <g:link action="create" class="linkButton" style="text-decoration:none;" controller="consentFormCompletion" params="[attachmentId:"${attachment.id}"]"  >
-
-                                        <button type="button" class="btn  btn-primary btn-sm "   >Enter Details</button>
-                                </g:link>
-
-                                        <g:remoteLink  class="btn  btn-danger btn-sm " controller="attachment" action="delete" id="${attachment.id}"  before="if(!confirm('Are you sure?')) return false" onSuccess="deleteRow(data,textStatus)">
-                                        Delete
-                                        </g:remoteLink>
-
-                                    </p>
-
+                                    <g:link action="create" class="btn btn-primary" style="text-decoration:none;" controller="consentFormCompletion" params="[attachmentId: attachment.id]">Enter Details</g:link>
+                                    <g:remoteLink  class="btn  btn-danger btn-sm " controller="attachment" action="delete" id="${attachment.id}"  before="if(!confirm('Are you sure?')) return false" onSuccess="deleteRow(data,textStatus)">Delete</g:remoteLink>
                                 </td>
                             </g:else>
                             </tr>

@@ -21,7 +21,7 @@
                             <div class="col-md-6">
                                 <div class="panel panel-primary">
                                     <div class="panel-body">
-                                        <g:form action="save"  enctype="multipart/form-data">
+                                        <g:form action="save" enctype="multipart/form-data" encoding="multipart/form-data">
 
                                                 <h5>Please select files:</h5>
 

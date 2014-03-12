@@ -22,17 +22,9 @@
                                     <td>"${attachment?.dateOfUpload}"</td>
                                     <td>"${attachment?.fileName}"</td>
                                     <td>
-                                        <p>
-                                            <g:link action="create" class="linkButton" style="text-decoration:none;" controller="consentFormCompletion" params="[attachmentId:"${attachment.id}"]"  >
-                                                <button type="button" class="btn  btn-primary" >Enter details</button>
-                                            </g:link>
-                                            <g:link action="show" id="${attachment.id}"   class="linkButton" style="text-decoration:none;">
-                                                <button type="button" class="btn btn-success">View</button>
-                                            </g:link>
-                                            <g:remoteLink action="delete" controller="attachment" style="text-decoration:none;" id="${attachment.id}" onSuccess="deleteRow(data,textStatus)">
-                                                <button type="button" class="btn  btn-danger"  onclick="return confirm('Are you sure?')">Delete</button>
-                                            </g:remoteLink>
-                                        </p>
+                                        <g:link action="create" class="btn btn-primary" controller="consentFormCompletion" params="[attachmentId:"${attachment.id}"]">Enter details</g:link>
+                                        <g:link action="show" id="${attachment.id}" class="btn btn-success" style="text-decoration:none;">View</g:link>
+                                        <g:remoteLink action="delete" controller="attachment" class="btn  btn-danger" id="${attachment.id}" onSuccess="deleteRow(data,textStatus)">Delete</g:remoteLink>
                                     </td>
                                 </tr>
                             </g:each>
