@@ -10,4 +10,10 @@ class ConsentFormController {
         render view:"search", model:[consentForms:result]
     }
 
+    def checkConsent()
+    {
+        def result= consentFormService.checkConsent(params);
+        render view:"cuttingRoom", model:[result:result.consented,consentForm:result.consentForm, searchInput:params["searchInput"]]
+    }
+
 }

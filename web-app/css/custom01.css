@@ -50,3 +50,21 @@
 .extra-large{
     font-size: 4em;
 }
+
+
+.consentSearchTable
+{
+    padding: 2px;
+}
+
+.centered
+{
+    margin: 0 auto;
+}
+
+
+.boldMessage
+{
+    font-weight:bold ;
+    font-size: 25px;
+}

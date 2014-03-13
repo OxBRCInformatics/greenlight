@@ -60,4 +60,28 @@ class ConsentFormService {
         }
     }
 
+    def checkConsent(params)
+    {
+        def searchInput = params["searchInput"];
+        def consent = ConsentForm.find("from ConsentForm as c where c.patient.hospitalNumber= :searchInput or c.patient.nhsNumber= :searchInput",[searchInput:searchInput]);
+
+        def result=[
+            consentForm:null,
+            consented:false
+        ]
+
+
+        if(consent){
+            result.consentForm=consent
+            result.consented=true
+
+            consent.responses.eachWithIndex { value ,i ->
+                    if(value.answer!= Response.ResponseValue.YES)
+                        result.consented= false
+            }
+
+        }
+        return result;
+    }
+
 }
