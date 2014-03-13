@@ -86,19 +86,18 @@ class AttachmentController {
 					if(confType=='application/pdf'){
 						PDDocument document = PDDocument.load(file.inputStream)
 						document.getDocumentCatalog().getAllPages().eachWithIndex{ PDPage page, pageNumber ->
-							def images = page.getResources().getXObjects().findAll { objname, object -> object instanceof PDXObjectImage}
-							images.each { String name, PDXObjectImage image ->
-								ByteArrayOutputStream baos = new ByteArrayOutputStream()
-								image.write2OutputStream(baos)
 
-								def attachment= new Attachment();
-								attachment.fileName = file?.originalFilename + "_p" + pageNumber + "_image-"+name
-								attachment.content = baos.toByteArray()
-								attachment.attachmentType=Attachment.AttachmentType.IMAGE
-								attachment.dateOfUpload=new Date()
-								attachmentService.save(attachment)
-								attachments.add(attachment)
-							}
+							// Create a byte array output stream and write the image to it as an RGB image at 256dpi
+							ByteArrayOutputStream baos = new ByteArrayOutputStream()
+							ImageIO.write(page.convertToImage(BufferedImage.TYPE_INT_RGB, 256), "jpg", baos)
+
+							def attachment= new Attachment()
+							attachment.fileName = file?.originalFilename + "_page" + pageNumber
+							attachment.content = baos.toByteArray()
+							attachment.attachmentType=Attachment.AttachmentType.IMAGE
+							attachment.dateOfUpload=new Date()
+							attachmentService.save(attachment)
+							attachments.add(attachment)
 						}
 
 					}

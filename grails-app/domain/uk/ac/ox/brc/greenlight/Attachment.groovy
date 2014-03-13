@@ -13,7 +13,7 @@ class Attachment {
 
     static constraints = {
         consentForm nullable: true
-        content maxSize: 1024*1024*100
+        content maxSize: 1024*1024*10
     }
 
     enum AttachmentType{

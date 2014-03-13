@@ -121,11 +121,8 @@
                 <g:if test="${commandInstance?.attachment}">
 
                     <a href="${createLink(action: 'show', controller: 'attachment', id: commandInstance?.attachment?.id)}" target="_blank">
-                        <div class="magnify">
-                            <img class="thumb" id="scannedForm" style="margin: 4px; width: 100%;height: 100%"
-                                 class="Photo"
-                                 src="${createLink(controller: 'attachment', action: 'viewContent', id: "${commandInstance?.attachment?.id}")}"/>
-                        </div>
+                    <img class="thumb" id="scannedForm"  src="${createLink(controller: 'attachment', action: 'viewContent', id: "${commandInstance?.attachment?.id}")}"/>
+
                     </a>
 
                 </g:if>
@@ -135,7 +132,7 @@
                     <label>Consent Form Type</label>
                     %{--<select id="consentFormTemplate"  name="consentFormTemplate">--}%
                     <g:select id="commandInstance.consentFormTemplate"
-                              style="font-size:12px;"
+                              style="font-size:12px;max-width: 250px;"
                               name="commandInstance.consentFormTemplateId" class="form-control"
                               value="${commandInstance?.consentForm?.template?.id}"
                               from="${ConsentFormTemplate.list()}"

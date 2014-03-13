@@ -15,7 +15,7 @@ class ConsentFormTemplate {
     static constraints = {
 
     }
-
+    
     String toString()
     {
         return "${name} ${templateVersion}";

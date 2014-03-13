@@ -23,17 +23,4 @@ modules = {
                 resource url:"js/FormValidators/jquery.validate.min.js"
                 resource url:"js/FormValidators/jquery.validate.Bootstrap.js"
             }
-
-    zoomMagnifier
-            {
-                resource url:"css/magnifier.css"
-                resource url:"js/zoomMagnifier.js"
-            }
-    canvas2Image
-            {
-                resource url:"js/Canvas2Image/base64.js"
-                resource url:"js/Canvas2Image/canvas2image.js"
-            }
-
-
 }
