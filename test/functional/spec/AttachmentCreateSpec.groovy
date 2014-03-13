@@ -1,27 +1,38 @@
-package specs.consentForm
+package spec
 
 import geb.spock.GebReportingSpec
 import org.openqa.selenium.Dimension
-import pages.consnetForm.ConsentFormCreatePage
-import pages.consnetForm.ConsentFormUploadPage
-import pages.consnetForm.ConsnetFormListPage
+import page.AttachmentUploadPage
+import page.DashboardPage
+import page.authentication.LoginPage
 
 /**
  * Created by soheil on 28/01/14.
  */
-class ConsentFormCreateSpec extends GebReportingSpec {
+class AttachmentCreateSpec extends GebReportingSpec {
 
 
-    def "Check if upload button is shown properly"()
-    {
-        when:"In consent form create page"
-        to ConsentFormCreatePage
-
-
-        then:"uploaded button and file selector are both displayed"
-        uploadButton.displayed
-        //fileSelectButton.displayed
-    }
+//    def setup()
+//    {
+//        to LoginPage
+//        username = "admin"
+//        password = "password"
+//        submitButton.click()
+//        at DashboardPage
+//    }
+//
+//
+//    def "Check if upload button is shown properly"()
+//    {
+//        when:"In consent form create page"
+//        to AttachmentUploadPage
+//
+//
+//        then:"uploaded button and file selector are both displayed"
+//        uploadButton.displayed
+//        //fileSelectButton.displayed
+//
+//    }
 
 //    def "Check if no file is selected and upload is clicked, file table is empty"()
 //    {

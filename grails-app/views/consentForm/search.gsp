@@ -98,7 +98,7 @@
                                 </div>
                            </g:form>
 
-                            <div style="padding: 2px;">
+                            <div class="consentSearchTable">
                                 <div class="table-responsive">
                                     <table class="table  table-hover table-bordered">
                                         <thead>

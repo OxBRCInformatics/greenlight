@@ -104,83 +104,90 @@ class ConsentFormControllerSpec extends IntegrationSpec {
         model.commandInstance.attachment.fileName == 'a.jpg'
     }
 
-    void "Test that Save action, saves the ConsentForm and Patient and returns the right model"() {
-   		given:
-        def attachmentBefore = Attachment.list()[0]
-        def consentFormTemplate = ConsentFormTemplate.list()[0]
-        def patientCountBefore = Patient.count();
+//    void "Test that Save action, saves the ConsentForm and Patient and returns the right model"() {
+//   		given:
+//        def attachmentBefore = Attachment.list()[0]
+//        def consentFormTemplate = ConsentFormTemplate.list()[0]
+//        def patientCountBefore = Patient.count();
+//
+//
+//        consentFormController.params['questionsSize'] = consentFormTemplate.questions.size();
+//
+//        consentFormTemplate.getQuestions().eachWithIndex() { obj,index ->
+//            consentFormController.params["responses.${index}"] = Response.ResponseValue.YES;
+//        }
+//
+//
+//        consentFormController.params['commandInstance'] = [
+//                patient: [
+//                        givenName: 'givName1',
+//                        familyName: 'familyName1',
+//                        dateOfBirth:new Date(),
+//                        dateOfBirth_year: "2014",
+//                        dateOfBirth_month: "1",
+//                        dateOfBirth_day: "1",
+//
+//                        nhsNumber: '123-456-1234',
+//                        hospitalNumber: '123'
+//                ],
+//                consentForm: [consentDate: new Date(),
+//                              consentDate_year:"2014",
+//                              consentDate_month:"1",
+//                              consentDate_day:"1",
+//                              formID: "123",
+//                              consentTakerName: 'ABC'
+//                ],
+//                attachmentId:attachmentBefore.id.toString(),
+//                consentFormTemplateId: consentFormTemplate.id,
+//                template: consentFormTemplate
+//        ]
+//
+//
+//        when: "Save action is executed, patient & consentform are saved, attachment is updated"
+//        consentFormController.save()
+//        def attachmentAfter = Attachment.get(attachmentBefore.id)
+//        def consentForm = ConsentForm.list()[0]
+//        def patient = Patient.list()[0]
+//
+//        then:
+//        consentFormController.response.redirectedUrl =="/attachment/list"
+//        Attachment.count()==2
+//        ConsentForm.count()==1
+//        Patient.count() ==patientCountBefore+1
+//        attachmentAfter.id == attachmentBefore.id
+//
+//        consentForm.attachedFormImage.id == attachmentAfter.id
+//        attachmentAfter.consentForm.id == consentForm.id
+//        attachmentAfter.consentForm.patient.id == patient.id
+//        consentForm.getResponses().size()==consentFormTemplate.getQuestions().size()
+//
+//        consentForm.getResponses()[0].answer == Response.ResponseValue.YES
+//        consentForm.getResponses()[0].question.id == consentFormTemplate.getQuestions()[0].id
+//    }
 
+    void "Edit action is called, with unAvailable consentForm"()
+    {
+        given:
+        consentFormController.params['id'] = 0
 
-        consentFormController.params['questionsSize'] = consentFormTemplate.questions.size();
+        when:"Edit action is called"
+         consentFormController.edit()
 
-        consentFormTemplate.getQuestions().eachWithIndex() { obj,index ->
-            consentFormController.params["responses.${index}"] = Response.ResponseValue.YES;
-        }
-
-
-        consentFormController.params['commandInstance'] = [
-                patient: [
-                        givenName: 'givName1',
-                        familyName: 'familyName1',
-                        dateOfBirth: new Date(),
-                        nhsNumber: '123-456-1234',
-                        hospitalNumber: '123'
-                ],
-                consentForm: [consentDate: new Date(),
-                              formID: "123",
-                              consentTakerName: 'ABC'
-                ],
-                attachmentId:attachmentBefore.id.toString(),
-                consentFormTemplateId: consentFormTemplate.id,
-                template: consentFormTemplate
-        ]
-
-
-        when: "Save action is executed, patient & consentform are saved, attachment is updated"
-        consentFormController.save()
-        def attachmentAfter = Attachment.get(attachmentBefore.id)
-        def consentForm = ConsentForm.list()[0]
-        def patient = Patient.list()[0]
-
-        then:
-        consentFormController.response.redirectedUrl =="/attachment/list"
-        Attachment.count()==2
-        ConsentForm.count()==1
-        Patient.count() ==patientCountBefore+1
-        attachmentAfter.id == attachmentBefore.id
-
-        consentForm.attachedFormImage.id == attachmentAfter.id
-        attachmentAfter.consentForm.id == consentForm.id
-        attachmentAfter.consentForm.patient.id == patient.id
-        consentForm.getResponses().size()==consentFormTemplate.getQuestions().size()
-
-        consentForm.getResponses()[0].answer == Response.ResponseValue.YES
-        consentForm.getResponses()[0].question.id == consentFormTemplate.getQuestions()[0].id
+        then:"Redirects to Controller:ConsentForm Action:list"
+        consentFormController.response.redirectedUrl =="/consentForm/list"
     }
 
-//    void "Edit action is called, with unAvailable consentForm"()
-//    {
-//        given:
-//        consentFormController.params['id'] = 0
-//
-//        when:"Edit action is called"
-//         consentFormController.edit()
-//
-//        then:"Redirects to Controller:ConsentForm Action:list"
-//        consentFormController.response.redirectedUrl =="/consentForm/list"
-//    }
-//
-//
-//    void "Edit action is called, with an available ConsentForm"()
-//    {
-//        given:
-//        consentFormController.params['id'] = 0
-//
-//        when:"Edit action is called"
-//        consentFormController.edit()
-//
-//        then:"Redirects to Controller:ConsentForm Action:list"
-//        consentFormController.response.redirectedUrl =="/consentForm/list"
-//
-//    }
+
+    void "Edit action is called, with an available ConsentForm"()
+    {
+        given:
+        consentFormController.params['id'] = 0
+
+        when:"Edit action is called"
+        consentFormController.edit()
+
+        then:"Redirects to Controller:ConsentForm Action:list"
+        consentFormController.response.redirectedUrl =="/consentForm/list"
+
+    }
 }

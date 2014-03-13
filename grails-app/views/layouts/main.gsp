@@ -47,6 +47,7 @@
 
 <body>
 
+
 <div role="navigation" class="navbar">
     <div class="navbar-inner">
         <a href="${createLink(uri: '/')}" class="brand">ORB Consent Form</a>
@@ -55,6 +56,8 @@
             <li class="active"><a href="${createLink(uri: '/')}">Home</a></li>
             <li><g:link  controller="attachment" action="list">Consent Forms</g:link></li>
             <li><g:link  controller="attachment" action="create">Upload Files</g:link></li>
+            <li><g:link  controller="consentForm" action="search">Search</g:link></li>
+            <li><g:link  controller="consentForm" action="cuttingRoom">Cutting Room</g:link></li>
 
             <sec:ifAnyGranted roles="ROLE_ADMIN">
                 <!-- Admin menu -->
@@ -63,7 +66,7 @@
                     <ul class="dropdown-menu">
                         <li><a><b>Roles</b></a></li>
                         <li><g:link controller="role" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
-                        <li><g:link controller="role" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
+                        <li><g:link controller="role" action='creavi te'><g:message code="spring.security.ui.create"/></g:link></li>
                         <li><a><b>Users</b></a></li>
                         <li><g:link controller="user" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
                         <li><g:link controller="user" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
@@ -104,6 +107,9 @@
                 <li><g:link data-placement="bottom" data-original-title="Login" rel="tooltip" controller="login"> Login </g:link></li>
             </sec:ifNotLoggedIn>
         </ul>
+
+
+        </div><!--/.nav-collapse -->
 
     </div>
 </div><!--/.nav -->

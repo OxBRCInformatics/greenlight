@@ -7,6 +7,9 @@ class UrlMappings {
             }
         }
 
+        "/consentForm/search" (view:"consentForm/search")
+        "/consentForm/cuttingRoom" (view:"consentForm/cuttingRoom")
+
         "/"(view:"/index")
         "404"(view:'/error')
         "500"(view:'/error')

@@ -105,9 +105,9 @@ class ConsentFormCompletionController {
         }
 
         def commandInstance = new ConsentFormCommand([
-                attachment: consentForm.attachedFormImage,
+                attachment: consentForm?.attachedFormImage,
                 consentForm: consentForm,
-                patient: consentForm.patient,
+                patient: consentForm?.patient,
                 template: consentForm?.template
         ]);
 
