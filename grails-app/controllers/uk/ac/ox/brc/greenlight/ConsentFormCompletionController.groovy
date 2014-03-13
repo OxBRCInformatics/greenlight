@@ -2,6 +2,9 @@ package uk.ac.ox.brc.greenlight
 
 import grails.converters.JSON
 
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
 
 class ConsentFormCompletionController {
 
@@ -159,11 +162,25 @@ class ConsentFormCommand {
             patient = new Patient();
         patient.properties = params.commandInstance?.patient;
 
+
+        def birthYear = params.commandInstance?.patient.dateOfBirth_year;
+        def birthMonth = params.commandInstance?.patient.dateOfBirth_month;
+        def birthDay = params.commandInstance?.patient.dateOfBirth_day;
+        patient.dateOfBirth = Date.parse("yyyy/MM/dd",birthYear+"/"+birthMonth+"/"+birthDay);
+
+
+
         //Build Consent Form Object
         consentForm = ConsentForm.get(params.commandInstance.consentForm.id)
         if (!consentForm)
             consentForm = new ConsentForm();
         consentForm.properties = params.commandInstance.consentForm
+
+        def consentDateYear = params.commandInstance.consentForm.consentDate_year;
+        def consentDateMonth = params.commandInstance.consentForm.consentDate_month;
+        def consentDateDay = params.commandInstance.consentForm.consentDate_day;
+        consentForm.consentDate = Date.parse("yyyy/MM/dd",consentDateYear+"/"+consentDateMonth+"/"+consentDateDay);
+
         consentForm.responses = [];
 
         //Load Selected Consent Template
