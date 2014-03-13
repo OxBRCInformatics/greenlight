@@ -116,7 +116,6 @@
                                         <tbody>
                                             <g:each in="${consentForms}" var="consentForm" status="index">
                                                 <tr>
-
                                                     <td>${consentForm?.patient?.nhsNumber}</td>
                                                     <td>${consentForm?.patient?.hospitalNumber}</td>
                                                     <td>${consentForm?.formStatus}</td>
@@ -132,9 +131,7 @@
                                                     <td>${consentForm?.consentTakerName}</td>
 
                                                     <td>
-                                                        <g:link action="show" id="${consentForm?.id}" controller="consentFormCompletion" target="blank">
-                                                            <button type="button" class="btn btn-success btn-sm" style="width:50px">View</button>
-                                                        </g:link>
+                                                        <g:link action="show" id="${consentForm?.id}" class="btn btn-success btn-sm" controller="consentFormCompletion" target="blank">View</g:link>
                                                     </td>
 
                                                 </tr>

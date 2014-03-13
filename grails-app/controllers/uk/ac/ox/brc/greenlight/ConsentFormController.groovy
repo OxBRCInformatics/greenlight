@@ -4,11 +4,6 @@ class ConsentFormController {
 
     def consentFormService
 
-    def search()
-    {
-
-    }
-
     def find()
     {
         def result= consentFormService.search(params);
