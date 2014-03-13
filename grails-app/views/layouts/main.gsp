@@ -26,9 +26,6 @@
     <g:javascript library="jquery"></g:javascript>
     <g:javascript library="jqueryFormValidator"></g:javascript>
 
-    <!--[if lt IE 8]>
-    <link href="${resource(dir:'bower_components/bootstrap-ie7/css',file:'bootstrap-ie7.css')}" rel="stylesheet">
-    <![endif]-->
     <!--[if lt IE 9]>
     <script src="${resource(dir:'bower_components/html5shiv/dist/',file:'html5shiv.js')}"></script>
     <script src="${resource(dir:'bower_components/respond/dest/',file:'respond.min.js')}"></script>

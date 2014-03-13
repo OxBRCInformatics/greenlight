@@ -163,8 +163,10 @@ grails{
                     // Asset pipeline
                     '/assets/**':           ['IS_AUTHENTICATED_ANONYMOUSLY'],
 
+					'/bower_compoennts/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
+
                     // Javascript
-                    '/js/**':      			['IS_AUTHENTICATED_ANONYMOUSLY'],
+					'/js/**':      			['IS_AUTHENTICATED_ANONYMOUSLY'],
                     '/js/vendor/**':  		['IS_AUTHENTICATED_ANONYMOUSLY'],
                     '/plugins/**/js/**':	['IS_AUTHENTICATED_ANONYMOUSLY'],
                     // CSS

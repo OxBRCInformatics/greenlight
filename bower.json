@@ -15,7 +15,10 @@
   ],
   "dependencies": {
     "bootstrap": "2.3.2",
-    "jquery": "~2.1.0"
+    "jquery": "~2.1.0",
+    "respond": "~1.4.2",
+    "html5shiv": "~3.7.0",
+    "bootstrap-ie7": "*"
   },
   "resolutions": {
     "jquery": ">=1.8.0 <2.1.0"
