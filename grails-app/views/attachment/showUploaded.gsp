@@ -10,7 +10,7 @@
 <div class="container">
 
     <div class="row">
-        <div class="col-md-12" style="margin-top:5px">
+        <div class="span12" style="margin-top:5px">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title">Consent Form</h3>

@@ -12,16 +12,9 @@
 <div class="container">
 
     <div class="row">
-        <div class="col-md-12 PageMainPanel">
+        <div class="span12">
+               <h3>Uploaded Consent Form</h3>
 
-            <div class="panel panel-primary" >
-                <div class="panel-heading">
-
-                    <h3 class="panel-title">Uploaded Consent Form</h3>
-                    </div>
-
-
-                <div class="panel-body">
                     <div class="table-responsive">
                         <g:link action="create" class="btn btn-primary btn-sm" >Add Forms</g:link>
                     <table class="table  table-hover table-bordered " >
@@ -82,7 +75,6 @@
                     </div>
 
                 </div>
-            </div>
 
         </div>
     </div>

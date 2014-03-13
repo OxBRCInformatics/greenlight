@@ -11,14 +11,14 @@
 <div class="container">
 
     <div class="row">
-        <div class="col-md-12" style="margin-top:5px">
+        <div class="span12" style="margin-top:5px">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">Consent Form</h3>
                     </div>
                     <div class="panel-body">
                         <div class="row " >
-                            <div class="col-md-6">
+                            <div class="span6">
                                 <div class="panel panel-primary">
                                     <div class="panel-body">
                                         <g:form action="save" enctype="multipart/form-data" encoding="multipart/form-data">

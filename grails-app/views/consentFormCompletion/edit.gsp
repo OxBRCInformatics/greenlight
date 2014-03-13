@@ -9,7 +9,7 @@
 
 <body>
 
-<div class="col-md-12 ">
+<div class="span12 ">
     <div class="panel panel-primary PageMainPanel">
         <div class="panel-heading">Consent Form</div>
 
@@ -17,7 +17,7 @@
             <g:hasErrors>
                 <g:eachError><p>${it}</p></g:eachError>
             </g:hasErrors>
-            <div class="col-md-12">
+            <div class="span12">
                 <g:if test="${flash.created}">
                     <div class="alert alert-success">${flash.created}</div>
                 </g:if>
@@ -28,7 +28,7 @@
 
             <g:form  role="form" action="update" controller="consentFormCompletion" >
                 <g:render template="form"/>
-                <div class="col-md-12">
+                <div class="span12">
                     <button type="submit" class="btn  btn-primary  ">Save</button>
                 </div>
             </g:form>

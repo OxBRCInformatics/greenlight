@@ -47,77 +47,66 @@
 
 <body>
 
-<div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button data-target=".navbar-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a href="${createLink(uri: '/')}" class="navbar-brand">ORB Consent Form</a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="${createLink(uri: '/')}">Home</a></li>
-                <li><g:link  controller="attachment" action="list">Consent Forms</g:link></li>
-                <li><g:link  controller="attachment" action="create">Upload Files</g:link></li>
-                <li><g:link  controller="consentForm" action="search">Search</g:link></li>
+<div role="navigation" class="navbar">
+    <div class="navbar-inner">
+        <a href="${createLink(uri: '/')}" class="brand">ORB Consent Form</a>
 
-                <sec:ifAnyGranted roles="ROLE_ADMIN">
-                    <!-- Admin menu -->
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#"> Administration <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
+        <ul class="nav">
+            <li class="active"><a href="${createLink(uri: '/')}">Home</a></li>
+            <li><g:link  controller="attachment" action="list">Consent Forms</g:link></li>
+            <li><g:link  controller="attachment" action="create">Upload Files</g:link></li>
 
-                            <li class="dropdown-header">Roles</li>
-                            <li><g:link controller="role" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
-                            <li><g:link controller="role" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
-                            <li class="dropdown-header">Users</li>
-                            <li><g:link controller="user" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
-                            <li><g:link controller="user" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
-                            <li class="divider"></li>
-                            <g:if test='${SpringSecurityUtils.securityConfig.securityConfigType == SecurityConfigType.Requestmap}'>
-                                <li class="dropdown-header"><g:message code="spring.security.ui.menu.requestmaps"/></li>
-                                <li><g:link controller="requestmap" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
-                                <li><g:link controller="requestmap" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
-                            </g:if>
-                            <g:if test='${SpringSecurityUtils.securityConfig.rememberMe.persistent}'>
-                                <li class="dropdown-header"><g:message code="spring.security.ui.menu.persistentLogins"/></li>
-                                <li><g:link controller="persistentLogin" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
-                            </g:if>
-                            <li class="dropdown-header"><g:message code="spring.security.ui.menu.registrationCode"/></li>
-                            <li><g:link controller="registrationCode" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <g:message code="spring.security.ui.menu.appinfo"/> <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li><g:link action='config' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.config'/></g:link></li>
-                            <li><g:link action='mappings' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.mappings'/></g:link></li>
-                            <li><g:link action='currentAuth' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.auth'/></g:link></li>
-                            <li><g:link action='usercache' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.usercache'/></g:link></li>
-                            <li><g:link action='filterChain' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.filters'/></g:link></li>
-                            <li><g:link action='logoutHandler' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.logout'/></g:link></li>
-                            <li><g:link action='voters' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.voters'/></g:link></li>
-                            <li><g:link action='providers' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.providers'/></g:link></li>
-                        </ul>
-                    </li>
-                </sec:ifAnyGranted>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <sec:ifLoggedIn>
-                    <li><g:link data-placement="bottom" class="btn btn-inverse" data-original-title="Logout" rel="tooltip" controller="logout"> Logout </g:link></li>
-                </sec:ifLoggedIn>
-                <sec:ifNotLoggedIn>
-                    <li><g:link data-placement="bottom" class="btn btn-inverse" data-original-title="Login" rel="tooltip" controller="login"> Login </g:link></li>
-                </sec:ifNotLoggedIn>
-            </ul>
+            <sec:ifAnyGranted roles="ROLE_ADMIN">
+                <!-- Admin menu -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#"> Administration <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a><b>Roles</b></a></li>
+                        <li><g:link controller="role" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
+                        <li><g:link controller="role" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
+                        <li><a><b>Users</b></a></li>
+                        <li><g:link controller="user" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
+                        <li><g:link controller="user" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
+                        <li class="divider"></li>
+                        <g:if test='${SpringSecurityUtils.securityConfig.securityConfigType == SecurityConfigType.Requestmap}'>
+                            <li><a><b><g:message code="spring.security.ui.menu.requestmaps"/></b></a></li>
+                            <li><g:link controller="requestmap" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
+                            <li><g:link controller="requestmap" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
+                        </g:if>
+                        <g:if test='${SpringSecurityUtils.securityConfig.rememberMe.persistent}'>
+                            <li><a><b><g:message code="spring.security.ui.menu.persistentLogins"/></b></a></li>
+                            <li><g:link controller="persistentLogin" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
+                        </g:if>
+                        <li><a><b><g:message code="spring.security.ui.menu.registrationCode"/></b></a></li>
+                        <li><g:link controller="registrationCode" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <g:message code="spring.security.ui.menu.appinfo"/> <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><g:link action='config' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.config'/></g:link></li>
+                        <li><g:link action='mappings' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.mappings'/></g:link></li>
+                        <li><g:link action='currentAuth' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.auth'/></g:link></li>
+                        <li><g:link action='usercache' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.usercache'/></g:link></li>
+                        <li><g:link action='filterChain' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.filters'/></g:link></li>
+                        <li><g:link action='logoutHandler' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.logout'/></g:link></li>
+                        <li><g:link action='voters' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.voters'/></g:link></li>
+                        <li><g:link action='providers' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.providers'/></g:link></li>
+                    </ul>
+                </li>
+            </sec:ifAnyGranted>
+        </ul>
+        <ul class="nav">
+            <sec:ifLoggedIn>
+                <li><g:link data-placement="bottom" data-original-title="Logout" rel="tooltip" controller="logout"> Logout </g:link></li>
+            </sec:ifLoggedIn>
+            <sec:ifNotLoggedIn>
+                <li><g:link data-placement="bottom" data-original-title="Login" rel="tooltip" controller="login"> Login </g:link></li>
+            </sec:ifNotLoggedIn>
+        </ul>
 
-        </div><!--/.nav-collapse -->
     </div>
-</div>
+</div><!--/.nav -->
 
 <div class="container" style="margin-top: 50px;">
     <g:layoutBody/>

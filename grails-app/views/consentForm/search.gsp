@@ -12,7 +12,7 @@
 <div class="container">
 
     <div class="row">
-        <div class="col-md-12 PageMainPanel">
+        <div class="span12 PageMainPanel">
 
             <div class="panel panel-primary" >
                 <div class="panel-heading">
@@ -20,13 +20,13 @@
                     <h3 class="panel-title">Search Consent Form</h3>
                 </div>
                 <div class="panel-body">
-                    <div class="col-md-12">
+                    <div class="span12">
                         <div class="panel panel-primary PageMainPanel">
 
                            <g:form role="form" action="find" controller="ConsentForm" params="">
                                 <div class="panel-body">
                                     <div class="row">
-                                        <div class="col-md-4 ">
+                                        <div class="span4 ">
                                             <div class="form-group">
                                                 <label for="nhsNumber">NHS Number</label>
                                                 <g:textField  class="form-control" tabindex="1"
@@ -53,7 +53,7 @@
                                                 <input type="submit"  class="btn btn-primary"  value="Search" tabindex="6">
                                             </div>
                                         </div>
-                                        <div class="col-md-4 ">
+                                        <div class="span4 ">
 
 
                                             <div class="form-group">
@@ -80,7 +80,7 @@
 
 
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="span4">
                                             <div class="form-group">
                                                 <label for="consentTakerName">Consent Taker</label>
                                                 <g:textField

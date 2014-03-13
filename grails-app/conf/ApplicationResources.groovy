@@ -8,14 +8,14 @@ modules = {
                 resource url: "css/custom01.css"
             }
     bootstrap{
-        resource url: "bower_components/bootstrap/dist/js/bootstrap.min.js"
-        resource url: "bower_components/bootstrap/dist/css/bootstrap.min.css"
+        resource url: "bower_components/bootstrap/docs/assets/js/bootstrap.min.js"
+        resource url: "bower_components/bootstrap/docs/assets/css/bootstrap.css"
     }
 
 
     jquery
             {
-                resource url:"bower_components/jquery/dist/jquery.min.js"
+                resource url:"bower_components/jquery/jquery.min.js"
             }
 
     jqueryFormValidator

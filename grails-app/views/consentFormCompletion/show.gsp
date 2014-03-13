@@ -10,15 +10,14 @@
 
 <body>
 
-<div class="col-md-12 ">
-    <div class="panel panel-primary PageMainPanel">
-        <div class="panel-heading">Consent Form</div>
+<div class="span12">
+        <h1>Consent Form</h1>
 
-        <div class="panel-body">
+        <div class="row">
             <g:hasErrors>
             <g:eachError><p>${it}</p></g:eachError>
             </g:hasErrors>
-            <div class="col-md-12">
+            <div class="span12">
                 <g:if test="${flash.created}">
                     <div class="alert alert-success">${flash.created}</div>
                 </g:if>
@@ -33,27 +32,23 @@
                 <g:set var="responses" value="${commandInstance?.consentForm?.responses}"></g:set>
 
 
-                <div class="col-md-12">
-                    <div class="panel panel-primary PageMainPanel">
-                        <div class="panel-body">
-
-                            <div class="col-md-6 ">
+                <div class="span12">
+                        <div class="row">
+                            <div class="span6 ">
                                 <div class="form-group">
-                                    <div class="form-group">
-                                        <label for="commandInstance.patient.nhsNumber" class="required">NHS Number</label>
-                                        <g:textField readonly="true"
-                                                class="form-control  ${hasErrors(bean: patient, field: 'nhsNumber', 'invalidInput')}"
-                                                id="commandInstance.patient.nhsNumber" name="commandInstance.patient.nhsNumber"
-                                                value="${commandInstance?.patient?.nhsNumber}"
-                                                 />
-                                    </div>
-
+                                    <label for="commandInstance.patient.nhsNumber" class="required">NHS Number</label>
+                                    <g:textField readonly="true"
+                                            class="form-control  ${hasErrors(bean: patient, field: 'nhsNumber', 'invalidInput')}"
+                                            id="commandInstance.patient.nhsNumber" name="commandInstance.patient.nhsNumber"
+                                            value="${commandInstance?.patient?.nhsNumber}"
+                                             />
+                                </div>
+                                <div class="form-group">
                                     <label for="commandInstance.patient.givenName" class="required">Given Name</label>
                                     <g:textField readonly="true"
                                             class="form-control ${hasErrors(bean: patient, field: 'givenName', 'invalidInput')}"
                                             name="commandInstance.patient.givenName" value="${commandInstance?.patient?.givenName}"
                                              />
-
                                 </div>
                                 <div class="form-group">
                                     <label for="commandInstance.patient.familyName" class="required">Family Name</label>
@@ -79,7 +74,7 @@
                                 </div>
 
                             </div>
-                            <div class="col-md-6 ">
+                            <div class="span6 ">
                                 <div class="form-group">
                                     <label for="commandInstance.patient.hospitalNumber" class="required">Hospital Number</label>
                                     <g:textField readonly="true"
@@ -106,31 +101,17 @@
 
                                                   precision="day"/>
                                 </div>
-
                             </div>
                         </div>
-                    </div>
                 </div>
 
-                <div class="col-md-12">
-                    <div class="panel panel-primary PageMainPanel">
-                        <div class="panel-body">
-                            <div class="col-md-8">
-
-                                %{--<g:if test="${commandInstance?.attachment}">--}%
-                                    %{--<img id="commandInstance.attachment" style="margin: 4px; width:100%;height:100%;"--}%
-                                         %{--class="Photo"--}%
-                                         %{--src="${createLink(controller: 'attachment', action: 'viewContent', id: "${commandInstance?.attachment?.id}")}"/>--}%
-                                %{--</g:if>--}%
-
-
+                <div class="span12">
+                        <div class="row">
+                            <div class="span8">
 
                                 <g:if test="${commandInstance?.attachment}">
-
                                     <a href="${createLink(action:'show',
                                             controller:'attachment',id: commandInstance?.attachment?.id)}" target="_blank">
-
-
 
                                         <g:if test="${commandInstance?.attachment?.attachmentType == Attachment.AttachmentType.IMAGE}">
 
@@ -146,27 +127,11 @@
                                             </div>
 
                                         </g:elseif>
-
-
                                     </a>
-
                                 </g:if>
-
-
-
-
-
-
-
-
-
                             </div>
 
-
-
-
-
-                            <div class="col-md-4">
+                            <div class="span4">
 
                                 <label >Consent Form Type</label>
                                 <g:textField id="commandInstance.consentFormTemplate"
@@ -203,11 +168,13 @@
                                 </ul>
 
 
-                                </div>
-                            <div class="col-md-12">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="span12">
                                 <div class="form-group">
                                     <label for="commandInstance.consentForm.comment">Comment</label>
-                                    <g:textArea readonly="readonly"
+                                    <g:textArea style="width: 100%" readonly="readonly"
                                             class="form-control  ${hasErrors(bean: consentForm, field: 'comment', 'invalidInput')}"
                                             id="commandInstance.consentForm.comment" name="commandInstance.consentForm.comment"
                                             value="${commandInstance?.consentForm?.comment}"
@@ -222,18 +189,17 @@
 
 
                         <g:link   action="delete" style="text-decoration:none;" controller="consentFormCompletion" id="${commandInstance?.consentForm?.id}"  onclick="return confirm('Are you sure?');" >
-                            <button type="button" class="btn  btn-danger btn-sm" style="width:50px">Delete</button>
+                            <button type="button" class="btn  btn-danger btn-sm">Delete</button>
                         </g:link>
 
                         <g:link   action="edit" controller="consentFormCompletion" id="${commandInstance?.consentForm?.id}" >
-                            <button type="button" class="btn  btn-primary btn-sm" style="width:50px">Edit</button>
+                            <button type="button" class="btn  btn-primary btn-sm">Edit</button>
                         </g:link>
 
                 </div>
 
             </g:form>
         </div>
-    </div>
 </div>
 </body>
 </html>

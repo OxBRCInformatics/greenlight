@@ -15,185 +15,165 @@
 
 
 
-<div class="col-md-12">
-    <div class="panel panel-primary PageMainPanel">
-        <div class="panel-body">
+<div class="span12">
+    <div class="row-fluid">
 
-            <div class="col-md-6 ">
+        <div class="span6">
+            <div class="form-group">
                 <div class="form-group">
-                    <div class="form-group">
-                        <label for="commandInstance.patient.nhsNumber" class="required">NHS Number</label>
-                        <g:textField
-                                class="form-control  ${hasErrors(bean: patient, field: 'nhsNumber', 'invalidInput')}"
-                                id="commandInstance.patient.nhsNumber" name="commandInstance.patient.nhsNumber"
-                                value="${commandInstance?.patient?.nhsNumber}"
-                                placeholder="NHS number like 1234567890"/>
-                    </div>
-
-                    <label for="commandInstance.patient.givenName" class="required">First Name</label>
+                    <label for="commandInstance.patient.nhsNumber" class="required">NHS Number</label>
                     <g:textField
-                            class="form-control ${hasErrors(bean: patient, field: 'givenName', 'invalidInput')}"
-                            name="commandInstance.patient.givenName" value="${commandInstance?.patient?.givenName}"
-                            placeholder="Given Name"/>
+                            class="form-control  ${hasErrors(bean: patient, field: 'nhsNumber', 'invalidInput')}"
+                            id="commandInstance.patient.nhsNumber" name="commandInstance.patient.nhsNumber"
+                            value="${commandInstance?.patient?.nhsNumber}"
+                            placeholder="NHS number like 1234567890"/>
+                </div>
 
-                </div>
-                <div class="form-group">
-                    <label for="commandInstance.patient.familyName" class="required">Surname</label>
-                    <g:textField
-                            class="form-control  ${hasErrors(bean: patient, field: 'familyName', 'invalidInput')}"
-                            id="commandInstance.patient.familyName" name="commandInstance.patient.familyName"
-                            value="${commandInstance?.patient?.familyName}"
-                            placeholder="Family Name"/>
-                </div>
-                <div class="form-group">
-                    <label for="commandInstance.consentForm.consentTakerName" class="required">Consent Taker Name</label>
-                    <g:textField name="commandInstance.consentForm.consentTakerName" id="commandInstance.consentForm.consentTakerName"
-                                 class="form-control  ${hasErrors(bean: consentForm, field: 'consentTakerName', 'invalidInput')}"
-                                 value="${commandInstance?.consentForm?.consentTakerName}"
-                                 placeholder="Enter Consent Taker's Name"/>
-                </div>
-                <div class="form-group">
-                    <label for="commandInstance.patient.dateOfBirth">Date of Birth</label>
-                    <g:datePicker class="form-control" id="commandInstance.patient.dateOfBirth"
-                                  name="commandInstance.patient.dateOfBirth"
-                                  relativeYears="[-100..0]"
-                                  value="${commandInstance?.patient?.dateOfBirth}"
-                                  placeholder="Date of Birth"
-                                  precision="day"/>
-                </div>
+                <label for="commandInstance.patient.givenName" class="required">First Name</label>
+                <g:textField
+                        class="form-control ${hasErrors(bean: patient, field: 'givenName', 'invalidInput')}"
+                        name="commandInstance.patient.givenName" value="${commandInstance?.patient?.givenName}"
+                        placeholder="Given Name"/>
 
             </div>
-            <div class="col-md-6 ">
-                <div class="form-group">
-                    <label for="commandInstance.patient.hospitalNumber" class="required">Hospital Number</label>
-                    <g:textField
-                            class="form-control  ${hasErrors(bean: patient, field: 'hospitalNumber', 'invalidInput')}"
-                            id="commandInstance.patient.hospitalNumber" name="commandInstance.patient.hospitalNumber"
-                            value="${commandInstance?.patient?.hospitalNumber}"
-                            placeholder="Hospital Number"/>
-                </div>
-                <div class="form-group">
-                    <label for="commandInstance.consentForm.formID" class="required">Form Id<span id="templatePrefix"></span></label>
 
-                    <g:textField
-                            class="form-control  ${hasErrors(bean: consentForm, field: 'formID', 'invalidInput')}"
-                            id="commandInstance.consentForm.formID" name="commandInstance.consentForm.formID"
-                            value="${commandInstance?.consentForm?.formID}"
-                            placeholder="Consent Form Id like GEN12345"
-                            onblur="checkDuplicate()"
-                    />
+            <div class="form-group">
+                <label for="commandInstance.patient.familyName" class="required">Surname</label>
+                <g:textField
+                        class="form-control  ${hasErrors(bean: patient, field: 'familyName', 'invalidInput')}"
+                        id="commandInstance.patient.familyName" name="commandInstance.patient.familyName"
+                        value="${commandInstance?.patient?.familyName}"
+                        placeholder="Family Name"/>
+            </div>
 
-                </div>
-                <div class="form-group">
-                    <label for="commandInstance.consentForm.consentDate">Consent Date</label>
-                    <g:datePicker class="form-control"
-                                  id="commandInstance.consentForm.ConsentDate"
-                                  name="commandInstance.consentForm.consentDate"
-                                  value="${commandInstance?.consentForm?.consentDate}"
-                                  placeholder="Consent Date"
-                                  precision="day"/>
-                </div>
+            <div class="form-group">
+                <label for="commandInstance.consentForm.consentTakerName" class="required">Consent Taker Name</label>
+                <g:textField name="commandInstance.consentForm.consentTakerName"
+                             id="commandInstance.consentForm.consentTakerName"
+                             class="form-control  ${hasErrors(bean: consentForm, field: 'consentTakerName', 'invalidInput')}"
+                             value="${commandInstance?.consentForm?.consentTakerName}"
+                             placeholder="Enter Consent Taker's Name"/>
+            </div>
 
+            <div class="form-group">
+                <label for="commandInstance.patient.dateOfBirth">Date of Birth</label>
+                <g:datePicker class="form-control" id="commandInstance.patient.dateOfBirth"
+                              name="commandInstance.patient.dateOfBirth"
+                              relativeYears="[-100..0]"
+                              value="${commandInstance?.patient?.dateOfBirth}"
+                              placeholder="Date of Birth"
+                              precision="day"/>
             </div>
 
         </div>
+
+        <div class="span6">
+            <div class="form-group">
+                <label for="commandInstance.patient.hospitalNumber" class="required">Hospital Number</label>
+                <g:textField
+                        class="form-control  ${hasErrors(bean: patient, field: 'hospitalNumber', 'invalidInput')}"
+                        id="commandInstance.patient.hospitalNumber" name="commandInstance.patient.hospitalNumber"
+                        value="${commandInstance?.patient?.hospitalNumber}"
+                        placeholder="Hospital Number"/>
+            </div>
+
+            <div class="form-group">
+                <label for="commandInstance.consentForm.formID" class="required">Form Id<span
+                        id="templatePrefix"></span></label>
+
+                <g:textField
+                        class="form-control  ${hasErrors(bean: consentForm, field: 'formID', 'invalidInput')}"
+                        id="commandInstance.consentForm.formID" name="commandInstance.consentForm.formID"
+                        value="${commandInstance?.consentForm?.formID}"
+                        placeholder="Consent Form Id like GEN12345"
+                        onblur="checkDuplicate()"/>
+
+            </div>
+
+            <div class="form-group">
+                <label for="commandInstance.consentForm.consentDate">Consent Date</label>
+                <g:datePicker class="form-control"
+                              id="commandInstance.consentForm.ConsentDate"
+                              name="commandInstance.consentForm.consentDate"
+                              value="${commandInstance?.consentForm?.consentDate}"
+                              placeholder="Consent Date"
+                              precision="day"/>
+            </div>
+
+            <div class="form-group">
+                <label for="commandInstance.consentForm.comment">Comment</label>
+                <g:textArea
+                        class="form-control  ${hasErrors(bean: consentForm, field: 'comment', 'invalidInput')}"
+                        id="commandInstance.consentForm.comment" name="commandInstance.consentForm.comment"
+                        value="${commandInstance?.consentForm?.comment}"
+                        placeholder="Comment"/>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<div class="col-md-12">
-    <div class="panel panel-primary PageMainPanel">
-        <div class="panel-body">
-            <div class="col-md-8">
+<div class="row">
+    <div class="span12">
+        <div class="row">
+            <div class="span8">
 
                 <g:if test="${commandInstance?.attachment}">
 
-                        <a href="${createLink(action:'show',
-                            controller:'attachment',id: commandInstance?.attachment?.id)}" target="_blank">
-
-                        %{--<img id="commandInstance.attachment" style="margin: 4px; width:100%;height:100%;"--}%
-                         %{--class="Photo"--}%
-                         %{--src="${createLink(controller: 'attachment', action: 'viewContent', id: "${commandInstance?.attachment?.id}")}"--}%
-                        %{--/>--}%
-
-
-                            <g:if test="${commandInstance?.attachment?.attachmentType == Attachment.AttachmentType.IMAGE}">
-
-                                <div class="magnify">
-                                      <img class="thumb" id="scannedForm" style="margin: 4px; width: 100%;height: 100%" class="Photo"
-                                     src="${createLink(controller: 'attachment', action: 'viewContent', id: "${commandInstance?.attachment?.id}")}"/>
-                                </div>
-                            </g:if>
-                            <g:elseif test="${commandInstance?.attachment?.attachmentType == Attachment.AttachmentType.PDF}">
-
-                                <div style="width: 100%">
-                                <g:render  template="/attachment/pdfViewer"         model="[attachmentId:commandInstance?.attachment?.id]" >
-                                </g:render>
-                                </div>
-
-                            </g:elseif>
-
-
-                                    </a>
+                    <a href="${createLink(action: 'show', controller: 'attachment', id: commandInstance?.attachment?.id)}" target="_blank">
+                        <div class="magnify">
+                            <img class="thumb" id="scannedForm" style="margin: 4px; width: 100%;height: 100%"
+                                 class="Photo"
+                                 src="${createLink(controller: 'attachment', action: 'viewContent', id: "${commandInstance?.attachment?.id}")}"/>
+                        </div>
+                    </a>
 
                 </g:if>
             </div>
-            <div class="col-md-4">
+            <div class="span4">
                 <div class="form-group">
-                <label >Consent Form Type</label>
-                %{--<select id="consentFormTemplate"  name="consentFormTemplate">--}%
-                <g:select id="commandInstance.consentFormTemplate"
-                    style="font-size:12px;"
-                          name="commandInstance.consentFormTemplateId" class="form-control"
-                          value="${commandInstance?.consentForm?.template?.id}"
-                          from="${ConsentFormTemplate.list()}"
-                          optionKey="id"
-                          optionValue="${name}"
-                          noSelection="${['-1': 'Select one ...']}"
-                          onchange="  ${
-                              remoteFunction(
-                                  action: 'getQuestions',
-                                  controller: 'ConsentFormTemplate',
-                                  params:'\'templateId=\' + this.value',
-                                  update: [success: 'questionList', failure: ''],
-                                  onSuccess: "formTemplateChanged()"
-                          )}"></g:select>
-</div>
+                    <label>Consent Form Type</label>
+                    %{--<select id="consentFormTemplate"  name="consentFormTemplate">--}%
+                    <g:select id="commandInstance.consentFormTemplate"
+                              style="font-size:12px;"
+                              name="commandInstance.consentFormTemplateId" class="form-control"
+                              value="${commandInstance?.consentForm?.template?.id}"
+                              from="${ConsentFormTemplate.list()}"
+                              optionKey="id"
+                              optionValue="${name}"
+                              noSelection="${['-1': 'Select one ...']}"
+                              onchange="${
+                                  remoteFunction(
+                                          action: 'getQuestions',
+                                          controller: 'ConsentFormTemplate',
+                                          params: '\'templateId=\' + this.value',
+                                          update: [success: 'questionList', failure: ''],
+                                          onSuccess: "formTemplateChanged()"
+                                  )}"></g:select>
+                </div>
+
                 <div class="form-group">
-                   <label for="commandInstance.consentForm.formStatus">Form Status</label>
-                   <g:select id="commandInstance.consentForm.formStatus"
-                             name="commandInstance.consentForm.formStatus"
-                             class="form-control"
-                             value="${commandInstance?.consentForm?.formStatus}"
-                             from="${ConsentForm?.FormStatus?.values()}"
-                             optionKey="key"
-                             optionValue="value"
-                   />
+                    <label for="commandInstance.consentForm.formStatus">Form Status</label>
+                    <g:select id="commandInstance.consentForm.formStatus"
+                              name="commandInstance.consentForm.formStatus"
+                              class="form-control"
+                              value="${commandInstance?.consentForm?.formStatus}"
+                              from="${ConsentForm?.FormStatus?.values()}"
+                              optionKey="key"
+                              optionValue="value"/>
                 </div>
 
 
                 <div class="form-group" id="questionList">
                     <g:if test="${commandInstance?.consentForm}">
-                        <g:render  template="/consentFormTemplate/getQuestions"
-                                   model="[questions:commandInstance?.template?.questions,
-                                           responses:commandInstance?.consentForm?.responses]" >
+                        <g:render template="/consentFormTemplate/getQuestions"
+                                  model="[questions: commandInstance?.template?.questions,
+                                          responses: commandInstance?.consentForm?.responses]">
                         </g:render>
                     </g:if>
                 </div>
 
             </div>
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="commandInstance.consentForm.comment">Comment</label>
-                    <g:textArea
-                            class="form-control  ${hasErrors(bean: consentForm, field: 'comment', 'invalidInput')}"
-                            id="commandInstance.consentForm.comment" name="commandInstance.consentForm.comment"
-                            value="${commandInstance?.consentForm?.comment}"
-                            placeholder="Comment"/>
-                </div>
-
-
-            </div>
-
         </div>
     </div>
 </div>
@@ -212,7 +192,7 @@
             blankForm();
             return;
         }
-        var link= "${createLink(action:'show', controller:'ConsentFormTemplate')}";
+        var link= "${createLink(action: 'show', controller: 'ConsentFormTemplate')}";
         $.ajax({
            type: 'POST',
            url: link+"/"+tempId+".json",
@@ -267,31 +247,31 @@
 
     $(function(){
 
-     %{--$.validator.addMethod(--}%
-                %{--"checkDuplicateFormId",--}%
-                %{--function(value, element) {--}%
+%{--$.validator.addMethod(--}%
+%{--"checkDuplicateFormId",--}%
+%{--function(value, element) {--}%
 
-                %{--var link= "${createLink(action:'show', controller:'ConsentFormCompletion')}";--}%
-                %{--$.ajax({--}%
-                   %{--type: 'POST',--}%
-                   %{--url: link+"/"+value+".json",--}%
-                   %{--success: function (data) {--}%
-                           %{--$('#templatePrefix').html(" ("+data.namePrefix+")");--}%
-                           %{--var placeholder= "Consent Form Id like "+data.namePrefix+"12345";--}%
-                           %{--$("input[id='commandInstance.consentForm.formID']").attr('placeholder',placeholder);--}%
-                           %{--//$("input[id='commandInstance.consentForm.formID']").val(data.namePrefix);--}%
+%{--var link= "${createLink(action:'show', controller:'ConsentFormCompletion')}";--}%
+%{--$.ajax({--}%
+%{--type: 'POST',--}%
+%{--url: link+"/"+value+".json",--}%
+%{--success: function (data) {--}%
+%{--$('#templatePrefix').html(" ("+data.namePrefix+")");--}%
+%{--var placeholder= "Consent Form Id like "+data.namePrefix+"12345";--}%
+%{--$("input[id='commandInstance.consentForm.formID']").attr('placeholder',placeholder);--}%
+%{--//$("input[id='commandInstance.consentForm.formID']").val(data.namePrefix);--}%
 
-                           %{--$("input[id='commandInstance.consentForm.formID']").rules('remove');--}%
-                           %{--var rule = new RegExp("^"+data.namePrefix+"\\d{5}$");--}%
-                           %{--$("input[id='commandInstance.consentForm.formID']").rules('add',{required: true,regex:rule });--}%
+%{--$("input[id='commandInstance.consentForm.formID']").rules('remove');--}%
+%{--var rule = new RegExp("^"+data.namePrefix+"\\d{5}$");--}%
+%{--$("input[id='commandInstance.consentForm.formID']").rules('add',{required: true,regex:rule });--}%
 
-                    %{--}--}%
-                  %{--});--}%
-                %{--},--}%
-                %{--"FormId already exists"--}%
-        %{--);--}%
+%{--}--}%
+%{--});--}%
+%{--},--}%
+%{--"FormId already exists"--}%
+%{--);--}%
 
-        applyFormValidation();
-    });
+    applyFormValidation();
+});
 
 </g:javascript>

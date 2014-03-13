@@ -3,6 +3,9 @@
  * Created by soheil on 20/01/14.
  */
 
+select{
+    width: auto; /* overrides bootstrap 220px default */
+}
 .PageMainPanel
 {
     margin-top:5px

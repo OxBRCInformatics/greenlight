@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-md-12">
+    <div class="span12">
         <g:if test="${attachments?.size()}">
             <div class="panel panel-default" >
                 <div class="panel-heading">Upload Result</div>
