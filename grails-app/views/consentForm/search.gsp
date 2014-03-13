@@ -29,55 +29,66 @@
                                         <div class="col-md-4 ">
                                             <div class="form-group">
                                                 <label for="nhsNumber">NHS Number</label>
-                                                <g:textField  class="form-control"
+                                                <g:textField  class="form-control" tabindex="1"
                                                               id="nhsNumber" name="nhsNumber"
                                                               value="${params.nhsNumber}"
                                                               placeholder="NHS number like 1234567890"/>
                                             </div>
+
+
+
+                                            <div class="form-group">
+                                                <label for="consentDateFrom">Consent Date From</label>
+                                                <br>
+                                                <g:datePicker class="form-control" id="consentDateFrom" tabindex="4"
+                                                              name="consentDateFrom"
+                                                              value="${params.consentDateFrom}"
+                                                              precision="day"/>
+                                            </div>
+
+
+
+
+                                            <div class="form-group">
+                                                <input type="submit"  class="btn btn-primary"  value="Search" tabindex="6">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 ">
+
+
                                             <div class="form-group">
                                                 <label for="hospitalNumber">Hospital Number</label>
                                                 <g:textField
-                                                        class="form-control"
+                                                        class="form-control" tabindex="2"
                                                         name="hospitalNumber"  id="hospitalNumber"
                                                         value="${params.hospitalNumber}"
                                                         placeholder="Hospital Number"/>
                                             </div>
 
+
                                             <div class="form-group">
-                                                <input type="submit"  class="btn btn-primary"  value="Search">
+                                                <label for="consentDateTo">Consent Date To</label>
+                                                <br>
+                                                <g:datePicker class="form-control" id="consentDateTo" tabindex="5"
+                                                              name="consentDateTo"
+                                                              value="${params.consentDateTo}"
+                                                              precision="day"/>
                                             </div>
+
+
+
+
+
                                         </div>
-                                        <div class="col-md-4 ">
-                                             <div class="form-group">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
                                                 <label for="consentTakerName">Consent Taker</label>
                                                 <g:textField
-                                                        class="form-control"
+                                                        class="form-control" tabindex="3"
                                                         name="consentTakerName"  id="consentTakerName"
                                                         value="${params.consentTakerName}"
                                                         placeholder="Consent Taker Name"/>
 
-                                            </div>
-
-                                            <div class="col-md-6 ">
-                                                <div class="form-group">
-                                                    <label for="consentDateFrom">Consent Date From</label>
-                                                    <g:textField
-                                                            class="form-control"
-                                                            name="consentDateFrom"  id="consentDateFrom"
-                                                            value="${params.consentDateFrom}"
-                                                            placeholder="dd/mm/yyyy"/>
-                                                </div>
-                                             </div>
-
-                                            <div class="col-md-6 ">
-                                                <div class="form-group">
-                                                    <label for="consentDateTo"> To</label>
-                                                    <g:textField
-                                                            class="form-control"
-                                                            name="consentDateTo"  id="consentDateTo"
-                                                            value="${params.consentDateTo}"
-                                                            placeholder="dd/mm/yyyy"/>
-                                                </div>
                                             </div>
 
 

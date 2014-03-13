@@ -2,7 +2,8 @@ package uk.ac.ox.brc.greenlight
 
 import grails.transaction.Transactional
 
-
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 
 @Transactional
@@ -14,35 +15,42 @@ class ConsentFormService {
         def hospitalNumber = params["hospitalNumber"];
         def consentTakerName = params["consentTakerName"];
 
-        def consentDateFromStr = params["consentDateFrom"];
-        def consentDateToStr = params["consentDateTo"];
-
-        def consentDateFrom=null
-        if(consentDateFromStr && consentDateFromStr.size()>0)
-        {
-            try
-            {
-                consentDateFrom= new Date().parse("dd/mm/yyyy",consentDateFromStr)
-            }
-            catch (Exception ex){}
-        }
+        def consentDateFrom = params["consentDateFrom"];
+        def consentDateTo = params["consentDateTo"];
 
 
 
-        def consentDateTo =null
-        if (consentDateToStr && consentDateToStr.size()>0)
-        {
-            try{
-                consentDateTo = new Date().parse("dd/mm/yyyy",consentDateToStr)
-            }
-            catch(Exception ex){}
-        }
+//        def consentDateFrom=null
+//        if(consentDateFromStr && consentDateFromStr.size()>0)
+//        {
+//            try
+//            {
+//
+//                DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+//                consentDateFrom= df.parse(consentDateFromStr)
+//            }
+//            catch (Exception ex){}
+//        }
+//
+//
+//
+//        def consentDateTo =null
+//        if (consentDateToStr && consentDateToStr.size()>0)
+//        {
+//            try{
+//                consentDateTo = new Date().parse("dd/mm/yyyy",consentDateToStr)
+//            }
+//            catch(Exception ex){}
+//        }
 
 
 
         def criteria = ConsentForm.createCriteria()
         def results = criteria.list {
-            if(consentDateFrom && consentDateTo){between('consentDate', consentDateFrom, consentDateTo)}
+            if(consentDateFrom && consentDateTo){
+                if(consentDateFrom.compareTo(consentDateTo)<0)
+                    between('consentDate', consentDateFrom, consentDateTo)
+            }
             if(consentTakerName && consentTakerName.size()>0) { like('consentTakerName',consentTakerName+"%")}
             patient
                     {

@@ -54,7 +54,7 @@
                                 <td>${attachment?.consentForm?.template?.namePrefix}</td>
                                 <td>${attachment?.consentForm?.patient.nhsNumber}</td>
                                 <td style="  text-align: left;">
-                                        <g:link action="show" class="btn" id="${attachment?.consentForm?.id}" controller="consentFormCompletion">View</g:link>
+                                        <g:link action="show" class="btn btn-success" id="${attachment?.consentForm?.id}" controller="consentFormCompletion">View</g:link>
                                 </td>
                             </g:if>
                             <g:else>
