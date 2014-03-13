@@ -1,6 +1,6 @@
 Greenlight 
 =======
-
+[![Build Status](https://travis-ci.org/OxBRCInformatics/greenlight.png?branch=develop)](https://travis-ci.org/OxBRCInformatics/greenlight)
 
 Open Source consent management tool
 ------------

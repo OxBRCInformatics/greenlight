@@ -17,6 +17,7 @@
   ],
   "dependencies": {
     "bootstrap": "~3.0.3",
-    "bootstrap-ie7": "*"
+    "bootstrap-ie7": "*",
+    "jquery": "~2.1.0"
   }
 }
