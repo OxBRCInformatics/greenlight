@@ -105,7 +105,7 @@ class ConsentFormControllerSpec extends IntegrationSpec {
     }
 
     void "Test that Save action, saves the ConsentForm and Patient and returns the right model"() {
-       given:
+   		given:
         def attachmentBefore = Attachment.list()[0]
         def consentFormTemplate = ConsentFormTemplate.list()[0]
         def patientCountBefore = Patient.count();

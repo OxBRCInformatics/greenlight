@@ -3,6 +3,7 @@ package uk.ac.ox.brc.greenlight
 import grails.converters.JSON
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage
 import org.apache.tomcat.jni.Shm
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
@@ -85,17 +86,19 @@ class AttachmentController {
 					if(confType=='application/pdf'){
 						PDDocument document = PDDocument.load(file.inputStream)
 						document.getDocumentCatalog().getAllPages().eachWithIndex{ PDPage page, pageNumber ->
-							BufferedImage bufferedImage = page.convertToImage()
-							ByteArrayOutputStream baos = new ByteArrayOutputStream()
-							ImageIO.write(bufferedImage, "jpg", baos)
+							def images = page.getResources().getXObjects().findAll { objname, object -> object instanceof PDXObjectImage}
+							images.each { String name, PDXObjectImage image ->
+								ByteArrayOutputStream baos = new ByteArrayOutputStream()
+								image.write2OutputStream(baos)
 
-							def attachment= new Attachment();
-							attachment.fileName = file?.originalFilename + "_p" + pageNumber
-							attachment.content = baos.toByteArray()
-							attachment.attachmentType=Attachment.AttachmentType.IMAGE
-							attachment.dateOfUpload=new Date()
-							attachmentService.save(attachment)
-							attachments.add(attachment)
+								def attachment= new Attachment();
+								attachment.fileName = file?.originalFilename + "_p" + pageNumber + "_image-"+name
+								attachment.content = baos.toByteArray()
+								attachment.attachmentType=Attachment.AttachmentType.IMAGE
+								attachment.dateOfUpload=new Date()
+								attachmentService.save(attachment)
+								attachments.add(attachment)
+							}
 						}
 
 					}

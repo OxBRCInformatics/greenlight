@@ -15,7 +15,7 @@ modules = {
 
     jquery
             {
-                resource url:"bower_components/jquery/jquery.min.js"
+                resource url:"bower_components/jquery/dist/jquery.min.js"
             }
 
     jqueryFormValidator
