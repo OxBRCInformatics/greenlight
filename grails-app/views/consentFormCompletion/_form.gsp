@@ -30,7 +30,7 @@
                                 placeholder="NHS number like 1234567890"/>
                     </div>
 
-                    <label for="commandInstance.patient.givenName" class="required">Given Name</label>
+                    <label for="commandInstance.patient.givenName" class="required">First Name</label>
                     <g:textField
                             class="form-control ${hasErrors(bean: patient, field: 'givenName', 'invalidInput')}"
                             name="commandInstance.patient.givenName" value="${commandInstance?.patient?.givenName}"
@@ -38,7 +38,7 @@
 
                 </div>
                 <div class="form-group">
-                    <label for="commandInstance.patient.familyName" class="required">Family Name</label>
+                    <label for="commandInstance.patient.familyName" class="required">Surname</label>
                     <g:textField
                             class="form-control  ${hasErrors(bean: patient, field: 'familyName', 'invalidInput')}"
                             id="commandInstance.patient.familyName" name="commandInstance.patient.familyName"
