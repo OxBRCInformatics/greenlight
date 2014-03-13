@@ -54,7 +54,9 @@
                 </div>
                 <div class="form-group">
                     <label for="commandInstance.patient.dateOfBirth">Date of Birth</label>
-                    <g:datePicker class="form-control" id="commandInstance.patient.dateOfBirth" name="commandInstance.patient.dateOfBirth"
+                    <g:datePicker class="form-control" id="commandInstance.patient.dateOfBirth"
+                                  name="commandInstance.patient.dateOfBirth"
+                                  relativeYears="[-100..0]"
                                   value="${commandInstance?.patient?.dateOfBirth}"
                                   placeholder="Date of Birth"
                                   precision="day"/>
@@ -83,7 +85,7 @@
 
                 </div>
                 <div class="form-group">
-                    <label for="commandInstance.consentForm.ConsentDate">Consent Date</label>
+                    <label for="commandInstance.consentForm.consentDate">Consent Date</label>
                     <g:datePicker class="form-control"
                                   id="commandInstance.consentForm.ConsentDate"
                                   name="commandInstance.consentForm.consentDate"
