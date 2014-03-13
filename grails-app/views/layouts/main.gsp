@@ -22,7 +22,6 @@
 
     <r:require modules="bootstrap"/>
     <r:require modules="customCSS"/>
-    <r:require modules="zoomMagnifier"/>
     <g:javascript library="jquery"></g:javascript>
     <g:javascript library="jqueryFormValidator"></g:javascript>
 
@@ -127,7 +126,7 @@
     });
 
 </script>
-<div id="spinner" class="spinner" style="display:none;"><g:message code="spinner.alt" default="Loading&hellip;"/></div>
+
 <r:layoutResources />
 </body>
 </html>
