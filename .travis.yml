@@ -6,7 +6,10 @@ addons:
   sauce_connect:
   - username: $SAUCE_USERNAME
   - access_key: $SAUCE_ACCESS_KEY
-script: "./node_modules/bower install && ./grailsw refresh-dependencies && ./grailsw test-app unit: && ./grailsw test-app integration: && ./grailsw test-app functional: -Dgeb.env=sauceChrome && ./grailsw test-app functional: -Dgeb.env=sauceIe7"
+before_script:
+  - npm install -g bower
+  - bower install
+script: "bower install && ./grailsw refresh-dependencies && ./grailsw test-app unit: && ./grailsw test-app integration: && ./grailsw test-app functional: -Dgeb.env=sauceChrome && ./grailsw test-app functional: -Dgeb.env=sauceIe7"
 env:
   global:
   - secure: C9yOH9LBLI067r5d2hzrn1FFa8krQeZedbHRBQ9HfjnwM5BpYEbWB3MH/iT1KLj2/ZsGorDOWJ7nd0/s5drX88Jb8sqUe26ua4HE/kDd70yy00vl+/KQclQl5Q/To3q21UKwk1qye6q1nB9dlDpABlmRQPsf5IF4ciEx6FKzQrg=

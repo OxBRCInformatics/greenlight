@@ -33,7 +33,7 @@
                 <g:textField
                         class="form-control ${hasErrors(bean: patient, field: 'givenName', 'invalidInput')}"
                         name="commandInstance.patient.givenName" value="${commandInstance?.patient?.givenName}"
-                        placeholder="Given Name"/>
+                        placeholder="First Name"/>
 
             </div>
 
@@ -43,7 +43,7 @@
                         class="form-control  ${hasErrors(bean: patient, field: 'familyName', 'invalidInput')}"
                         id="commandInstance.patient.familyName" name="commandInstance.patient.familyName"
                         value="${commandInstance?.patient?.familyName}"
-                        placeholder="Family Name"/>
+                        placeholder="Last Name"/>
             </div>
 
             <div class="form-group">
