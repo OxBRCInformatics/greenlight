@@ -53,7 +53,7 @@
             <li><g:link  controller="attachment" action="list">Consent Forms</g:link></li>
             <li><g:link  controller="attachment" action="create">Upload Files</g:link></li>
             <li><g:link  controller="consentForm" action="search">Search</g:link></li>
-            <li><g:link  controller="consentForm" action="cuttingRoom">Cutting Room</g:link></li>
+            <li><g:link  controller="consentForm" action="cuttingRoom">Cut-Up Room</g:link></li>
 
             <sec:ifAnyGranted roles="ROLE_ADMIN">
                 <!-- Admin menu -->

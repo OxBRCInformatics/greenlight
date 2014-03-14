@@ -37,10 +37,13 @@
                     </g:link>
                 </td>
                 <td width="33%" class="dashboard-panel">
+                   <g:link  controller="consentForm" action="cuttingRoom">
                     <div class="colored-box">
                         <span class="glyphicon glyphicon-search extra-large"></span>
                         <h4>Search and use<br> consents form</h4>
+                        <p>Search for consent forms by NHS number, MRN, consent dates and more...</p>
                     </div>
+                    </g:link>
                 </td>
             </tr>
         </table>

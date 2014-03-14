@@ -17,11 +17,11 @@
 
 <div class="centered well well-small grayBackground" >
     <div class="row">
-        <g:form controller="consentForm" name="consentForm" action="checkConsent">
-              <div class="span6 offset3">
-                    <g:textField name="searchInput" id="searchInput" class="form-control boldInput" ></g:textField>
-            </div>
-        </g:form>
+        <div class="span6 offset3">
+            <g:form controller="consentForm" name="consentForm" action="checkConsent">
+                        <g:textField name="searchInput" id="searchInput" class="form-control boldInput" ></g:textField>
+            </g:form>
+        </div>
     </div>
 
     <div class="row">
