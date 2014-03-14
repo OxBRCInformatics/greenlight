@@ -7,16 +7,15 @@ import geb.Page
  */
 class AttachmentUploadPage extends Page{
 
-    static url = "attachment/upload"
+    static url = "attachment/create"
 
     static at = {
-        url == "attachment/upload" &&
+        url == "attachment/create" &&
                 title == "Consent Forms Upload"
     }
     static content = {
 
         uploadButton{$("button[id='btnUpload'][type='submit']")}
-        fileSelectorButton{$("input[id='scannedForm']")}
-        uploadedFilesTable(required: false) {$("table[id='uploadedFilesTable']")}
+        fileSelectorButton{$("input[id='scannedForms']")}
     }
 }

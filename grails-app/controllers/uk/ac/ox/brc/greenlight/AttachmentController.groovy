@@ -65,6 +65,7 @@ class AttachmentController {
     }
 
     def create() {
+
     }
 
     def showUploaded() {

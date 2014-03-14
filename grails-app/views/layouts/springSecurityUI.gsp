@@ -14,7 +14,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
- %{--Do not remove this as Geb functional test, fails after logging in spring secutiry--}%
+ %{--Do not remove this as Geb functional test, fails after logging in spring security--}%
 <link rel="shortcut icon" href="${resource(dir:'images',file:'favicon.ico')}" type="image/x-icon"/>
 
     <r:require modules="bootstrap"/>
