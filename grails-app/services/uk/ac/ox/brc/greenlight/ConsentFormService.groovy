@@ -14,13 +14,34 @@ class ConsentFormService {
         def consentDateFrom = params["consentDateFrom"];
         def consentDateTo = params["consentDateTo"];
 
+
+        def formIdFrom = (params["formIdFrom"]).trim();
+        def formIdTo = (params["formIdTo"]).trim();
+
+
+
+        if(consentDateFrom && consentDateTo && consentDateFrom.compareTo(consentDateTo)>0)
+            return [];
+
+
+
+
         def criteria = ConsentForm.createCriteria()
         def results = criteria.list {
             if(consentDateFrom && consentDateTo){
                 if(consentDateFrom.compareTo(consentDateTo)<0)
                     between('consentDate', consentDateFrom, consentDateTo)
             }
-            if(consentTakerName && consentTakerName.size()>0) { like('consentTakerName',consentTakerName+"%")}
+
+
+            if(formIdFrom.size()>0 && formIdTo.size()>0){
+                if(formIdFrom.compareTo(formIdTo)<=0)
+                    between('formID', formIdFrom, formIdTo)
+            }
+
+            if(consentTakerName && consentTakerName.size()>0) {
+                like('consentTakerName',consentTakerName+"%")
+            }
             patient
                     {
                         if(hospitalNumber && hospitalNumber.size()>0){like("hospitalNumber", hospitalNumber+"%")}
@@ -63,14 +84,16 @@ class ConsentFormService {
     def checkConsent(params)
     {
         def searchInput = params["searchInput"];
-        def consent = ConsentForm.find("from ConsentForm as c where c.patient.hospitalNumber= :searchInput or c.patient.nhsNumber= :searchInput",[searchInput:searchInput]);
 
         def result=[
             consentForm:null,
             consented:false
         ]
 
+        if(!searchInput)
+            return  result;
 
+        def consent = ConsentForm.find("from ConsentForm as c where c.patient.hospitalNumber= :searchInput or c.patient.nhsNumber= :searchInput",[searchInput:searchInput]);
         if(consent){
             result.consentForm=consent
             result.consented=true

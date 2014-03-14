@@ -47,6 +47,15 @@
                                             </div>
 
 
+                                            <div class="form-group">
+                                                <label for="formIdFrom">Consent Form Id From</label>
+                                                <br>
+                                                <g:textField  class="form-control" tabindex="1"
+                                                              id="formIdFrom" name="formIdFrom"
+                                                              value="${params.formIdFrom}"
+                                                              placeholder="Form Id like GEN12345"/>
+                                            </div>
+
 
 
                                             <div class="form-group">
@@ -73,6 +82,16 @@
                                                               name="consentDateTo"
                                                               value="${params.consentDateTo}"
                                                               precision="day"/>
+                                            </div>
+
+
+                                            <div class="form-group">
+                                                <label for="formIdTo">Consent Form Id To</label>
+                                                <br>
+                                                <g:textField  class="form-control" tabindex="1"
+                                                              id="formIdTo" name="formIdTo"
+                                                              value="${params.formIdTo}"
+                                                              placeholder="Form Id like GEN6789"/>
                                             </div>
 
 
@@ -107,6 +126,7 @@
                                             <th>Hospital Number</th>
                                             <th>Form Status</th>
                                             <th>Form Type</th>
+                                            <th>Form Id</th>
                                             <th>Upload Date</th>
                                             <th>Consent Date</th>
                                             <th>Consent Taker</th>
@@ -120,6 +140,7 @@
                                                     <td>${consentForm?.patient?.hospitalNumber}</td>
                                                     <td>${consentForm?.formStatus}</td>
                                                     <td>${consentForm?.template?.namePrefix}</td>
+                                                    <td>${consentForm?.formID}</td>
                                                     <td>
                                                         <g:formatDate format="yyyy-MM-dd HH:mm" date="${consentForm?.attachedFormImage?.dateOfUpload}"/>
                                                     </td>
