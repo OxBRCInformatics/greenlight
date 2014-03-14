@@ -38,7 +38,7 @@
             </div>
 
             <div class="form-group">
-                <label for="commandInstance.patient.familyName" class="required">Surname</label>
+                <label for="commandInstance.patient.familyName" class="required">Last Name</label>
                 <g:textField
                         class="form-control  ${hasErrors(bean: patient, field: 'familyName', 'invalidInput')}"
                         id="commandInstance.patient.familyName" name="commandInstance.patient.familyName"
