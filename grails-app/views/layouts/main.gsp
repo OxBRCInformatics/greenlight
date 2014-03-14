@@ -105,9 +105,7 @@
         </ul>
 
 
-        </div><!--/.nav-collapse -->
-
-    </div>
+    </div><!--/.nav-collapse -->
 </div><!--/.nav -->
 
 <div class="container" style="margin-top: 50px;">

@@ -11,37 +11,36 @@ import page.authentication.LoginPage
  */
 class AttachmentCreateSpec extends GebReportingSpec {
 
-
+//
 //    def setup()
 //    {
 //        to LoginPage
 //        username = "admin"
 //        password = "password"
 //        submitButton.click()
-//        at DashboardPage
+//        //at DashboardPage
 //    }
 //
 //
 //    def "Check if upload button is shown properly"()
 //    {
-//        when:"In consent form create page"
+//        when:"In attachment page"
 //        to AttachmentUploadPage
 //
 //
 //        then:"uploaded button and file selector are both displayed"
 //        uploadButton.displayed
-//        //fileSelectButton.displayed
-//
+//        fileSelectorButton.displayed
 //    }
 
-//    def "Check if no file is selected and upload is clicked, file table is empty"()
+//    def "Check if no file is selected and upload is clicked, file table is still empty"()
 //    {
 //        when: "In consent Form create page and click on upload"
-//        to ConsentFormCreatePage
+//        to AttachmentUploadPage
 //        uploadButton.click()
 //
 //        then:"Should be in Upload page with empty file table"
-//        at ConsentFormUploadPage
+//        at AttachmentUploadPage
 //        !uploadedFilesTable.present
 //    }
 //

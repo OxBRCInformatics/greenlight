@@ -9,63 +9,55 @@
 <html>
 <head>
     <title>Consent Check</title>
-    <r:require modules="bootstrap"/>
-    <r:require modules="customCSS"/>
-    <g:javascript library="jquery"></g:javascript>
-    <r:layoutResources />
+    <meta name="layout" content="main">
 
 </head>
 
 <body>
 
-
-
-<div class="container">
-    <div class="row">
-        <div class="span12"><br></div>
-    </div>
+<div class="centered well well-small grayBackground" >
     <div class="row">
         <g:form controller="consentForm" name="consentForm" action="checkConsent">
-              <div class="span10">
-                <div class="form-group">
-                    <g:textField name="searchInput" id="searchInput" class="form-control "></g:textField>
-                </div>
+              <div class="span6 offset3">
+                    <g:textField name="searchInput" id="searchInput" class="form-control boldInput" ></g:textField>
             </div>
         </g:form>
     </div>
 
     <div class="row">
-        <div class="span10">
+        <div class="span6 offset3">
 
             <g:if test="${result!=null}">
 
                  <g:if test="${consentForm!=null}">
                      <g:if test="${result}">
                         <div class="alert alert-success">
-                            <div class="boldMessage">Reference: ${searchInput}</div>
+                            <div class="boldMessage">Ref: ${searchInput}</div>
                             <div class="boldMessage">is Consented.</div>
                         </div>
                     </g:if>
                     <g:else>
                         <div class="alert alert-danger">
-                            <div class="boldMessage">Reference: ${searchInput}</div>
+                            <div class="boldMessage">Ref: ${searchInput}</div>
                             <div class="boldMessage">is Not Consented!</div>
                         </div>
                     </g:else>
                  </g:if>
                 <g:else>
-                    <div class="alert alert-warning">
-                        <div class="boldMessage" >Reference: ${searchInput}</div>
+                    <div class="alert alert-danger">
+                        <div class="boldMessage" >Ref: ${searchInput}</div>
                         <div class="boldMessage">Not Found!</div>
                     </div>
                 </g:else>
             </g:if>
+            <g:else>
+                <div class="alert alert-info">
+                    <div class="cuttingRoomInfoMessage" >Please enter NHS number or MRN</div>
+                </div>
+            </g:else>
         </div>
     </div>
-
 </div>
-
-
 
 <g:javascript type="text/javascript">
     $(function () {
@@ -82,7 +74,6 @@
 
     });
 </g:javascript>
-<r:layoutResources />
 
 </body>
 </html>
