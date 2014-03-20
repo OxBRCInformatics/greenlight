@@ -27,7 +27,7 @@ class ConsentFormSearchSpec extends  IntegrationSpec{
         def consent1 = new ConsentForm(
                 attachedFormImage: attachment,
                 template: template,
-                consentDate: new Date("1/1/2014"),
+                consentDate: new Date([year:2014,month:01,date:01]),
                 consentTakerName: "Edmin",
                 formID: "GEN12345",
                 formStatus: ConsentForm.FormStatus.NORMAL
@@ -49,7 +49,7 @@ class ConsentFormSearchSpec extends  IntegrationSpec{
         def consent2 = new ConsentForm(
                 attachedFormImage: attachment,
                 template: template,
-                consentDate: new Date("20/1/2014"),
+                consentDate: new Date([year:2014,month:01,date:20]),
                 consentTakerName: "Adam",
                 formID: "GEN12369",
                 formStatus: ConsentForm.FormStatus.NORMAL
@@ -79,7 +79,7 @@ class ConsentFormSearchSpec extends  IntegrationSpec{
 
 
     @Unroll
-    void "Test if consentFormSearch return correct values"()
+    void "Test if consentFormSearch return correct values #consentDateFrom #consentDateTo"()
     {
 
         setup:"Initialize the params for search"
@@ -88,7 +88,6 @@ class ConsentFormSearchSpec extends  IntegrationSpec{
         when: "Find is called by a single params for nhsNumber"
         consentFormController.params['nhsNumber'] = nhsNumber
         consentFormController.params['hospitalNumber'] = hospitalNumber
-        consentFormController.params['consentTakerName'] = consentTakerName
         consentFormController.params['consentDateFrom'] = consentDateFrom
         consentFormController.params['consentDateTo'] = consentDateTo
 
@@ -101,14 +100,13 @@ class ConsentFormSearchSpec extends  IntegrationSpec{
 
 
         where:
-        nhsNumber   | hospitalNumber | consentTakerName |consentDateFrom | consentDateTo         | resultSize
-        "1234567890"| ""             |        ""        |     new Date("01/01/2018") |    new Date("01/01/2018")   |    1
-        ""          | ""             |        ""        |     new Date("01/01/2018") |    new Date("01/01/2018")   |    2
-        "1234567890"| "9999"         |        ""        |     new Date("01/01/2018") |    new Date("01/01/2018")   |    0
-        "1234567890"| "1002"         |        ""        |     new Date("01/01/2018") |    new Date("01/01/2018")   |    1
-        ""          | ""             |        ""        |     new Date("01/01/2014") |  new Date("20/01/2014")|    2
-        ""          | ""             |        ""        |     new Date("01/01/2014") |  new Date("10/01/2014")|    1
-        "1234567890"| ""             |        ""        |     new Date("01/01/2015") |  new Date("20/01/2014")|    0
+        nhsNumber   | hospitalNumber |consentDateFrom                       | consentDateTo                        | resultSize
+        "1234567890"| ""             | new Date("01/01/2018")               | new Date("01/01/2018")               |    0
+        ""          | ""             | new Date("01/01/2014")               | new Date([year:2014,month:1,date:2]) |    1
+        "1234567890"| "9999"         | null                                 | null                                 |    0
+        "1234567890"| "1002"         | null                                 | null                                 |    1
+        ""          | ""             | new Date([year:2014,month:1,date:1]) | new Date([year:2014,month:5,date:5]) |    2
+        "1234567890"| ""             | new Date("01/01/2015")               | new Date("20/01/2014")               |    0
 
     }
 
@@ -155,14 +153,40 @@ class ConsentFormSearchSpec extends  IntegrationSpec{
         InitControllerParams();
 
         when: "Find is called by a single params for consentDateFrom-To"
-        consentFormController.params['consentDateFrom'] = new Date("01/01/2014")
-        consentFormController.params['consentDateTo'] = new Date("01/02/2014")
+        consentFormController.params['consentDateFrom'] = new Date([year:2014,month:1,date:1])
+        consentFormController.params['consentDateTo'] = new Date([year:2014,month:2,date:1])
         consentFormController.find()
         def model =  consentFormController.modelAndView.model
 
 
         then: "A consent form should be returned"
         model.consentForms.size()==1
+    }
+
+    @Unroll
+    void "Test if consentFormSearch finds consents correctly between two consentFormDates from:#from to:#to"()
+    {
+        setup:"Initialize the params for search"
+        InitControllerParams();
+
+        when: "Find is called by a single params for consentDateFrom-To"
+        consentFormController.params['consentDateFrom'] = from
+        consentFormController.params['consentDateTo'] = to
+        consentFormController.find()
+        def model =  consentFormController.modelAndView.model
+
+
+        then: "correct consent form should be returned"
+        model.consentForms.size() == result
+
+        where:
+        from                                  |   to                                    |  result
+        new Date([year:2014,month:1,date:1])  |    new Date([year:2014,month:2,date:1]) |    2
+        new Date([year:2014,month:1,date:5])  |    new Date([year:2014,month:2,date:1]) |    1
+        null                                  |    new Date([year:2014,month:2,date:1]) |    2
+        new Date([year:2014,month:1,date:1])  |    null                                 |    2
+        null                                  |    null                                 |    2
+
     }
 
 
@@ -213,7 +237,7 @@ class ConsentFormSearchSpec extends  IntegrationSpec{
     }
 
 
-    void "Test if consentFormSearch returns zero records in case where consentDateFrom>consentDateTo"()
+    void "Test if consentFormSearch ignores date search where consentDateFrom>consentDateTo"()
     {
 
         setup:"Initialize the params for search"
@@ -226,8 +250,8 @@ class ConsentFormSearchSpec extends  IntegrationSpec{
         def model =  consentFormController.modelAndView.model
 
 
-        then: "No result should be returned"
-        model.consentForms.size()==0
+        then: "consentDates should be ignored in the search"
+        model.consentForms.size()==2
     }
 
 

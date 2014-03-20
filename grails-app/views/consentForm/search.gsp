@@ -43,7 +43,7 @@
                                                 <g:datePicker class="form-control" id="consentDateFrom" tabindex="4"
                                                               name="consentDateFrom"
                                                               value="${params.consentDateFrom}"
-                                                              precision="day"/>
+                                                              precision="day" default="none" noSelection="['':'']"/>
                                             </div>
 
 
@@ -81,7 +81,7 @@
                                                 <g:datePicker class="form-control" id="consentDateTo" tabindex="5"
                                                               name="consentDateTo"
                                                               value="${params.consentDateTo}"
-                                                              precision="day"/>
+                                                              precision="day" default="none" noSelection="['':'']"/>
                                             </div>
 
 

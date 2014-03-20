@@ -20,8 +20,8 @@ class ConsentFormService {
 
 
 
-        if(consentDateFrom && consentDateTo && consentDateFrom.compareTo(consentDateTo)>0)
-            return [];
+
+
 
 
 
@@ -29,7 +29,7 @@ class ConsentFormService {
         def criteria = ConsentForm.createCriteria()
         def results = criteria.list {
             if(consentDateFrom && consentDateTo){
-                if(consentDateFrom.compareTo(consentDateTo)<0)
+                if(consentDateFrom.compareTo(consentDateTo)<=0)
                     between('consentDate', consentDateFrom, consentDateTo)
             }
 
