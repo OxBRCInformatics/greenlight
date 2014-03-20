@@ -12,6 +12,9 @@ class UserLoginSpec extends GebReportingSpec {
 	def "Login screen standard elements"() {
 		when: 'I go to the login screen'
 		to LoginPage
+        waitFor{
+            at LoginPage
+        }
 
 		then: ' The title of the page is "Login" and there are the standard components present'
 		at LoginPage
@@ -25,6 +28,9 @@ class UserLoginSpec extends GebReportingSpec {
 	def "User authentication attempts (bad)"() {
 		when: 'I enter the incorrect credentials'
 		to LoginPage
+        waitFor{
+            at LoginPage
+        }
 		username = "baduser"
 		password = "badpassword"
 		submitButton.click(LoginPage)
@@ -52,6 +58,9 @@ class UserLoginSpec extends GebReportingSpec {
 	def "Successful second authentication"() {
 		when: 'I enter the incorrect credentials'
 		to LoginPage
+        waitFor{
+            at LoginPage
+        }
 		username = "baduser"
 		password = "badpassword"
 		submitButton.click(LoginPage)
@@ -77,6 +86,9 @@ class UserLoginSpec extends GebReportingSpec {
 	def "Successful login when going to the login page directly"() {		
 		when: 'I enter the correct credentials'
 		to LoginPage
+        waitFor{
+            at LoginPage
+        }
 		username = "admin"
 		password = "password"
 		submitButton.click(DashboardPage)
