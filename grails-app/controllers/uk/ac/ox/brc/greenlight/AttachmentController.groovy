@@ -37,9 +37,10 @@ class AttachmentController {
         if(!attachment)
         {
             render "not found"
+            return
         }
 
-        if(!attachment.consentForm)
+        if(attachment && !(attachment.consentForm))
         {
             attachment.delete flush:true
             def result=[id:attachment.id, status:'success'];
@@ -47,7 +48,8 @@ class AttachmentController {
         }
         else
         {
-            render 'Can not delete it as it\'s annotated'
+            render "Can not delete it as it's annotated"
+            return
         }
     }
 
@@ -100,7 +102,6 @@ class AttachmentController {
 							attachmentService.save(attachment)
 							attachments.add(attachment)
 						}
-
 					}
 					else{
 						def attachment= new Attachment();

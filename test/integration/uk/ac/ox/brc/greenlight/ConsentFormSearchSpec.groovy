@@ -1,12 +1,18 @@
 package uk.ac.ox.brc.greenlight
 
 import com.sun.jna.Structure
+import grails.test.mixin.Mock
+import grails.test.mixin.TestFor
 import grails.test.spock.IntegrationSpec
+import groovy.mock.interceptor.MockFor
+import spock.lang.Specification
 import spock.lang.Unroll
 
 /**
  * Created by Soheil on 13/03/2014.
  */
+
+
 class ConsentFormSearchSpec extends  IntegrationSpec{
 
     def consentFormController= new ConsentFormController()
