@@ -23,6 +23,10 @@ class ConsentForm {
             responses:Response
     ]
 
+    static mapping = {
+        responses cascade: 'all-delete-orphan'
+    }
+
     static constraints = {
         attachedFormImage nullable: true //remove this later :)
         formID matches: '[a-zA-Z]{3}\\d{5}'
