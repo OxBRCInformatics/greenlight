@@ -59,7 +59,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         ]).save(flash:true)
     }
 
-    private void initParams(consentFormTemplate,attachment)
+    private void initParams(consentFormTemplate,attachment,formId)
     {
         consentFormController.params['questionsSize'] = consentFormTemplate.questions.size();
         consentFormTemplate.getQuestions().eachWithIndex() { obj,index ->
@@ -80,7 +80,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
                         consentDate_year:"2014",
                         consentDate_month:"1",
                         consentDate_day:"1",
-                        formID: "GEN12345",
+                        formID: formId,
                         consentTakerName: 'ABC'
                 ],
                 attachmentId:attachment.id.toString(),
@@ -113,7 +113,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         def patientCountBefore = Patient.count();
 
         when: "Save action is executed, consentForm is created"
-        initParams(ConsentFormTemplate.first(),Attachment.first())
+        initParams(ConsentFormTemplate.first(),Attachment.first(),"GEN97890")
         consentFormController.save()
 
         then:
@@ -126,7 +126,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         def consentFormCountBefore = ConsentForm.count();
 
         when: "Save action is executed, consentForm is created"
-        initParams(ConsentFormTemplate.first(),Attachment.first())
+        initParams(ConsentFormTemplate.first(),Attachment.first(),"GEN12349")
         consentFormController.save()
 
         then:
@@ -147,7 +147,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         def consentTemplate = ConsentFormTemplate.first()
 
         when: "Save action is executed, attachment is updated"
-        initParams(consentTemplate,attachment)
+        initParams(consentTemplate,attachment,"GEN78905")
         consentFormController.save()
 
         then:
@@ -171,8 +171,55 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         consentFormController.response.redirectedUrl =="/consentForm/list"
     }
 
-    void "Test that Delete actions, deletes the attachment which is not annotated yet"()
+    void "Test that FormIdCheck will return correct JSON value when no formId is passed"()
     {
+        when:"calling checkFormId"
+        consentFormController.request.contentType =""
+        consentFormController.response.format="json"
+        consentFormController.checkFormId();
 
+        then:"it returns -1 for non-Existing formId"
+        consentFormController.response
+        consentFormController.response.json.consentFormId == -1
     }
+
+
+    void "Test that FormIdCheck will return correct JSON value when formId does not exists"()
+    {
+        when:"calling checkFormId"
+        consentFormController.params["id"] ="123"
+        consentFormController.response.format="json"
+        consentFormController.checkFormId();
+
+        then:"it returns -1 for formId which does not exist"
+        consentFormController.response.json
+        consentFormController.response.json.consentFormId == -1
+    }
+
+
+    void "Test that FormIdCheck will return the right consentFormId when formId exists"()
+    {
+        when:"calling checkFormId"
+        def consentFormId = ConsentForm.list()[0].id
+        consentFormController.response.format="json"
+        consentFormController.params["id"] ="GEN12345"
+        consentFormController.checkFormId();
+
+        then:"it returns correct consentForm.Id"
+        consentFormController.response
+        consentFormController.response.json.consentFormId == consentFormId
+    }
+
+    void "Test that FormIdCheck will return -1 when formId ends with 00000"()
+    {
+        when:"calling checkFormId"
+        consentFormController.response.format="json"
+        consentFormController.params["id"] ="GEN00000"
+        consentFormController.checkFormId();
+
+        then:"it returns correct consentForm.Id"
+        consentFormController.response
+        consentFormController.response.json.consentFormId == -1
+    }
+
 }

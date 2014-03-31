@@ -19,13 +19,6 @@ class ConsentFormService {
         def formIdTo = (params["formIdTo"]).trim();
 
 
-
-
-
-
-
-
-
         def criteria = ConsentForm.createCriteria()
         def results = criteria.list {
             if(consentDateFrom && consentDateTo){
@@ -107,4 +100,15 @@ class ConsentFormService {
         return result;
     }
 
+    def getConsentFormByFormId(formId)
+    {
+        if(formId.endsWith("00000"))
+            return  -1;
+
+        def consent = ConsentForm.find("from ConsentForm as c where c.formID = :formId",[formId:formId]);
+        if(consent){
+            return consent.id
+        }
+        return -1;
+    }
 }

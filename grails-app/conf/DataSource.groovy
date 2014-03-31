@@ -33,7 +33,7 @@ environments {
             dbCreate = "update"
             url = "jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE"
 
-//             pooled = true
+//            pooled = true
 //            dbCreate = "update"
 //            url = "jdbc:postgresql://localhost:5432/greenlight2"
 //            driverClassName = "org.postgresql.Driver"

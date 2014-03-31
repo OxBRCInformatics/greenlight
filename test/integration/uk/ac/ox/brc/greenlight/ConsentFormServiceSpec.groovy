@@ -10,7 +10,7 @@ import spock.lang.Specification
  */
 class ConsentFormServiceSpec extends IntegrationSpec {
 
-    def consentFormService
+    def   consentFormService
 
     def setup(){
         def attachment= new Attachment(id: 1, fileName: 'a.jpg', dateOfUpload: new Date(),
@@ -65,4 +65,44 @@ class ConsentFormServiceSpec extends IntegrationSpec {
         Response.count() == 0
         Patient.count() == 1
     }
+
+    def "Check getConsentFormByFormId for not-available FormId "()
+    {
+        when:"CheckFormId is called for a non-existing formId"
+        def formId = "123"
+        def consentId = consentFormService.getConsentFormByFormId(formId);
+
+        then:"then -1 will be returned as not available"
+        consentId == -1
+    }
+
+
+    def "Check getConsentFormByFormId for available FormId "()
+    {
+        when:"CheckFormId is called for a existing formId"
+        def formId =ConsentForm.list()[0].formID
+        def actualConsentId = ConsentForm.list()[0].id
+        def consentId = consentFormService.getConsentFormByFormId(formId);
+
+        then:"then the actual consent id should be returned"
+        consentId != -1
+        consentId == actualConsentId
+    }
+
+
+    def "Check getConsentFormByFormId for general FormId ends with 00000"()
+    {
+        when:"CheckFormId is called for a general FormId"
+        def formId = "GEN00000"
+        def consentId = consentFormService.getConsentFormByFormId(formId);
+
+        then:"then it returns -1"
+        consentId == -1
+    }
+
+
+
+
+
+
 }
