@@ -1,15 +1,19 @@
 package uk.ac.ox.brc.greenlight
 
+import grails.rest.RestfulController
+
 /**
  * API endpoint for retrieving the consent status for a patient. The patient
  * could be queried for by NHS number or hospital number.
  */
-class ConsentStatusController {
+class ConsentStatusController{
 
 	static defaultAction = "getStatus"
 	static allowedMethods = [ getStatus: "GET"]
 
-	def consentStatusService
+	def consentFormService
+	def consentEvaluationService
+	def patientService
 
 	/**
 	 * Get the consent status for a patient. Initially looks up NHS number,
@@ -22,7 +26,7 @@ class ConsentStatusController {
     def getStatus() {
 
 		def response = [_self: request.forwardURI]
-		def lookupId = params.lookupId
+		String lookupId = params.lookupId
 
 		// If we don't have an ID to lookup, respond with an error
 		if(!lookupId){
@@ -32,15 +36,30 @@ class ConsentStatusController {
 			return
 		}
 
-		// We entrust lookups to the consent status service
-		def consentStatus = consentStatusService.getConsentStatus(lookupId)
-		if(!consentStatus){
+		// Attempt to find the patient
+		def patient = patientService.findByNHSOrHospitalNumber(lookupId)
+		if(!patient){
 			response.errors = true
 			response.message = "The lookup ID could not be found"
 		}else{
+			// Patient exists, let's get the consents
 			response.errors = false
-			response.nhsNumber = "1234"
-			response.consent = consentStatus
+			response.nhsNumber = patient.nhsNumber
+			response.hospitalNumber = patient.hospitalNumber
+			response.consents = []
+
+			def consents = consentFormService.getLatestConsentForms(patient)
+			consents.each{ consentForm ->
+				response.consents.push([
+						form: [
+						        name: consentForm.template.name,
+								version: consentForm.template.version,
+						],
+						lastCompleted: consentForm.consentDate,
+						consentStatus: consentEvaluationService.getConsentStatus(consentForm).name()
+				])
+			}
+
 		}
 		respond response
 	}

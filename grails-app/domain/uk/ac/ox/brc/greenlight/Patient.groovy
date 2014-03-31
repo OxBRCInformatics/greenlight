@@ -1,5 +1,8 @@
 package uk.ac.ox.brc.greenlight
 
+import groovy.transform.EqualsAndHashCode
+
+@EqualsAndHashCode
 class Patient {
 
     String givenName
@@ -19,6 +22,7 @@ class Patient {
         familyName nullable: true
         dateOfBirth nullable: true
         hospitalNumber nullable: true
+		consents nullable: true
     }
 
 }

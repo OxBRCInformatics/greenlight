@@ -5,6 +5,17 @@ import grails.transaction.Transactional
 
 class ConsentFormService {
 
+	/**
+	 * Get the latest consent form for each type for a specific patient.
+	 * Returns an empty list if no consent forms have been entered.
+	 * @param A list of consent forms containing the latest for each ConsentFormTemplate
+	 */
+	Collection getLatestConsentForms(Patient patient){
+		// FIXME filter by date and type
+		// FIXME with tests
+		return patient.consents
+	}
+
     def search(params)
     {
         def nhsNumber = params["nhsNumber"];

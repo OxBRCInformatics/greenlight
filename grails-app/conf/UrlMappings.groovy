@@ -7,7 +7,7 @@ class UrlMappings {
             }
         }
 
-		"/api/consent/${nhsnumber}"(controller: "consentStatus")
+		"/api/consents/${lookupId}?(.${format})?"(controller: "consentStatus")
         "/consentForm/search" (view:"consentForm/search")
         "/consentForm/cuttingRoom" (view:"consentForm/cuttingRoom")
 
