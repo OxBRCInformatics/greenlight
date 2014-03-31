@@ -8,8 +8,7 @@ class AttachmentService {
 
 
     def getAllAttachments() {
-       Attachment.list(sort: 'dateOfUpload', order: 'desc');
-
+      Attachment.list(sort: 'dateOfUpload', order: 'desc');
 //        def result=
 //        Attachment.createCriteria().list() {
 //            resultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP)
@@ -17,9 +16,8 @@ class AttachmentService {
 //                property 'dateOfUpload'
 //                property 'attachmentType'
 //                property 'fileName'
-//                property  'consentForm'
+//                property 'id'
 //            }
-//
 //            sort: 'dateOfUpload'
 //            order: 'desc'
 //        }

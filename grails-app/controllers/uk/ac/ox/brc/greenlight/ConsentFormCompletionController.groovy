@@ -181,7 +181,13 @@ class ConsentFormCommand {
         def consentDateDay = params.commandInstance.consentForm.consentDate_day;
         consentForm.consentDate = Date.parse("yyyy/MM/dd",consentDateYear+"/"+consentDateMonth+"/"+consentDateDay);
 
-        consentForm.responses = [];
+        //if it is in update mode, delete all old responses
+        if(consentForm.responses){
+            consentForm.responses.clear()
+        }
+        else{
+            consentForm.responses = [];
+        }
 
         //Load Selected Consent Template
         if (params.commandInstance.consentFormTemplateId != null && params.commandInstance.consentFormTemplateId != "-1") {
