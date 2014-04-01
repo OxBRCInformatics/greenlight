@@ -14,9 +14,9 @@
     <div class="row">
         <div class="span12">
                <h3>Uploaded Consent Form</h3>
-
                     <div class="table-responsive">
                         <g:link action="create" class="btn btn-primary btn-sm" >Add Forms</g:link>
+                        <g:link action="export" controller="ConsentForm" class="btn btn-primary btn-sm" >Export to CSV</g:link>
                     <table class="table  table-hover table-bordered " >
                         <thead>
                         <tr>

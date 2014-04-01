@@ -102,7 +102,67 @@ class ConsentFormServiceSpec extends IntegrationSpec {
 
 
 
+    def "exportToCSV returns CSV content with Headers"()
+    {
+        when:"exportToCSV is called"
+        String csv = consentFormService.exportToCSV()
+        csv.readLines().size() != 0
+        def headers=csv.readLines()[0].tokenize(",")
+
+        then:"the first row is header"
+        headers.size() == 13
+        headers[0] == "consentId"
+        headers[1] == "consentDate"
+        headers[2] == "consentformID"
+        headers[3] == "consentTakerName"
+        headers[4] == "formStatus"
+        headers[5] == "patientNHS"
+        headers[6] == "patientMRN"
+        headers[7] == "patientName"
+        headers[8] == "patientSurName"
+        headers[9] =="patientDateOfBirth"
+        headers[10] == "templateName"
+        headers[11] == "consentResult"
+        headers[12] == "responses"
+    }
 
 
+    def "exportToCSV returns consent in CSV format"()
+    {
+        when:"exportToCSV is called"
+        String csv = consentFormService.exportToCSV()
+        List<ConsentForm> consents = ConsentForm.list()
 
+
+        then:"it returns contents in csv format"
+        csv.readLines().size() == consents.size() + 1 //1 for Header row
+        csv.readLines().eachWithIndex { line, index ->
+            //the first line is Header
+            if(index == 0)
+                return;
+
+            def values = line.tokenize(",")
+            values.size() != 0
+            def consent =  consents[index-1]
+            assert consent.id.toString() == values[0]
+            assert consent.consentDate.format("yyyy-MMM-dd") == values[1]
+            assert consent.formID.toString() == values[2]
+            assert consent.consentTakerName == values[3]
+            assert consent.formStatus.toString() == values[4]
+            assert consent.patient.nhsNumber.toString() == values[5]
+            assert consent.patient.hospitalNumber.toString() == values[6]
+            assert consent.patient.givenName.toString() == values[7]
+            assert consent.patient.familyName.toString() == values[8]
+            assert consent.patient.dateOfBirth.format("yyyy-MMM-dd") == values[9]
+            assert consent.template.namePrefix.toString() == values[10]
+            assert " "== values[11]
+
+            def resString = ""
+            consent.responses.each { response->
+                resString += response.answer.toString() +"|"
+            }
+            assert resString == values[12]
+
+        }
+    }
 }

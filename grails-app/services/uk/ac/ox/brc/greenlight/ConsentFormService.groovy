@@ -111,4 +111,54 @@ class ConsentFormService {
         }
         return -1;
     }
+
+
+    def exportToCSV()
+    {
+        def result=""
+        def headers =[
+                    "consentId",
+                    "consentDate",
+                    "consentformID",
+                    "consentTakerName",
+                    "formStatus",
+                    "patientNHS",
+                    "patientMRN",
+                    "patientName",
+                    "patientSurName",
+                    "patientDateOfBirth",
+                    "templateName",
+                    "consentResult",
+                    "responses",
+                    ];
+        headers.each { header->
+            result = result + header + ",";
+        }
+        result = result + "\r\n"
+
+        def consents= ConsentForm.list()
+        consents.each { consent ->
+            result += consent.id.toString() + ","
+            result += consent.consentDate.format("yyyy-MMM-dd") + ","
+            result += consent.formID.toString() + ","
+            result = result + consent.consentTakerName.toString() + ","
+            result = result + consent.formStatus.toString() + ","
+            result = result + consent.patient.nhsNumber.toString() + ","
+            result = result + consent.patient.hospitalNumber.toString() + ","
+            result = result + consent.patient.givenName.toString() + ","
+            result = result + consent.patient.familyName.toString() + ","
+            result = result + consent.patient.dateOfBirth.format("yyyy-MMM-dd") + ","
+            result = result + consent.template.namePrefix.toString() + ","
+            result = result + " " + ","
+
+            def resString = ""
+            consent.responses.each { response->
+                resString += response.answer.toString() +"|"
+            }
+            result = result + resString + ","
+            result = result + "\r\n"
+        }
+        return result
+    }
+
 }
