@@ -67,14 +67,35 @@ class ConsentEvaluationServiceSpec extends Specification {
         10.times {
             consentForm.addToResponses(new Response(answer:Response.ResponseValue.YES))
         }
-
-
         ConsentStatus result = service.getConsentStatus(consentForm)
 
         then:"it returns FULL_CONSENT status"
         result == ConsentStatus.FULL_CONSENT
     }
 
+	void "The first item can be anything, and still return FULL_CONSENT"(){
+
+		given:
+		ConsentForm consentForm = new ConsentForm();
+		consentForm.addToResponses(new Response(answer:firstResponse))
+
+		otherResponses.each { answer ->
+			consentForm.addToResponses(new Response(answer:answer))
+		}
+
+		ConsentStatus result = service.getConsentStatus(consentForm)
+
+		expect: "consent to be granted if the first item is anything, but the rest are YES"
+		result == expectedResult
+
+		where:
+		firstResponse 					| expectedResult				| otherResponses
+		Response.ResponseValue.NO		| ConsentStatus.NON_CONSENT		| [Response.ResponseValue.YES, Response.ResponseValue.NO, Response.ResponseValue.NO, Response.ResponseValue.NO]
+		Response.ResponseValue.NO		| ConsentStatus.FULL_CONSENT	| [Response.ResponseValue.YES, Response.ResponseValue.YES, Response.ResponseValue.YES, Response.ResponseValue.YES]
+		Response.ResponseValue.BLANK	| ConsentStatus.FULL_CONSENT	| [Response.ResponseValue.YES, Response.ResponseValue.YES, Response.ResponseValue.YES, Response.ResponseValue.YES]
+		Response.ResponseValue.AMBIGUOUS| ConsentStatus.FULL_CONSENT	| [Response.ResponseValue.YES, Response.ResponseValue.YES, Response.ResponseValue.YES, Response.ResponseValue.YES]
+
+	}
 
 
 }
