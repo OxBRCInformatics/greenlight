@@ -114,4 +114,38 @@ class ConsentEvaluationServiceSpec extends Specification {
 		CONSENT			| [NO, YES, NO, NO, NO]			| [0, 1, 2, 3 ,4]
 		CONSENT			| [YES, YES, YES, YES, YES]		| [0, 1, 2, 3 ,4]
 	}
+
+	@Unroll
+	void "If there are questions with a 'labelIfNotYes' attribute, we get those restrictions back from the evaluator"(){
+
+		def questions = []
+
+		ConsentFormTemplate formTemplate = new ConsentFormTemplate(questions: questions)
+		ConsentForm consentForm = new ConsentForm(template: formTemplate);
+		responses.eachWithIndex { answer, i ->
+			Question q = new Question(optional: false, labelIfNotYes: labelIfNotYes[i])
+			questions.push(q)
+			consentForm.addToResponses(new Response(answer:answer, question: q))
+		}
+		def consent = service.getConsentStatus(consentForm)
+		def labels = service.getConsentLabels(consentForm)
+
+		expect: "consent to be granted if the first item is anything, but the rest are YES"
+		consent == expectedConsent
+		labels == expectedLabels
+
+		where:
+		expectedConsent	| expectedLabels		| responses		      				| labelIfNotYes
+		CONSENT			| []					| [YES, YES, YES, YES, YES]   		| [null, null, null, null, null]
+		NO_CONSENT		| []					| [YES, YES, NO, YES, YES]   		| [null, null, null, null, null]
+		NO_CONSENT		| ["A"]					| [NO, YES, YES, YES, YES]   		| ["A", null, null, null, null]
+		NO_CONSENT		| ["A"]					| [NO, YES, NO, YES, YES]   		| ["A", null, null, null, null]
+		CONSENT			| []					| [YES, YES, YES, YES, YES]   		| ["A", null, null, null, null]
+		NO_CONSENT		| []					| [YES, YES, NO, YES, YES]   		| ["A", null, null, null, null]
+		NO_CONSENT		| ["A"]					| [NO, YES, YES, YES, YES]   		| ["A", null, "B", null, null]
+		NO_CONSENT		| ["A", "B"]			| [NO, YES, NO, YES, YES]  			| ["A", null, "B", null, null]
+		NO_CONSENT		| ["B"]					| [YES, YES, NO, YES, YES]  		| ["A", null, "B", null, null]
+		NO_CONSENT		| ["A"]					| [NO, YES, NO, YES, YES]  			| ["A", null, "A", null, null]
+		NO_CONSENT		| ["A"]					| [YES, YES, NO, YES, YES]  		| ["A", null, "A", null, null]
+	}
 }
