@@ -1,5 +1,8 @@
 package uk.ac.ox.brc.greenlight
 
+import groovy.transform.EqualsAndHashCode
+
+@EqualsAndHashCode
 class ConsentForm {
 
     Attachment attachedFormImage

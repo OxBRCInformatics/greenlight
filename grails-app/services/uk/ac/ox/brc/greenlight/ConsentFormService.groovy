@@ -11,9 +11,18 @@ class ConsentFormService {
 	 * @param A list of consent forms containing the latest for each ConsentFormTemplate
 	 */
 	Collection getLatestConsentForms(Patient patient){
-		// FIXME filter by date and type
-		// FIXME with tests
-		return patient.consents
+
+		// Store as a map of ConsentFormTemplate:ConsentForm pairs
+		Map<ConsentFormTemplate, ConsentForm> latestTests = [:]
+
+		// Find the max date for each form template
+		patient.consents.each{ consent ->
+			// Only update the map if the key doesn't exist or the new value is newer than the old value
+			if(!latestTests.containsKey(consent.template) || consent.consentDate > latestTests[consent.template].consentDate ){
+				latestTests[consent.template] = consent
+			}
+		}
+		return latestTests.values() as List
 	}
 
     def search(params)
