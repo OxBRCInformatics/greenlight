@@ -7,7 +7,7 @@
 
 <g:hiddenField name="commandInstance.attachmentId" value="${commandInstance?.attachment?.id}"></g:hiddenField>
 <g:hiddenField name="commandInstance.patient.id" value="${commandInstance?.patient?.id}"></g:hiddenField>
-<g:hiddenField name="commandInstance.consentForm.id" value="${commandInstance?.consentForm?.id}"></g:hiddenField>
+<g:hiddenField name="commandInstance.consentForm.id" id="commandInstance.consentForm.id" value="${commandInstance?.consentForm?.id}"></g:hiddenField>
 
 
 
@@ -26,14 +26,14 @@
                             class="form-control  ${hasErrors(bean: patient, field: 'nhsNumber', 'invalidInput')}"
                             id="commandInstance.patient.nhsNumber" name="commandInstance.patient.nhsNumber"
                             value="${commandInstance?.patient?.nhsNumber}"
-                            placeholder="NHS number like 1234567890"/>
+                            placeholder="NHS number like 1234567890" tabindex="1" />
                 </div>
 
                 <label for="commandInstance.patient.givenName" class="required">First Name</label>
                 <g:textField
                         class="form-control ${hasErrors(bean: patient, field: 'givenName', 'invalidInput')}"
                         name="commandInstance.patient.givenName" value="${commandInstance?.patient?.givenName}"
-                        placeholder="First Name"/>
+                        placeholder="First Name" tabindex="4"/>
 
             </div>
 
@@ -43,7 +43,7 @@
                         class="form-control  ${hasErrors(bean: patient, field: 'familyName', 'invalidInput')}"
                         id="commandInstance.patient.familyName" name="commandInstance.patient.familyName"
                         value="${commandInstance?.patient?.familyName}"
-                        placeholder="Last Name"/>
+                        placeholder="Last Name" tabindex="3"/>
             </div>
 
             <div class="form-group">
@@ -52,7 +52,7 @@
                              id="commandInstance.consentForm.consentTakerName"
                              class="form-control  ${hasErrors(bean: consentForm, field: 'consentTakerName', 'invalidInput')}"
                              value="${commandInstance?.consentForm?.consentTakerName}"
-                             placeholder="Enter Consent Taker's Name"/>
+                             placeholder="Enter Consent Taker's Name" tabindex="6"/>
             </div>
 
             <div class="form-group">
@@ -62,7 +62,7 @@
                               relativeYears="[-100..0]"
                               value="${commandInstance?.patient?.dateOfBirth}"
                               placeholder="Date of Birth"
-                              precision="day"/>
+                              precision="day" tabindex="5"/>
             </div>
 
         </div>
@@ -74,7 +74,7 @@
                         class="form-control  ${hasErrors(bean: patient, field: 'hospitalNumber', 'invalidInput')}"
                         id="commandInstance.patient.hospitalNumber" name="commandInstance.patient.hospitalNumber"
                         value="${commandInstance?.patient?.hospitalNumber}"
-                        placeholder="Hospital Number"/>
+                        placeholder="Hospital Number" tabindex="2"/>
             </div>
 
             <div class="form-group">
@@ -85,8 +85,8 @@
                         class="form-control  ${hasErrors(bean: consentForm, field: 'formID', 'invalidInput')}"
                         id="commandInstance.consentForm.formID" name="commandInstance.consentForm.formID"
                         value="${commandInstance?.consentForm?.formID}"
-                        placeholder="Consent Form Id like GEN12345"
-                        onblur="checkDuplicate()"/>
+                        placeholder="Consent Form Id like GEN12345" tabindex="8"
+                         />
 
             </div>
 
@@ -97,7 +97,7 @@
                               name="commandInstance.consentForm.consentDate"
                               value="${commandInstance?.consentForm?.consentDate}"
                               placeholder="Consent Date"
-                              precision="day"/>
+                              precision="day" tabindex="7"/>
             </div>
 
             <div class="form-group">
@@ -201,7 +201,11 @@
 
                    $("input[id='commandInstance.consentForm.formID']").rules('remove');
                    var rule = new RegExp("^"+data.namePrefix+"\\d{5}$");
-                   $("input[id='commandInstance.consentForm.formID']").rules('add',{required: true,regex:rule });
+                   $("input[id='commandInstance.consentForm.formID']").rules('add',{
+                            required: true,
+                            regex:rule ,
+                            checkDuplicateFormId:true
+                   });
 
             }
         });
@@ -242,33 +246,77 @@
 
     }
 
+
+       function getConsentIdByFormId()
+    {
+        var ajaxLink= "${createLink(action:'checkFormId', controller:'ConsentFormCompletion')}";
+        var returnedConsentId
+        $.ajax({
+            type: 'POST',
+            url: ajaxLink+"/"+value+".json",
+            async:false,
+            success: function (data) {
+                    debugger;
+                    returnedConsentId = data.consentFormId
+                    return
+                    }
+                })
+
+        debugger;
+        return returnedConsentId;
+    }
+
+
+
     $(function(){
 
-%{--$.validator.addMethod(--}%
-%{--"checkDuplicateFormId",--}%
-%{--function(value, element) {--}%
+        $.validator.addMethod(
+                    "checkDuplicateFormId",
+                        function(value, element) {
 
-%{--var link= "${createLink(action:'show', controller:'ConsentFormCompletion')}";--}%
-%{--$.ajax({--}%
-%{--type: 'POST',--}%
-%{--url: link+"/"+value+".json",--}%
-%{--success: function (data) {--}%
-%{--$('#templatePrefix').html(" ("+data.namePrefix+")");--}%
-%{--var placeholder= "Consent Form Id like "+data.namePrefix+"12345";--}%
-%{--$("input[id='commandInstance.consentForm.formID']").attr('placeholder',placeholder);--}%
-%{--//$("input[id='commandInstance.consentForm.formID']").val(data.namePrefix);--}%
+                            var actualConsentId   =$("input[id='commandInstance.consentForm.id']").val()
+                            var consentFormLink = "${createLink(action:'show', controller:'ConsentFormCompletion')}";
+                            var returnedConsentId = ""
+                            var ajaxLink= "${createLink(action:'checkFormId', controller:'ConsentFormCompletion')}";
+                            var returnedConsentId
+                            $.ajax({
+                                type: 'POST',
+                                url: ajaxLink+"/"+value+".json",
+                                async:false,
+                                success: function (data) {
+                                        returnedConsentId = data.consentFormId
+                                        return
+                                        }
+                                    })
 
-%{--$("input[id='commandInstance.consentForm.formID']").rules('remove');--}%
-%{--var rule = new RegExp("^"+data.namePrefix+"\\d{5}$");--}%
-%{--$("input[id='commandInstance.consentForm.formID']").rules('add',{required: true,regex:rule });--}%
+                            consentFormLink = consentFormLink + "/"+returnedConsentId;
+                            //add this element and use it again in error message
+                            $(element).data('consentFormLink',consentFormLink);
 
-%{--}--}%
-%{--});--}%
-%{--},--}%
-%{--"FormId already exists"--}%
-%{--);--}%
 
-    applyFormValidation();
-});
+                            //FormId is NOT used before
+                            if(returnedConsentId == -1)
+                                    return  true;
+
+                            //FormId is used before
+                            //and now it is a new consentForm
+                            if(returnedConsentId != -1 && actualConsentId == null)
+                                    return false;
+
+                            //FormId is used before
+                            //and now it is an edit mode for a consentForm
+                            if(returnedConsentId != -1 && returnedConsentId != actualConsentId)
+                                     return false
+
+                            return true
+                          } ,
+                           function(params, element) {
+                               return "<a target='blank' href='"+$(element).data('consentFormLink')+"'>Form Id<a/> already used!";}
+                         );
+
+       applyFormValidation();
+ });
+
+
 
 </g:javascript>

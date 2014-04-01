@@ -39,13 +39,6 @@ class ConsentFormService {
         def formIdTo = (params["formIdTo"]).trim();
 
 
-
-
-
-
-
-
-
         def criteria = ConsentForm.createCriteria()
         def results = criteria.list {
             if(consentDateFrom && consentDateTo){
@@ -125,6 +118,67 @@ class ConsentFormService {
 
         }
         return result;
+    }
+
+    def getConsentFormByFormId(formId)
+    {
+        if(formId.endsWith("00000"))
+            return  -1;
+
+        def consent = ConsentForm.find("from ConsentForm as c where c.formID = :formId",[formId:formId]);
+        if(consent){
+            return consent.id
+        }
+        return -1;
+    }
+
+
+    def exportToCSV()
+    {
+        def result=""
+        def headers =[
+                    "consentId",
+                    "consentDate",
+                    "consentformID",
+                    "consentTakerName",
+                    "formStatus",
+                    "patientNHS",
+                    "patientMRN",
+                    "patientName",
+                    "patientSurName",
+                    "patientDateOfBirth",
+                    "templateName",
+                    "consentResult",
+                    "responses",
+                    ];
+        headers.each { header->
+            result = result + header + ",";
+        }
+        result = result + "\r\n"
+
+        def consents= ConsentForm.list()
+        consents.each { consent ->
+            result += consent.id.toString() + ","
+            result += consent.consentDate.format("dd-MM-yyyy") + ","
+            result += consent.formID.toString() + ","
+            result = result + consent.consentTakerName.toString() + ","
+            result = result + consent.formStatus.toString() + ","
+            result = result + consent.patient.nhsNumber.toString() + ","
+            result = result + consent.patient.hospitalNumber.toString() + ","
+            result = result + consent.patient.givenName.toString() + ","
+            result = result + consent.patient.familyName.toString() + ","
+            result = result + consent.patient.dateOfBirth.format("dd-MM-yyyy") + ","
+            result = result + consent.template.namePrefix.toString() + ","
+            result = result + " " + ","
+
+            def resString = ""
+            consent.responses.each { response->
+                resString += response.answer.toString() +"|"
+            }
+            result = result + resString + ","
+            result = result + "\r\n"
+        }
+        return result
     }
 
 }

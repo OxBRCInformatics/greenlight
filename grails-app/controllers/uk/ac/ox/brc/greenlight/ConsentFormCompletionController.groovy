@@ -36,6 +36,19 @@ class ConsentFormCompletionController {
         commandObj.patient.validate()
         commandObj.consentForm.validate()
 
+        //check if formId is used before
+        //this is checked in ClientSide as well
+        def consentId = consentFormService.getConsentFormByFormId(commandObj.consentForm.formID);
+        if ( (consentId  != -1 && commandObj.consentForm.id == null) ||
+             (consentId != -1 && commandObj.consentForm.id != consentId) )
+        {
+            flash.error = "Form Id already used!"
+            render view: 'create', model: [commandInstance: commandObj]
+            return
+        }
+
+
+
         if (commandObj.patient.hasErrors() || commandObj.consentForm.hasErrors()) {
             flash.error = "Error in input"
 
@@ -145,6 +158,18 @@ class ConsentFormCompletionController {
         return
     }
 
+
+    def checkFormId()
+    {
+        def formId = params["id"]
+        //default value , so if it can not find the consent formId, it returns -1 as ID
+        def model=[consentFormId:-1]
+
+        if(formId != null){
+            model.consentFormId = consentFormService.getConsentFormByFormId(formId)
+        }
+        respond model
+    }
 
 }
 
