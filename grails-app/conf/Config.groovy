@@ -182,6 +182,10 @@ grails{
                     '/logout/*':    		['IS_AUTHENTICATED_ANONYMOUSLY'],
                     '/register/*':    		['IS_AUTHENTICATED_ANONYMOUSLY'],
 
+					// Allow anonymous access to cut up room page and results
+					'/consentForm/checkConsent':	['IS_AUTHENTICATED_ANONYMOUSLY'],
+					'/consentForm/cuttingRoom': 	['IS_AUTHENTICATED_ANONYMOUSLY'],
+
                     // Need to be logged in for anything else!
                     '/**':         			["hasAnyRole('ROLE_USER', 'ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY']
             ]
