@@ -11,6 +11,7 @@ import spock.lang.Specification
 class ConsentFormServiceSpec extends IntegrationSpec {
 
     def   consentFormService
+    def   consentEvaluationService
 
     def setup(){
         def attachment= new Attachment(id: 1, fileName: 'a.jpg', dateOfUpload: new Date(),
@@ -155,14 +156,15 @@ class ConsentFormServiceSpec extends IntegrationSpec {
             assert consent.patient.familyName.toString() == values[8]
             assert consent.patient.dateOfBirth.format("dd-MM-yyyy") == values[9]
             assert consent.template.namePrefix.toString() == values[10]
-            assert " "== values[11]
+
+            ConsentStatus status=  consentEvaluationService.getConsentStatus(consent)
+            assert status.toString() == values[11]
 
             def resString = ""
             consent.responses.each { response->
                 resString += response.answer.toString() +"|"
             }
             assert resString == values[12]
-
         }
     }
 }

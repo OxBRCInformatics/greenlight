@@ -5,6 +5,7 @@ import grails.transaction.Transactional
 
 class ConsentFormService {
 
+    def consentEvaluationService
 	/**
 	 * Get the latest consent form for each type for a specific patient.
 	 * Returns an empty list if no consent forms have been entered.
@@ -161,24 +162,25 @@ class ConsentFormService {
             result += consent.id.toString() + ","
             result += consent.consentDate.format("dd-MM-yyyy") + ","
             result += consent.formID.toString() + ","
-            result = result + consent.consentTakerName.toString() + ","
-            result = result + consent.formStatus.toString() + ","
-            result = result + consent.patient.nhsNumber.toString() + ","
-            result = result + consent.patient.hospitalNumber.toString() + ","
-            result = result + consent.patient.givenName.toString() + ","
-            result = result + consent.patient.familyName.toString() + ","
-            result = result + consent.patient.dateOfBirth.format("dd-MM-yyyy") + ","
-            result = result + consent.template.namePrefix.toString() + ","
-            result = result + " " + ","
+            result += consent.consentTakerName.toString() + ","
+            result += consent.formStatus.toString() + ","
+            result += consent.patient.nhsNumber.toString() + ","
+            result += consent.patient.hospitalNumber.toString() + ","
+            result += consent.patient.givenName.toString() + ","
+            result += consent.patient.familyName.toString() + ","
+            result += consent.patient.dateOfBirth.format("dd-MM-yyyy") + ","
+            result += consent.template.namePrefix.toString() + ","
+
+            ConsentStatus status=  consentEvaluationService.getConsentStatus(consent)
+            result += status.toString() + ","
 
             def resString = ""
             consent.responses.each { response->
                 resString += response.answer.toString() +"|"
             }
-            result = result + resString + ","
-            result = result + "\r\n"
+            result += resString + ","
+            result += "\r\n"
         }
         return result
     }
-
 }

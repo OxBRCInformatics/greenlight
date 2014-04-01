@@ -8,7 +8,7 @@ import spock.lang.Specification
  */
 @TestFor(ConsentFormService)
 @grails.test.mixin.Mock([ConsentForm, ConsentFormTemplate])
-class ConsentFormServiceSpec extends Specification {
+class ConsentFormServiceUnitSpec extends Specification {
 
 	static Date now = new Date();
 
