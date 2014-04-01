@@ -21,10 +21,13 @@ class ConsentEvaluationService {
        ConsentStatus result = ConsentStatus.FULL_CONSENT
 
        consentForm.responses.eachWithIndex { response, index ->
-           //The first question is not relevant for full consent, for ORB
-           if(response.answer != Response.ResponseValue.YES && index != 0){
-               result = ConsentStatus.NON_CONSENT
-           }
+		   // If we see a non-YES value
+		   if(response.answer != Response.ResponseValue.YES){
+
+			   if(!response.question.optional){
+			   	result = ConsentStatus.NON_CONSENT
+			   }
+		   }
        }
 
        return result

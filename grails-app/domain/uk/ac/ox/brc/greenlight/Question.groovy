@@ -3,6 +3,7 @@ package uk.ac.ox.brc.greenlight
 class Question {
 
     String name
+	Boolean optional = false
 
     static auditable = true
     static belongsTo = [
