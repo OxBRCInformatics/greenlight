@@ -51,8 +51,8 @@ class ConsentStatusControllerSpec extends Specification {
 				nhsNumber: patient.nhsNumber,
 				hospitalNumber: patient.hospitalNumber,
 				consents: [
-						[form: formTypes[0].id, lastCompleted: latestConsentForms[0].consentDate, consentStatus: ConsentStatus.FULL_CONSENT],
-						[form: formTypes[1].id, lastCompleted: latestConsentForms[1].consentDate, consentStatus: ConsentStatus.NON_CONSENT]
+						[form: [name: formTypes[0].name, version: formTypes[0].version],lastCompleted: latestConsentForms[0].consentDate, consentStatus: ConsentStatus.FULL_CONSENT.name()],
+						[form: [name: formTypes[1].name, version: formTypes[1].version], lastCompleted: latestConsentForms[1].consentDate, consentStatus: ConsentStatus.NON_CONSENT.name()]
 				]
 		]
 	}
