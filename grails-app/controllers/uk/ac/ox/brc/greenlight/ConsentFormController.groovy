@@ -2,7 +2,10 @@ package uk.ac.ox.brc.greenlight
 
 class ConsentFormController {
 
+	def consentEvaluationService
     def consentFormService
+	def patientService
+
 
     def find()
     {
@@ -10,12 +13,38 @@ class ConsentFormController {
         render view:"search", model:[consentForms:result]
     }
 
+	/**
+	 * Check the consent status for an NHS or hospital number.
+	 * @return
+	 */
+	def checkConsent(){
+		String lookupId = params.searchInput
+		def model = [searchInput: lookupId]
+		// If we don't have an ID to lookup, respond with an error
+		if(!lookupId){
+			model.errormsg = "A lookup ID must be provided for 'lookupId'"
+		}else{
+			// Attempt to find the patient
+			def patient = patientService.findByNHSOrHospitalNumber(lookupId)
+			if(!patient){
+				model.errormsg = "The lookup ID "+ lookupId +" could not be found"
+			}else{
+				// Patient exists, let's get the consents
+				def consents = consentFormService.getLatestConsentForms(patient)
+				model.consents = []
+				consents.each{ consentForm ->
+					model.consents.push([
+							form: [
+									name: consentForm.template.name,
+									version: consentForm.template.version,
+							],
+							lastCompleted: consentForm.consentDate,
+							consentStatus: consentEvaluationService.getConsentStatus(consentForm).name()
+					])
+				}
+			}
+		}
 
-
-    def checkConsent()
-    {
-        def result= consentFormService.checkConsent(params);
-        render view:"cuttingRoom", model:[result:result.consented,consentForm:result.consentForm, searchInput:params["searchInput"]]
-    }
-
+		render view:"cuttingRoom", model: model
+	}
 }

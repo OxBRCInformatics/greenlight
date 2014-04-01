@@ -15,7 +15,10 @@ class ConsentFormServiceSpec extends Specification {
 	def "Get the latest consent forms for a patient"() {
 
 		given:
-		def formTemplates = [new ConsentFormTemplate(name: "FORM1", namePrefix: "fm1"), new ConsentFormTemplate(name: "FORM2", namePrefix: "fm2")]
+		def formTemplates = [
+				new ConsentFormTemplate(name: "FORM1", namePrefix: "fm1", templateVersion: "1", questions: []),
+				new ConsentFormTemplate(name: "FORM2", namePrefix: "fm2", templateVersion: "1", questions: [])
+		]
 
 		def completedForms = [
 				new ConsentForm(template: formTemplates[0], consentDate: now-14), // 2 weeks ago
@@ -24,7 +27,7 @@ class ConsentFormServiceSpec extends Specification {
 				new ConsentForm(template: formTemplates[1], consentDate: now-2 ),
 				new ConsentForm(template: formTemplates[1], consentDate: now-5 ),
 				new ConsentForm(template: formTemplates[1], consentDate: now-2 ),
-				new ConsentForm(template: formTemplates[1], consentDate: now-3 ),
+				new ConsentForm(template: formTemplates[1], consentDate: now-3 )
 		]
 		def latestForms = [completedForms[1], completedForms[2]]
 
@@ -32,7 +35,8 @@ class ConsentFormServiceSpec extends Specification {
 		def returnedForms = service.getLatestConsentForms(new Patient(consents: completedForms))
 
 		then: "the most recent form for each type is returned"
-		// Handle both objects as lists
-		returnedForms == latestForms as List
+		returnedForms.size() == latestForms.size()
+		returnedForms.containsAll(latestForms)
+		latestForms.containsAll(returnedForms)
 	}
 }

@@ -16,45 +16,68 @@
 <body>
 
 <div class="centered well well-small grayBackground" >
+
+    <g:if test="${flash.message}">
     <div class="row">
         <div class="span6 offset3">
+                <div class="alert alert-info alert-block">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <p>${flash.message}</p>
+                </div>
+        </div>
+    </div>
+    </g:if>
+
+    <div class="row">
+        <div class="span6 offset3">
+            <div class="alert alert-info">
+                <div class="cuttingRoomInfoMessage" >Please enter NHS number or MRN</div>
+            </div>
             <g:form controller="consentForm" name="consentForm" action="checkConsent">
-                        <g:textField name="searchInput" id="searchInput" class="form-control boldInput" ></g:textField>
+                <g:textField name="searchInput" id="searchInput" class="form-control boldInput" ></g:textField>
             </g:form>
         </div>
     </div>
-
     <div class="row">
         <div class="span6 offset3">
 
-            <g:if test="${result!=null}">
-
-                 <g:if test="${consentForm!=null}">
-                     <g:if test="${result}">
-                        <div class="alert alert-success">
-                            <div class="boldMessage">Ref: ${searchInput}</div>
-                            <div class="boldMessage">is Consented.</div>
-                        </div>
-                    </g:if>
-                    <g:else>
-                        <div class="alert alert-danger">
-                            <div class="boldMessage">Ref: ${searchInput}</div>
-                            <div class="boldMessage">is Not Consented!</div>
-                        </div>
-                    </g:else>
-                 </g:if>
-                <g:else>
-                    <div class="alert alert-danger">
-                        <div class="boldMessage" >Ref: ${searchInput}</div>
-                        <div class="boldMessage">Not Found!</div>
-                    </div>
-                </g:else>
-            </g:if>
-            <g:else>
-                <div class="alert alert-info">
-                    <div class="cuttingRoomInfoMessage" >Please enter NHS number or MRN</div>
+            <g:if test="${errormsg}">
+                <div class="alert alert-error alert-block">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <h4>Error!</h4>
+                    <p>${errormsg}</p>
                 </div>
-            </g:else>
+            </g:if>
+
+            <g:if test="${searchInput}">
+                <g:if test="${consents}">
+                    Search for <span>${searchInput}:</span>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Consent Form</th>
+                                <th>Date consented</th>
+                                <th>Consent status</th>
+                                <th>Restrictions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <g:each var="consent" in="${consents}">
+                            <tr>
+                                <td>${consent.form.name} <small>(version: ${consent.form.version})</small></td>
+                                <td><g:formatDate format="dd-MM-yyyy" date="${consent.lastCompleted}"/></td>
+                                <g:if test="${consent.consentStatus == uk.ac.ox.brc.greenlight.ConsentStatus.FULL_CONSENT.name()}">
+                                    <td class="alert alert-info alert-block">${consent.consentStatus}</td>
+                                </g:if>
+                                <g:else>
+                                    <td class="alert alert-danger alert-block">${consent.consentStatus}</td>
+                                </g:else>
+                            </tr>
+                            </g:each>
+                        </tbody>
+                    </table>
+                </g:if>
+            </g:if>
         </div>
     </div>
 </div>
