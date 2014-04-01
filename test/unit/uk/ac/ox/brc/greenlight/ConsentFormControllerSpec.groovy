@@ -33,7 +33,7 @@ class ConsentFormControllerSpec extends Specification{
     def "Calling export action will return csv file with a correct Name"()
     {
         when:"calling export action"
-        def fileName ="consentForms-"+(new Date()).format("yyyy-MMM-dd")
+        def fileName ="consentForms-"+(new Date()).format("dd-MM-yyyy")
         controller.export()
 
         then:"consentFormService exportToCSV method should be called once"

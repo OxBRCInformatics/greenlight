@@ -139,7 +139,7 @@ class ConsentFormService {
         def consents= ConsentForm.list()
         consents.each { consent ->
             result += consent.id.toString() + ","
-            result += consent.consentDate.format("yyyy-MMM-dd") + ","
+            result += consent.consentDate.format("dd-MM-yyyy") + ","
             result += consent.formID.toString() + ","
             result = result + consent.consentTakerName.toString() + ","
             result = result + consent.formStatus.toString() + ","
@@ -147,7 +147,7 @@ class ConsentFormService {
             result = result + consent.patient.hospitalNumber.toString() + ","
             result = result + consent.patient.givenName.toString() + ","
             result = result + consent.patient.familyName.toString() + ","
-            result = result + consent.patient.dateOfBirth.format("yyyy-MMM-dd") + ","
+            result = result + consent.patient.dateOfBirth.format("dd-MM-yyyy") + ","
             result = result + consent.template.namePrefix.toString() + ","
             result = result + " " + ","
 

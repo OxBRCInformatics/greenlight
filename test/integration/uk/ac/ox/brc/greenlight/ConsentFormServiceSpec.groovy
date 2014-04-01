@@ -145,7 +145,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
             values.size() != 0
             def consent =  consents[index-1]
             assert consent.id.toString() == values[0]
-            assert consent.consentDate.format("yyyy-MMM-dd") == values[1]
+            assert consent.consentDate.format("dd-MM-yyyy") == values[1]
             assert consent.formID.toString() == values[2]
             assert consent.consentTakerName == values[3]
             assert consent.formStatus.toString() == values[4]
@@ -153,7 +153,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
             assert consent.patient.hospitalNumber.toString() == values[6]
             assert consent.patient.givenName.toString() == values[7]
             assert consent.patient.familyName.toString() == values[8]
-            assert consent.patient.dateOfBirth.format("yyyy-MMM-dd") == values[9]
+            assert consent.patient.dateOfBirth.format("dd-MM-yyyy") == values[9]
             assert consent.template.namePrefix.toString() == values[10]
             assert " "== values[11]
 
