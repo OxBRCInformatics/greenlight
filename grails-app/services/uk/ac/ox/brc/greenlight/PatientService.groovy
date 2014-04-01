@@ -24,16 +24,11 @@ class PatientService {
 	}
 
 	/**
-	 * Find a patient by their NHS or hospital numbers. Attempts NHS number
-	 * first, then falls back to hospital number.
+	 * Find a patient by their NHS or hospital numbers.
 	 * @param id The NHS number or Hospital Number
 	 * @return The patient object, or null if there was no match
 	 */
 	Patient findByNHSOrHospitalNumber(String patientNumber){
-		Patient patient = findByNHSNumber(patientNumber)
-		if(patient == null){
-			patient = findByHospitalNumber(patientNumber)
-		}
-		return patient
+		return Patient.findByNhsNumberOrHospitalNumber(patientNumber, patientNumber)
 	}
 }
