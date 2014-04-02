@@ -14,6 +14,7 @@ class ConsentEvaluationServiceSpec extends Specification {
 
 	static final NO_CONSENT = ConsentStatus.NON_CONSENT
 	static final CONSENT = ConsentStatus.FULL_CONSENT
+	static final CONSENT_LABELS = ConsentStatus.CONSENT_WITH_LABELS
 	static final YES = Response.ResponseValue.YES
 	static final NO = Response.ResponseValue.NO
 	static final BLANK = Response.ResponseValue.BLANK
@@ -115,15 +116,14 @@ class ConsentEvaluationServiceSpec extends Specification {
 		CONSENT			| [YES, YES, YES, YES, YES]		| [0, 1, 2, 3 ,4]
 	}
 
+
 	@Unroll
-	void "If there are questions with a 'labelIfNotYes' attribute, we get those restrictions back from the evaluator"(){
-
+	void "Any NO responses to optional questions which have labelIfNotYes set causes the consent to be CONSENT_WITH_LABELS rather than FULL_CONSENT"(){
 		def questions = []
-
 		ConsentFormTemplate formTemplate = new ConsentFormTemplate(questions: questions)
 		ConsentForm consentForm = new ConsentForm(template: formTemplate);
 		responses.eachWithIndex { answer, i ->
-			Question q = new Question(optional: false, labelIfNotYes: labelIfNotYes[i])
+			Question q = new Question(optional: optionalQs.contains(i), labelIfNotYes: labelIfNotYes[i])
 			questions.push(q)
 			consentForm.addToResponses(new Response(answer:answer, question: q))
 		}
@@ -135,17 +135,31 @@ class ConsentEvaluationServiceSpec extends Specification {
 		labels == expectedLabels
 
 		where:
-		expectedConsent	| expectedLabels		| responses		      				| labelIfNotYes
-		CONSENT			| []					| [YES, YES, YES, YES, YES]   		| [null, null, null, null, null]
-		NO_CONSENT		| []					| [YES, YES, NO, YES, YES]   		| [null, null, null, null, null]
-		NO_CONSENT		| ["A"]					| [NO, YES, YES, YES, YES]   		| ["A", null, null, null, null]
-		NO_CONSENT		| ["A"]					| [NO, YES, NO, YES, YES]   		| ["A", null, null, null, null]
-		CONSENT			| []					| [YES, YES, YES, YES, YES]   		| ["A", null, null, null, null]
-		NO_CONSENT		| []					| [YES, YES, NO, YES, YES]   		| ["A", null, null, null, null]
-		NO_CONSENT		| ["A"]					| [NO, YES, YES, YES, YES]   		| ["A", null, "B", null, null]
-		NO_CONSENT		| ["A", "B"]			| [NO, YES, NO, YES, YES]  			| ["A", null, "B", null, null]
-		NO_CONSENT		| ["B"]					| [YES, YES, NO, YES, YES]  		| ["A", null, "B", null, null]
-		NO_CONSENT		| ["A"]					| [NO, YES, NO, YES, YES]  			| ["A", null, "A", null, null]
-		NO_CONSENT		| ["A"]					| [YES, YES, NO, YES, YES]  		| ["A", null, "A", null, null]
+		expectedConsent	| expectedLabels		| responses		      				| optionalQs| labelIfNotYes
+		// Basic functionality: CONSENT/NON_CONSENT with no labels
+		CONSENT			| []					| [YES, YES, YES, YES, YES]   		| [] 		|[null, null, null, null, null]
+		NO_CONSENT		| []					| [YES, YES, NO, YES, YES]   		| [] 		|[null, null, null, null, null]
+		NO_CONSENT		| ["A"]					| [NO, YES, YES, YES, YES]   		| [] 		|["A", null, null, null, null]
+		NO_CONSENT		| ["A"]					| [NO, YES, NO, YES, YES]   		| [] 		|["A", null, null, null, null]
+		CONSENT			| []					| [YES, YES, YES, YES, YES]   		| [] 		|["A", null, null, null, null]
+		NO_CONSENT		| []					| [YES, YES, NO, YES, YES]   		| [] 		|["A", null, null, null, null]
+		NO_CONSENT		| ["A"]					| [NO, YES, YES, YES, YES]   		| [] 		|["A", null, "B", null, null]
+		NO_CONSENT		| ["A", "B"]			| [NO, YES, NO, YES, YES]  			| [] 		|["A", null, "B", null, null]
+		NO_CONSENT		| ["B"]					| [YES, YES, NO, YES, YES]  		| [] 		|["A", null, "B", null, null]
+		NO_CONSENT		| ["A"]					| [NO, YES, NO, YES, YES]  			| [] 		|["A", null, "A", null, null]
+		NO_CONSENT		| ["A"]					| [YES, YES, NO, YES, YES]  		| [] 		|["A", null, "A", null, null]
+
+		// Extended support for labels making questions have a partial level of consent CONSENT_WITH_LABELS
+		CONSENT			| []					| [YES, YES, YES, YES, YES]   		| [] 		| [null, null, null, null, null]
+		NO_CONSENT		| []					| [YES, YES, NO, YES, YES]   		| [] 		| [null, null, null, null, null]
+		CONSENT_LABELS	| ["A"]					| [NO, YES, YES, YES, YES]   		| [0] 		| ["A", null, null, null, null]
+		NO_CONSENT		| ["A"]					| [NO, YES, NO, YES, YES]   		| [] 		| ["A", null, null, null, null]
+		CONSENT			| []					| [YES, YES, YES, YES, YES]   		| [] 		| ["A", null, null, null, null]
+		NO_CONSENT		| []					| [YES, YES, NO, YES, YES]   		| [] 		| ["A", null, null, null, null]
+		CONSENT_LABELS	| ["A"]					| [NO, YES, YES, YES, YES]   		| [0,2]		| ["A", null, "B", null, null]
+		CONSENT_LABELS	| ["A", "B"]			| [NO, YES, NO, YES, YES]  			| [0,2] 	| ["A", null, "B", null, null]
+		CONSENT_LABELS	| ["B"]					| [YES, YES, NO, YES, YES]  		| [2] 		| ["A", null, "B", null, null]
+		CONSENT_LABELS	| ["A"]					| [NO, YES, NO, YES, YES]  			| [0,2] 	| ["A", null, "A", null, null]
+		CONSENT_LABELS	| ["A"]					| [YES, YES, NO, YES, YES]  		| [0,2] 	| ["A", null, "A", null, null]
 	}
 }

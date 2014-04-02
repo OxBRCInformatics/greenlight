@@ -39,7 +39,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="span6 offset3">
+        <div class="span10 offset1">
 
             <g:if test="${errormsg}">
                 <div class="alert alert-error alert-block">
@@ -52,26 +52,37 @@
             <g:if test="${searchInput}">
                 <g:if test="${consents}">
                     Search for <span>${searchInput}:</span>
-                    <table>
+                    <table class="consent-status-table">
                         <thead>
                             <tr>
-                                <th>Consent Form</th>
-                                <th>Date consented</th>
-                                <th>Consent status</th>
+                                <th class="form-name">Consent Form</th>
+                                <th class="consent-date">Date consented</th>
+                                <th class="consent-status">Consent status</th>
                                 <th>Restrictions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <g:each var="consent" in="${consents}">
-                            <tr>
+                            <g:if test="${consent.consentStatus == uk.ac.ox.brc.greenlight.ConsentStatus.FULL_CONSENT}">
+                            <tr  class="alert alert-info alert-block">
+                            </g:if>
+                           <g:elseif test="${consent.consentStatus == uk.ac.ox.brc.greenlight.ConsentStatus.CONSENT_WITH_LABELS}">
+                               <tr class="alert alert-block">
+                           </g:elseif>
+                           <g:else>
+                               <tr class="alert alert-danger alert-block">
+                           </g:else>
+
                                 <td>${consent.form.name} <small>(version: ${consent.form.version})</small></td>
                                 <td><g:formatDate format="dd-MM-yyyy" date="${consent.lastCompleted}"/></td>
-                                <g:if test="${consent.consentStatus == uk.ac.ox.brc.greenlight.ConsentStatus.FULL_CONSENT.name()}">
-                                    <td class="alert alert-info alert-block">${consent.consentStatus}</td>
-                                </g:if>
-                                <g:else>
-                                    <td class="alert alert-danger alert-block">${consent.consentStatus}</td>
-                                </g:else>
+                                <td><h1>${consent.consentStatus.label}</h1></td>
+                                <td class="left-align">
+                                    <ul>
+                                        <g:each in="${consent.labels}" var="label">
+                                            <li>${label}</li>
+                                        </g:each>
+                                    </ul>
+                                </td>
                             </tr>
                             </g:each>
                         </tbody>

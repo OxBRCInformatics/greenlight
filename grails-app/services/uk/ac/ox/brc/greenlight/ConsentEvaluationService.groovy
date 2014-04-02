@@ -29,8 +29,13 @@ class ConsentEvaluationService {
 		   // If we see a non-YES value
 		   if(response.answer != Response.ResponseValue.YES){
 
-			   if(!response.question.optional){
-			   	result = ConsentStatus.NON_CONSENT
+			   // If it's optional + has a label -> CONSENT_WITH_LABELS
+			   // If it's optional + no label -> FULL_CONSENT
+			   // If it's not optional -> NON_CONSENT
+			   if (!response.question.optional) {
+				   result = ConsentStatus.NON_CONSENT
+			   } else if (response.question.labelIfNotYes != null) {
+				   result = ConsentStatus.CONSENT_WITH_LABELS
 			   }
 		   }
        }
@@ -62,7 +67,13 @@ class ConsentEvaluationService {
 
 enum ConsentStatus
 {
-    FULL_CONSENT,
-    NON_CONSENT,
-    CONSENT_WITH_RESTRICTIONS
+    FULL_CONSENT("Full consent"),
+    NON_CONSENT("No consent"),
+    CONSENT_WITH_LABELS("Consent with restrictions")
+
+	private final String label
+
+	ConsentStatus(String label){
+		this.label = label
+	}
 }

@@ -97,3 +97,33 @@ select{
 {
     background-color: #F5F5F5;
 }
+
+/**
+ * Left align text
+ **/
+.left-align{
+    text-align: left;
+}
+
+/**
+ * Styling for the cutting room table
+ **/
+.consent-status-table td{
+    padding: 0.25em;
+}
+.consent-status-table tr{
+    border-top: 1px dashed;
+    border-bottom: 1px dashed;
+}
+
+.consent-status-table .form-name{
+    width: 25%;
+}
+
+.consent-status-table .consent-date{
+    width: 15%;
+}
+
+.consent-status-table .consent-status{
+    width: 10%;
+}
