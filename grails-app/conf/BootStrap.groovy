@@ -1,3 +1,5 @@
+import org.springframework.jca.cci.CciOperationNotSupportedException
+import uk.ac.ox.brc.greenlight.ConsentForm
 import uk.ac.ox.brc.greenlight.ConsentFormTemplate
 import uk.ac.ox.brc.greenlight.Question
 import uk.ac.ox.brc.greenlight.auth.AppRole
@@ -87,14 +89,8 @@ class BootStrap {
             ).save(failOnError: true)
         }
 
-//        new ConsentFormTemplate(
-//                name: "ORB Verbal Consent Form",
-//                namePrefix: "ABC",
-//                templateVersion: "1"
-//        ).addToQuestions(new Question(name: 'I confirm that the patient has given previous written consent to ORB and that I have verbally reconfirmed that consent prior to taking a sample. I have answered any questions the patient had.')
-//        ).save(failOnError: true)
-
     }
+
     def destroy = {
     }
 }
