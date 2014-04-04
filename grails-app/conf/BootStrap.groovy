@@ -89,6 +89,66 @@ class BootStrap {
             ).save(failOnError: true)
         }
 
+        //Update Old Questions (optional and labelIfNotYes fields) for those two ConsentForms
+        if(ConsentFormTemplate.count() == 2)
+        {
+            def GENConsent = ConsentFormTemplate.findByNamePrefix("GEN")
+            if(GENConsent != null) {
+                Question q1 = GENConsent.questions.find {it.name=="I have read and understood the information sheet for this study (Version 1 dated December 2013). I have had the opportunity to ask questions and have had these answered satisfactorily."}
+                if(q1){
+                    q1.optional = true
+                    q1.save(flush: true)
+                }
+
+                Question q6 = GENConsent.questions.find{it.name=="I understand that results from research tests on my samples might be medically important to me.  I agree to my hospital consultant and GP being informed, and that research findings that are important for treating serious medical conditions I may have can be discussed with me."}
+                if(q6){
+                    q6.optional = true
+                    q6.labelIfNotYes = "Do not return incidental findings"
+                    q6.save(flush: true)
+                }
+
+                Question q11= GENConsent.questions.find{it.name=="I agree to be contacted about ethically approved research studies for which I may be suitable. I understand that agreeing to be contacted does not oblige me to participate in any further studies."}
+                if(q11){
+                    q11.optional = true
+                    q11.labelIfNotYes ="Do not contact"
+                    q11.save(flush: true)
+                }
+            }
+
+            def CRAConsent = ConsentFormTemplate.findByNamePrefix("CRA")
+            if (CRAConsent != null){
+                Question q1= CRAConsent.questions.find{it.name=="I have read and understood the information sheet for this study (Version 1 dated October 2013). I have had the opportunity to ask questions and have had these answered satisfactorily."}
+                if(q1){
+                    q1.optional = true
+                    q1.save(flush: true)
+                }
+
+                Question q10 = CRAConsent.questions.find{ it.name=="Clinically relevant results: I agree that findings from genetic and other testing related to the reason I am currently undergoing investigations will be fed back to my clinician so that they may be used in decisions about my treatment."}
+                if(q10)
+                {
+                    q10.optional = true
+                    q10.labelIfNotYes = "Do not return clinically relevant results"
+                    q10.save(flush: true)
+                }
+
+
+                Question q11 = CRAConsent.questions.find{ it.name=="Incidental findings: I understand and agree that I will be informed of any results of genetic analysis of my sample where they are NOT relevant to the condition being investigated, but are judged to be important for my/my family’s health care, and can be acted upon medically."}
+                if(q11)
+                {
+                    q11.optional = true
+                    q11.labelIfNotYes = "Do not return incidental findings"
+                    q11.save(flush: true)
+                }
+
+                Question q12 = CRAConsent.questions.find{ it.name=="I agree to be contacted about ethically approved research studies for which I may be suitable. I understand that agreeing to be contacted does not oblige me to participate in any further studies."}
+                if(q12)
+                {
+                    q12.optional = true
+                    q12.labelIfNotYes = "Do not contact"
+                    q12.save(flush: true)
+                }
+            }
+        }
     }
 
     def destroy = {

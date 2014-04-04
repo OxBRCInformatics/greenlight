@@ -26,14 +26,14 @@
                             class="form-control  ${hasErrors(bean: patient, field: 'nhsNumber', 'invalidInput')}"
                             id="commandInstance.patient.nhsNumber" name="commandInstance.patient.nhsNumber"
                             value="${commandInstance?.patient?.nhsNumber}"
-                            placeholder="NHS number like 1234567890" tabindex="1" />
+                            placeholder="NHS number like 1234567890"  />
                 </div>
 
                 <label for="commandInstance.patient.givenName" class="required">First Name</label>
                 <g:textField
                         class="form-control ${hasErrors(bean: patient, field: 'givenName', 'invalidInput')}"
                         name="commandInstance.patient.givenName" value="${commandInstance?.patient?.givenName}"
-                        placeholder="First Name" tabindex="4"/>
+                        placeholder="First Name" />
 
             </div>
 
@@ -43,7 +43,7 @@
                         class="form-control  ${hasErrors(bean: patient, field: 'familyName', 'invalidInput')}"
                         id="commandInstance.patient.familyName" name="commandInstance.patient.familyName"
                         value="${commandInstance?.patient?.familyName}"
-                        placeholder="Last Name" tabindex="3"/>
+                        placeholder="Last Name" />
             </div>
 
             <div class="form-group">
@@ -52,7 +52,7 @@
                              id="commandInstance.consentForm.consentTakerName"
                              class="form-control  ${hasErrors(bean: consentForm, field: 'consentTakerName', 'invalidInput')}"
                              value="${commandInstance?.consentForm?.consentTakerName}"
-                             placeholder="Enter Consent Taker's Name" tabindex="6"/>
+                             placeholder="Enter Consent Taker's Name" />
             </div>
 
             <div class="form-group">
@@ -62,7 +62,7 @@
                               relativeYears="[-100..0]"
                               value="${commandInstance?.patient?.dateOfBirth}"
                               placeholder="Date of Birth"
-                              precision="day" tabindex="5"/>
+                              precision="day" />
             </div>
 
         </div>
@@ -74,7 +74,7 @@
                         class="form-control  ${hasErrors(bean: patient, field: 'hospitalNumber', 'invalidInput')}"
                         id="commandInstance.patient.hospitalNumber" name="commandInstance.patient.hospitalNumber"
                         value="${commandInstance?.patient?.hospitalNumber}"
-                        placeholder="Hospital Number" tabindex="2"/>
+                        placeholder="Hospital Number"  />
             </div>
 
             <div class="form-group">
@@ -85,7 +85,7 @@
                         class="form-control  ${hasErrors(bean: consentForm, field: 'formID', 'invalidInput')}"
                         id="commandInstance.consentForm.formID" name="commandInstance.consentForm.formID"
                         value="${commandInstance?.consentForm?.formID}"
-                        placeholder="Consent Form Id like GEN12345" tabindex="8"
+                        placeholder="Consent Form Id like GEN12345"
                          />
 
             </div>
@@ -97,7 +97,7 @@
                               name="commandInstance.consentForm.consentDate"
                               value="${commandInstance?.consentForm?.consentDate}"
                               placeholder="Consent Date"
-                              precision="day" tabindex="7"/>
+                              precision="day" />
             </div>
 
             <div class="form-group">
