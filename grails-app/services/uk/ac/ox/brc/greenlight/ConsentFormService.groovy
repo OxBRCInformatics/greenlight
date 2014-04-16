@@ -192,7 +192,13 @@ class ConsentFormService {
     String escapeForCSV(String unEscapedComment) {
 
         String escapedDblQuote = "\""
-        String comment = unEscapedComment.replaceAll("\n","\t")
+		String comment = unEscapedComment
+
+		//in case of a null value return no-value string
+		if(!comment)
+			comment = ""
+
+        comment = comment.replaceAll("\n","\t")
         comment = comment.replaceAll(escapedDblQuote, escapedDblQuote + escapedDblQuote)
         comment = escapedDblQuote + comment + escapedDblQuote
 
