@@ -162,8 +162,8 @@ class ConsentEvaluationServiceSpec extends Specification {
 		CONSENT_LABELS	| ["A"]					| [NO, YES, NO, YES, YES]  			| [0,2] 	| ["A", null, "A", null, null]
 		CONSENT_LABELS	| ["A"]					| [YES, YES, NO, YES, YES]  		| [0,2] 	| ["A", null, "A", null, null]
 
-        // #51 issue, All Blank in responses
-       NO_CONSENT       | ["A", "B"]            | [BLANK, BLANK, BLANK, BLANK, BLANK]   | [0,3,4] | [null, null, null, "A", "B"]
+		// #51 issue, All Blank in responses
+		NO_CONSENT       | ["A", "B"]            | [BLANK, BLANK, BLANK, BLANK, BLANK]   | [0,3,4] | [null, null, null, "A", "B"]
 
 	}
 }
