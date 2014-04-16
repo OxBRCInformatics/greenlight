@@ -233,6 +233,10 @@
                     required:true,
                     regex:/^[a-zA-Z]{3}\d{5}$/,
                     checkDuplicateFormId:true
+                },
+                'commandInstance.consentFormTemplate':{
+                     required: true,
+                     formElementSelected: true
                 }
             },
 
@@ -262,7 +266,6 @@
                     }
                 })
 
-        debugger;
         return returnedConsentId;
     }
 
