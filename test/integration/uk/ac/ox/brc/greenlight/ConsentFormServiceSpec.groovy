@@ -1,9 +1,6 @@
 package uk.ac.ox.brc.greenlight
 
-import grails.test.mixin.Mock
-import grails.test.mixin.TestFor
 import grails.test.spock.IntegrationSpec
-import spock.lang.Specification
 
 /**
  * Created by soheil on 28/03/2014.
@@ -13,7 +10,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
     def   consentFormService
     def   consentEvaluationService
 
-    def setup(){
+    def setup() {
         def attachment= new Attachment(id: 1, fileName: 'a.jpg', dateOfUpload: new Date(),
                 attachmentType: Attachment.AttachmentType.IMAGE, content: []).save()
 
@@ -68,8 +65,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
         Patient.count() == 1
     }
 
-    def "Check getConsentFormByFormId for not-available FormId "()
-    {
+    def "Check getConsentFormByFormId for not-available FormId "() {
         when:"CheckFormId is called for a non-existing formId"
         def formId = "123"
         def consentId = consentFormService.getConsentFormByFormId(formId);
@@ -79,8 +75,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
     }
 
 
-    def "Check getConsentFormByFormId for available FormId "()
-    {
+    def "Check getConsentFormByFormId for available FormId "() {
         when:"CheckFormId is called for a existing formId"
         def formId =ConsentForm.list()[0].formID
         def actualConsentId = ConsentForm.list()[0].id
@@ -92,8 +87,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
     }
 
 
-    def "Check getConsentFormByFormId for general FormId ends with 00000"()
-    {
+    def "Check getConsentFormByFormId for general FormId ends with 00000"() {
         when:"CheckFormId is called for a general FormId"
         def formId = "GEN00000"
         def consentId = consentFormService.getConsentFormByFormId(formId);
@@ -104,8 +98,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
 
 
 
-    def "exportToCSV returns CSV content with Headers"()
-    {
+    def "exportToCSV returns CSV content with Headers"() {
         when:"exportToCSV is called"
         String csv = consentFormService.exportToCSV()
         csv.readLines().size() != 0
