@@ -23,23 +23,33 @@ class ConsentEvaluationService {
             return ConsentStatus.NON_CONSENT
         }
 
-       ConsentStatus result = ConsentStatus.FULL_CONSENT
+       boolean consented = true
+       boolean restrictions = false
 
        consentForm.responses.eachWithIndex { response, index ->
 		   // If we see a non-YES value
 		   if(response.answer != Response.ResponseValue.YES){
 
-			   // If it's optional + has a label -> CONSENT_WITH_LABELS
-			   // If it's optional + no label -> FULL_CONSENT
-			   // If it's not optional -> NON_CONSENT
-			   if (!response.question.optional) {
-				   result = ConsentStatus.NON_CONSENT
-			   } else if (response.question.labelIfNotYes != null) {
-				   result = ConsentStatus.CONSENT_WITH_LABELS
-			   }
+               if (!response.question.optional) {
+                   consented = false
+               } else if (response.question.labelIfNotYes != null) {
+                   restrictions = true
+               }
 		   }
        }
-       return result
+
+        // If it's optional + has a label -> CONSENT_WITH_LABELS
+        // If it's optional + no label -> FULL_CONSENT
+        // If it's not optional -> NON_CONSENT
+        ConsentStatus result
+
+        if (consented) {
+            result = restrictions ? ConsentStatus.CONSENT_WITH_LABELS : ConsentStatus.FULL_CONSENT
+        } else{
+            result = ConsentStatus.NON_CONSENT
+        }
+
+        return result
     }
 
 	/**
