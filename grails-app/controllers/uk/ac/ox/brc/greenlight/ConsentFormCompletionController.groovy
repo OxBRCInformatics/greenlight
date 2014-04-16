@@ -182,6 +182,7 @@ class ConsentFormCommand {
     List<Response> responses
 
     def buildObject(params) {
+
         patient = Patient.get(params.commandInstance.patient.id)
         if (!patient)
             patient = new Patient();
@@ -207,12 +208,14 @@ class ConsentFormCommand {
         consentForm.consentDate = Date.parse("yyyy/MM/dd",consentDateYear+"/"+consentDateMonth+"/"+consentDateDay);
 
         //if it is in update mode, delete all old responses
-        if(consentForm.responses){
-            consentForm.responses.clear()
-        }
-        else{
-            consentForm.responses = [];
-        }
+          if(consentForm.responses != null && consentForm.responses.size() > 0){
+                consentForm.responses.collect().each {
+                    consentForm.removeFromResponses(it)
+                }
+           }
+          else{
+                consentForm.responses = [];
+          }
 
         //Load Selected Consent Template
         if (params.commandInstance.consentFormTemplateId != null && params.commandInstance.consentFormTemplateId != "-1") {

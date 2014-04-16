@@ -14,14 +14,34 @@ hibernate {
 environments {
     development {
         dataSource {
-            dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
-            url = "jdbc:h2:mem:greenlight2;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE"
+//            dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
+//            url = "jdbc:h2:mem:greenlight2;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE"
+
+
+            pooled = true
+            dbCreate = "update"
+            url = "jdbc:postgresql://localhost:5432/greenlight"
+            username = "postgres"
+            password = 1
+            driverClassName = "org.postgresql.Driver"
+            dialect = net.sf.hibernate.dialect.PostgreSQLDialect
+
         }
     }
     test {
         dataSource {
+//            dbCreate = "update"
+//            url = "jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE"
+
+            pooled = true
             dbCreate = "update"
-            url = "jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE"
+            url = "jdbc:postgresql://localhost:5432/greenlight"
+            username = "postgres"
+            password = 1
+            driverClassName = "org.postgresql.Driver"
+            dialect = net.sf.hibernate.dialect.PostgreSQLDialect
+
+
         }
     }
     production {

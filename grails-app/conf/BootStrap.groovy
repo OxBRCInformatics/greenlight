@@ -1,7 +1,9 @@
+import grails.transaction.Transactional
 import org.springframework.jca.cci.CciOperationNotSupportedException
 import uk.ac.ox.brc.greenlight.ConsentForm
 import uk.ac.ox.brc.greenlight.ConsentFormTemplate
 import uk.ac.ox.brc.greenlight.Question
+import uk.ac.ox.brc.greenlight.Response
 import uk.ac.ox.brc.greenlight.auth.AppRole
 import uk.ac.ox.brc.greenlight.auth.AppUser
 import uk.ac.ox.brc.greenlight.auth.UserRole
@@ -21,12 +23,14 @@ class BootStrap {
                 createRoles()
                 createAdminUser("admin", "password", "support@example.com")
                 createFormTemplates()
+                RemoveOrphanResponses()
             }
 
             production {
                 createRoles()
                 createAdminUser("admin", "password", "support@example.com")
                 createFormTemplates()
+                RemoveOrphanResponses()
             }
         }
     }
@@ -42,6 +46,37 @@ class BootStrap {
             UserRole.create user, AppRole.findByAuthority('ROLE_ADMIN')
         }
     }
+
+
+    @Transactional
+    def RemoveOrphanResponses()
+    {
+        //have to do this to cleanup the old records,
+        //as we forgot to set all-delete-orphan in ConsentForm class
+        //removes the orphan records in Response
+        ConsentForm.list().collect().each { consentForm ->
+            def allResp= Response.findAll("from Response as r where r.consentForm.id = :consentFormId order by r.id desc ",[consentFormId:consentForm.id]);
+            def actualOnesCount = consentForm.responses.size();
+            def actualOnes = allResp.subList(0,actualOnesCount)
+
+            //find the latest ones and exclude them from the list
+            allResp.removeAll(actualOnes)
+
+            // remove old ones from database
+            allResp.collect().each {
+                //GORM may add old objects to association. Not the latest ones! as
+                //we did not add cascade-all-delete before
+                if(consentForm.responses.contains(it)){
+                 consentForm.removeFromResponses(it)
+                 consentForm.save()
+                }
+                //remove it from
+                else
+                    it.delete(flush: true)
+            }
+        }
+    }
+
 
     def createFormTemplates(){
 
@@ -149,7 +184,9 @@ class BootStrap {
                 }
             }
         }
-    }
+
+     }
+
 
     def destroy = {
     }

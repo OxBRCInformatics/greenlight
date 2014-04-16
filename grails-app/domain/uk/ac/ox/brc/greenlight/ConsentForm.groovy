@@ -26,9 +26,9 @@ class ConsentForm {
             responses:Response
     ]
 
-    static mapping = {
+   static mapping = {
         responses cascade: 'all-delete-orphan'
-    }
+   }
 
     static constraints = {
         attachedFormImage nullable: true //remove this later :)

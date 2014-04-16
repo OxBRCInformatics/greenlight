@@ -49,12 +49,11 @@ grails.project.dependency.resolution = {
         grailsCentral()
         mavenCentral()
 
-        // For Geb snapshot
-        mavenRepo "http://oss.sonatype.org/content/repositories/snapshots"
-
-        // Spring Security
-        mavenRepo "http://download.java.net/maven/2/"
         mavenRepo "http://repo.spring.io/milestone/"
+        mavenRepo "http://download.java.net/maven/2/"
+        mavenRepo 'http://maven.restlet.org'
+        mavenRepo "http://repo.grails.org/grails/core"
+        mavenRepo 'http://repo.spring.io/milestone'
     }
 
     dependencies {
