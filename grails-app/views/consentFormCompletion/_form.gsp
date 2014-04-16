@@ -18,23 +18,23 @@
 <div class="span12">
     <div class="row-fluid">
 
-        <div class="span6">
+        <div class="span4">
             <div class="form-group">
-                <div class="form-group">
-                    <label for="commandInstance.patient.nhsNumber" class="required">NHS Number</label>
-                    <g:textField
-                            class="form-control  ${hasErrors(bean: patient, field: 'nhsNumber', 'invalidInput')}"
-                            id="commandInstance.patient.nhsNumber" name="commandInstance.patient.nhsNumber"
-                            value="${commandInstance?.patient?.nhsNumber}"
-                            placeholder="NHS number like 1234567890"  />
-                </div>
-
-                <label for="commandInstance.patient.givenName" class="required">First Name</label>
+                <label for="commandInstance.patient.nhsNumber" class="required">NHS Number</label>
                 <g:textField
-                        class="form-control ${hasErrors(bean: patient, field: 'givenName', 'invalidInput')}"
-                        name="commandInstance.patient.givenName" value="${commandInstance?.patient?.givenName}"
-                        placeholder="First Name" />
+                        class="form-control  ${hasErrors(bean: patient, field: 'nhsNumber', 'invalidInput')}"
+                        id="commandInstance.patient.nhsNumber" name="commandInstance.patient.nhsNumber"
+                        value="${commandInstance?.patient?.nhsNumber}"
+                        placeholder="NHS number like 1234567890"  />
+            </div>
 
+            <div class="form-group">
+                <label for="commandInstance.patient.hospitalNumber" class="required">Hospital Number</label>
+                <g:textField
+                        class="form-control  ${hasErrors(bean: patient, field: 'hospitalNumber', 'invalidInput')}"
+                        id="commandInstance.patient.hospitalNumber" name="commandInstance.patient.hospitalNumber"
+                        value="${commandInstance?.patient?.hospitalNumber}"
+                        placeholder="Hospital Number"  />
             </div>
 
             <div class="form-group">
@@ -45,14 +45,16 @@
                         value="${commandInstance?.patient?.familyName}"
                         placeholder="Last Name" />
             </div>
+        </div>
+
+        <div class="span4">
 
             <div class="form-group">
-                <label for="commandInstance.consentForm.consentTakerName" class="required">Consent Taker Name</label>
-                <g:textField name="commandInstance.consentForm.consentTakerName"
-                             id="commandInstance.consentForm.consentTakerName"
-                             class="form-control  ${hasErrors(bean: consentForm, field: 'consentTakerName', 'invalidInput')}"
-                             value="${commandInstance?.consentForm?.consentTakerName}"
-                             placeholder="Enter Consent Taker's Name" />
+                <label for="commandInstance.patient.givenName" class="required">First Name</label>
+                <g:textField
+                        class="form-control ${hasErrors(bean: patient, field: 'givenName', 'invalidInput')}"
+                        name="commandInstance.patient.givenName" value="${commandInstance?.patient?.givenName}"
+                        placeholder="First Name" />
             </div>
 
             <div class="form-group">
@@ -65,16 +67,25 @@
                               precision="day" />
             </div>
 
+            <div class="form-group">
+                <label for="commandInstance.consentForm.consentTakerName" class="required">Consent Taker Name</label>
+                <g:textField name="commandInstance.consentForm.consentTakerName"
+                             id="commandInstance.consentForm.consentTakerName"
+                             class="form-control  ${hasErrors(bean: consentForm, field: 'consentTakerName', 'invalidInput')}"
+                             value="${commandInstance?.consentForm?.consentTakerName}"
+                             placeholder="Enter Consent Taker's Name" />
+            </div>
         </div>
 
-        <div class="span6">
+        <div class="span4">
             <div class="form-group">
-                <label for="commandInstance.patient.hospitalNumber" class="required">Hospital Number</label>
-                <g:textField
-                        class="form-control  ${hasErrors(bean: patient, field: 'hospitalNumber', 'invalidInput')}"
-                        id="commandInstance.patient.hospitalNumber" name="commandInstance.patient.hospitalNumber"
-                        value="${commandInstance?.patient?.hospitalNumber}"
-                        placeholder="Hospital Number"  />
+                <label for="commandInstance.consentForm.consentDate">Consent Date</label>
+                <g:datePicker class="form-control"
+                              id="commandInstance.consentForm.ConsentDate"
+                              name="commandInstance.consentForm.consentDate"
+                              value="${commandInstance?.consentForm?.consentDate}"
+                              placeholder="Consent Date"
+                              precision="day" />
             </div>
 
             <div class="form-group">
@@ -90,15 +101,6 @@
 
             </div>
 
-            <div class="form-group">
-                <label for="commandInstance.consentForm.consentDate">Consent Date</label>
-                <g:datePicker class="form-control"
-                              id="commandInstance.consentForm.ConsentDate"
-                              name="commandInstance.consentForm.consentDate"
-                              value="${commandInstance?.consentForm?.consentDate}"
-                              placeholder="Consent Date"
-                              precision="day" />
-            </div>
 
             <div class="form-group">
                 <label for="commandInstance.consentForm.comment">Comment</label>
