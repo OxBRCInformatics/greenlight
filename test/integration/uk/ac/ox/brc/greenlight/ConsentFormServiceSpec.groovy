@@ -43,6 +43,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
                 consentTakerName: "Edward",
                 formID: "GEN12345",
                 formStatus: ConsentForm.FormStatus.NORMAL,
+                comment: "a simple unEscapedComment, with charachters \' \" \n "
         ).save()
 
         consent.addToResponses(new Response(answer: Response.ResponseValue.YES))
@@ -111,7 +112,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
         def headers=csv.readLines()[0].tokenize(",")
 
         then:"the first row is header"
-        headers.size() == 13
+        headers.size() == 14
         headers[0] == "consentId"
         headers[1] == "consentDate"
         headers[2] == "consentformID"
@@ -125,46 +126,49 @@ class ConsentFormServiceSpec extends IntegrationSpec {
         headers[10] == "templateName"
         headers[11] == "consentResult"
         headers[12] == "responses"
+        headers[13] == "comments"
     }
 
 
-    def "exportToCSV returns consent in CSV format"()
-    {
-        when:"exportToCSV is called"
-        String csv = consentFormService.exportToCSV()
-        List<ConsentForm> consents = ConsentForm.list()
-
-
-        then:"it returns contents in csv format"
-        csv.readLines().size() == consents.size() + 1 //1 for Header row
-        csv.readLines().eachWithIndex { line, index ->
-            //the first line is Header
-            if(index == 0)
-                return;
-
-            def values = line.tokenize(",")
-            values.size() != 0
-            def consent =  consents[index-1]
-            assert consent.id.toString() == values[0]
-            assert consent.consentDate.format("dd-MM-yyyy") == values[1]
-            assert consent.formID.toString() == values[2]
-            assert consent.consentTakerName == values[3]
-            assert consent.formStatus.toString() == values[4]
-            assert consent.patient.nhsNumber.toString() == values[5]
-            assert consent.patient.hospitalNumber.toString() == values[6]
-            assert consent.patient.givenName.toString() == values[7]
-            assert consent.patient.familyName.toString() == values[8]
-            assert consent.patient.dateOfBirth.format("dd-MM-yyyy") == values[9]
-            assert consent.template.namePrefix.toString() == values[10]
-
-            ConsentStatus status=  consentEvaluationService.getConsentStatus(consent)
-            assert status.toString() == values[11]
-
-            def resString = ""
-            consent.responses.each { response->
-                resString += response.answer.toString() +"|"
-            }
-            assert resString == values[12]
+    def "exportToCSV returns consent in CSV format"() {
+        given: "something"
+        def expectedConsents = []
+        ConsentForm.list().each { consentForm ->
+            expectedConsents.add([
+                    consentForm.id as String,
+                    consentForm.consentDate.format("dd-MM-yyyy"),
+                    consentForm.formID as String,
+                    consentForm.consentTakerName,
+                    consentForm.formStatus as String,
+                    consentForm.patient.nhsNumber,
+                    consentForm.patient.hospitalNumber,
+                    consentForm.patient.givenName,
+                    consentForm.patient.familyName,
+                    consentForm.patient.dateOfBirth.format("dd-MM-yyyy"),
+                    consentForm.template.namePrefix,
+                    consentEvaluationService.getConsentStatus(consentForm) as String,
+                    consentForm.responses.collect { it.answer as String }.join('|'),
+                    getCSVEscapedComment(consentForm.comment)
+            ].join(','))
         }
+
+        when: "we export the CSV content"
+        String csv = consentFormService.exportToCSV()
+        def csvConsents = csv.split('\n').toList()
+        csvConsents.remove(0) // remove the header row
+
+        then: "the exported content matches our expectations"
+        expectedConsents.size() == csvConsents.size()
+        expectedConsents == csvConsents
+    }
+
+    private String getCSVEscapedComment(String unEscapedComment) {
+
+        String escapedDblQuote = "\""
+        String comment = unEscapedComment.replaceAll("\n","\t")
+        comment = comment.replaceAll(escapedDblQuote, escapedDblQuote + escapedDblQuote)
+        comment = escapedDblQuote + comment + escapedDblQuote
+
+        return  comment
     }
 }

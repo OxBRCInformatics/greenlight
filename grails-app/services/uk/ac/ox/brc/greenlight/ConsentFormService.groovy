@@ -136,7 +136,7 @@ class ConsentFormService {
 
     def exportToCSV()
     {
-        def result=""
+        StringBuilder sb = new StringBuilder()
         def headers =[
                     "consentId",
                     "consentDate",
@@ -151,36 +151,51 @@ class ConsentFormService {
                     "templateName",
                     "consentResult",
                     "responses",
+                    "comments"
                     ];
-        headers.each { header->
-            result = result + header + ",";
-        }
-        result = result + "\r\n"
+        sb.append(headers.join(','))
+        sb.append("\n")
 
         def consents= ConsentForm.list()
         consents.each { consent ->
-            result += consent.id.toString() + ","
-            result += consent.consentDate.format("dd-MM-yyyy") + ","
-            result += consent.formID.toString() + ","
-            result += consent.consentTakerName.toString() + ","
-            result += consent.formStatus.toString() + ","
-            result += consent.patient.nhsNumber.toString() + ","
-            result += consent.patient.hospitalNumber.toString() + ","
-            result += consent.patient.givenName.toString() + ","
-            result += consent.patient.familyName.toString() + ","
-            result += consent.patient.dateOfBirth.format("dd-MM-yyyy") + ","
-            result += consent.template.namePrefix.toString() + ","
-
-            ConsentStatus status=  consentEvaluationService.getConsentStatus(consent)
-            result += status.toString() + ","
-
-            def resString = ""
-            consent.responses.each { response->
-                resString += response.answer.toString() +"|"
-            }
-            result += resString + ","
-            result += "\r\n"
+           sb.append([
+                consent.id.toString(),
+                consent.consentDate.format("dd-MM-yyyy"),
+                consent.formID.toString(),
+                consent.consentTakerName,
+                consent.formStatus.toString(),
+                consent.patient.nhsNumber,
+                consent.patient.hospitalNumber,
+                consent.patient.givenName,
+                consent.patient.familyName,
+                consent.patient.dateOfBirth.format("dd-MM-yyyy"),
+                consent.template.namePrefix,
+                consentEvaluationService.getConsentStatus(consent).toString(),
+                consent.responses.collect { it.answer.toString()}.join("|"),
+                escapeForCSV(consent.comment)
+            ].join(',') )
+            sb.append("\n")
         }
-        return result
+        return sb.toString()
+    }
+
+    /**
+     * Escapes a String for CSV output, following the guidelines of http://en.wikipedia.org/wiki/Comma-separated_values#Basic_rules_and_examples,
+     * specifically:
+     *
+     *  * Double quotes are doubled
+     *  * Everything is enclosed in double quotes to allow use of commas, newlines ,etc.
+     *
+     * @param unEscapedComment A String containing anything
+     * @return the escaped String
+     */
+    String escapeForCSV(String unEscapedComment) {
+
+        String escapedDblQuote = "\""
+        String comment = unEscapedComment.replaceAll("\n","\t")
+        comment = comment.replaceAll(escapedDblQuote, escapedDblQuote + escapedDblQuote)
+        comment = escapedDblQuote + comment + escapedDblQuote
+
+        return  comment
     }
 }
