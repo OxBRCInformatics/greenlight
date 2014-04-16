@@ -14,19 +14,3 @@ env:
   global:
   - secure: C9yOH9LBLI067r5d2hzrn1FFa8krQeZedbHRBQ9HfjnwM5BpYEbWB3MH/iT1KLj2/ZsGorDOWJ7nd0/s5drX88Jb8sqUe26ua4HE/kDd70yy00vl+/KQclQl5Q/To3q21UKwk1qye6q1nB9dlDpABlmRQPsf5IF4ciEx6FKzQrg=
   - secure: Wr3b1juRcwYhcs2EbxfleixxBPws79oQlXGUj5HDw4m09hSG2GCohF1ip39iz/PkOEtvZ0CfKTR8WnzJaMV3K/Vw9omKgMn/1Up1CFlTbJc3mAxRl4smLFhKB28QSVu+0rjSUYihooG3+GfN6fFvwZ80Gr7g/Cpfhs+eUQ1yza8=
-branches:
-  only:
-  - master
-  - develop
-deploy:
-  provider:
-    provider: cloudfoundry
-  target: greenlight
-  username: ryan.brooks@ndm.ox.ac.uk
-  password:
-    secure: H+Z/47VEvmwp0XnFhX6AlgYDog2yrbqyAR6p823krcvfmS19LUJ6hpWFVkJhgDKp/FprKOnFuVlNqBpfUCwbzsiNkKTL5/x4Ceoi3RjhZ475kAj9t9vDECr19b9EouFBr46trUogy4StvpItshku1j8aDW78ms3cCGlRBup08ww=
-  organization: jwatters-org
-  space: Oxford University OSS team
-  on:
-    repo: OxBRCInformatics/greenlight
-    branch: develop
