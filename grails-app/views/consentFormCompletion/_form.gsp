@@ -235,10 +235,6 @@
                     required:true,
                     regex:/^[a-zA-Z]{3}\d{5}$/,
                     checkDuplicateFormId:true
-                },
-                'commandInstance.consentFormTemplate':{
-                     required: true,
-                     formElementSelected: true
                 }
             },
 
@@ -249,6 +245,11 @@
                 $(element).closest('.form-group').removeClass('has-error');
             }
         });
+
+          $("select[id='commandInstance.consentFormTemplate']").rules("add",{
+                     required: true,
+                     formElementSelected: true
+                });
 
     }
 
