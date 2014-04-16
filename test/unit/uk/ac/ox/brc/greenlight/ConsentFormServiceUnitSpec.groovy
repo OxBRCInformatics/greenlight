@@ -47,8 +47,9 @@ class ConsentFormServiceUnitSpec extends Specification {
         where:
         inputString | expectedString
         "This is some text" | "This is some text"
+        "This is some\n text\n" | "This is some\t text\t"
         "," | ","
         DBL_QUOTE | DBL_QUOTE+DBL_QUOTE
-
+		null	  | ""
     }
 }

@@ -201,6 +201,10 @@ class ConsentFormCommand {
             consentForm = new ConsentForm();
         consentForm.properties = params.commandInstance.consentForm
 
+		//Grails assigns null to an empty textArea when it does not contain any text
+		if(!consentForm?.comment)
+			consentForm.comment = ""
+
         def consentDateYear = params.commandInstance.consentForm.consentDate_year;
         def consentDateMonth = params.commandInstance.consentForm.consentDate_month;
         def consentDateDay = params.commandInstance.consentForm.consentDate_day;
