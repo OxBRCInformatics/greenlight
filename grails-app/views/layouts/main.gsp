@@ -129,6 +129,10 @@
                 "Not a valid format."
         );
 
+        $.validator.addMethod("formElementSelected", function(value, element){
+            return value > -1;
+        }, "Please select an item.");
+
     });
 
 </script>
