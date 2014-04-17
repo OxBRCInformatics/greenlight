@@ -123,6 +123,8 @@ class ConsentFormService {
 
     def getConsentFormByFormId(formId)
     {
+		// FormId which ends to 00000 is general and
+		//we can have more that one int
         if(formId.endsWith("00000"))
             return  -1;
 
@@ -159,19 +161,19 @@ class ConsentFormService {
         def consents= ConsentForm.list()
         consents.each { consent ->
            sb.append([
-                consent.id.toString(),
+                consent.id as String,
                 consent.consentDate.format("dd-MM-yyyy"),
-                consent.formID.toString(),
+                consent.formID as String,
                 consent.consentTakerName,
-                consent.formStatus.toString(),
+                consent.formStatus as String,
                 consent.patient.nhsNumber,
                 consent.patient.hospitalNumber,
                 consent.patient.givenName,
                 consent.patient.familyName,
                 consent.patient.dateOfBirth.format("dd-MM-yyyy"),
                 consent.template?.namePrefix,
-                consentEvaluationService.getConsentStatus(consent).toString(),
-                consent.responses?.collect { it.answer.toString()}.join("|"),
+                consentEvaluationService.getConsentStatus(consent) as String,
+                consent.responses?.collect { it.answer as String}.join("|"),
                 escapeForCSV(consent.comment)
             ].join(',') )
             sb.append("\n")
