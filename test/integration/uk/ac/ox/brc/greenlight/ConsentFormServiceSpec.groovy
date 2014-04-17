@@ -14,13 +14,21 @@ class ConsentFormServiceSpec extends IntegrationSpec {
         def attachment= new Attachment(id: 1, fileName: 'a.jpg', dateOfUpload: new Date(),
                 attachmentType: Attachment.AttachmentType.IMAGE, content: []).save()
 
+		def question1 =  new Question(name: 'I read1...')
+		def question2 =  new Question(name: 'I read2...')
+		def question3 =  new Question(name: 'I read3...')
+		def question4 =  new Question(name: 'I read4...')
+
         def template=new ConsentFormTemplate(
                 id: 1,
                 name: "ORB1",
                 templateVersion: "1.1",
-                namePrefix: "GNR",
-        ).addToQuestions(new Question(name: 'I read1...')
-        ).save()
+                namePrefix: "GNR")
+				.addToQuestions(question1)
+				.addToQuestions(question2)
+				.addToQuestions(question3)
+				.addToQuestions(question4)
+        .save()
 
 
         def patient= new Patient(
@@ -40,28 +48,33 @@ class ConsentFormServiceSpec extends IntegrationSpec {
                 consentTakerName: "Edward",
                 formID: "GEN12345",
                 formStatus: ConsentForm.FormStatus.NORMAL,
-                comment: "a simple unEscapedComment, with charachters \' \" \n "
+                comment: "a simple unEscapedComment, with characters \' \" \n "
         ).save()
 
-        consent.addToResponses(new Response(answer: Response.ResponseValue.YES))
-        consent.addToResponses(new Response(answer: Response.ResponseValue.YES))
-        consent.addToResponses(new Response(answer: Response.ResponseValue.YES))
-        consent.addToResponses(new Response(answer: Response.ResponseValue.YES))
+        consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: question1))
+        consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: question2))
+        consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: question3))
+        consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: question4))
         consent.save()
     }
 
     def "Delete action will delete consentForm and its responses"() {
 
-        when:"Delete action is called"
-        ConsentForm.count() == 1
-        def cons= ConsentForm.first()
-        cons.responses.size() == 2
+		given:"A number of consentForms are available"
+		assert ConsentForm.count() == 1
+		def cons = ConsentForm.first()
+		assert cons.responses.size() == 4
+		assert Response.count() == 4
+
+		when:"deleting a consentForm"
         consentFormService.delete(cons)
 
 
-        then:"It deletes the consentForm and its responses"
+        then:"the consentForm and its responses are all deleted"
         ConsentForm.count() == 0
         Response.count() == 0
+
+		and:"it keeps the patient record"
         Patient.count() == 1
     }
 
@@ -76,18 +89,17 @@ class ConsentFormServiceSpec extends IntegrationSpec {
 
 
     def "Check getConsentFormByFormId for available FormId "() {
-        when:"CheckFormId is called for a existing formId"
-        def formId =ConsentForm.list()[0].formID
-        def actualConsentId = ConsentForm.list()[0].id
-        def consentId = consentFormService.getConsentFormByFormId(formId);
+        when:"CheckFormId is called for an existing formId"
+        def expectedConsentId = ConsentForm.list()[0].id
+        def consentId = consentFormService.getConsentFormByFormId(ConsentForm.list()[0].formID);
 
         then:"then the actual consent id should be returned"
         consentId != -1
-        consentId == actualConsentId
+        consentId == expectedConsentId
     }
 
 
-    def "Check getConsentFormByFormId for general FormId ends with 00000"() {
+    def "getConsentFormByFormId will not return a specific Id for general FormId (ends with 00000)"() {
         when:"CheckFormId is called for a general FormId"
         def formId = "GEN00000"
         def consentId = consentFormService.getConsentFormByFormId(formId);
