@@ -1,7 +1,12 @@
 package uk.ac.ox.brc.greenlight
 
-import grails.transaction.Transactional
-
+/**
+ * This controller is used to clean orphan records from database
+ * In previous version(1.1.0), a number of orphan responses where created
+ * as relation between ConsentForm and Response didn't contain  cascade: 'all-delete-orphan'
+ * cleanOrphanResponses action will remove orphan responses
+ * and update latest responses for each consentForm
+ */
 class DatabaseCleanUpController {
 
 	def databaseCleanupService
