@@ -19,7 +19,7 @@ class DatabaseCleanUpController {
 			return
 		}
 
-		responseStr = responseStr + "<br>"+ getResponsesStatusStr()
+		responseStr = "Before<br>" + responseStr + "<br>After<br>"+ getResponsesStatusStr()
 		render responseStr
 	}
 
@@ -30,6 +30,6 @@ class DatabaseCleanUpController {
 		ConsentForm.list().each { consent->
 			allConsentResponses += consent.responses.size()
 		}
-		return "AllResponses=${allResponses}   allConsentResponses=${allConsentResponses}"
+		return "AllResponses = ${allResponses}   allConsentResponses = ${allConsentResponses}"
 	}
 }
