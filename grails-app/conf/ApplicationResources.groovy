@@ -23,4 +23,10 @@ modules = {
                 resource url:"js/FormValidators/jquery.validate.min.js"
                 resource url:"js/FormValidators/jquery.validate.Bootstrap.js"
             }
+
+	dataTables
+			{
+				resource url:"bower_components/DataTables/media/css/jquery.dataTables.css"
+				resource url:"bower_components/DataTables/media/js/jquery.dataTables.js"
+			}
 }

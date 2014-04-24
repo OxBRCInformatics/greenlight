@@ -5,6 +5,8 @@ import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage
 import org.apache.tomcat.jni.Shm
+import org.grails.datastore.gorm.finders.MethodExpression
+import org.hibernate.criterion.CriteriaSpecification
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
@@ -15,6 +17,82 @@ class AttachmentController {
 
 
     def attachmentService
+
+	def listUnAnnotatedAttachments(){
+		def data
+		def total
+		def displayTotal
+		def order
+		def sortCol
+
+		order = params?.sSortDir_0
+		sortCol = params?.iSortCol_0
+		if(sortCol=="0")
+			sortCol = "dateOfUpload"
+		else if(sortCol=="1")
+			sortCol = "fileName"
+		else
+			sortCol = "dateOfUpload"
+
+
+
+
+	   data = Attachment.findAllByConsentFormIsNull([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order]);
+		//data = Attachment.list([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order]);
+		//data = Attachment.findAllWhere(consentForm: null)
+		//def alll = Attachment.list()
+//		data = Attachment.findAllByConsentFormIsNull([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order]);
+//		data = Attachment.findAll([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order])
+//				{
+//					isNull("consentForm")
+//				}
+
+//		data = Attachment.withCriteria([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order])
+//				{
+//					isNull("consentForm")
+//				}
+
+//		data = Attachment.findAll([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order],
+//				{
+//					consentForm == null
+//				})
+
+
+
+
+		total = Attachment.count()
+		displayTotal = data.size()
+
+		def model = [sEcho: params.sEcho, iTotalRecords: total, iTotalDisplayRecords: displayTotal, aaData: data]
+		render model as JSON
+	}
+
+
+	def lisAnnotatedAttachments(){
+		def data
+		def total
+		def displayTotal
+		def order
+		def sortCol
+
+		order = params?.sSortDir_0
+		def sortColIndex = params?.iSortCol_0
+		def cols = ["0":"consentDate",
+					"1":"formStatus",
+				    "2":"template.namePrefix",
+					"3":"formID",
+					"4":"patient.nhsNumber" ]
+		sortCol = cols.containsValue(sortColIndex) ? cols[sortColIndex] : "consentDate"
+
+
+		data = ConsentForm.list([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order])
+		total = ConsentForm.count()
+		displayTotal = data.size()
+
+		def model = [sEcho: params.sEcho, iTotalRecords: total, iTotalDisplayRecords: displayTotal, aaData: data]
+		render model as JSON
+	}
+
 
     def list()
     {

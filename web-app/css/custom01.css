@@ -127,3 +127,24 @@ select{
 .consent-status-table .consent-status{
     width: 10%;
 }
+
+.addformButton
+{
+	padding: 5px;
+}
+
+
+table.dataTable tr.odd td.sorting_1 {
+	background-color: #F1FAED !important;
+}
+
+table.dataTable tr.odd td {
+	background-color: #f9f9f9 !important;
+}
+
+table.dataTable tr.even td.sorting_1 {
+	background-color: #F1FAED !important;
+}
+table.dataTable tr.even td {
+	background-color: #FFFFFF !important;
+}

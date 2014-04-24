@@ -10,6 +10,8 @@ class UrlMappings {
 		"/api/consents/${lookupId}?(.${format})?"(controller: "consentStatus")
         "/consentForm/search" (view:"consentForm/search")
         "/consentForm/cuttingRoom" (view:"consentForm/cuttingRoom")
+		"/attachment/unAnnotatedList" (view:"attachment/unAnnotatedList")
+		"/attachment/annotatedList" (view:"attachment/annotatedList")
 
         "/"(view:"/index")
         "404"(view:'/error')

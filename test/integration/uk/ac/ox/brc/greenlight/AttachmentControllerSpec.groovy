@@ -20,12 +20,19 @@ class AttachmentControllerSpec extends IntegrationSpec {
     def attachmentController = new AttachmentController()
 
     def setup() {
-        new Attachment(fileName: 'a.jpg', dateOfUpload: new Date(), attachmentType: Attachment.AttachmentType.IMAGE, content: []).save()
-        new Attachment(fileName: 'b.jpg', dateOfUpload: new Date(), attachmentType: Attachment.AttachmentType.PDF, content: []).save()
+        new Attachment(fileName: '1.jpg', dateOfUpload: new Date(), attachmentType: Attachment.AttachmentType.IMAGE, content: []).save()
+        new Attachment(fileName: '2.jpg', dateOfUpload: new Date(), attachmentType: Attachment.AttachmentType.PDF, content: []).save()
+        new Attachment(fileName: '3.jpg', dateOfUpload: new Date(), attachmentType: Attachment.AttachmentType.PDF, content: []).save()
+        new Attachment(fileName: '4.jpg', dateOfUpload: new Date(), attachmentType: Attachment.AttachmentType.PDF, content: []).save()
+        new Attachment(fileName: '5.jpg', dateOfUpload: new Date(), attachmentType: Attachment.AttachmentType.PDF, content: []).save()
+        new Attachment(fileName: '6.jpg', dateOfUpload: new Date(), attachmentType: Attachment.AttachmentType.PDF, content: []).save()
+        new Attachment(fileName: '7.jpg', dateOfUpload: new Date(), attachmentType: Attachment.AttachmentType.PDF, content: []).save()
     }
 
-    def private createAnnotatedAttachment() {
-        def attachment = new Attachment(id: 1, fileName: 'a.jpg', dateOfUpload: new Date(), attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flash: true)
+    def private createAnnotatedAttachments() {
+        def attachment1 = new Attachment(id: 1, fileName: '1a.jpg', dateOfUpload: new Date(), attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flash: true)
+        def attachment2 = new Attachment(id: 1, fileName: '2a.jpg', dateOfUpload: new Date(), attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flash: true)
+        def attachment3 = new Attachment(id: 1, fileName: '3a.jpg', dateOfUpload: new Date(), attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flash: true)
 
         def template = new ConsentFormTemplate(
                 id: 1,
@@ -35,8 +42,9 @@ class AttachmentControllerSpec extends IntegrationSpec {
         ).addToQuestions(new Question(name: 'I read1...')
         ).save()
 
+		//--------------------------
         def consent1 = new ConsentForm(
-                attachedFormImage: attachment,
+                attachedFormImage: attachment1,
                 template: template,
                 consentDate: new Date([year: 2014, month: 01, date: 01]),
                 consentTakerName: "Edmin",
@@ -46,15 +54,56 @@ class AttachmentControllerSpec extends IntegrationSpec {
 
 
         new Patient(
-                givenName: "Eric",
+                givenName: "Patient1",
                 familyName: "Clapton",
                 dateOfBirth: new Date("30/03/1945"),
                 hospitalNumber: "1002",
                 nhsNumber: "1234567890",
                 consents: []
         ).addToConsents(consent1).save()
-        return attachment
 
+
+		//--------------------------
+		def consent2 = new ConsentForm(
+				attachedFormImage: attachment2,
+				template: template,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edmin",
+				formID: "GEN12345",
+				formStatus: ConsentForm.FormStatus.NORMAL
+		).save();
+
+
+		new Patient(
+				givenName: "Patient2",
+				familyName: "Clapton",
+				dateOfBirth: new Date("30/03/1945"),
+				hospitalNumber: "1002",
+				nhsNumber: "1234567890",
+				consents: []
+		).addToConsents(consent2).save()
+		//-------------------------------
+		def consent3 = new ConsentForm(
+				attachedFormImage: attachment3,
+				template: template,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edmin",
+				formID: "GEN12345",
+				formStatus: ConsentForm.FormStatus.NORMAL
+		).save();
+
+
+		new Patient(
+				givenName: "Patient3",
+				familyName: "Clapton",
+				dateOfBirth: new Date("30/03/1945"),
+				hospitalNumber: "1002",
+				nhsNumber: "1234567890",
+				consents: []
+		).addToConsents(consent3).save()
+
+
+		return [attachment1,attachment2,attachment3]
     }
 
 
@@ -123,7 +172,7 @@ class AttachmentControllerSpec extends IntegrationSpec {
 
     def "Test if delete action will not delete an annotated attachment"() {
         when: "Action delete is called"
-        def attachment = createAnnotatedAttachment();
+        def attachment = createAnnotatedAttachments()[0];
         def preCount = Attachment.count()
         attachmentController.params.id = attachment.id;
         //we have to use it if we want it to retrieve object for us in show(Attachment attachment)
@@ -180,21 +229,39 @@ class AttachmentControllerSpec extends IntegrationSpec {
         Attachment.count() == attCount + 1
         attachmentController.modelAndView.model.attachments.size()==1
     }
-//    def "Test if Save, saves the uploaded file correctly"()
-//    {
-//        given:"A sample image file is uploaded"
-//        def mockFile = new MockMultipartFile('scannedForms', 'input.jpg','image/jpg' , "TestMockContent" as byte[])
-//        def attCount = Attachment.count()
-//
-//        when:"uploading an image file"
-//        attachmentController.metaClass.request = new MockMultipartHttpServletRequest();
-//        attachmentController.request.addFile(mockFile)
-//        attachmentController.save();
-//
-//        then:"the file should not be added"
-//        Attachment.count() == attCount + 1
-//        attachmentController.modelAndView.model.attachments[0].fileName == "input.jpg"
-//        attachmentController.modelAndView.model.attachments[0].attachmentType == Attachment.AttachmentType.IMAGE
-//        attachmentController.modelAndView.model.attachments[0].dateOfUpload.compare
-//    }
+
+	def "listUnAnnotatedAttachments returns list of un-annotated attachment"()
+	{
+		given:"A number of attachments exist"
+		createAnnotatedAttachments();
+		Attachment.count() == 10 //all attachment
+
+		when:"listUnAnnotatedAttachments action is called"
+		attachmentController.params.sSortDir_0 = "desc"
+		attachmentController.params.iSortCol_0 = "0"
+		attachmentController.response.format = "json"
+		attachmentController.listUnAnnotatedAttachments()
+
+		then:"returns Un-AnnotatedAttachments in json format"
+		new JSONArray(attachmentController.response.json.aaData).size() == 7 //7 attachments are not annotated
+		attachmentController.response.json.iTotalRecords == 7 //7 attachments are not annotated
+	}
+
+	def "listAnnotatedAttachments returns list of all consentForms"()
+	{
+		given:"A number of consentForms and attachments exist"
+		createAnnotatedAttachments();
+		ConsentForm.count() == 3
+
+		when:"listUnAnnotatedAttachments action is called"
+		attachmentController.params.sSortDir_0 = "desc"
+		attachmentController.params.iSortCol_0 = "0"
+		attachmentController.response.format = "json"
+		attachmentController.lisAnnotatedAttachments()
+
+		then:"returns all consentForms in json format"
+		new JSONArray(attachmentController.response.json.aaData).size() == 3
+		attachmentController.response.json.iTotalRecords == 3
+	}
+
 }
