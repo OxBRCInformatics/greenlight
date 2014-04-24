@@ -26,41 +26,15 @@ class AttachmentController {
 		def sortCol
 
 		order = params?.sSortDir_0
-		sortCol = params?.iSortCol_0
-		if(sortCol=="0")
-			sortCol = "dateOfUpload"
-		else if(sortCol=="1")
-			sortCol = "fileName"
-		else
-			sortCol = "dateOfUpload"
+		def sortColIndex = params?.iSortCol_0
+		def cols =["0": "dateOfUpload", "1":"fileName"]
+		sortCol = cols.containsKey(sortColIndex) ? cols[sortColIndex] : "dateOfUpload"
 
 
+		def query = "select a from Attachment as a where a not in (select c.attachedFormImage from ConsentForm as c) order by " + sortCol + " " + order
+ 		data = Attachment.executeQuery(query,[max: params.iDisplayLength, offset: params.iDisplayStart]);
 
-
-	   data = Attachment.findAllByConsentFormIsNull([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order]);
-		//data = Attachment.list([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order]);
-		//data = Attachment.findAllWhere(consentForm: null)
-		//def alll = Attachment.list()
-//		data = Attachment.findAllByConsentFormIsNull([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order]);
-//		data = Attachment.findAll([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order])
-//				{
-//					isNull("consentForm")
-//				}
-
-//		data = Attachment.withCriteria([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order])
-//				{
-//					isNull("consentForm")
-//				}
-
-//		data = Attachment.findAll([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order],
-//				{
-//					consentForm == null
-//				})
-
-
-
-
-		total = Attachment.count()
+		total = data.size()
 		displayTotal = data.size()
 
 		def model = [sEcho: params.sEcho, iTotalRecords: total, iTotalDisplayRecords: displayTotal, aaData: data]
@@ -82,7 +56,7 @@ class AttachmentController {
 				    "2":"template.namePrefix",
 					"3":"formID",
 					"4":"patient.nhsNumber" ]
-		sortCol = cols.containsValue(sortColIndex) ? cols[sortColIndex] : "consentDate"
+		sortCol = cols.containsKey(sortColIndex) ? cols[sortColIndex] : "consentDate"
 
 
 		data = ConsentForm.list([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order])
