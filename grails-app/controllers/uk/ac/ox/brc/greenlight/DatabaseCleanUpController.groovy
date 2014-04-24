@@ -11,15 +11,13 @@ class DatabaseCleanUpController {
 
 	def databaseCleanupService
 
-	def cleanOrphanResponses()
-	{
+	def cleanOrphanResponses() {
 		def responseStr = getResponsesStatusStr()
 
 		try {
 			databaseCleanupService.cleanOrphanResponses()
 		}
-		catch (Exception exception)
-		{
+		catch (Exception exception) {
 			render exception.message
 			return
 		}
@@ -28,8 +26,7 @@ class DatabaseCleanUpController {
 		render responseStr
 	}
 
-	private def getResponsesStatusStr()
-	{
+	private def getResponsesStatusStr()	{
 		def allResponses = Response.count()
 		def allConsentResponses = 0
 		ConsentForm.list().each { consent->
