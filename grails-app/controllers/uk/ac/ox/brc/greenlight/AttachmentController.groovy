@@ -5,6 +5,7 @@ import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage
 import org.apache.tomcat.jni.Shm
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
@@ -73,8 +74,7 @@ class AttachmentController {
     def showUploaded() {
     }
 
-    def save()
-    {
+    def save() {
         def attachments = []
         if(request instanceof MultipartHttpServletRequest) {
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)request;
@@ -94,22 +94,14 @@ class AttachmentController {
 							ByteArrayOutputStream baos = new ByteArrayOutputStream()
 							ImageIO.write(page.convertToImage(BufferedImage.TYPE_INT_RGB, 256), "jpg", baos)
 
-							def attachment= new Attachment()
-							attachment.fileName = file?.originalFilename + "_page" + pageNumber
-							attachment.content = baos.toByteArray()
-							attachment.attachmentType=Attachment.AttachmentType.IMAGE
-							attachment.dateOfUpload=new Date()
-							attachmentService.save(attachment)
+							String singlePageName = file?.originalFilename + "_page" + pageNumber
+							MockMultipartFile singlePage = new MockMultipartFile(singlePageName, baos.bytes)
+							Attachment attachment = attachmentService.create(singlePage)
 							attachments.add(attachment)
 						}
 					}
 					else{
-						def attachment= new Attachment();
-						attachment.fileName = file?.originalFilename
-						attachment.content = file?.bytes
-						attachment.attachmentType=Attachment.AttachmentType.IMAGE
-						attachment.dateOfUpload=new Date()
-						attachmentService.save(attachment)
+						def attachment = attachmentService.create(file)
 						attachments.add(attachment)
 					}
 				}

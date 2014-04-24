@@ -123,7 +123,7 @@
                 <g:if test="${commandInstance?.attachment}">
 
                     <a href="${createLink(action: 'show', controller: 'attachment', id: commandInstance?.attachment?.id)}" target="_blank">
-                    <img class="thumb" id="scannedForm"  src="${createLink(controller: 'attachment', action: 'viewContent', id: "${commandInstance?.attachment?.id}")}"/>
+                        <img id="scannedForm" style="margin: 4px; width: 100%;height: 100%" class="Photo" src="${resource(dir:'attachments', file: commandInstance?.attachment?.id + '.jpg')}" />
 
                     </a>
 
