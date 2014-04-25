@@ -89,10 +89,9 @@
                     </table>
                 </g:if>
                 <g:if test="${studies}">
-
                     <div class="alert alert-info" style="text-align: left" >
-                        ${studies}
-                    </div>
+                        <pre>${studies}</pre>
+                        </div>
                 </g:if>
             </g:if>
         </div>
