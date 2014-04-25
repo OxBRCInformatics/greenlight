@@ -7,6 +7,8 @@ import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage
 import org.apache.tomcat.jni.Shm
 import org.grails.datastore.gorm.finders.MethodExpression
 import org.hibernate.criterion.CriteriaSpecification
+import org.springframework.mock.web.MockMultipartFile
+
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
@@ -15,8 +17,9 @@ import java.awt.image.BufferedImage
 
 class AttachmentController {
 
-
     def attachmentService
+
+	def defaultAction = 'list'
 
 	def listUnAnnotatedAttachments(){
 		def data
@@ -43,7 +46,6 @@ class AttachmentController {
 		render model as JSON
 	}
 
-
 	def lisAnnotatedAttachments(){
 		def data
 		def total
@@ -69,17 +71,20 @@ class AttachmentController {
 		render model as JSON
 	}
 
+	/**
+	 * Trigger a migration of all attachments in the database.
+	 *
+	 * The operation is idempotent, so running many times or over items
+	 * already migrated is fine.
+	 */
+	def migrateAll() {
+		def results =  attachmentService.migrateAllAttachments()
+		respond results as Object, [formats:['xml', 'json']] as Map
+	}
 
-    def list()
-    {
+    def list() {
         def result = attachmentService.getAllAttachments()
         respond result  , model:[attachments:result ]
-    }
-
-
-
-    def index() {
-        redirect action:'list'
     }
 
     def show(Attachment attachment) {
@@ -113,7 +118,7 @@ class AttachmentController {
         response.outputStream << content
     }
 
-    def viewPDF ={
+    def viewPDF = {
         byte[] content= attachmentService.getContent(params?.id);
         def data = "data:application/pdf;base64,${content.encodeBase64().toString()}"
         def result=[content:data]
@@ -127,8 +132,7 @@ class AttachmentController {
     def showUploaded() {
     }
 
-    def save()
-    {
+    def save() {
         def attachments = []
         if(request instanceof MultipartHttpServletRequest) {
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)request;
@@ -148,22 +152,14 @@ class AttachmentController {
 							ByteArrayOutputStream baos = new ByteArrayOutputStream()
 							ImageIO.write(page.convertToImage(BufferedImage.TYPE_INT_RGB, 256), "jpg", baos)
 
-							def attachment= new Attachment()
-							attachment.fileName = file?.originalFilename + "_page" + pageNumber
-							attachment.content = baos.toByteArray()
-							attachment.attachmentType=Attachment.AttachmentType.IMAGE
-							attachment.dateOfUpload=new Date()
-							attachmentService.save(attachment)
+							String singlePageName = file?.originalFilename + "_page" + pageNumber
+							MockMultipartFile singlePage = new MockMultipartFile(singlePageName, baos.bytes)
+							Attachment attachment = attachmentService.create(singlePage)
 							attachments.add(attachment)
 						}
 					}
 					else{
-						def attachment= new Attachment();
-						attachment.fileName = file?.originalFilename
-						attachment.content = file?.bytes
-						attachment.attachmentType=Attachment.AttachmentType.IMAGE
-						attachment.dateOfUpload=new Date()
-						attachmentService.save(attachment)
+						def attachment = attachmentService.create(file)
 						attachments.add(attachment)
 					}
 				}

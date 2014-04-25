@@ -16,8 +16,8 @@ import spock.lang.Unroll
  */
 //@TestFor(AttachmentController)
 //@Mock(Attachment)
-//class AttachmentControllerSpec extends Specification{
-class AttachmentControllerSpec extends IntegrationSpec {
+//class AttachmentControllerISpec extends Specification{
+class AttachmentControllerISpec extends IntegrationSpec {
 
     def attachmentController = new AttachmentController()
 
@@ -243,23 +243,6 @@ class AttachmentControllerSpec extends IntegrationSpec {
     }
 
 
-    def "Test if save rejects files other than Image and PDF"()
-    {
-        given:"A sample text file is uploaded"
-        def mockFile1 = new MockMultipartFile('scannedForms', 'input.txt','text/plain' , "TestMockContent" as byte[])
-        def mockFile2 = new MockMultipartFile('scannedForms', 'input.jpg','image/jpg' , "TestMockContent" as byte[])
-        def attCount = Attachment.count()
-
-        when:"uploading a text file"
-        attachmentController.metaClass.request = new MockMultipartHttpServletRequest();
-        attachmentController.request.addFile(mockFile1)
-        attachmentController.request.addFile(mockFile2)
-        attachmentController.save();
-
-        then:"the file should not be added"
-        Attachment.count() == attCount + 1
-        attachmentController.modelAndView.model.attachments.size() == 1
-    }
 
 	def "listUnAnnotatedAttachments returns list of un-annotated attachment"()
 	{
@@ -392,4 +375,5 @@ class AttachmentControllerSpec extends IntegrationSpec {
 		"desc"	|	"88"	|		2	|		0	//if not a valid column specified, sort it base on date of consent
 		"asc"	|	"88"	|		0	|		2	//if not a valid column specified, sort it base on date of consent
 	}
+
 }

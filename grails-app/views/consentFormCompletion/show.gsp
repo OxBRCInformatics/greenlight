@@ -147,8 +147,7 @@
 
                                         <g:if test="${commandInstance?.attachment?.attachmentType == Attachment.AttachmentType.IMAGE}">
 
-                                            <img id="scannedForm" style="margin: 4px; width: 100%;height: 100%" class="Photo"
-                                                 src="${createLink(controller: 'attachment', action: 'viewContent', id: "${commandInstance?.attachment?.id}")}"/>
+                                            <img id="scannedForm" style="margin: 4px; width: 100%;height: 100%" class="Photo" src="${resource(dir:'attachments', file: commandInstance?.attachment?.id + '.jpg')}" />
 
                                         </g:if>
                                         <g:elseif test="${commandInstance?.attachment?.attachmentType == Attachment.AttachmentType.PDF}">
