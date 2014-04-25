@@ -12,6 +12,8 @@
 
         $(document).ready(function() {
 
+            var grailsContextPath = "${ createLinkTo(dir: '/')}";
+
             $('#example').dataTable( {
                 "sDom": "<'row'<'span6'l><'span6'>r>t<'row span10'<ip>>",
                 "oTableTools": {"sRowSelect": "single"},
@@ -32,7 +34,7 @@
                     {  "mData": "id",
                         "bSortable":false,
                         "fnRender": function (oObj) {
-                            return "<a class='btn btn-success btn-small' href=/consentFormCompletion/show/" + oObj.aData.id + '>' + 'View' + '</a>'
+                            return "<a class='btn btn-success btn-small' href="+grailsContextPath+"consentFormCompletion/show/" + oObj.aData.id + '>' + 'View' + '</a>'
                         }
                     }
                         ]
