@@ -188,12 +188,12 @@
                     </div>
 
 
-                        <g:link   action="delete" style="text-decoration:none;" controller="consentFormCompletion" id="${commandInstance?.consentForm?.id}"  onclick="return confirm('Are you sure?');" >
-                            <button type="button" class="btn  btn-danger btn-sm">Delete</button>
+                        <g:link   action="delete" class="btn  btn-danger btn-sm" style="text-decoration:none;" controller="consentFormCompletion" id="${commandInstance?.consentForm?.id}"  onclick="return confirm('Are you sure?');" >
+                             Delete
                         </g:link>
 
-                        <g:link   action="edit" controller="consentFormCompletion" id="${commandInstance?.consentForm?.id}" >
-                            <button type="button" class="btn  btn-primary btn-sm">Edit</button>
+                        <g:link   action="edit" class="btn  btn-primary btn-sm" controller="consentFormCompletion" id="${commandInstance?.consentForm?.id}" >
+                            Edit
                         </g:link>
 
                 </div>
