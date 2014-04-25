@@ -25,7 +25,8 @@ class AttachmentController {
 	 * already migrated is fine.
 	 */
 	def migrateAll() {
-		respond attachmentService.migrateAllAttachments(), [formats:['xml', 'json']]
+		def results =  attachmentService.migrateAllAttachments()
+		respond results as Object, [formats:['xml', 'json']] as Map
 	}
 
     def list()

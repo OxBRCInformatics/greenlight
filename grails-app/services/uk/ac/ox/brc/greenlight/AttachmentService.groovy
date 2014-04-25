@@ -56,9 +56,9 @@ class  AttachmentService {
 	 * @return a map of the results (key: attachment.id, value: successBoolean)
 	 */
 	def migrateAllAttachments(){
-		def attachments = AttachmentService.findAll()
+		List<Attachment> attachments = Attachment.list()
 		def results = [:]
-		attachments.each { attachment ->
+		attachments.each { Attachment attachment ->
 			results[attachment] = migrateAttachmentFromDatabase(attachment)
 		}
 		return results
