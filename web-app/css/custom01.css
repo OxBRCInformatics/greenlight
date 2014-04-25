@@ -148,3 +148,9 @@ table.dataTable tr.even td.sorting_1 {
 table.dataTable tr.even td {
 	background-color: #FFFFFF !important;
 }
+
+.studyAlert
+{
+    width:20%;
+    margin-top: 5px;
+}

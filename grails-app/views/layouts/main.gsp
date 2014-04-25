@@ -55,7 +55,7 @@
             <li class="active"><a href="${createLink(uri: '/')}">Home</a></li>
 
             <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Consnet Forms <b class="caret"></b></a>
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Consent Forms <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     <li><g:link  controller="attachment" action="unAnnotatedList">Un-Annotated Consent Forms</g:link></li>
                     <li><g:link  controller="attachment" action="annotatedList">Annotated Consent Forms</g:link></li>
@@ -64,6 +64,7 @@
             <li><g:link  controller="attachment" action="create">Upload Files</g:link></li>
             <li><g:link  controller="consentForm" action="search">Search</g:link></li>
             <li><g:link  controller="consentForm" action="cuttingRoom">Cut-Up Room</g:link></li>
+            <li><g:link  controller="study" action="index">Cut-Up room Text</g:link></li>
 
             <sec:ifAnyGranted roles="ROLE_ADMIN">
                 <!-- Admin menu -->
