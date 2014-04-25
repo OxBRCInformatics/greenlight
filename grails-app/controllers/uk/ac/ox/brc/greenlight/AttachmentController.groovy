@@ -5,7 +5,10 @@ import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage
 import org.apache.tomcat.jni.Shm
+import org.grails.datastore.gorm.finders.MethodExpression
+import org.hibernate.criterion.CriteriaSpecification
 import org.springframework.mock.web.MockMultipartFile
+
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
@@ -18,6 +21,56 @@ class AttachmentController {
 
 	def defaultAction = 'list'
 
+	def listUnAnnotatedAttachments(){
+		def data
+		def total
+		def displayTotal
+		def order
+		def sortCol
+
+		order = params?.sSortDir_0
+		def sortColIndex = params?.iSortCol_0
+		def cols =["0": "dateOfUpload", "1":"fileName"]
+		sortCol = cols.containsKey(sortColIndex) ? cols[sortColIndex] : "dateOfUpload"
+
+
+		def query = "select a from Attachment as a where a not in (select c.attachedFormImage from ConsentForm as c) order by " + sortCol + " " + order
+ 		data = Attachment.executeQuery(query,[max: params.iDisplayLength, offset: params.iDisplayStart]);
+		def totalRecords = Attachment.executeQuery(query);
+
+
+		total = data.size()
+		displayTotal = totalRecords.size()
+
+		def model = [sEcho: params.sEcho, iTotalRecords: total, iTotalDisplayRecords: displayTotal, aaData: data]
+		render model as JSON
+	}
+
+	def lisAnnotatedAttachments(){
+		def data
+		def total
+		def displayTotal
+		def order
+		def sortCol
+
+		order = params?.sSortDir_0
+		def sortColIndex = params?.iSortCol_0
+		def cols = ["0":"consentDate",
+					"1":"formStatus",
+				    "2":"template.namePrefix",
+					"3":"formID",
+					"4":"patient.nhsNumber" ]
+		sortCol = cols.containsKey(sortColIndex) ? cols[sortColIndex] : "consentDate"
+
+
+		data = ConsentForm.list([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order])
+		total = data.size()
+		displayTotal = ConsentForm.count()
+
+		def model = [sEcho: params.sEcho, iTotalRecords: total, iTotalDisplayRecords: displayTotal, aaData: data]
+		render model as JSON
+	}
+
 	/**
 	 * Trigger a migration of all attachments in the database.
 	 *
@@ -29,8 +82,7 @@ class AttachmentController {
 		respond results as Object, [formats:['xml', 'json']] as Map
 	}
 
-    def list()
-    {
+    def list() {
         def result = attachmentService.getAllAttachments()
         respond result  , model:[attachments:result ]
     }
@@ -66,7 +118,7 @@ class AttachmentController {
         response.outputStream << content
     }
 
-    def viewPDF ={
+    def viewPDF = {
         byte[] content= attachmentService.getContent(params?.id);
         def data = "data:application/pdf;base64,${content.encodeBase64().toString()}"
         def result=[content:data]

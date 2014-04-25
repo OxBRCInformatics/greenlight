@@ -8,7 +8,6 @@ This project is built in Grails and uses GSP in most sections.
 A number of libraries such as JQuery, Bootstrap,... are also used.
 
 
-
 ## Features
 Main features are as the followings:
 * [Uploading scanned forms in all image formats and PDF format](#upload)

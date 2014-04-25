@@ -1,4 +1,5 @@
 import org.springframework.jca.cci.CciOperationNotSupportedException
+import org.springframework.web.context.support.WebApplicationContextUtils
 import uk.ac.ox.brc.greenlight.ConsentForm
 import uk.ac.ox.brc.greenlight.ConsentFormTemplate
 import uk.ac.ox.brc.greenlight.Question
@@ -10,6 +11,8 @@ class BootStrap {
 
     def init = { servletContext ->
 
+		def springContext = WebApplicationContextUtils.getWebApplicationContext(servletContext)
+		springContext.getBean( "customObjectMarshallers" ).register()
 
         environments {
             test {

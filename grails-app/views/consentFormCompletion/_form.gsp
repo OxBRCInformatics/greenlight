@@ -134,7 +134,7 @@
                     <label>Consent Form Type</label>
                     %{--<select id="consentFormTemplate"  name="consentFormTemplate">--}%
                     <g:select id="commandInstance.consentFormTemplate"
-                              style="font-size:12px;max-width: 250px;"
+                              style="font-size:12px;width: 250px;"
                               name="commandInstance.consentFormTemplateId" class="form-control"
                               value="${commandInstance?.consentForm?.template?.id}"
                               from="${ConsentFormTemplate.list()}"

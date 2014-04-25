@@ -69,7 +69,7 @@ class ConsentFormCompletionController {
         else
             flash.error = "Error in saving Patient Consent"
 
-        redirect controller: 'attachment', action: 'list'
+        redirect controller: 'attachment', action: 'annotatedList'
     }
 
     def show() {
@@ -82,7 +82,7 @@ class ConsentFormCompletionController {
         }
 
         if (!consentForm) {
-            redirect(controller: 'attachment', action: 'list')
+            redirect(controller: 'attachment', action: 'annotatedList')
             return;
         }
         def command = new ConsentFormCommand([
@@ -103,7 +103,7 @@ class ConsentFormCompletionController {
         def consentForm = ConsentForm.get(params.id);
         def result = consentFormService.delete(consentForm)
         if (result) {
-            redirect action: "list", controller: "attachment"
+            redirect action: "annotatedList", controller: "attachment"
             return
         } else {
             redirect(action:'notFound')
@@ -114,7 +114,7 @@ class ConsentFormCompletionController {
     def edit() {
         def consentForm = ConsentForm.get(params?.id);
         if (!consentForm) {
-            redirect(controller: 'ConsentForm', action: 'list')
+            redirect(controller: 'ConsentForm', action: 'annotatedList')
         }
 
         def commandInstance = new ConsentFormCommand([
@@ -148,7 +148,7 @@ class ConsentFormCompletionController {
         else
             flash.error = "Error in saving Patient Consent"
 
-        redirect controller: 'attachment', action: 'list'
+        redirect controller: 'attachment', action: 'annotatedList'
 
     }
 
