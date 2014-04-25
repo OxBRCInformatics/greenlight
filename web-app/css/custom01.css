@@ -127,3 +127,9 @@ select{
 .consent-status-table .consent-status{
     width: 10%;
 }
+
+.studyAlert
+{
+ width:20%;
+ margin-top: 5px;
+}

@@ -88,6 +88,12 @@
                         </tbody>
                     </table>
                 </g:if>
+                <g:if test="${studies}">
+
+                    <div class="alert alert-info" style="text-align: left" >
+                        ${studies}
+                    </div>
+                </g:if>
             </g:if>
         </div>
     </div>
