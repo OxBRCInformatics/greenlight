@@ -91,8 +91,6 @@
                 <g:if test="${studies}">
 
                     <div class="alert alert-info" style="text-align: left" >
-                        <strong>Studies</strong>
-                        <br>
                         ${studies}
                     </div>
                 </g:if>

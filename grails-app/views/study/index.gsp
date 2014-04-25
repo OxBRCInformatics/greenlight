@@ -13,7 +13,7 @@
     <g:form role="form" controller="study" action="updateStudy">
     <div class="row">
         <div class="span12">
-            <h3>Studies description</h3>
+            <h3>Cut-Up room Text</h3>
 
                 <g:textArea name="description" value="${description}" style="width:50%;" rows="10">
                 </g:textArea>
