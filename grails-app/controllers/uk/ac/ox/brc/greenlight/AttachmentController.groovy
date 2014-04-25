@@ -33,9 +33,11 @@ class AttachmentController {
 
 		def query = "select a from Attachment as a where a not in (select c.attachedFormImage from ConsentForm as c) order by " + sortCol + " " + order
  		data = Attachment.executeQuery(query,[max: params.iDisplayLength, offset: params.iDisplayStart]);
+		def totalRecords = Attachment.executeQuery(query);
+
 
 		total = data.size()
-		displayTotal = data.size()
+		displayTotal = totalRecords.size()
 
 		def model = [sEcho: params.sEcho, iTotalRecords: total, iTotalDisplayRecords: displayTotal, aaData: data]
 		render model as JSON
@@ -60,8 +62,8 @@ class AttachmentController {
 
 
 		data = ConsentForm.list([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order])
-		total = ConsentForm.count()
-		displayTotal = data.size()
+		total = data.size()
+		displayTotal = ConsentForm.count()
 
 		def model = [sEcho: params.sEcho, iTotalRecords: total, iTotalDisplayRecords: displayTotal, aaData: data]
 		render model as JSON
