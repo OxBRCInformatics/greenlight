@@ -12,6 +12,8 @@
 
         $(document).ready(function() {
 
+            var grailsContextPath = "${ createLinkTo(dir: '/')}";
+
             $('#example').dataTable( {
                 "sDom": "<'row'<'span6'l><'span6'>r>t<'row span10'<ip>>",
                 "oTableTools": {"sRowSelect": "single"},
@@ -29,8 +31,8 @@
                     {  "mData": "id",
                         "bSortable":false,
                         "fnRender": function (oObj) {
-                            return "<a class='btn btn-primary btn-small' href=/consentFormCompletion/create?attachmentId=" + oObj.aData.id + '>' + 'Enter Details' + '</a>' +
-                                    "<a style='margin-left: 2px;' class='btn  btn-danger btn-small'"+ " onclick='return deleteRow("+oObj.aData.id +","+ oObj.iDataRow + ")' "+" href=/attachment/delete/" + oObj.aData.id + '>' + 'Delete' + '</a>'
+                            return "<a class='btn btn-primary btn-small' href="+grailsContextPath+"consentFormCompletion/create?attachmentId=" + oObj.aData.id + '>' + 'Enter Details' + '</a>' +
+                                    "<a style='margin-left: 2px;' class='btn  btn-danger btn-small'"+ " onclick='return deleteRow("+oObj.aData.id +","+ oObj.iDataRow + ")' "+" href="+grailsContextPath+"attachment/delete/" + oObj.aData.id + '>' + 'Delete' + '</a>'
 
                         }
                     }
@@ -97,9 +99,11 @@
     {
         if(confirm("Are you sure?"))
         {
+            var grailsContextPath = "${ createLinkTo(dir: '/')}";
+
             $.ajax({
                 type: 'POST',
-                url: "/attachment/delete/"+attachmentId,
+                url: grailsContextPath+"attachment/delete/"+attachmentId,
                 async:false,
                 success: function (data) {
 
