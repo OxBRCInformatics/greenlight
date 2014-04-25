@@ -22,8 +22,8 @@ class DatabaseCleanUpController {
 			return
 		}
 
-		responseStr = "Before<br>" + responseStr + "<br>After<br>"+ getResponsesStatusStr()
-		render responseStr
+		def result = [before: responseStr, after: getResponsesStatusStr()]
+		respond result as Object, [formats:['xml','json']] as Map
 	}
 
 	private def getResponsesStatusStr()	{
