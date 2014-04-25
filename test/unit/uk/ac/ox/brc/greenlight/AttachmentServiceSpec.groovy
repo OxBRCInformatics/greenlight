@@ -21,19 +21,20 @@ class AttachmentServiceSpec extends Specification {
 				attachmentType: Attachment.AttachmentType.IMAGE,
 				dateOfUpload: new Date()
 			).save(failOnError: true)
-		String expectedFileLocation =  "target${File.separator}attachments${File.separator}${attachment.id}.jpg"
+		File expectedFileLocation =  "target${File.separator}attachments${File.separator}${attachment.id}.jpg" as File
 		service.fileUploadService = Mock(FileUploadService)
 
 
 		when: "The migration is carried out"
 		boolean result = service.migrateAttachmentFromDatabase(attachment)
 		Attachment savedAttachment = Attachment.get(attachment.id)
+
 		then:
 		result == true
 		savedAttachment.content == null
-		savedAttachment.fileUrl == expectedFileLocation
-		(expectedFileLocation as File).exists()
-		(expectedFileLocation as File).bytes.length == inputFile.bytes.length
+		savedAttachment.fileUrl == expectedFileLocation.path
+		expectedFileLocation.exists()
+		expectedFileLocation.bytes.length == inputFile.bytes.length
 		1 * service.fileUploadService.uploadFile(_, attachment.id + ".jpg", 'attachments') >> { _, filename, dir ->
 			// We need to mock the file copying bits. Ideally we should refactor the code under test to make this easier.
 			File path = expectedFileLocation as File
@@ -43,8 +44,9 @@ class AttachmentServiceSpec extends Specification {
 		}
 
 		cleanup:
-		new File('attachments'+ File.separator + attachment.id + ".jpg").delete()
-		new File('attachments').delete()
+
+		expectedFileLocation.delete()
+		expectedFileLocation.parentFile.delete()
 	}
 
 	def "Attempting migration from database when no data is present returns true but does nothing"() {

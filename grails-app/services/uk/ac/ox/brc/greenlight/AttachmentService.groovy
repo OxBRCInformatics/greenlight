@@ -52,6 +52,19 @@ class  AttachmentService {
     }
 
 	/**
+	 * Migrate all attachments.
+	 * @return a map of the results (key: attachment.id, value: successBoolean)
+	 */
+	def migrateAllAttachments(){
+		def attachments = AttachmentService.findAll()
+		def results = [:]
+		attachments.each { attachment ->
+			results[attachment] = migrateAttachmentFromDatabase(attachment)
+		}
+		return results
+	}
+
+	/**
 	 * Move the contents of the Attachment from the database into the filesystem. If there is no content in the `content`
 	 * attribute then no action is taken and a successful response is given.
 	 *

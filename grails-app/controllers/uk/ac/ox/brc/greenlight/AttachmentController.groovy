@@ -14,19 +14,24 @@ import java.awt.image.BufferedImage
 
 class AttachmentController {
 
-
     def attachmentService
+
+	def defaultAction = 'list'
+
+	/**
+	 * Trigger a migration of all attachments in the database.
+	 *
+	 * The operation is idempotent, so running many times or over items
+	 * already migrated is fine.
+	 */
+	def migrateAll() {
+		respond attachmentService.migrateAllAttachments(), [formats:['xml', 'json']]
+	}
 
     def list()
     {
         def result = attachmentService.getAllAttachments()
         respond result  , model:[attachments:result ]
-    }
-
-
-
-    def index() {
-        redirect action:'list'
     }
 
     def show(Attachment attachment) {
