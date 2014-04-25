@@ -11,7 +11,7 @@ import spock.lang.Specification
 class ConsentFormServiceUnitSpec extends Specification {
 
 	static Date now = new Date();
-
+    static final String DBL_QUOTE = '\"'
 	def "Get the latest consent forms for a patient"() {
 
 		given:
@@ -39,4 +39,17 @@ class ConsentFormServiceUnitSpec extends Specification {
 		returnedForms.containsAll(latestForms)
 		latestForms.containsAll(returnedForms)
 	}
+
+    def "Escaping text for CSV output"() {
+        expect:
+        service.escapeForCSV(inputString) == DBL_QUOTE + expectedString + DBL_QUOTE
+
+        where:
+        inputString | expectedString
+        "This is some text" | "This is some text"
+        "This is some\n text\n" | "This is some\t text\t"
+        "," | ","
+        DBL_QUOTE | DBL_QUOTE+DBL_QUOTE
+		null	  | ""
+    }
 }

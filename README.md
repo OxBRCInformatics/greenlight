@@ -8,7 +8,6 @@ This project is built in Grails and uses GSP in most sections.
 A number of libraries such as JQuery, Bootstrap,... are also used.
 
 
-
 ## Features
 Main features are as the followings:
 * [Uploading scanned forms in all image formats and PDF format](#upload)
@@ -23,56 +22,36 @@ Main features are as the followings:
 
 #### <a name="upload" style="text-decoration:none">Uploading scanned forms in all image formats and PDF format</a>
 Most image files and pdf format are all supported.
-<p align="center">
-    <img width="500" height="300" src="/resources/docImages/uploadedFiles.png"/>
-</p>
+
+![Uploaded files](/resources/docImages/uploadedFiles.png)
 
 #### <a name="annotate" style="text-decoration:none">Supporting multi-page PDF consent forms</a>
 Scanning several consent forms as a batch may result in a multi-page PDF file in which each consent form is saved in a page. In this case, the file can be uploaded and 'Consent Management System' will save each page as a separate consent form and operators will annotate each page seperately .
-<div  align="center">
-    <img width="500" height="300" src="/resources/docImages/multipagePDF.png"/>
-</div>
 
+![Multi page PDF](/resources/docImages/multipagePDF.png)
 
 #### <a name="severalforms" style="text-decoration:none">Supporting several consent form templates</a>
 In ORB, several consent forms are used such as General Consent Form, Oncology Consent Form for Adults and .... . In this case users can select the consent form type while annotating the scanned form.
-<p align="center">
-    <img width="500" height="300" src="/resources/docImages/consentForms.png"/>
-</p>
+
+![Consent forms](/resources/docImages/consentForms.png)
 
 #### <a name="annotate" style="text-decoration:none">Annotating uploaded consent forms</a>
 By annotating a consent form, an operator will enter all details of a consent form such as NHS number, MRN, consent date, consent take name,answers to each consent questions,...
 This process is facilitated by a number of fast entry buttons such as Answer 'Yes to all', Answer 'No to all',...
 In case of ambiguous or blank answers to a consent question, operators can easily select an item form the list and apply this option for a question.
-<p align="center">
-    <img width="500" height="300" src="/resources/docImages/annotation.png"/>
-</p>
+![Annotations](/resources/docImages/annotation.png)
 
 #### <a name="cutup" style="text-decoration:none">Cut-Up room consent tracker</a>
 This feature enables users such as pathologists and researchers at cut-up rooms to use Barcode readers to read barcodes on samples and check wheather the sample is consented or not. In this features, the read code is checked agains NHS number and MRN to find the related information.
-<div align="center">
-    <img width="450" height="200" src="/resources/docImages/cutuproom.png"/>
-</div>
-
-<div align="center">
-    <img width="450" height="200" src="/resources/docImages/cutuproom-consented.png"/>
-</div>
-
-
-<div  align="center">
-    <img width="450" height="200" src="/resources/docImages/cutuproom-Notconsented.png"/>
-</div>
-
-<div  align="center">
-    <img width="450" height="200" src="/resources/docImages/cutuproom-Notfound.png"/>
-</div>
+![Cut up room](/resources/docImages/cutuproom.png)
+![Cut up room - consented](/resources/docImages/cutuproom-consented.png)
+![Cut up room - not consented](/resources/docImages/cutuproom-Notconsented.png)
+![Cut up room - not found](/resources/docImages/cutuproom-Notfound.png)
 
 
 #### <a name="search" style="text-decoration:none">Supporting search on consent forms content</a>
 Users can search for consent forms based on NHS Number, MRN, Consent date, Consent Taker name and ...
-<p align="center">
-    <img width="500" height="300" src="/resources/docImages/search.png"/>
-</p>
+![Search](/resources/docImages/search.png)
 
 
 ## Deploying the application

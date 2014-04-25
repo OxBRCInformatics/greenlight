@@ -117,7 +117,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         consentFormController.save()
 
         then:
-        consentFormController.response.redirectedUrl =="/attachment/list"
+        consentFormController.response.redirectedUrl == "/attachment/annotatedList"
         Patient.count() == patientCountBefore + 1
     }
 
@@ -130,7 +130,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         consentFormController.save()
 
         then:
-        consentFormController.response.redirectedUrl =="/attachment/list"
+        consentFormController.response.redirectedUrl == "/attachment/annotatedList"
         ConsentForm.count() == consentFormCountBefore + 1
 
         cleanup:
@@ -151,7 +151,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         consentFormController.save()
 
         then:
-        consentFormController.response.redirectedUrl =="/attachment/list"
+        consentFormController.response.redirectedUrl == "/attachment/annotatedList"
         attachment.consentForm!=null
 
         cleanup:
@@ -168,7 +168,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         consentFormController.edit()
 
         then:"request is redirected to consent list"
-        consentFormController.response.redirectedUrl =="/consentForm/list"
+        consentFormController.response.redirectedUrl == "/consentForm/annotatedList"
     }
 
     void "Test that FormIdCheck will return correct JSON value when no formId is passed"()

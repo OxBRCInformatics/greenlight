@@ -26,6 +26,7 @@
     <r:require modules="customCSS"/>
     <g:javascript library="jquery"></g:javascript>
     <g:javascript library="jqueryFormValidator"></g:javascript>
+    <g:javascript library="dataTables"></g:javascript>
 
     <!--[if lt IE 9]>
     <script src="${resource(dir:'bower_components/html5shiv/dist/',file:'html5shiv.js')}"></script>
@@ -52,10 +53,18 @@
 
         <ul class="nav">
             <li class="active"><a href="${createLink(uri: '/')}">Home</a></li>
-            <li><g:link  controller="attachment" action="list">Consent Forms</g:link></li>
+
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Consent Forms <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><g:link  controller="attachment" action="unAnnotatedList">Un-Annotated Consent Forms</g:link></li>
+                    <li><g:link  controller="attachment" action="annotatedList">Annotated Consent Forms</g:link></li>
+                 </ul>
+            </li>
             <li><g:link  controller="attachment" action="create">Upload Files</g:link></li>
             <li><g:link  controller="consentForm" action="search">Search</g:link></li>
             <li><g:link  controller="consentForm" action="cuttingRoom">Cut-Up Room</g:link></li>
+            <li><g:link  controller="study" action="index">Cut-Up room Text</g:link></li>
 
             <sec:ifAnyGranted roles="ROLE_ADMIN">
                 <!-- Admin menu -->
@@ -128,6 +137,10 @@
                 },
                 "Not a valid format."
         );
+
+        $.validator.addMethod("formElementSelected", function(value, element){
+            return value > -1;
+        }, "Please select an item.");
 
     });
 
