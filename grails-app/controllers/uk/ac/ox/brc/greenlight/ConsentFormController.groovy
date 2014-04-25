@@ -5,6 +5,7 @@ class ConsentFormController {
 	def consentEvaluationService
     def consentFormService
 	def patientService
+	def studyService
 
 
     def find()
@@ -45,6 +46,7 @@ class ConsentFormController {
 				}
 			}
 		}
+		model.studies =  studyService.getStudy()?.description
 		render view:"cuttingRoom", model: model
 	}
 
