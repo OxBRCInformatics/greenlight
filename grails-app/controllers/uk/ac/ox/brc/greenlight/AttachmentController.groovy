@@ -153,7 +153,7 @@ class AttachmentController {
 							ImageIO.write(page.convertToImage(BufferedImage.TYPE_INT_RGB, 256), "jpg", baos)
 
 							String singlePageName = file?.originalFilename + "_page" + pageNumber
-							MockMultipartFile singlePage = new MockMultipartFile(singlePageName, baos.bytes)
+							MockMultipartFile singlePage = new MockMultipartFile(singlePageName, baos.toByteArray())
 							Attachment attachment = attachmentService.create(singlePage)
 							attachments.add(attachment)
 						}
