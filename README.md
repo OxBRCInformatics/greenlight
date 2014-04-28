@@ -7,6 +7,8 @@ Open Source consent management tool
 This project is built in Grails and uses GSP in most sections.
 A number of libraries such as JQuery, Bootstrap,... are also used.
 
+## Documentation
+Please see [the wiki](https://github.com/OxBRCInformatics/greenlight/wiki) for documentation and deployment instructions.
 
 ## Features
 Main features are as the followings:
