@@ -28,6 +28,7 @@ class ConsentForm {
 
     static mapping = {
         responses cascade: 'all-delete-orphan'
+        comment type: "text"
     }
 
     static constraints = {
