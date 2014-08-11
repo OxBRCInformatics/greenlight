@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="layout" content="main"/>
-    <title>ORB Consent Form</title>
+    <title>Oxford BioResource Consent Form</title>
 
 </head>
 
@@ -12,7 +12,7 @@
 
     <div class="jumbotron">
         <div class="container">
-            <h2>ORB <br>Consent Form <br> Management System</h2>
+            <h2>Oxford BioResource <br>Consent Form <br> Management System</h2>
         </div>
 
         <table>
@@ -31,7 +31,7 @@
                         <div class="colored-box">
                             <span class="glyphicon glyphicon-edit extra-large"></span>
                             <h4>Annotate<br>  consent forms</h4>
-                            <p>ORB consent forms and their items.
+                            <p>Oxford BioResource consent forms and their items.
                             Select your uploaded consent form and annotate it's details.</p>
                         </div>
                     </g:link>
