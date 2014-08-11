@@ -59,7 +59,7 @@
 
 <div role="navigation" class="navbar">
     <div class="navbar-inner">
-        <a href="${createLink(uri: '/')}" class="brand">ORB Consent Form</a>
+        <a href="${createLink(uri: '/')}" class="brand">Oxford BioResource Consent Form</a>
 
         <ul class="nav">
             <li class="active"><a href="${createLink(uri: '/')}">Home</a></li>
