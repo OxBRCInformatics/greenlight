@@ -61,7 +61,7 @@
                 <label for="commandInstance.patient.dateOfBirth">Date of Birth</label>
                 <g:datePicker class="form-control" id="commandInstance.patient.dateOfBirth"
                               name="commandInstance.patient.dateOfBirth"
-                              relativeYears="[-100..0]"
+                              relativeYears="[-100..100]"
                               value="${commandInstance?.patient?.dateOfBirth}"
                               placeholder="Date of Birth"
                               precision="day" />
