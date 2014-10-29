@@ -13,7 +13,10 @@ class Question {
             studyForm:ConsentFormTemplate]
 
     static constraints = {
-        name maxSize: 500
 		labelIfNotYes nullable: true
     }
+	static mapping = {
+		name type: "text"
+	}
+
 }
