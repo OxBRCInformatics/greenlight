@@ -276,10 +276,36 @@
 
     $(function(){
 
+
+        $("input[id='commandInstance.patient.nhsNumber']").blur(function() {
+                    alert('hi')
+
+
+
+
+        var ajaxLink= "${createLink(action:'findDemographic', controller:'ConsentFormCompletion')}";
+        var patientDemographic
+        $.ajax({
+            type: 'POST',
+            url: ajaxLink,
+            contentType: 'application/json; charset=utf-8',
+            data: { nhsNumber: '123' },
+            dataType: 'json',
+            async:false,
+            success: function (data) {
+                    debugger;
+                    patientDemographic = data
+                    return
+                    }
+                })
+
+
+        });
+
+
         $.validator.addMethod(
                     "checkDuplicateFormId",
                         function(value, element) {
-
                             var actualConsentId   =$("input[id='commandInstance.consentForm.id']").val()
                             var consentFormLink = "${createLink(action:'show', controller:'ConsentFormCompletion')}";
                             var returnedConsentId = ""
