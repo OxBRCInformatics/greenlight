@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat
 class ConsentFormCompletionController {
 
     def consentFormService
+    def demographicService
 
     def index() {
     }
@@ -169,6 +170,12 @@ class ConsentFormCompletionController {
             model.consentFormId = consentFormService.getConsentFormByFormId(formId)
         }
         respond model
+    }
+
+    def findDemographic(){
+        def nhsNumber = params["nhsNumber"]
+        def patient = demographicService.findPatient(nhsNumber)
+        respond patient
     }
 
 }

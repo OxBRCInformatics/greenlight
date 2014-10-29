@@ -1,6 +1,7 @@
 package uk.ac.ox.brc.greenlight
 
 import grails.test.spock.IntegrationSpec
+import spock.lang.Ignore
 import spock.lang.Specification
 
 
@@ -220,6 +221,21 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         then:"it returns correct consentForm.Id"
         consentFormController.response
         consentFormController.response.json.consentFormId == -1
+    }
+
+
+    @Ignore
+    void "findDemographic should return patient demographic"(){
+
+        when: "The Create action is called with a attachmentId parameter"
+        consentFormController.params['nhsNumber'] = "ABC"
+        consentFormController.response.format="json"
+        consentFormController.findDemographic()
+
+        then:""
+        consentFormController.response.json == null
+        1 * consentFormController.demographicService.findPatient("ABC") >> {}
+
     }
 
 }
