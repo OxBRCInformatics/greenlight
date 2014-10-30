@@ -1,8 +1,11 @@
 package uk.ac.ox.brc.greenlight
 
 import grails.test.spock.IntegrationSpec
-import spock.lang.Ignore
-import spock.lang.Specification
+import org.json.JSONObject
+import grails.converters.JSON
+import grails.test.spock.IntegrationSpec
+import org.codehaus.groovy.grails.web.json.JSONArray
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 
 class ConsentFormCompletionControllerSpec extends IntegrationSpec {
@@ -13,8 +16,11 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         def attachment1= new Attachment( fileName: 'a.jpg', dateOfUpload: new Date(), attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flash: true)
         def attachment2=  new Attachment(fileName: 'a.jpg', dateOfUpload: new Date(), attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flash: true)
 
+		//As we need to also mock the service which is used inside the controller
+		//so we need to add the following line
+		consentFormController.demographicService = Mock(DemographicService)
 
-        def template1=new ConsentFormTemplate(
+		def template1=new ConsentFormTemplate(
                 name: "ORB1",
                 templateVersion: "1.1",
                 namePrefix: "GNR",
@@ -224,18 +230,32 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
     }
 
 
-    @Ignore
-    void "findDemographic should return patient demographic"(){
+	void "findDemographic should return patient demographic"() {
 
-        when: "The Create action is called with a attachmentId parameter"
-        consentFormController.params['nhsNumber'] = "ABC"
-        consentFormController.response.format="json"
-        consentFormController.findDemographic()
+		when: "nhsNumber is passed"
+		consentFormController.params['nhsNumber'] = "ABC"
+		consentFormController.response.format = "json"
+		consentFormController.findDemographic()
 
-        then:""
-        consentFormController.response.json == null
-        1 * consentFormController.demographicService.findPatient("ABC") >> {}
 
-    }
+		then: "findDemographic returns patient demographic"
+		consentFormController.response
+		1 * consentFormController.demographicService.findPatient(_) >> {
+			[ACTIVE_MRN: "10221601",
+					GIVENNAME: "ABCD",
+					FAMILYNAME: "HiABC",
+					SEX: "1",
+					DOB: new Date(2010, 05, 17)]
+		}
+		new JSONObject(consentFormController.response.json) == new JSONObject([patient:[
+				ACTIVE_MRN: "10221601",
+				GIVENNAME: "ABCD",
+				FAMILYNAME: "HiABC",
+				SEX: "1",
+				DOB_day:17,
+				DOB_month:5,
+				DOB_year:2010
+		]])
+	}
 
 }

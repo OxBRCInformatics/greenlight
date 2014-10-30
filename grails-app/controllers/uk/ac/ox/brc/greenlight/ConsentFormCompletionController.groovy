@@ -175,7 +175,15 @@ class ConsentFormCompletionController {
     def findDemographic(){
         def nhsNumber = params["nhsNumber"]
         def patient = demographicService.findPatient(nhsNumber)
-        respond patient
+
+		if(patient){
+			patient.DOB_day   = patient.DOB.date;
+			patient.DOB_month = patient.DOB.month;
+			patient.DOB_year  = patient.DOB.year;
+			patient.remove('DOB')
+		}
+		def model =[patient:patient]
+        respond model
     }
 
 }
