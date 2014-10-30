@@ -40,7 +40,7 @@ class DemographicServiceSpec extends Specification {
 		Sql.metaClass."static".newInstance = { String url, String username, String password, String driver ->
 			//mock its inner methods like findRow
 			return [
-					findRow: { def query, def params ->
+					firstRow: { def query, def params ->
 						//expect that findRow is called with proper params
 						assert query  == "select ACTIVE_MRN,GIVENNAME,FAMILYNAME,DOB,SEX from PMI.VW_COSD_STAGING_DB where NHSNUMBER=:nhsNum"
 						assert params == [nhsNum: nhsNumber]
