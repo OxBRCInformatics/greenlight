@@ -20,7 +20,8 @@
 
         <div class="span4">
             <div class="form-group">
-                <label for="commandInstance.patient.nhsNumber" class="required">NHS Number</label>
+                <label for="commandInstance.patient.nhsNumber" class="required">                <span  class="bootstrapTooltip" data-toggle="tooltip" data-original-title="Load patient demographic" onclick="loadDemographic()"><i class="icon-refresh  icon-green"  style="cursor: pointer"></i>  </span>
+                    NHS Number</label>
                 <g:textField
                         class="form-control  ${hasErrors(bean: patient, field: 'nhsNumber', 'invalidInput')}"
                         id="commandInstance.patient.nhsNumber" name="commandInstance.patient.nhsNumber"
@@ -273,34 +274,39 @@
     }
 
 
+    function loadDemographic(){
+     var ajaxLink= "${createLink(action:'findDemographic', controller:'ConsentFormCompletion')}";
+        var patient
+        $.ajax({
+            type: 'POST',
+            url: ajaxLink+".json?nhsNumber="+$("input[id='commandInstance.patient.nhsNumber']").val(),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            async:false,
+            success: function (data) {
+                    patient = data.patient
+                    $("input[id='commandInstance.patient.hospitalNumber']").val(patient.ACTIVE_MRN)
+                    $("input[id='commandInstance.patient.givenName']").val(patient.GIVENNAME)
+                    $("input[id='commandInstance.patient.familyName']").val(patient.FAMILYNAME)
+                    $("select[id='commandInstance.patient.dateOfBirth_day']").val(patient.DOB_day)
+                    $("select[id='commandInstance.patient.dateOfBirth_month']").val(patient.DOB_month)
+                    $("select[id='commandInstance.patient.dateOfBirth_year']").val(patient.DOB_year)
+                    return
+                    },
+            error:function(err){
+
+            }
+
+                })
+    }
 
     $(function(){
 
 
-        $("input[id='commandInstance.patient.nhsNumber']").blur(function() {
-                    alert('hi')
+         $("input[id='commandInstance.patient.nhsNumber']").blur(function(){
+             loadDemographic()
+                });
 
-
-
-
-        var ajaxLink= "${createLink(action:'findDemographic', controller:'ConsentFormCompletion')}";
-        var patientDemographic
-        $.ajax({
-            type: 'POST',
-            url: ajaxLink,
-            contentType: 'application/json; charset=utf-8',
-            data: { nhsNumber: '123' },
-            dataType: 'json',
-            async:false,
-            success: function (data) {
-                    debugger;
-                    patientDemographic = data
-                    return
-                    }
-                })
-
-
-        });
 
 
         $.validator.addMethod(
