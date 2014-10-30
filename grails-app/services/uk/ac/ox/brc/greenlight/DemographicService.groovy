@@ -2,6 +2,9 @@ package uk.ac.ox.brc.greenlight
 import groovy.sql.Sql
 import grails.transaction.Transactional
 
+import java.sql.Connection
+import java.sql.DriverManager
+
 @Transactional
 class DemographicService {
 
@@ -26,5 +29,12 @@ class DemographicService {
  	*/
 	def checkODBC(){
 		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+	}
+
+
+	def checkOracle(){
+		Connection conn = DriverManager.getConnection('jdbc:oracle:thin:@oxnetepdsprod02.oxnet.nh.uk:1521:EPDSDEV');
+		Sql sql = new Sql(conn);
+		sql.firstRow("select ACTIVE_MRN,GIVENNAME,FAMILYNAME,DOB,SEX from PMI.VW_COSD_STAGING_DB where NHSNUMBER=:nhsNum",[nhsNum:nhsNumber])
 	}
 }

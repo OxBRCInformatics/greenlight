@@ -19,6 +19,13 @@ class DemographicServiceSpec extends Specification {
     }
 
 
+	def "checkODBC"(){
+		expect:
+		service.checkODBC()
+
+	}
+
+
 	void "checkPatient"() {
 		expect: "returns null when passed null"
 		null == service.findPatient(null)
