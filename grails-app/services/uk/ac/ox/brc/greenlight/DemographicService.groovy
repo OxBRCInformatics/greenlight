@@ -33,7 +33,7 @@ class DemographicService {
 
 
 	def checkOracle(){
-		Connection conn = DriverManager.getConnection('jdbc:oracle:thin:@oxnetepdsprod02.oxnet.nh.uk:1521:EPDSDEV');
+		Connection conn = DriverManager.getConnection('jdbc:oracle:thin:@oxnetepdsprod02.oxnet.nh.uk:1521:EPDSDEV',"username","password");
 		Sql sql = new Sql(conn);
 		sql.firstRow("select ACTIVE_MRN,GIVENNAME,FAMILYNAME,DOB,SEX from PMI.VW_COSD_STAGING_DB where NHSNUMBER=:nhsNum",[nhsNum:nhsNumber])
 	}

@@ -73,4 +73,10 @@ class DemographicServiceSpec extends Specification {
 		result.SEX == "1"
 		result.DOB == new Date(2010, 05, 17)
 	}
+
+
+	def "checkOracle"(){
+		expect:
+		service.checkOracle()
+	}
 }
