@@ -58,6 +58,8 @@ class DemographicServiceSpec extends Specification {
 		def result = service.findPatient(nhsNumber)
 
 		then: "returns patient demographic"
+		//it should just return these fields
+		result.size() == 5
 		result.ACTIVE_MRN == "10221601"
 		result.GIVENNAME  == "ABCD"
 		result.FAMILYNAME == "HiABC"
