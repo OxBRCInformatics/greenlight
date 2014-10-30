@@ -77,6 +77,6 @@ class DemographicServiceSpec extends Specification {
 
 	def "checkOracle"(){
 		expect:
-		service.checkOracle()
+		service.checkOracle(9446457610)==null
 	}
 }
