@@ -196,5 +196,4 @@ grails{
 //EPDS settings
 epds.conString.username = "USERNAME"
 epds.conString.password = "PASSWORD"
-epds.conString.url='jdbc:odbc:EPDSDEV'
-
+epds.conString.url='jdbc:oracle:thin:@serverName:1521:SIDName'
