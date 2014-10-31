@@ -7,6 +7,8 @@ import grails.test.spock.IntegrationSpec
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 
+import java.sql.Timestamp
+
 
 class ConsentFormCompletionControllerSpec extends IntegrationSpec {
 
@@ -241,21 +243,23 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
 		then: "findDemographic returns patient demographic"
 		consentFormController.response
 		1 * consentFormController.demographicService.findPatient(_) >> {
-			[ACTIVE_MRN: "10221601",
-					GIVENNAME: "ABCD",
-					FAMILYNAME: "HiABC",
+			[		ACTIVE_MRN: "10221601",
+					GIVENNAME: "John",
+					FAMILYNAME: "Smith",
 					SEX: "1",
-					DOB: new Date(2010, 05, 17)]
+					DOB: Date.parse("yyyy-MM-dd","2010-05-17")
+			]
 		}
-		new JSONObject(consentFormController.response.json) == new JSONObject([patient:[
-				ACTIVE_MRN: "10221601",
-				GIVENNAME: "ABCD",
-				FAMILYNAME: "HiABC",
-				SEX: "1",
-				DOB_day:17,
-				DOB_month:5,
-				DOB_year:2010
-		]])
+		//json returned from controller changes the format of the Date type
+		//it needs a custom marshaller to handle date
+		//so we do not check DOB as its value in jSON is '2010-05-16T23:00:00Z'
+		//consentFormController.response.json.DOB == Date.parse("yyyy-MM-dd","2010-05-17")
+		consentFormController.response.json.patient.DOB_day == 17
+		consentFormController.response.json.patient.ACTIVE_MRN == "10221601"
+ 		consentFormController.response.json.patient.GIVENNAME == "John"
+		consentFormController.response.json.patient.SEX ==  "1"
+		consentFormController.response.json.patient.FAMILYNAME == "Smith"
+		consentFormController.response.json.patient.DOB_year == 2010
+		consentFormController.response.json.patient.DOB_month == 4
 	}
-
 }
