@@ -132,7 +132,11 @@ grails{
     plugin{
         springsecurity{
 
-            // page to redirect to if a login attempt fails
+			password.algorithm = 'SHA-256'
+			password.hash.iterations = 1
+			logout.postOnly = false
+
+			// page to redirect to if a login attempt fails
             failureHandler.defaultFailureUrl = '/login/authfail/?login_error=1'
 
             // redirection page for success (including successful registration
