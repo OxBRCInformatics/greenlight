@@ -162,33 +162,34 @@ grails{
 
             securityConfigType = "Annotation"
             controllerAnnotations.staticRules = [
-                    '/':                            ['IS_AUTHENTICATED_ANONYMOUSLY'],
-
+                    '/':                            ['permitAll'],
+					'/index':             ['permitAll'],
+					'/index.gsp':         ['permitAll'],
                     // Asset pipeline
-                    '/assets/**':           ['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/assets/**':           ['permitAll'],
 
-					'/bower_compoennts/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
+					'/bower_compoennts/**': ['permitAll'],
 
                     // Javascript
-					'/js/**':      			['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/js/vendor/**':  		['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/plugins/**/js/**':	['IS_AUTHENTICATED_ANONYMOUSLY'],
+					'/js/**':      			['permitAll'],
+                    '/js/vendor/**':  		['permitAll'],
+                    '/plugins/**/js/**':	['permitAll'],
                     // CSS
-                    '/**/css/**':      		['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/css/**': 				['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/**/*.less':           ['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/**/css/**':      		['permitAll'],
+                    '/css/**': 				['permitAll'],
+                    '/**/*.less':           ['permitAll'],
                     // Images
-                    '/images/**': 			['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/img/**': 				['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/images/**': 			['permitAll'],
+                    '/img/**': 				['permitAll'],
 
                     // Anonymously acessible pages, e.g. registration & login
-                    '/login/*':    			['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/logout/*':    		['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/register/*':    		['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/login/*':    			['permitAll'],
+                    '/logout/*':    		['permitAll'],
+                    //'/register/*':    		['permitAll'],
 
 					// Allow anonymous access to cut up room page and results
-					'/consentForm/checkConsent':	['IS_AUTHENTICATED_ANONYMOUSLY'],
-					'/consentForm/cuttingRoom': 	['IS_AUTHENTICATED_ANONYMOUSLY'],
+					'/consentForm/checkConsent':	['permitAll'],
+					'/consentForm/cuttingRoom': 	['permitAll'],
 
                     // Need to be logged in for anything else!
                     '/**':         			["hasAnyRole('ROLE_USER', 'ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY']
