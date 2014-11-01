@@ -27,7 +27,7 @@
                     </g:link>
                 </td>
                 <td width="33%" class="dashboard-panel">
-                    <g:link  controller="attachment" action="list">
+                    <g:link  controller="attachment" action="unAnnotatedList">
                         <div class="colored-box">
                             <span class="glyphicon glyphicon-edit extra-large"></span>
                             <h4>Annotate<br>  consent forms</h4>

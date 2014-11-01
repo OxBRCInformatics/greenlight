@@ -12,6 +12,7 @@ class UrlMappings {
         "/consentForm/cuttingRoom" (view:"consentForm/cuttingRoom")
 		"/attachment/unAnnotatedList" (view:"attachment/unAnnotatedList")
 		"/attachment/annotatedList" (view:"attachment/annotatedList")
+		"/attachment/list" (view:"attachment/unAnnotatedList")
 
         "/"(view:"/index")
         "404"(view:'/error')
