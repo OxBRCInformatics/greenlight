@@ -1,5 +1,5 @@
-<%@ page import="org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils"%>
-<%@ page import="grails.plugins.springsecurity.SecurityConfigType"%>
+<%@ page import="grails.plugin.springsecurity.SpringSecurityUtils"%>
+<%@ page import="grails.plugin.springsecurity.SecurityConfigType"%>
 <!DOCTYPE html>
 
 
