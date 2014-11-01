@@ -63,7 +63,7 @@
 
                 <div class="panel-body">
                     <div class="addformButton">
-                        <g:link action="create" class="btn btn-primary btn-sm" >Add Forms</g:link>
+                        <g:link action="create" controller="attachment" class="btn btn-primary btn-sm" >Add Forms</g:link>
                     </div>
 
                     <div class="table-responsive">
