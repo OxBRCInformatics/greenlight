@@ -41,8 +41,8 @@ class ConsentStatusControllerSpec extends Specification {
 		controller.getStatus()
 
 		then: "The controller responds with the consent status"
-		1 * controller.patientService.findByNHSOrHospitalNumber(lookupId) >> patient
-		1 * controller.consentFormService.getLatestConsentForms(patient) >> latestConsentForms
+		1 * controller.patientService.findAllByNHSOrHospitalNumber(lookupId) >> [patient]
+		1 * controller.consentFormService.getLatestConsentForms([patient]) >> latestConsentForms
 		2 * controller.consentEvaluationService.getConsentStatus(_) >>> [ConsentStatus.FULL_CONSENT, ConsentStatus.NON_CONSENT]
 
 		model.stringInstanceMap == [
@@ -75,7 +75,7 @@ class ConsentStatusControllerSpec extends Specification {
 				errors: true,
 				message:"The lookup ID could not be found"
 		]
-		1 * controller.patientService.findByNHSOrHospitalNumber(lookupId) >> null
+		1 * controller.patientService.findAllByNHSOrHospitalNumber(lookupId) >> []
 
 		where:
 		lookupId << ["124141241", '1', "null", "something", "undefined"]
@@ -137,8 +137,8 @@ class ConsentStatusControllerSpec extends Specification {
 		controller.getStatus()
 
 		then: "The controller responds with the consent status"
-		1 * controller.patientService.findByNHSOrHospitalNumber(lookupId) >> patient
-		1 * controller.consentFormService.getLatestConsentForms(patient) >> latestConsentForms
+		1 * controller.patientService.findAllByNHSOrHospitalNumber(lookupId) >> [patient]
+		1 * controller.consentFormService.getLatestConsentForms([patient]) >> latestConsentForms
 		2 * controller.consentEvaluationService.getConsentStatus(_) >>> [ConsentStatus.FULL_CONSENT, ConsentStatus.NON_CONSENT]
 
 		model.stringInstanceMap == [
