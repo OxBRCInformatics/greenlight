@@ -15,7 +15,8 @@ class UrlMappings {
 		"/attachment/list" (view:"attachment/unAnnotatedList")
 
         "/"(view:"/index")
-        "404"(view:'/error')
+        "404"(view:'/errors/404')
+        "403"(view:'/errors/403')
         "500"(view:'/error')
 	}
 }
