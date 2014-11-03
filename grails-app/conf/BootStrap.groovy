@@ -1,3 +1,7 @@
+import grails.converters.JSON
+import org.codehaus.groovy.grails.web.converters.configuration.ChainedConverterConfiguration
+import org.codehaus.groovy.grails.web.converters.configuration.ConvertersConfigurationHolder
+import org.codehaus.groovy.grails.web.converters.configuration.DefaultConverterConfiguration
 import org.springframework.jca.cci.CciOperationNotSupportedException
 import org.springframework.web.context.support.WebApplicationContextUtils
 import uk.ac.ox.brc.greenlight.ConsentForm
@@ -13,6 +17,10 @@ class BootStrap {
 
 		def springContext = WebApplicationContextUtils.getWebApplicationContext(servletContext)
 		springContext.getBean( "customObjectMarshallers" ).register()
+
+		DefaultConverterConfiguration<JSON> cfg = (DefaultConverterConfiguration<JSON>)ConvertersConfigurationHolder.getConverterConfiguration(JSON)
+		ConvertersConfigurationHolder.setDefaultConfiguration(JSON.class, new ChainedConverterConfiguration<JSON>(cfg, cfg.proxyHandler));
+
 
         environments {
             test {
