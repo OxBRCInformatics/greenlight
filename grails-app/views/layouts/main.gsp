@@ -89,6 +89,11 @@
                         </g:if>
                         <li><a><b><g:message code="spring.security.ui.menu.registrationCode"/></b></a></li>
                         <li><g:link controller="registrationCode" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
+
+                        <li class="divider"></li>
+                        <li><a><b>EPDS</b></a></li>
+                        <li><g:link controller="testConnection" action='index'>Connection Test</g:link></li>
+
                     </ul>
                 </li>
                 <li class="dropdown">

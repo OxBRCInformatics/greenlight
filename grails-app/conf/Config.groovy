@@ -206,7 +206,7 @@ grails{
 					'/aclEntry': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
 					'/aclEntry/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
 					'/aclObjectIdentity': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
-
+					'/testConnection/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
 
 					// Need to be logged in for anything else!
                     '/**':         			["hasAnyRole('ROLE_USER', 'ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY']

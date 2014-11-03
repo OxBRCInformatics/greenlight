@@ -37,4 +37,18 @@ class DemographicService {
 			return null
 		}
 	}
+
+	def testConnection(){
+		try {
+			def conString  = grailsApplication.config.epds.conString
+			Connection con = DriverManager.getConnection(conString.url, conString.username, conString.password);
+			def sql = new Sql(con);
+			def row = sql.firstRow("select 1=1")
+			[result:row,errors:null]
+		}
+		catch(Exception ex){
+			log.error(ex)
+			[result:null,errors:ex.message]
+		}
+	}
 }
