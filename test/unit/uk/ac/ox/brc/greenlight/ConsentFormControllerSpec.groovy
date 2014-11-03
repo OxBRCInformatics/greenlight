@@ -93,5 +93,6 @@ class ConsentFormControllerSpec extends Specification{
 		 controller.modelAndView.model.consents.size() == 2
 		 controller.modelAndView.model.consents[0].form.name == "FORM1"
 		 controller.modelAndView.model.consents[0].form.version == "12"
+		 controller.modelAndView.model.consents[0].form.namePrefix == "fm1"
 	 }
 }

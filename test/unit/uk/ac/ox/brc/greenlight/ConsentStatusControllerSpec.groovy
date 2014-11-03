@@ -54,8 +54,8 @@ class ConsentStatusControllerSpec extends Specification {
 				lastName: patient.familyName,
 				dateOfBirth: patient.dateOfBirth,
 				consents: [
-						[form: [name: formTypes[0].name, version: formTypes[0].templateVersion],lastCompleted: latestConsentForms[0].consentDate, consentStatus: ConsentStatus.FULL_CONSENT.name(), consentTakerName: latestConsentForms[0].consentTakerName,consentFormId:latestConsentForms[0].formID],
-						[form: [name: formTypes[1].name, version: formTypes[1].templateVersion], lastCompleted: latestConsentForms[1].consentDate, consentStatus: ConsentStatus.NON_CONSENT.name(), consentTakerName: latestConsentForms[1].consentTakerName,consentFormId:latestConsentForms[1].formID]
+						[form: [namePrefix:formTypes[0].namePrefix,  name: formTypes[0].name, version: formTypes[0].templateVersion],lastCompleted: latestConsentForms[0].consentDate, consentStatus: ConsentStatus.FULL_CONSENT.name(), consentTakerName: latestConsentForms[0].consentTakerName,consentFormId:latestConsentForms[0].formID],
+						[form: [namePrefix:formTypes[1].namePrefix, name: formTypes[1].name, version: formTypes[1].templateVersion], lastCompleted: latestConsentForms[1].consentDate, consentStatus: ConsentStatus.NON_CONSENT.name(), consentTakerName: latestConsentForms[1].consentTakerName,consentFormId:latestConsentForms[1].formID]
 				]
 		]
 	}
@@ -150,8 +150,8 @@ class ConsentStatusControllerSpec extends Specification {
 				lastName: patient.familyName,
 				dateOfBirth: patient.dateOfBirth,
 				consents: [
-						[form: [name: formTypes[0].name, version: formTypes[0].templateVersion],lastCompleted: latestConsentForms[0].consentDate, consentStatus: ConsentStatus.FULL_CONSENT.name(), consentTakerName:latestConsentForms[0].consentTakerName,consentFormId:latestConsentForms[0].formID],
-						[form: [name: formTypes[1].name, version: formTypes[1].templateVersion], lastCompleted: latestConsentForms[1].consentDate, consentStatus: ConsentStatus.NON_CONSENT.name(), consentTakerName:latestConsentForms[1].consentTakerName,consentFormId:latestConsentForms[1].formID]
+						[form: [namePrefix:formTypes[0].namePrefix,name: formTypes[0].name, version: formTypes[0].templateVersion],lastCompleted: latestConsentForms[0].consentDate, consentStatus: ConsentStatus.FULL_CONSENT.name(), consentTakerName:latestConsentForms[0].consentTakerName,consentFormId:latestConsentForms[0].formID],
+						[form: [namePrefix:formTypes[1].namePrefix,name: formTypes[1].name, version: formTypes[1].templateVersion], lastCompleted: latestConsentForms[1].consentDate, consentStatus: ConsentStatus.NON_CONSENT.name(), consentTakerName:latestConsentForms[1].consentTakerName,consentFormId:latestConsentForms[1].formID]
 				]
 		]
 	}

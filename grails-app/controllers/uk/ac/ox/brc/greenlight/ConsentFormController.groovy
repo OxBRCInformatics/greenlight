@@ -38,6 +38,7 @@ class ConsentFormController {
 							form: [
 									name: consentForm.template.name,
 									version: consentForm.template.templateVersion,
+									namePrefix: consentForm.template.namePrefix
 							],
 							lastCompleted: consentForm.consentDate,
 							consentStatus: consentEvaluationService.getConsentStatus(consentForm),
