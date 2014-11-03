@@ -8,7 +8,6 @@ import grails.test.mixin.TestFor
 import grails.test.spock.IntegrationSpec
 import groovy.time.TimeCategory
 import org.springframework.security.core.userdetails.UserDetailsService
-import uk.ac.ox.brc.greenlight.GormTokenStorageService
 import uk.ac.ox.brc.greenlight.*
 import uk.ac.ox.brc.greenlight.auth.*
 
@@ -16,8 +15,6 @@ import uk.ac.ox.brc.greenlight.auth.*
  * Created by soheil on 02/11/2014.
  */
 
-@TestFor(GormTokenStorageService)
-@Mock([AuthenticationToken,AppRole,AppUser,UserRole])
 class GormTokenStorageServiceSpec extends IntegrationSpec {
 
 	def setup() {
