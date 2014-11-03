@@ -4,79 +4,48 @@ import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import spock.lang.Specification
 
-/**
- * Test for the PathwayService. This was originally using data driven testing, but there
- * was a bizarre bug which meant the domain classes weren't being mocked for every test, so
- * I've just unfactored it out into many statements.
- * @author Ryan Brooks <ryan.brooks@ndm.ox.ac.uk>
- */
+
 @TestFor(PatientService)
 @Mock(Patient)
 class PatientServiceSpec extends Specification {
 
-	def "findByNHSNumber"(){
+	def "findAllByNHSOrHospitalNumber"(){
 		given:
-		Patient johnDoe = new Patient(givenName: "John Doe", nhsNumber: "1234567890", hospitalNumber: "OXNHS12345")
-		johnDoe.save(flush: true)
+		def patients = [new Patient(givenName: "John Doe", nhsNumber: "1234567890", hospitalNumber: "OXNHS12345").save(flush: true),
+						new Patient(givenName: "John Doe", nhsNumber: "1234567890", hospitalNumber: "OXNHS12345").save(flush: true),
+						new Patient(givenName: "John Smith", nhsNumber: "1234507000", hospitalNumber: "OXNHS12005").save(flush: true),
+						new Patient(givenName: "David Man", nhsNumber: "1234568900", hospitalNumber: "OXNHS12605").save(flush: true)]
 
-		expect: "A valid NHS number returns the right patient"
-		service.findByNHSNumber(johnDoe.nhsNumber) == johnDoe
+		when: "Passing a valid nhsNumber"
+		def result = service.findAllByNHSOrHospitalNumber(patients[0].nhsNumber)
 
-		and: "A valid Hospital number DOESN'T return a patient"
-		service.findByNHSNumber(johnDoe.hospitalNumber) == null
+		then:"all patients with this nhsNumber should be returned"
+		result.size() == 2
+		result[0].id == patients[0].id
+		result[1].id == patients[1].id
 
-		and: "null gets null back"
-		service.findByNHSNumber(null) == null
 
-		and: "Any other input gets null back"
-		service.findByNHSNumber("1245gunjkdnvbkj3") == null
-		service.findByNHSNumber("") == null
+		when: "Passing another valid nhsNumber"
+		result = service.findAllByNHSOrHospitalNumber("1234507000")
 
-		cleanup:
-		johnDoe.delete()
-	}
+		then:"all patients with this nhsNumber should be returned"
+		result.size() == 1
+		result[0].id == patients[2].id
 
-	def "findByHospitalNumber"(){
-		given:
-		Patient johnDoe = new Patient(givenName: "John Doe", nhsNumber: "1234567890", hospitalNumber: "OXNHS12345")
-		johnDoe.save(flush: true)
 
-		expect: "A valid hospital number returns the right patient"
-		service.findByHospitalNumber(johnDoe.hospitalNumber) == johnDoe
+		when: "Passing a valid Hospital number will return all patients having this hospital number"
+		result = service.findAllByNHSOrHospitalNumber(patients[0].hospitalNumber)
 
-		and: "A valid NHS number DOESN'T return a patient"
-		service.findByHospitalNumber(johnDoe.nhsNumber) == null
+		then:"all patients with this Hospital number should be returned"
+		result.size() == 2
+		result[0].id == patients[0].id
+		result[1].id == patients[1].id
 
-		and: "null gets null back"
-		service.findByHospitalNumber(null) == null
 
-		and: "Any other input gets null back"
-		service.findByHospitalNumber("1245gunjkdnvbkj3") == null
-		service.findByHospitalNumber("") == null
+		when:"null passed"
+		result = service.findAllByNHSOrHospitalNumber(null)
 
-		cleanup:
-		johnDoe.delete()
-	}
-
-	def "findByNHSOrHospitalNumber"(){
-		given:
-		Patient johnDoe = new Patient(givenName: "John Doe", nhsNumber: "1234567890", hospitalNumber: "OXNHS12345")
-		johnDoe.save(flush: true)
-
-		expect: "A valid hospital number returns the right patient"
-		service.findByNHSOrHospitalNumber(johnDoe.hospitalNumber) == johnDoe
-
-		and: "A valid NHS number DOESN'T return a patient"
-		service.findByNHSOrHospitalNumber(johnDoe.nhsNumber) == johnDoe
-
-		and: "null gets null back"
-		service.findByNHSOrHospitalNumber(null) == null
-
-		and: "Any other input gets null back"
-		service.findByNHSOrHospitalNumber("1245gunjkdnvbkj3") == null
-		service.findByNHSOrHospitalNumber("") == null
-
-		cleanup:
-		johnDoe.delete()
+		then:"null will an empty list"
+		result == []
 	}
 }

@@ -36,22 +36,25 @@ class ConsentStatusController{
 			return
 		}
 
-		// Attempt to find the patient
-		def patient = patientService.findByNHSOrHospitalNumber(lookupId)
-		if(!patient){
+		// Attempt to find all patient objects having this nhs number or hospitalNumber
+		def patients = patientService.findAllByNHSOrHospitalNumber(lookupId)
+		if(patients?.size() == 0){
 			response.errors = true
 			response.message = "The lookup ID could not be found"
 		}else{
 			// Patient exists, let's get the consents
+			//so get these details from the first patient object
+			//we assume that all the current patient objects with same nhsNumber
+			//they all have the same name/family
 			response.errors = false
-			response.nhsNumber = patient.nhsNumber
-			response.hospitalNumber = patient.hospitalNumber
-			response.firstName = patient.givenName
-			response.lastName = patient.familyName
-			response.dateOfBirth = patient.dateOfBirth
+			response.nhsNumber = patients[0]?.nhsNumber
+			response.hospitalNumber = patients[0]?.hospitalNumber
+			response.firstName = patients[0]?.givenName
+			response.lastName = patients[0]?.familyName
+			response.dateOfBirth = patients[0]?.dateOfBirth
 			response.consents = []
 
-			def consents = consentFormService.getLatestConsentForms(patient)
+			def consents = consentFormService.getLatestConsentForms(patients)
 			consents.each{ consentForm ->
 				response.consents.push([
 						form: [
