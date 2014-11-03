@@ -1,5 +1,6 @@
 package uk.ac.ox.brc.greenlight
 
+import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
 
 /**
@@ -8,8 +9,6 @@ import grails.rest.RestfulController
  */
 class ConsentStatusController{
 
-	static defaultAction = "getStatus"
-	static allowedMethods = [ getStatus: "GET"]
 
 	def consentFormService
 	def consentEvaluationService
@@ -23,7 +22,8 @@ class ConsentStatusController{
 	 * This behaviour is to handle NHS barcode stickers gracefully, where the
 	 * NHS and hospital numbers are next to each other.
 	 */
-    def getStatus() {
+	@Secured(['ROLE_API'])
+	def getStatus() {
 
 		def response = [_self: request.forwardURI]
 		String lookupId = params.lookupId

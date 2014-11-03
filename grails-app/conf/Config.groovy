@@ -158,7 +158,7 @@ grails{
             ui.password.maxLength=64
 
             securityConfigType = SecurityConfigType.InterceptUrlMap
-            useSecurityEventListener = true
+            //useSecurityEventListener = true
 
             securityConfigType = "Annotation"
             controllerAnnotations.staticRules = [
@@ -191,12 +191,54 @@ grails{
 					'/consentForm/checkConsent':	['permitAll'],
 					'/consentForm/cuttingRoom': 	['permitAll'],
 
-                    // Need to be logged in for anything else!
+					//just admin access
+					'/securityInfo/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/role': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/role/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/registrationCode': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/registrationCode/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/user': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/user/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/aclClass': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/aclClass/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/aclSid': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/aclSid/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/aclEntry': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/aclEntry/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/aclObjectIdentity': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+
+
+					// Need to be logged in for anything else!
                     '/**':         			["hasAnyRole('ROLE_USER', 'ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY']
             ]
         }
     }
 }
+
+
+
+//Long story short: JOINED_FILTERS refers to all the configured filters.
+//The minus (-) notation means all the previous values but the neglected one.
+//Add the mapping here like '/api/consents' BUT
+//as configured in UrlMappings, this mapping points to
+// ConsentStatusController controller, getStatus action
+//[It seems that, action must be mentioned , otherwise @Secured on top of it does not work
+//so in ConsentStatusController, we have added @Secured to restrict access for specific roles
+grails.plugin.springsecurity.filterChain.chainMap = [
+		'/api/**': 'JOINED_FILTERS,-exceptionTranslationFilter,-authenticationProcessingFilter,-securityContextPersistenceFilter,-rememberMeAuthenticationFilter',  // Stateless chain
+		'/api/consents/*': 'JOINED_FILTERS,-exceptionTranslationFilter,-authenticationProcessingFilter,-securityContextPersistenceFilter,-rememberMeAuthenticationFilter',  // Stateless chain
+		'/**': 'JOINED_FILTERS,-restTokenValidationFilter,-restExceptionTranslationFilter'                                                                          // Traditional chain
+]
+
+
+grails.plugin.springsecurity.rest.token.storage.useGorm = true
+grails.plugin.springsecurity.rest.token.storage.gorm.tokenDomainClassName	= "uk.ac.ox.brc.greenlight.auth.AuthenticationToken"
+grails.plugin.springsecurity.rest.token.storage.gorm.tokenValuePropertyName	= "tokenValue"
+grails.plugin.springsecurity.rest.token.storage.gorm.usernamePropertyName	= "username"
+grails.plugin.springsecurity.rest.token.storage.gorm.dateCreatedPropertyName	= "dateCreated"
+grails.plugin.springsecurity.rest.token.storage.gorm.lastTimeUpdatedPropertyName	= "lastTimeUpdated"
+grails.plugin.springsecurity.rest.token.storage.gorm.expiration	= 3600 //token will be expired 1hr after their latest access
+
 
 //EPDS settings
 epds.conString.username = "USERNAME"
