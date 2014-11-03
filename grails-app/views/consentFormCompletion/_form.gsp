@@ -289,9 +289,9 @@
                     $("input[id='commandInstance.patient.givenName']").val(patient.GIVENNAME)
                     $("input[id='commandInstance.patient.familyName']").val(patient.FAMILYNAME)
                     $("select[id='commandInstance.patient.dateOfBirth_day']").val(patient.DOB_day)
-                    //as in GSP calender, months are considered from [1..12], we should add +1 and year+1900 as it is originally a Timestamp
+                    //as in GSP calender, months are considered from [1..12], we should add +1 and year-1900 as it is originally a Timestamp
                     $("select[id='commandInstance.patient.dateOfBirth_month']").val(patient.DOB_month+1)
-                    $("select[id='commandInstance.patient.dateOfBirth_year']").val(patient.DOB_year+1900)
+                    $("select[id='commandInstance.patient.dateOfBirth_year']").val(patient.DOB_year-1900)
                     return
                     },
             error:function(err){
