@@ -18,11 +18,13 @@ class BootStrap {
             test {
                 createRoles()
                 createAdminUser("admin", "password", "support@example.com")
-                createFormTemplates()
+				createAPIUser("api","api","api@api.cpm")
+				createFormTemplates()
             }
             development {
                 createRoles()
                 createAdminUser("admin", "password", "support@example.com")
+				createAPIUser("api","api","api@api.cpm")
                 createFormTemplates()
             }
 
@@ -37,6 +39,7 @@ class BootStrap {
     def createRoles(){
         AppRole.findByAuthority('ROLE_ADMIN') ?: new AppRole(authority: 'ROLE_ADMIN').save(failOnError: true)
         AppRole.findByAuthority('ROLE_USER') ?: new AppRole(authority: 'ROLE_USER').save(failOnError: true)
+        AppRole.findByAuthority('ROLE_API') ?: new AppRole(authority: 'ROLE_API').save(failOnError: true)
     }
 
     def createAdminUser(String username, String password, String email){
@@ -45,6 +48,13 @@ class BootStrap {
             UserRole.create user, AppRole.findByAuthority('ROLE_ADMIN')
         }
     }
+
+	def createAPIUser(String username, String password, String email){
+		if(!AppUser.findByUsername(username) ){
+			def user = new AppUser(username: username, enabled: true, emailAddress: email, password: password).save(failOnError: true)
+			UserRole.create user, AppRole.findByAuthority('ROLE_API')
+		}
+	}
 
     def createFormTemplates(){
 

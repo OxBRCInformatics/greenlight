@@ -1,4 +1,4 @@
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.SpringSecurityUtils
 
 // locations to search for config files that get merged into the main config;
 // config files can be ConfigSlurper scripts, Java properties files, or classes
@@ -129,10 +129,14 @@ auditLog {
 
 
 grails{
-    plugins{
+    plugin{
         springsecurity{
 
-            // page to redirect to if a login attempt fails
+			password.algorithm = 'SHA-256'
+			password.hash.iterations = 1
+			logout.postOnly = false
+
+			// page to redirect to if a login attempt fails
             failureHandler.defaultFailureUrl = '/login/authfail/?login_error=1'
 
             // redirection page for success (including successful registration
@@ -154,44 +158,87 @@ grails{
             ui.password.maxLength=64
 
             securityConfigType = SecurityConfigType.InterceptUrlMap
-            useSecurityEventListener = true
+            //useSecurityEventListener = true
 
             securityConfigType = "Annotation"
             controllerAnnotations.staticRules = [
-                    '/':                            ['IS_AUTHENTICATED_ANONYMOUSLY'],
-
+                    '/':                            ['permitAll'],
+					'/index':             ['permitAll'],
+					'/index.gsp':         ['permitAll'],
                     // Asset pipeline
-                    '/assets/**':           ['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/assets/**':           ['permitAll'],
 
-					'/bower_compoennts/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
+					'/bower_compoennts/**': ['permitAll'],
 
                     // Javascript
-					'/js/**':      			['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/js/vendor/**':  		['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/plugins/**/js/**':	['IS_AUTHENTICATED_ANONYMOUSLY'],
+					'/js/**':      			['permitAll'],
+                    '/js/vendor/**':  		['permitAll'],
+                    '/plugins/**/js/**':	['permitAll'],
                     // CSS
-                    '/**/css/**':      		['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/css/**': 				['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/**/*.less':           ['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/**/css/**':      		['permitAll'],
+                    '/css/**': 				['permitAll'],
+                    '/**/*.less':           ['permitAll'],
                     // Images
-                    '/images/**': 			['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/img/**': 				['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/images/**': 			['permitAll'],
+                    '/img/**': 				['permitAll'],
 
                     // Anonymously acessible pages, e.g. registration & login
-                    '/login/*':    			['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/logout/*':    		['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/register/*':    		['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/login/*':    			['permitAll'],
+                    '/logout/*':    		['permitAll'],
+                    //'/register/*':    		['permitAll'],
 
 					// Allow anonymous access to cut up room page and results
-					'/consentForm/checkConsent':	['IS_AUTHENTICATED_ANONYMOUSLY'],
-					'/consentForm/cuttingRoom': 	['IS_AUTHENTICATED_ANONYMOUSLY'],
+					'/consentForm/checkConsent':	['permitAll'],
+					'/consentForm/cuttingRoom': 	['permitAll'],
 
-                    // Need to be logged in for anything else!
+					//just admin access
+					'/securityInfo/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/role': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/role/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/registrationCode': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/registrationCode/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/user': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/user/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/aclClass': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/aclClass/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/aclSid': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/aclSid/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/aclEntry': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/aclEntry/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/aclObjectIdentity': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+
+
+					// Need to be logged in for anything else!
                     '/**':         			["hasAnyRole('ROLE_USER', 'ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY']
             ]
         }
     }
 }
+
+
+
+//Long story short: JOINED_FILTERS refers to all the configured filters.
+//The minus (-) notation means all the previous values but the neglected one.
+//Add the mapping here like '/api/consents' BUT
+//as configured in UrlMappings, this mapping points to
+// ConsentStatusController controller, getStatus action
+//[It seems that, action must be mentioned , otherwise @Secured on top of it does not work
+//so in ConsentStatusController, we have added @Secured to restrict access for specific roles
+grails.plugin.springsecurity.filterChain.chainMap = [
+		'/api/**': 'JOINED_FILTERS,-exceptionTranslationFilter,-authenticationProcessingFilter,-securityContextPersistenceFilter,-rememberMeAuthenticationFilter',  // Stateless chain
+		'/api/consents/*': 'JOINED_FILTERS,-exceptionTranslationFilter,-authenticationProcessingFilter,-securityContextPersistenceFilter,-rememberMeAuthenticationFilter',  // Stateless chain
+		'/**': 'JOINED_FILTERS,-restTokenValidationFilter,-restExceptionTranslationFilter'                                                                          // Traditional chain
+]
+
+
+grails.plugin.springsecurity.rest.token.storage.useGorm = true
+grails.plugin.springsecurity.rest.token.storage.gorm.tokenDomainClassName	= "uk.ac.ox.brc.greenlight.auth.AuthenticationToken"
+grails.plugin.springsecurity.rest.token.storage.gorm.tokenValuePropertyName	= "tokenValue"
+grails.plugin.springsecurity.rest.token.storage.gorm.usernamePropertyName	= "username"
+grails.plugin.springsecurity.rest.token.storage.gorm.dateCreatedPropertyName	= "dateCreated"
+grails.plugin.springsecurity.rest.token.storage.gorm.lastTimeUpdatedPropertyName	= "lastTimeUpdated"
+grails.plugin.springsecurity.rest.token.storage.gorm.expiration	= 3600 //token will be expired 1hr after their latest access
+
 
 //EPDS settings
 epds.conString.username = "USERNAME"

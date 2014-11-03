@@ -1,5 +1,5 @@
-<%@ page import="org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils"%>
-<%@ page import="grails.plugins.springsecurity.SecurityConfigType"%>
+<%@ page import="grails.plugin.springsecurity.SpringSecurityUtils"%>
+<%@ page import="grails.plugin.springsecurity.SecurityConfigType"%>
 <!DOCTYPE html>
 
 
@@ -73,7 +73,7 @@
                     <ul class="dropdown-menu">
                         <li><a><b>Roles</b></a></li>
                         <li><g:link controller="role" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
-                        <li><g:link controller="role" action='creavi te'><g:message code="spring.security.ui.create"/></g:link></li>
+                        <li><g:link controller="role" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
                         <li><a><b>Users</b></a></li>
                         <li><g:link controller="user" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
                         <li><g:link controller="user" action='create'><g:message code="spring.security.ui.create"/></g:link></li>

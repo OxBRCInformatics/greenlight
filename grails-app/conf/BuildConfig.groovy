@@ -94,12 +94,19 @@ grails.project.dependency.resolution = {
         runtime ":resources:1.2.1"
 
         // Spring Security
-        compile ':spring-security-core:1.2.7.3'
-        compile ":spring-security-ui:0.2"
+		compile ":spring-security-core:2.0-RC4"
+		compile ":spring-security-ui:1.0-RC2"
         compile ":jquery:1.11.0"
         compile ":jquery-ui:1.10.3"
-        compile ":famfamfam:1.0.1"
-        compile ":mail:1.0"
+        compile ":famfamfam:1.0"
+		compile ':mail:1.0.7', {
+			excludes 'spring-test'
+		}
+
+		//Spring Security REST
+		compile ":spring-security-rest:1.4.1.RC1", {
+			excludes: 'spring-security-core'
+		}
 
         // Audit logging
         compile ":audit-logging:0.5.5.3"
