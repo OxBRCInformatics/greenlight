@@ -108,7 +108,14 @@ grails.project.dependency.resolution = {
 			excludes: 'spring-security-core'
 		}
 
-        // Audit logging
+		//This is a REST client builder
+		//it can be used in Greenlight clients to call its API endpoints
+		//We just use it to show how to call Greenlight API endpoints and
+		//added some test for that in GreenlightAPISpec
+		compile ":rest-client-builder:2.0.3"
+
+
+		// Audit logging
         compile ":audit-logging:0.5.5.3"
 
         test ":geb:$gebVersion"
