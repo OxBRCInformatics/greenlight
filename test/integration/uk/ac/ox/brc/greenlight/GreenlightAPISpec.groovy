@@ -38,7 +38,7 @@ class GreenlightAPISpec extends IntegrationSpec {
 		//create a mock server that replies to requests to http://greenlight.com/api/login/
 		def rest = new RestBuilder()
 		final mockServer = MockRestServiceServer.createServer(rest.restTemplate)
-		mockServer.expect(MockRestRequestMatchers.requestTo("http://GREENLIGHT_ADDRESS_.com/api/login/"))
+		mockServer.expect(MockRestRequestMatchers.requestTo("http://GREENLIGHT_ADDRESS_.com/api/login"))
 				.andExpect(MockRestRequestMatchers.method(HttpMethod.POST))
 				.andRespond(MockRestResponseCreators.withSuccess(responseJon.toString(), MediaType.APPLICATION_JSON))
 
@@ -50,7 +50,7 @@ class GreenlightAPISpec extends IntegrationSpec {
 			password = "API_USER_PASSWORD"
 		}
 		//call API endpoint
-		def response = rest.post("http://GREENLIGHT_ADDRESS_.com/api/login/") {
+		def response = rest.post("http://GREENLIGHT_ADDRESS_.com/api/login") {
 			body requestJson
 		}
 
@@ -80,7 +80,7 @@ class GreenlightAPISpec extends IntegrationSpec {
 		//create a mock server that replies to requests to http://greenlight.com/api/vlidate/
 		def rest = new RestBuilder()
 		final mockServer = MockRestServiceServer.createServer(rest.restTemplate)
-		mockServer.expect(MockRestRequestMatchers.requestTo("http://GREENLIGHT_ADDRESS_.com/api/validate/"))
+		mockServer.expect(MockRestRequestMatchers.requestTo("http://GREENLIGHT_ADDRESS_.com/api/validate"))
 				.andExpect(MockRestRequestMatchers.method(HttpMethod.POST))
 				.andExpect(MockRestRequestMatchers.header("Authorization", "Bearer 72sns5aoniq891er2r4kjo558g083jsg"))
 				.andRespond(MockRestResponseCreators.withSuccess(responseJon.toString(), MediaType.APPLICATION_JSON))
@@ -88,7 +88,7 @@ class GreenlightAPISpec extends IntegrationSpec {
 		when: "Login request is issued"
 		//This is the process that happens on client side
 		//call API endpoint
-		def response = rest.post("http://GREENLIGHT_ADDRESS_.com/api/validate/") {
+		def response = rest.post("http://GREENLIGHT_ADDRESS_.com/api/validate") {
 			auth "Bearer 72sns5aoniq891er2r4kjo558g083jsg"
 		}
 
@@ -180,19 +180,10 @@ class GreenlightAPISpec extends IntegrationSpec {
 
 	def "logout"() {
 		given: "Greenlight server is running at http://GREENLIGHT_ADDRESS_.com"
-		//create a mock reply for server
-		def builder = new JSONBuilder()
-		JSON responseJon = builder.build {
-			username = "api"
-			roles = ["ROLE_API"]
-			access_token = "27dr90vau681mmtr8c14n8halnjqi694"
-			token_type = "Bearer"
-		}
-
 		//create a mock server that replies to requests to http://greenlight.com/api/logout/
 		def rest = new RestBuilder()
 		final mockServer = MockRestServiceServer.createServer(rest.restTemplate)
-		mockServer.expect(MockRestRequestMatchers.requestTo("http://GREENLIGHT_ADDRESS_.com/api/logout/"))
+		mockServer.expect(MockRestRequestMatchers.requestTo("http://GREENLIGHT_ADDRESS_.com/api/logout"))
 				.andExpect(MockRestRequestMatchers.method(HttpMethod.POST))
 				.andExpect(MockRestRequestMatchers.header("Authorization", "Bearer 72sns5aoniq891er2r4kjo558g083jsg"))
 				.andRespond(MockRestResponseCreators.withSuccess("", MediaType.APPLICATION_JSON))
@@ -200,7 +191,7 @@ class GreenlightAPISpec extends IntegrationSpec {
 		when: "Login request is issued"
 		//This is the process that happens on client side
 		//call API endpoint
-		def response = rest.post("http://GREENLIGHT_ADDRESS_.com/api/logout/") {
+		def response = rest.post("http://GREENLIGHT_ADDRESS_.com/api/logout") {
 			auth "Bearer 72sns5aoniq891er2r4kjo558g083jsg"
 		}
 
