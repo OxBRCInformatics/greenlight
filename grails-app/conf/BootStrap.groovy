@@ -1,3 +1,7 @@
+import grails.converters.JSON
+import org.codehaus.groovy.grails.web.converters.configuration.ChainedConverterConfiguration
+import org.codehaus.groovy.grails.web.converters.configuration.ConvertersConfigurationHolder
+import org.codehaus.groovy.grails.web.converters.configuration.DefaultConverterConfiguration
 import org.springframework.jca.cci.CciOperationNotSupportedException
 import org.springframework.web.context.support.WebApplicationContextUtils
 import uk.ac.ox.brc.greenlight.ConsentForm
@@ -13,6 +17,17 @@ class BootStrap {
 
 		def springContext = WebApplicationContextUtils.getWebApplicationContext(servletContext)
 		springContext.getBean( "customObjectMarshallers" ).register()
+
+		//Using grails.plugins.rest.client.RestBuilder constructor re-initialises JSON response rendering.
+		//Any custom renderers will subsequently not be used.
+		//https://jira.grails.org/browse/GRAILS-11801
+		//And we faced this exception:
+		//org.codehaus.groovy.grails.web.converters.exceptions.ConverterException: Error converting Bean with class org.springframework.beans.GenericTypeAwarePropertyDescriptor
+		//BUT it seems that the following code solves this problem:
+		//http://grails.1312388.n4.nabble.com/Marshallers-are-blowing-up-in-2-3-5-anyone-else-td4653954.html#a4657521
+		DefaultConverterConfiguration<JSON> cfg = (DefaultConverterConfiguration<JSON>)ConvertersConfigurationHolder.getConverterConfiguration(JSON)
+		ConvertersConfigurationHolder.setDefaultConfiguration(JSON.class, new ChainedConverterConfiguration<JSON>(cfg, cfg.proxyHandler));
+
 
         environments {
             test {
