@@ -3,6 +3,7 @@ package uk.ac.ox.brc.greenlight
 import com.odobo.grails.plugin.springsecurity.rest.token.storage.TokenNotFoundException
 import com.odobo.grails.plugin.springsecurity.rest.token.storage.TokenStorageService
 import grails.plugin.springsecurity.SpringSecurityUtils
+import grails.test.mixin.TestFor
 import groovy.time.TimeCategory
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.plugins.support.aware.GrailsApplicationAware
@@ -76,7 +77,12 @@ class GormTokenStorageService implements TokenStorageService, GrailsApplicationA
 			//before an hour ago
 			def before =  now - tokenExpiry.seconds
 			def expiredTokens = AuthenticationToken."findAllBy${lastTimeUpdatedPropertyName.capitalize()}LessThan"(before)
-			AuthenticationToken.deleteAll(expiredTokens)
+			AuthenticationToken.withTransaction { status ->
+				expiredTokens.each{ expiredToken ->
+					expiredToken.delete(flush:true)
+				}
+			}
+			//AuthenticationToken.deleteAll(expiredTokens)
 		}
 
 	}

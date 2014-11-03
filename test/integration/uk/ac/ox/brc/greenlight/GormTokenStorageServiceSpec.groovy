@@ -17,7 +17,11 @@ import uk.ac.ox.brc.greenlight.auth.*
 
 class GormTokenStorageServiceSpec extends IntegrationSpec {
 
+	def grailsApplication
+	def service = new uk.ac.ox.brc.greenlight.GormTokenStorageService()
+	
 	def setup() {
+		service.grailsApplication = grailsApplication
 		service.userDetailsService = Mock(UserDetailsService)
 
 		//create API role
