@@ -61,7 +61,7 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
         // runtime 'mysql:mysql-connector-java:5.1.24'
 
-
+		test "org.grails:grails-datastore-test-support:1.0-grails-2.4"
 
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes
         compile 'com.googlecode.json-simple:json-simple:1.1.1'
@@ -81,22 +81,21 @@ grails.project.dependency.resolution = {
 
     plugins {
         // plugins for the build system only
-        build ":tomcat:7.0.47"
+        build ":tomcat:7.0.55"
 
         // plugins for the compile step
-        compile ":scaffolding:2.0.1"
-        compile ':cache:1.1.1'
+        compile ":scaffolding:2.1.2"
+        compile ':cache:1.1.7'
+		compile ":asset-pipeline:1.9.6"
 
-        // plugins needed at runtime but not for compilation
-        runtime ":hibernate:3.6.10.6" // or ":hibernate4:4.1.11.6"
-        runtime ":database-migration:1.3.8"
-        runtime ":jquery:1.10.2.2"
-        runtime ":resources:1.2.1"
+		// plugins needed at runtime but not for compilation
+        runtime ":hibernate:3.6.10.17" // or ":hibernate4:4.1.11.6"
+        runtime ":database-migration:1.4.0"
+        runtime ":jquery:1.11.1"
 
         // Spring Security
 		compile ":spring-security-core:2.0-RC4"
 		compile ":spring-security-ui:1.0-RC2"
-        compile ":jquery:1.11.0"
         compile ":jquery-ui:1.10.3"
         compile ":famfamfam:1.0"
 		compile ':mail:1.0.7', {
@@ -116,7 +115,7 @@ grails.project.dependency.resolution = {
 
 
 		// Audit logging
-        compile ":audit-logging:0.5.5.3"
+        //compile ":audit-logging:0.5.5.3"
 
         test ":geb:$gebVersion"
     }

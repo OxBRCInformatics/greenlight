@@ -15,25 +15,50 @@
     <title><g:layoutTitle default="Grails"/></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     %{--Do not remove this as Geb functional test, fails after logging in spring security--}%
-    <link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon">
+    <link rel="shortcut icon" href="${assetPath(src: 'favicon.ico')}" type="image/x-icon">
 
     %{--<link rel="apple-touch-icon" href="${resource(dir: 'images', file: 'apple-touch-icon.png')}">--}%
     %{--<link rel="apple-touch-icon" sizes="114x114" href="${resource(dir: 'images', file: 'apple-touch-icon-retina.png')}">--}%
     %{--<link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}" type="text/css">--}%
     %{--<link rel="stylesheet" href="${resource(dir: 'css', file: 'mobile.css')}" type="text/css">--}%
 
-    <r:require modules="bootstrap"/>
-    <r:require modules="customCSS"/>
-    <g:javascript library="jquery"></g:javascript>
-    <g:javascript library="jqueryFormValidator"></g:javascript>
-    <g:javascript library="dataTables"></g:javascript>
+
+
+    %{--<g:javascript library="jquery"></g:javascript>--}%
+    <asset:javascript src="jquery/jquery.min.js"/>
+
+
+    %{--<r:require modules="bootstrap"/>--}%
+    <asset:stylesheet src="bootstrap/docs/assets/css/bootstrap.css"/>
+    <asset:javascript src="bootstrap/docs/assets/js/bootstrap.min.js"/>
+
+    %{--<r:require modules="customCSS"/>--}%
+    <asset:stylesheet src="custom01.css"/>
+
+
+
+    %{--<g:javascript library="jqueryFormValidator"></g:javascript>--}%
+    <asset:javascript src="FormValidators/jquery.validate.min.js"/>
+    <asset:javascript src="FormValidators/jquery.validate.Bootstrap.js"/>
+
+
+    %{--<g:javascript library="dataTables"></g:javascript>--}%
+    <asset:stylesheet src="DataTables/media/css/jquery.dataTables.css"/>
+    <asset:javascript src="DataTables/media/js/jquery.dataTables.js"/>
+
+
+    %{--<g:javascript library="application"/>--}%
+    <asset:javascript src="application.js"/>
+
 
     <!--[if lt IE 9]>
-    <script src="${resource(dir:'bower_components/html5shiv/dist/',file:'html5shiv.js')}"></script>
-    <script src="${resource(dir:'bower_components/respond/dest/',file:'respond.min.js')}"></script>
+    <!--<script src="${resource(dir:'bower_components/html5shiv/dist/',file:'html5shiv.js')}"></script>-->
+    <!--<script src="${resource(dir:'bower_components/respond/dest/',file:'respond.min.js')}"></script>-->
+    <asset:javascript src="html5shiv/dist/html5shiv.js"/>
+    <asset:javascript src="respond/dest/respond.min.js"/>
     <![endif]-->
 
-    <r:layoutResources />
+    %{--<r:layoutResources />--}%
     <g:layoutHead/>
 </head>
 %{--<body style="margin: 0 auto">--}%
@@ -151,6 +176,6 @@
 
 </script>
 
-<r:layoutResources />
+%{--<r:layoutResources />--}%
 </body>
 </html>
