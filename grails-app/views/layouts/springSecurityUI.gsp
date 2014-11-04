@@ -1,4 +1,3 @@
-<%@ page import="org.codehaus.groovy.grails.plugins.PluginManagerHolder"%>
 <%@ page import="grails.plugin.springsecurity.SpringSecurityUtils"%>
 <%@ page import="grails.plugin.springsecurity.SecurityConfigType"%>
 <!DOCTYPE html>
@@ -17,11 +16,23 @@
  %{--Do not remove this as Geb functional test, fails after logging in spring security--}%
 <link rel="shortcut icon" href="${resource(dir:'images',file:'favicon.ico')}" type="image/x-icon"/>
 
-    <r:require modules="bootstrap"/>
-    <r:require modules="customCSS"/>
-    <g:javascript library="application"/>
 
-<s2ui:resources module='spring-security-ui' />
+    %{--<g:javascript library="jquery"></g:javascript>--}%
+    <asset:javascript src="jquery/jquery.min.js"/>
+
+    %{--<r:require modules="bootstrap"/>--}%
+    <asset:stylesheet src="bootstrap/docs/assets/css/bootstrap.css"/>
+    <asset:javascript src="bootstrap/docs/assets/js/bootstrap.min.js"/>
+
+    %{--<r:require modules="customCSS"/>--}%
+    <asset:stylesheet src="custom01.css"/>
+
+
+    %{--<g:javascript library="application"/>--}%
+    <asset:javascript src="application.js"/>
+
+
+    <s2ui:resources module='spring-security-ui' />
 
 <g:layoutHead/>
 
@@ -159,23 +170,7 @@
 </div>
 
 
-<script type="text/javascript">
-    $(function()
-    {
-        $('.bootstrapTooltip').tooltip()
 
-        jQuery.validator.addMethod("nhsNumber", function(value, element) {
-            return this.optional(element) || /^\d\d\d-\d\d\d-\d\d\d\d$/.test(value);
-        }, "NHS-Number must be in xxx-xxx-xxxxx format")
-
-
-
-        jQuery.validator.addMethod("ShouldNotSelected", function(value, element){
-            return 'null' != value;
-        }, "Please select one option.");
-
-    });
-</script>
 <div id="spinner" class="spinner" style="display:none;"><g:message code="spinner.alt" default="Loading&hellip;"/></div>
 
 
