@@ -25,12 +25,12 @@ environments {
         }
     }
     production {
-        dataSource {
-            pooled = true
-            dbCreate = "update"
-            url = "jdbc:postgresql://localhost:5432/greenlight"
-            driverClassName = "org.postgresql.Driver"
-            dialect = net.sf.hibernate.dialect.PostgreSQLDialect
-        }
+//        dataSource {
+//            pooled = true
+//            dbCreate = "update"
+//            url = "jdbc:postgresql://localhost:5432/greenlight"
+//            driverClassName = "org.postgresql.Driver"
+//            dialect = net.sf.hibernate.dialect.PostgreSQLDialect
+//        }
     }
 }
