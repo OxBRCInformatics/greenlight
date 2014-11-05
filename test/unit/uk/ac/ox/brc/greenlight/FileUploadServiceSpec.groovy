@@ -1,6 +1,7 @@
 package uk.ac.ox.brc.greenlight
 
 import grails.test.mixin.TestFor
+import org.codehaus.groovy.grails.web.context.ServletContextHolder
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.web.multipart.MultipartFile
 import spock.lang.Specification
@@ -48,14 +49,14 @@ class FileUploadServiceSpec extends Specification {
 	void "Uploading valid files"(){
 
 		given:
-		service.servletContext = Mock(ServletContext)
+		ServletContextHolder.servletContext = Mock(ServletContext)
 
 		when:
 		String filePath = service.uploadFile(file, name, destinationDirectory)
 
 		then:
 		filePath == expectedPath
-		1 * service.servletContext.getRealPath(destinationDirectory) >> "/tmp/${destinationDirectory}"
+		1 * ServletContextHolder.servletContext.getRealPath("/"+destinationDirectory) >> "/tmp/${destinationDirectory}"
 
 		where:
 		file										| name			| destinationDirectory 	| expectedPath

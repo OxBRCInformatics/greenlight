@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile
 @Transactional
 class FileUploadService {
 
-	def servletContext
+
 
 	// We want the whole upload to succeed or fail as a single transaction
 	boolean transactional = true
