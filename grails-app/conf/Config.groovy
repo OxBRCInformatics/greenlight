@@ -239,6 +239,8 @@ grails.plugin.springsecurity.rest.token.storage.gorm.dateCreatedPropertyName	= "
 grails.plugin.springsecurity.rest.token.storage.gorm.lastTimeUpdatedPropertyName	= "lastTimeUpdated"
 grails.plugin.springsecurity.rest.token.storage.gorm.expiration	= 3600 //token will be expired 1hr after their latest access
 
+//Stop minify and uglify to speed up the build process
+grails.assets.minifyJs = false
 
 //EPDS settings
 epds.conString.username = "USERNAME"
