@@ -27,6 +27,9 @@
             </div>
 
             <g:form  role="form" action="update" controller="consentFormCompletion" >
+
+                <g:set var="todayRange" value="${new Date()[Calendar.YEAR] - (commandInstance?.patient?.dateOfBirth?.year+1900)}"/>
+                <g:set var="dateOfBirthMax" value="[-100..Math.min(todayRange,100)]" />
                 <g:render template="form"/>
                 <div class="span12">
                     <button type="submit" class="btn  btn-primary  ">Save</button>
