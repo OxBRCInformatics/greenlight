@@ -5,6 +5,7 @@ import grails.plugins.rest.client.RestBuilder
 import grails.test.spock.IntegrationSpec
 import grails.web.JSONBuilder
 import groovy.json.JsonSlurper
+import org.apache.http.HttpStatus
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.test.web.client.MockRestServiceServer
@@ -50,13 +51,22 @@ class GreenlightAPISpec extends IntegrationSpec {
 			password = "API_USER_PASSWORD"
 		}
 		//call API endpoint
-		def response = rest.post("http://GREENLIGHT_ADDRESS_.com/api/login") {
-			body requestJson
+		def response
+		try{
+			response = rest.post("http://GREENLIGHT_ADDRESS_.com/api/login") {
+				body requestJson
+			}
+		}
+		catch(Exception ex){
+			log.error(ex)
 		}
 
 		//process the response
-		def jsonSlurper = new JsonSlurper()
-		def responseObject = jsonSlurper.parseText(response.body)
+		def responseObject
+		if(response && response?.responseEntity?.statusCode.value == HttpStatus.SC_OK){
+			def jsonSlurper = new JsonSlurper()
+			responseObject = jsonSlurper.parseText(response?.body)
+		}
 
 		then: "server response contains token value"
 		responseObject == [username: "api",
@@ -88,13 +98,25 @@ class GreenlightAPISpec extends IntegrationSpec {
 		when: "Login request is issued"
 		//This is the process that happens on client side
 		//call API endpoint
-		def response = rest.post("http://GREENLIGHT_ADDRESS_.com/api/validate") {
-			auth "Bearer 72sns5aoniq891er2r4kjo558g083jsg"
+		def response
+		try{
+			response = rest.post("http://GREENLIGHT_ADDRESS_.com/api/validate") {
+				auth "Bearer 72sns5aoniq891er2r4kjo558g083jsg"
+			}
+		}
+		catch(Exception ex){
+			log.error(ex)
 		}
 
 		//process the response
 		def jsonSlurper = new JsonSlurper()
-		def responseObject = jsonSlurper.parseText(response.body)
+
+		//process the response
+		def responseObject
+		if(response && response?.responseEntity?.statusCode.value == HttpStatus.SC_OK){
+			responseObject = jsonSlurper.parseText(response.body)
+		}
+
 
 		then: "server response contains token value and other details"
 		responseObject == [username: "api",
@@ -146,13 +168,22 @@ class GreenlightAPISpec extends IntegrationSpec {
 		//This is the process that happens on client side
 		//call API endpoint and pass NHSNumber or MRN number
 		def nhsNumber = "1234567890"
-		def response = rest.post("http://GREENLIGHT_ADDRESS_.com/api/consents/${nhsNumber}.json") {
-			auth "Bearer 72sns5aoniq891er2r4kjo558g083jsg"
+		def response
+		try{
+			response = rest.post("http://GREENLIGHT_ADDRESS_.com/api/consents/${nhsNumber}.json") {
+				auth "Bearer 72sns5aoniq891er2r4kjo558g083jsg"
+			}
+		}
+		catch(Exception ex){
+			log.erro(ex)
 		}
 
 		//process the response
 		def jsonSlurper = new JsonSlurper()
-		def responseObject = jsonSlurper.parseText(response.body)
+		def responseObject
+		if(response && response?.responseEntity?.statusCode.value == HttpStatus.SC_OK){
+			responseObject = jsonSlurper.parseText(response.body)
+		}
 
 		then: "server response contains token value"
 		responseObject == [
@@ -191,8 +222,14 @@ class GreenlightAPISpec extends IntegrationSpec {
 		when: "Login request is issued"
 		//This is the process that happens on client side
 		//call API endpoint
-		def response = rest.post("http://GREENLIGHT_ADDRESS_.com/api/logout") {
-			auth "Bearer 72sns5aoniq891er2r4kjo558g083jsg"
+		def response
+		try{
+			response = rest.post("http://GREENLIGHT_ADDRESS_.com/api/logout") {
+				auth "Bearer 72sns5aoniq891er2r4kjo558g083jsg"
+			}
+		}
+		catch(Exception ex){
+			log.error ex
 		}
 
 		//a successful logout should have 200HTTP status

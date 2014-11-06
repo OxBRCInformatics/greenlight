@@ -24,6 +24,8 @@
                     <div class="alert alert-danger">${flash.error}</div>
                 </g:elseif>
 
+            <g:set var="dateOfBirthMax" value="[-100..0]" />
+
             <g:form role="form" action="save" controller="consentFormCompletion" >
                 <g:render template="form"/>
 
