@@ -12,4 +12,7 @@ class Study {
     static constraints = {
 		description nullable: true
     }
+    static mapping = {
+        description type: "text"
+    }
 }

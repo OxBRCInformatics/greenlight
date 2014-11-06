@@ -26,18 +26,19 @@ class ConsentFormController {
 			model.errormsg = "A lookup ID must be provided for 'lookupId'"
 		}else{
 			// Attempt to find the patient
-			def patient = patientService.findByNHSOrHospitalNumber(lookupId)
-			if(!patient){
+			def patients = patientService.findAllByNHSOrHospitalNumber(lookupId)
+			if(patients?.size() == 0){
 				model.errormsg = "The lookup ID "+ lookupId +" could not be found"
 			}else{
 				// Patient exists, let's get the consents
-				def consents = consentFormService.getLatestConsentForms(patient)
+				def consents = consentFormService.getLatestConsentForms(patients)
 				model.consents = []
 				consents.each{ consentForm ->
 					model.consents.push([
 							form: [
 									name: consentForm.template.name,
-									version: consentForm.template.version,
+									version: consentForm.template.templateVersion,
+									namePrefix: consentForm.template.namePrefix
 							],
 							lastCompleted: consentForm.consentDate,
 							consentStatus: consentEvaluationService.getConsentStatus(consentForm),

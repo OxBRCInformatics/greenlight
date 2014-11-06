@@ -20,7 +20,8 @@
 
         <div class="span4">
             <div class="form-group">
-                <label for="commandInstance.patient.nhsNumber" class="required">NHS Number</label>
+                <label for="commandInstance.patient.nhsNumber" class="required">                <span  class="bootstrapTooltip" data-toggle="tooltip" data-original-title="Load patient demographic" onclick="loadDemographic()"><i class="icon-refresh  icon-green"  style="cursor: pointer"></i>  </span>
+                    NHS Number</label>
                 <g:textField
                         class="form-control  ${hasErrors(bean: patient, field: 'nhsNumber', 'invalidInput')}"
                         id="commandInstance.patient.nhsNumber" name="commandInstance.patient.nhsNumber"
@@ -61,7 +62,7 @@
                 <label for="commandInstance.patient.dateOfBirth">Date of Birth</label>
                 <g:datePicker class="form-control" id="commandInstance.patient.dateOfBirth"
                               name="commandInstance.patient.dateOfBirth"
-                              relativeYears="[-100..0]"
+                              relativeYears="[-100..100]"
                               value="${commandInstance?.patient?.dateOfBirth}"
                               placeholder="Date of Birth"
                               precision="day" />
@@ -273,13 +274,47 @@
     }
 
 
+    function loadDemographic(){
+     var ajaxLink= "${createLink(action:'findDemographic', controller:'ConsentFormCompletion')}";
+        var patient
+        $.ajax({
+            type: 'POST',
+            url: ajaxLink+".json?nhsNumber="+$("input[id='commandInstance.patient.nhsNumber']").val(),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            async:false,
+            success: function (data) {
+                    patient = data.patient
+                    if(patient){
+                        $("input[id='commandInstance.patient.hospitalNumber']").val(patient.ACTIVE_MRN)
+                        $("input[id='commandInstance.patient.givenName']").val(patient.GIVENNAME)
+                        $("input[id='commandInstance.patient.familyName']").val(patient.FAMILYNAME)
+                        $("select[id='commandInstance.patient.dateOfBirth_day']").val(patient.DOB_day)
+                        //as in GSP calender, months are considered from [1..12], we should add +1 and year-1900 as it is originally a Timestamp
+                        $("select[id='commandInstance.patient.dateOfBirth_month']").val(patient.DOB_month+1)
+                        $("select[id='commandInstance.patient.dateOfBirth_year']").val(patient.DOB_year-1900)
+                        return
+                        }
+                    },
+            error:function(err){
+
+            }
+
+                })
+    }
 
     $(function(){
+
+
+         $("input[id='commandInstance.patient.nhsNumber']").blur(function(){
+             loadDemographic()
+                });
+
+
 
         $.validator.addMethod(
                     "checkDuplicateFormId",
                         function(value, element) {
-
                             var actualConsentId   =$("input[id='commandInstance.consentForm.id']").val()
                             var consentFormLink = "${createLink(action:'show', controller:'ConsentFormCompletion')}";
                             var returnedConsentId = ""

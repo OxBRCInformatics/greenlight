@@ -7,6 +7,8 @@ Open Source consent management tool
 This project is built in Grails and uses GSP in most sections.
 A number of libraries such as JQuery, Bootstrap,... are also used.
 
+## Documentation
+Please see [the wiki](https://github.com/OxBRCInformatics/greenlight/wiki) for documentation and deployment instructions.
 
 ## Features
 Main features are as the followings:
@@ -17,6 +19,7 @@ Main features are as the followings:
 * [Cut-Up room consent tracker](#cutup) 
 * [Supporting search on consent forms content](#search)
 * [Supports IE7, IE8 and higher versions](#IE)
+* [REST API Endpoint](#REST)
 * ...
 
 
@@ -48,10 +51,22 @@ This feature enables users such as pathologists and researchers at cut-up rooms 
 ![Cut up room - not consented](/resources/docImages/cutuproom-Notconsented.png)
 ![Cut up room - not found](/resources/docImages/cutuproom-Notfound.png)
 
-
 #### <a name="search" style="text-decoration:none">Supporting search on consent forms content</a>
 Users can search for consent forms based on NHS Number, MRN, Consent date, Consent Taker name and ...
 ![Search](/resources/docImages/search.png)
+
+
+
+#### <a name="REST" style="text-decoration:none">REST API Endpoints</a>
+This feature enables external client systems to query for consents and retrived details in JSON format.
+This is a fully secured token-based REST API endpoint which is designed based on Spring Security. The followings are the main endpoints:
+
+API          | Description              | Input                                         | Output
+---          | ---                      | ---                                           | ---
+`/api/login` | login & generates token  |   *username,password as JSON body*    | token value & user details
+`/api/validate` | checks if a token is valid| *token as HTTP header('Authentication') parameter* | token value & user details
+`/api/logout`   | logout    | *token as HTTP header('Authentication') parameter*  | HTTP 200 (empty body)
+`/api/consents/` | returns consent details for a patient    | *token as HTTP header('Authentication') parameter* + nhsNumber as query string like /api/consents/SAMPLE_NHS_NUMBER.json | aptient consents
 
 
 ## Deploying the application
@@ -65,7 +80,13 @@ dataSource {
     password = "mysupersecretpassword"
 }
 ```
-
+You also need to set database connection for demographic database where Greenlight retrives patient demographic data from.
+This setting should be specified in 'greenlight-config.groovy' file like the following:
+```
+epds.conString.username = "USERNAME"
+epds.conString.password = "PASSWORD"
+epds.conString.url='jdbc:oracle:thin:@serverName:1521:SIDName'
+```
 
 # License
 

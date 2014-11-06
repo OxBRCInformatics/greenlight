@@ -21,7 +21,7 @@ class AppUser {
 	}
 
 	Set<AppRole> getAuthorities() {
-		UserRole.findAllByUser(this).collect { it.role } as Set
+		UserRole.findAllByAppUser(this).collect { it.appRole } as Set
 	}
 
 	def beforeInsert() {

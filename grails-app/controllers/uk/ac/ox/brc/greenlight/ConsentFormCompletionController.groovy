@@ -2,13 +2,11 @@ package uk.ac.ox.brc.greenlight
 
 import grails.converters.JSON
 
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-
 
 class ConsentFormCompletionController {
 
     def consentFormService
+    def demographicService
 
     def index() {
     }
@@ -168,6 +166,19 @@ class ConsentFormCompletionController {
         if(formId != null){
             model.consentFormId = consentFormService.getConsentFormByFormId(formId)
         }
+        respond model
+    }
+
+    def findDemographic(){
+        def nhsNumber = params["nhsNumber"]
+        def patient = demographicService.findPatient(nhsNumber)
+
+		if(patient){
+			patient.DOB_day   = patient.DOB[Calendar.DATE];
+			patient.DOB_month = patient.DOB[Calendar.MONTH];
+			patient.DOB_year  = patient.DOB[Calendar.YEAR];
+		}
+		def model =[patient:patient]
         respond model
     }
 
