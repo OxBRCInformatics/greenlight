@@ -45,6 +45,8 @@ class DemographicService {
 			//its month value is between [0-11]
 			def date  =  new Date().parse("yyyy-MM-dd",row.DOB.toString())
 			row.DOB = new Date(date[Calendar.YEAR],date[Calendar.MONTH],date[Calendar.DATE])
+			row?.GIVENNAME   = capitalizeName(row?.GIVENNAME)
+			row?.FAMILYNAME  = capitalizeName(row?.FAMILYNAME)
 			row
 			//[[ORIGINAL_MRN:XXX, ACTIVE_MRN:xxxx, NHSNUMBER:9446457610, TITLE:MR, GIVENNAME:ABC, FAMILYNAME:AA, SEX:1, DOB:2010-05-17 00:00:00.0, DOD:null, ADDRESS_LINE1:ABCBCBCBC, ADDRESS_LINE3:AAAA, ADDRESS_LINE4:OXFORD, ADDRESS_LINE5:null, POSTCODE:AAA, ETHNICGROUP:C, GP_GMPCODE:G8700000, GP_PRACTICE_CODE:K84615]]
 		}
@@ -67,4 +69,19 @@ class DemographicService {
 			[result:null,errors:ex.message]
 		}
 	}
+
+
+	def  capitalizeName(input){
+
+		//if it is null, return null
+		if(input == null)
+			return null
+
+		def splits = input?.split()
+		splits.eachWithIndex{ s,index ->
+			splits[index] = s?.toLowerCase()?.capitalize()
+		}
+		splits.join(' ')
+	}
+
 }
