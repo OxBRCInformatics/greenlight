@@ -5,7 +5,8 @@
 <html>
 <head>
     <meta name="layout" content="main">
-    <title></title>
+    <title>Consent Form</title>
+
 </head>
 
 <body>
