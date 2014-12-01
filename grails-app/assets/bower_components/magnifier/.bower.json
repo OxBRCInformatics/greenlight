@@ -1,11 +1,11 @@
 {
   "name": "magnifier",
   "homepage": "https://github.com/mark-rolich/Magnifier.js",
-  "_release": "6e1d2dab8c",
+  "_release": "ed0403ba76",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "6e1d2dab8c262e7f6de81275d040457bba05e0f5"
+    "commit": "ed0403ba760a87067876b430f749478cef19d3fd"
   },
   "_source": "git://github.com/mark-rolich/Magnifier.js.git",
   "_target": "*",

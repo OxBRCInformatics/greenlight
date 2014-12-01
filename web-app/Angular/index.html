@@ -1,0 +1,240 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Starter Template for Bootstrap</title>
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+
+    <!--Angular-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.1/angular.js"></script>
+
+    <!--angular UI Bootstrap-->
+    <script src="ui-bootstrap-tpls-0.11.2.js" type="javascript"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+
+
+    <link href="starter-template.css" rel="stylesheet">
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+    <script src="main.js" type="text/javascript"></script>
+
+
+
+</head>
+
+<body ng-app="greenlight">
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="starter-template">
+        <h1>Greenlight v2</h1>
+
+        <p class="lead">Consent Management System</p>
+
+    </div>
+
+    <div class="row" ng-controller="ExampleController" ng-init="init()">
+        <div class="col-md-4">
+            <p>{{consent.patient | json}}</p>
+        </div>
+        <div class="col-md-4">
+            <div >
+                <form novalidate role="form" class="css-form" name="form">
+                    <div class="form-group">
+                        <label for="nhsNumber">nhsNumber</label>
+
+
+                        <div class="input-group">
+
+                            <input type="input" class="form-control"
+                                   placeholder="Enter NHS number"
+                                   id="nhsNumber"
+                                   name="nhsNumber"
+                                   ng-model="consent.patient.nhsNumber"
+                                   ng-trim="true"  ng-pattern="nhsNumberPattern" required>
+
+                            <div class="input-group-addon">
+                                    <span class="glyphicon glyphicon-upload"></span>
+                            </div>
+                        </div>
+
+
+
+
+
+
+                        <span class="help-block validation-text" ng-show="form.nhsNumber.$dirty && form.nhsNumber.$invalid">Not a valid NHS number</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-default" ng-disabled="form.$invalid">Submit</button>
+
+
+                    <div class="form-group">
+                        <label for="hospitalNumber">Hospital Number</label>
+                        <input type="input" class="form-control" placeholder="Hospital Number"
+                               id="hospitalNumber"
+                               name="hospitalNumber"
+                               ng-model="consent.patient.hospitalNumber" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">LastName</label>
+                        <input type="input" class="form-control"
+                               id="lastName"
+                               name="lastName"
+                               ng-model="consent.patient.lastName"
+                               placeholder="LastName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="firstName">FirstName</label>
+                        <input type="input" class="form-control"
+                               id="firstName"
+                               name="firstName"
+                               ng-model="consent.patient.firstName"
+                               placeholder="FirstName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        <select class="form-control" id="dateOfBirth.year"  ng-model="consent.patient.dateOfBirth.year">
+
+                            <option ng-repeat="year in validYears" selected="">{{year}}</option>
+
+                        </select>
+                        <select class="form-control" id="dateOfBirth.month" ng-model="consent.patient.dateOfBirth.month"></select>
+                        <select class="form-control" id="dateOfBirth.day"   ng-model="consent.patient.dateOfBirth.day"></select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="consentTakerName">Consent Taker Name</label>
+                        <input type="input" class="form-control"
+                               id="consentTakerName"
+                               name="consentTakerName"
+                               ng-model="consent.consentTakerName"
+                               placeholder="Consent Taker Name" required>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Consent Date</label>
+                        <select class="form-control" id="consentDateYear"  name="consentDateYear"  ng-model="consent.date.year"></select>
+                        <select class="form-control" id="consentDateMonth" name="consentDateMonth" ng-model="consent.date.month"></select>
+                        <select class="form-control" id="consentDateDay"   name="consentDateDay"   ng-model="consent.date.day"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="formId">Form ID</label>
+                        <input type="input" class="form-control"
+                               id="formId"
+                               name="formId"
+                               ng-model="consent.formId"
+                               placeholder="FormId" required consent-form-id>
+
+                        <span ng-show="form.formId.$pending.myValidator" class="help-block">Checking if this formId is available ...</span>
+                        <span ng-show="form.formId.$error.myValidator"class="help-block">This form {{foundFormId}}is already taken!</span>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="comment">Comment</label>
+                        <textarea type="input" class="form-control"
+                                  id="comment"
+                                  name="comment"
+                                  ng-model="consent.comment"
+                                  placeholder="Comment"></textarea>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Consent Form Type</label>
+                        <select class="form-control"
+                                id="consentFormTemplate"
+                                name="consentFormTemplate"
+                                ng-model="consent.consentFormTemplate"
+                                required></select>
+                    </div>
+
+                    <div class="form-group">
+                       <ul>
+                           <li>
+                               <select>
+                                   <option value="0">Blank</option>
+                                   <option value="1">Yes</option>
+                                   <option value="2">No</option>
+                               </select>
+
+                           </li>
+                           <li>
+                               <select>
+                                   <option value="0">Blank</option>
+                                   <option value="1">Yes</option>
+                                   <option value="2">No</option>
+                               </select>
+
+                           </li>
+                       </ul>
+
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+        <div class="col-md-4">.col-md-4</div>
+    </div>
+</div>
+
+
+</body>
+</html>
+
+
+

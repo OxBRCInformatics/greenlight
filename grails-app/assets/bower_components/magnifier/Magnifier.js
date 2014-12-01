@@ -78,6 +78,7 @@ var Magnifier = function (evt, options) {
         gMode = gOptions.mode || curData.mode,
         data = {},
         inBounds = false,
+        isOverThumb = 0,
         getElementsByClass = function (className) {
             var list = [],
                 elements = null,
@@ -490,9 +491,9 @@ var Magnifier = function (evt, options) {
             zoomAttached: false,
             status: 0,
             largeUrl: largeUrl,
-            largeWrapperId: largeWrapper.id,
-            largeWrapperW: largeWrapper.offsetWidth,
-            largeWrapperH: largeWrapper.offsetHeight,
+            largeWrapperId: mode === 'outside' ? largeWrapper.id : null,
+            largeWrapperW: mode === 'outside' ? largeWrapper.offsetWidth : null,
+            largeWrapperH: mode === 'outside' ? largeWrapper.offsetHeight : null,
             onzoom: onzoom,
             onthumbenter: onthumbenter,
             onthumbleave: onthumbleave,
@@ -530,6 +531,10 @@ var Magnifier = function (evt, options) {
             }
         }, false);
 
+        evt.attach('mousemove', thumb, function (e, src) {
+            isOverThumb = 1;
+        });
+
         evt.attach('load', thumbObj, function () {
             data[idx].status = 1;
 
@@ -556,9 +561,13 @@ var Magnifier = function (evt, options) {
         if (inBounds === true) {
             move();
         } else {
-            onThumbLeave();
+            if (isOverThumb !== 0) {
+                onThumbLeave();
+            }
+
+            isOverThumb = 0;
         }
-    });
+    }, false);
 
     evt.attach('scroll', window, function () {
         if (curThumb !== null) {

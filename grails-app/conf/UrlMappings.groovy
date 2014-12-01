@@ -13,6 +13,7 @@ class UrlMappings {
 		"/attachment/unAnnotatedList" (view:"attachment/unAnnotatedList")
 		"/attachment/annotatedList" (view:"attachment/annotatedList")
 		"/attachment/list" (view:"attachment/unAnnotatedList")
+		"/mainAngularApp" (view:"mainAngularApp/index")
 
         "/"(view:"/index")
         "404"(view:'/errors/404')

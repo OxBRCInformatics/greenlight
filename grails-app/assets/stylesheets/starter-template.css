@@ -1,0 +1,23 @@
+body {
+	padding-top: 50px;
+}
+
+.starter-template {
+	padding: 40px 15px;
+	text-align: center;
+}
+
+
+
+.css-form input.ng-invalid.ng-dirty {
+	border-color: red;
+}
+
+
+
+.css-form .validation-text
+{
+	font-size: 12;
+	color :red;
+	font-style: italic;
+}

@@ -190,6 +190,8 @@ grails{
 					// Allow anonymous access to cut up room page and results
 					'/consentForm/checkConsent':	['permitAll'],
 					'/consentForm/cuttingRoom': 	['permitAll'],
+					'/mainAngularApp/index': 		['permitAll'],
+					'/mainAngularApp':		 		['permitAll'],
 
 					//just admin access
 					'/securityInfo/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
