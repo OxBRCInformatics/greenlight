@@ -221,4 +221,69 @@ class ConsentFormServiceSpec extends IntegrationSpec {
 		"1234567890"	|	  1
 		""				|	  2
 	}
+
+
+	void "Save will update the ConsentForm if it is in update mode"(){
+
+		given:"An attachment is annotated"
+		def attachment = Attachment.first()
+		//check if it is already annotated
+		!attachment.consentForm
+		attachment?.consentForm.patient.givenName = "A.."
+		attachment?.consentForm.consentTakerName  = "B.."
+
+		when:"save is called for annotating the same attachment again"
+		def result  = consentFormService.save(attachment.consentForm.patient,attachment.consentForm)
+		def consent = Attachment.first()?.consentForm
+
+		then:
+		result
+		consent.consentTakerName  == "B.."
+		consent.patient.givenName == "A.."
+	}
+
+
+	void "Save will save ConsentForm,patient and responses for an unAnnotated attachment"(){
+
+		given:"An unAnnotated attachment is available & get annotated"
+		def attachment= new Attachment(id: 200, fileName: 'a.jpg', dateOfUpload: new Date(),
+				attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush:true)
+		def template = ConsentFormTemplate.first()
+
+		def patient= new Patient(
+				givenName: "Eric",
+				familyName: "Clapton",
+				dateOfBirth: new Date("30/03/1945"),
+				hospitalNumber: "1002",
+				nhsNumber: "1234567890",
+				consents: []
+		)
+		def consent = new ConsentForm(
+				attachedFormImage: attachment,
+				template: template,
+				patient: patient,
+				consentDate: new Date([year:2014,month:01,date:01]),
+				consentTakerName: "Edward",
+				formID: "GEN12345",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				comment: "a simple unEscapedComment, with characters \' \" \n "
+		)
+		consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: template.questions[0]))
+		consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: template.questions[1]))
+		consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: template.questions[2]))
+		consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: template.questions[3]))
+
+		def consentBefore = ConsentForm.count()
+		def responseBefore = Response.count()
+		def patientBefore = Patient.count()
+
+		when:"save is called"
+		def result  = consentFormService.save(patient,consent)
+
+		then:"it will save consentForm,patient and responses"
+		result
+		ConsentForm.count() == consentBefore + 1
+		Response.count() == responseBefore + 4
+		Patient.count() == patientBefore + 1
+	}
 }

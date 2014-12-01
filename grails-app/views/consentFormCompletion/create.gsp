@@ -21,7 +21,14 @@
                     <div class="alert alert-success">${flash.created}</div>
                 </g:if>
                 <g:elseif test="${flash.error}">
-                    <div class="alert alert-danger">${flash.error}</div>
+                    <g:if test="${flash.annotatedBefore}">
+                        <div class="alert alert-danger">
+                            This <a href="${flash.annotatedBeforeLink}">form</a> is already annotated!
+                        </div>
+                    </g:if>
+                    <g:else>
+                        <div class="alert alert-danger">${flash.error}</div>
+                    </g:else>
                 </g:elseif>
 
             <g:set var="dateOfBirthMax" value="[-100..0]" />

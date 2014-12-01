@@ -1,6 +1,7 @@
 package uk.ac.ox.brc.greenlight
 
 import grails.test.spock.IntegrationSpec
+import org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib
 import org.json.JSONObject
 import grails.converters.JSON
 import grails.test.spock.IntegrationSpec
@@ -13,6 +14,7 @@ import java.sql.Timestamp
 class ConsentFormCompletionControllerSpec extends IntegrationSpec {
 
     def consentFormController =new ConsentFormCompletionController()
+	def grailsLinkGenerator
 
     def setup() {
         def attachment1= new Attachment( fileName: 'a.jpg', dateOfUpload: new Date(), attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flash: true)
@@ -117,12 +119,35 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         model.commandInstance.attachment.fileName == 'ABC.jpg'
     }
 
+	void "Test that Create action, will give error if the attachment is already annotated"() {
+
+		setup:"an Annotated attachment exists"
+		def attachment = Attachment.first()
+
+		when: "The Create action is called with a attachmentId parameter"
+		consentFormController.params['attachmentId'] = attachment.id
+		consentFormController.create()
+		def model =  consentFormController.modelAndView.model
+
+
+		then: "A model is generated containing the attachment instance and flash has the error message"
+		consentFormController.response.text != 'not found'
+		model.commandInstance.attachment
+		model.commandInstance.attachment.id == attachment.id
+
+		consentFormController.flash.error
+		consentFormController.flash.annotatedBefore
+		consentFormController.flash.annotatedBeforeLink == grailsLinkGenerator.link([controller: "consentFormCompletion",action: "show",id:attachment?.id])
+	}
+
     void "Test that Save action, creates the Patient"() {
-        given:
+        given:"An UnAnnotated attachment exists"
+		def attachment= new Attachment(id: 200, fileName: 'a.jpg', dateOfUpload: new Date(),
+				attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush:true)
         def patientCountBefore = Patient.count();
 
         when: "Save action is executed, consentForm is created"
-        initParams(ConsentFormTemplate.first(),Attachment.first(),"GEN97890")
+        initParams(ConsentFormTemplate.first(),attachment,"GEN97890")
         consentFormController.save()
 
         then:
@@ -131,11 +156,13 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
     }
 
     void "Test that Save action, creates the ConsentForm"() {
-        given:
-        def consentFormCountBefore = ConsentForm.count();
+		given:"An UnAnnotated attachment exists"
+		def attachment= new Attachment(id: 200, fileName: 'a.jpg', dateOfUpload: new Date(),
+				attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush:true)
 
         when: "Save action is executed, consentForm is created"
-        initParams(ConsentFormTemplate.first(),Attachment.first(),"GEN12349")
+		def consentFormCountBefore = ConsentForm.count();
+		initParams(ConsentFormTemplate.first(),attachment,"GEN12349")
         consentFormController.save()
 
         then:
@@ -147,6 +174,55 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         attachmentAfter.consentForm=null
         attachmentAfter.save()
     }
+
+
+	void "Test that Save action, does not create ConsentForm if attachment is already attached to a consent"() {
+		given:"An UnAnnotated attachment exists"
+		def attachment= new Attachment(id: 200, fileName: 'a.jpg', dateOfUpload: new Date(),
+				attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush:true)
+		def template = ConsentFormTemplate.first()
+		def patient= new Patient(
+				givenName: "Eric",
+				familyName: "Clapton",
+				dateOfBirth: new Date("30/03/1945"),
+				hospitalNumber: "1002",
+				nhsNumber: "1234567890",
+				consents: []
+		)
+		def consent = new ConsentForm(
+				attachedFormImage: attachment,
+				template: template,
+				patient: patient,
+				consentDate: new Date([year:2014,month:01,date:01]),
+				consentTakerName: "Edward",
+				formID: "GEN12345",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				comment: "a simple unEscapedComment, with characters \' \" \n "
+		)
+		consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: template.questions[0]))
+		consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: template.questions[1]))
+		consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: template.questions[2]))
+		consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: template.questions[3]))
+
+
+		def consentFormCountBefore = ConsentForm.count();
+		def responsesCountBefore = Response.count();
+		def patientCountBefore   = Patient.count();
+
+
+		//another user tries to attach this attachment to another consent
+		when: "Save action is executed, consentForm is created"
+		initParams(template,attachment,"GEN12349")
+		consentFormController.save()
+
+		then:
+		ConsentForm.count() == consentFormCountBefore
+		Patient.count() == patientCountBefore
+		Response.count() == responsesCountBefore
+		consentFormController.flash.error
+		consentFormController.flash.annotatedBefore
+		consentFormController.flash.annotatedBeforeLink == grailsLinkGenerator.link([controller: "consentFormCompletion",action: "show",id:attachment?.id])
+	}
 
     void "Test that Save action, updates the Attachment"() {
         given:"An attachment is not assigned to a consent"
