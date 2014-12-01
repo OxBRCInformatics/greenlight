@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile
 @Transactional
 class FileUploadService {
 
-	def servletContext
+
 
 	// We want the whole upload to succeed or fail as a single transaction
 	boolean transactional = true
@@ -41,21 +41,38 @@ class FileUploadService {
 			return null
 		}
 
+		//The parameter for getRealPath() is a 'virtual path' which - unfortunately -
+		// is a concept used in the Java docs but not actually defined anywhere.
+		// It is assumed to be a path to a resource in your web application and
+		// the separator in that case is always '/' regardless of platform.
+		//http://stackoverflow.com/questions/25555541/getservletcontext-getrealpath-in-tomcat-8-returns-wrong-path
+		//So the 'destinationDirectory' should start with / , otherwise getRealPath will return null
+		if (!destinationDirectory.startsWith("/")) {
+			destinationDirectory = "/" + destinationDirectory
+		}
+		def servletContext = ServletContextHolder.servletContext
 		def storagePath = servletContext.getRealPath(destinationDirectory)
 
 		// Create storage path directory if it does not exist
-		def storagePathDirectory = new File(storagePath)
-		if (!storagePathDirectory.exists()) {
-			log.info "CREATING DIRECTORY ${storagePath}: "
-			if (!storagePathDirectory.mkdirs()) {
-				log.error "FAILED to create directories for uploads: " + storagePath
-				return null
+		if (storagePath) {
+			def storagePathDirectory = new File(storagePath)
+			if (!storagePathDirectory.exists()) {
+				log.info "CREATING DIRECTORY ${storagePath}: "
+				if (!storagePathDirectory.mkdirs()) {
+					log.error "FAILED to create directories for uploads: " + storagePath
+					return null
+				}
 			}
+
+			// Store file
+			file.transferTo(new File(storagePath + File.separator + name))
+			return storagePath + File.separator + name
+		}
+		else{
+			log.error "FAILED to create directories for uploads"
+			return null
 		}
 
-		// Store file
-		file.transferTo(new File(storagePath + File.separator + name))
-		return storagePath + File.separator + name
 	}
 }
 

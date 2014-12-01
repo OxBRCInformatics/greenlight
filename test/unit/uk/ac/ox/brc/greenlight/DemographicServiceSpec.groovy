@@ -45,7 +45,7 @@ class DemographicServiceSpec extends Specification {
 
 						//return as mocked result
 						[ACTIVE_MRN: "10221601",
-								GIVENNAME: "John",
+								GIVENNAME: "John Joe",
 								FAMILYNAME: "Smith",
 								SEX: "1",
 								/*
@@ -68,9 +68,25 @@ class DemographicServiceSpec extends Specification {
 		//it should just return these fields
 		result.size() == 5
 		result.ACTIVE_MRN == "10221601"
-		result.GIVENNAME == "John"
+		result.GIVENNAME == "John Joe"
 		result.FAMILYNAME == "Smith"
 		result.SEX == "1"
 		result.DOB == new Date(2010, 04, 17)
+	}
+
+	def "capitalizeName capitalizes the words in a string (input=#input) (output=#output)"(){
+		when:
+		def result = service.capitalizeName(input)
+
+		then:
+		result == output
+
+		where:
+		input				|	output
+		"NAME NAME"			|   "Name Name"
+		"NAMENAME"			|   "Namename"
+		"NAME NAME NAME"	|   "Name Name Name"
+		null				|	null
+		""					|    ""
 	}
 }

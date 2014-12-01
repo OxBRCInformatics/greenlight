@@ -62,7 +62,7 @@
                 <label for="commandInstance.patient.dateOfBirth">Date of Birth</label>
                 <g:datePicker class="form-control" id="commandInstance.patient.dateOfBirth"
                               name="commandInstance.patient.dateOfBirth"
-                              relativeYears="[-100..100]"
+                              relativeYears="${dateOfBirthMax}"
                               value="${commandInstance?.patient?.dateOfBirth}"
                               placeholder="Date of Birth"
                               precision="day" />
@@ -282,9 +282,10 @@
             url: ajaxLink+".json?nhsNumber="+$("input[id='commandInstance.patient.nhsNumber']").val(),
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
-            async:false,
+            async:true,
             success: function (data) {
                     patient = data.patient
+
                     if(patient){
                         $("input[id='commandInstance.patient.hospitalNumber']").val(patient.ACTIVE_MRN)
                         $("input[id='commandInstance.patient.givenName']").val(patient.GIVENNAME)
@@ -293,6 +294,9 @@
                         //as in GSP calender, months are considered from [1..12], we should add +1 and year-1900 as it is originally a Timestamp
                         $("select[id='commandInstance.patient.dateOfBirth_month']").val(patient.DOB_month+1)
                         $("select[id='commandInstance.patient.dateOfBirth_year']").val(patient.DOB_year-1900)
+
+                        //As it is found, now set focus to Consent Taker field
+                        $("input[id='commandInstance.consentForm.consentTakerName']").focus()
                         return
                         }
                     },
@@ -301,6 +305,14 @@
             }
 
                 })
+
+                if(patient){
+                    return true;
+                    }
+                 else{
+                    return false;
+                    }
+
     }
 
     $(function(){
@@ -308,7 +320,27 @@
 
          $("input[id='commandInstance.patient.nhsNumber']").blur(function(){
              loadDemographic()
-                });
+             $("input[id='commandInstance.patient.hospitalNumber']").focus()
+              });
+
+
+        $("input[id='commandInstance.patient.nhsNumber']").keypress(function(e) {
+              //Enter key
+              if (e.which == 13) {
+                loadDemographic()
+                $("input[id='commandInstance.patient.hospitalNumber']").focus()
+                return false;
+              }
+            });
+
+        //Disable enter for Form Submission
+         $("form").keypress(function(e) {
+              //Enter key
+              if (e.which == 13) {
+                return false;
+              }
+            });
+
 
 
 
@@ -356,6 +388,12 @@
                          );
 
        applyFormValidation();
+
+
+
+
+
+
  });
 
 

@@ -38,8 +38,8 @@ class ConsentFormService {
 		def consentDateTo = params["consentDateTo"];
 
 
-		def formIdFrom = (params["formIdFrom"]).trim();
-		def formIdTo = (params["formIdTo"]).trim();
+		def formIdFrom = params["formIdFrom"]?.trim();
+		def formIdTo = params["formIdTo"]?.trim();
 
 
 		def criteria = ConsentForm.createCriteria()
@@ -50,7 +50,7 @@ class ConsentFormService {
 			}
 
 
-			if (formIdFrom.size() > 0 && formIdTo.size() > 0) {
+			if (formIdFrom && formIdTo && formIdFrom.size() > 0 && formIdTo.size() > 0) {
 				if (formIdFrom.compareTo(formIdTo) <= 0)
 					between('formID', formIdFrom, formIdTo)
 			}
