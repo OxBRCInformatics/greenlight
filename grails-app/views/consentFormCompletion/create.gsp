@@ -23,7 +23,7 @@
                 <g:elseif test="${flash.error}">
                     <g:if test="${flash.annotatedBefore}">
                         <div class="alert alert-danger">
-                            This <a href="${flash.annotatedBeforeLink}">form</a> is already annotated!
+                            This <a href="${flash.annotatedBeforeLink}">form</a> is annotated!
                         </div>
                     </g:if>
                     <g:else>
