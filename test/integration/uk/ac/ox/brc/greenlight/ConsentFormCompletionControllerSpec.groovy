@@ -137,7 +137,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
 
 		consentFormController.flash.error
 		consentFormController.flash.annotatedBefore
-		consentFormController.flash.annotatedBeforeLink == grailsLinkGenerator.link([controller: "consentFormCompletion",action: "show",id:attachment?.id])
+		consentFormController.flash.annotatedBeforeLink == grailsLinkGenerator.link([controller: "consentFormCompletion",action: "show",id:attachment?.consentForm?.id])
 	}
 
     void "Test that Save action, creates the Patient"() {
@@ -221,7 +221,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
 		Response.count() == responsesCountBefore
 		consentFormController.flash.error
 		consentFormController.flash.annotatedBefore
-		consentFormController.flash.annotatedBeforeLink == grailsLinkGenerator.link([controller: "consentFormCompletion",action: "show",id:attachment?.id])
+		consentFormController.flash.annotatedBeforeLink == grailsLinkGenerator.link([controller: "consentFormCompletion",action: "show",id:attachment?.consentForm?.id])
 	}
 
     void "Test that Save action, updates the Attachment"() {
