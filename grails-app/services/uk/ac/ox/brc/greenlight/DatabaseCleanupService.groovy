@@ -1,10 +1,12 @@
 package uk.ac.ox.brc.greenlight
 
 import grails.transaction.Transactional
+import groovy.sql.Sql
 
 @Transactional
 class DatabaseCleanupService {
 
+	def dataSource
  	def cleanOrphanResponses()
 	{
 		//have to do this to cleanup the old records,
@@ -41,5 +43,47 @@ class DatabaseCleanupService {
 					it.delete(flush: true)
 			}
 		}
+	}
+
+	def RemoveDuplicateConsentForm(){
+		def sql = new Sql(dataSource)
+		def attachmentIds = [:]
+		def removedConsentForms = []
+		//go through all consentForms
+		sql.eachRow('select * from consent_form') {
+
+			def consentFormId = it["id"]
+			def attachmentId = it["attached_form_image_id"]
+
+			//if this attachment is used before, so removed the consentFrom
+			if (attachmentIds.containsKey(attachmentId)) {
+				//Keep the first consentForm which has this attachmentId and
+				//Remove the other consentForms and their responses which has the attachmentId
+				ConsentForm.withTransaction { status ->
+					try {
+						//remove Responses of the consentForm
+						def consent = ConsentForm.get(consentFormId)
+						consent.responses.collect().each {
+							consent.removeFromResponses(it)
+						}
+						//makes its attachment null
+						consent.attachedFormImage = null
+						consent.save(flush: true)
+
+						//remove ConsentForm
+						ConsentForm.where { id == consentFormId }.deleteAll()
+						removedConsentForms.add(consentFormId)
+					}
+					catch(Exception exp){
+						status.setRollbackOnly()
+					}
+				}
+
+			} else {
+				//a new attachment which is attached to a consentForm
+				attachmentIds[attachmentId] = attachmentId
+			}
+		}
+		removedConsentForms
 	}
 }
