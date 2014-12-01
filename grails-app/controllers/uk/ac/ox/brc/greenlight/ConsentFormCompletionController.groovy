@@ -79,7 +79,7 @@ class ConsentFormCompletionController {
 				//this form is annotated before by another user
 				flash.error = true
 				flash.annotatedBefore = true
-				flash.annotatedBeforeLink = createLink([controller: "consentFormCompletion",action: "show",id:commandObj?.consentForm?.id])
+				flash.annotatedBeforeLink = createLink([controller: "consentFormCompletion",action: "show",id:commandObj?.attachment?.consentForm?.id])
 				render view: 'create', model: [commandInstance: commandObj]
 				return
 			}
