@@ -21,6 +21,22 @@ class AttachmentController {
 
 	def defaultAction = 'list'
 
+	/*
+		We added these lines to make sure that the libraries are all loaded
+		and in case of failure it will happen on build process before deployment
+		org.springframework.mock.web.MockMultipartFile
+		org.springframework.web.multipart.MultipartFile
+		org.springframework.web.multipart.MultipartHttpServletRequest
+		These are all based on spring-test.jar file which is in lib and wrapper folder
+		In case of Grils upgrades we need to update these as well manullay
+	 */
+	static{
+		try {
+			Class.forName ("org.springframework.mock.web.MockMultipartFile");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 	def listUnAnnotatedAttachments(){
 		def data
 		def total
@@ -138,7 +154,7 @@ class AttachmentController {
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)request;
             List<MultipartFile> files = multiRequest.getFiles("scannedForms");
 
-			files.each{ MultipartFile file ->
+			files.each{  file ->
                 def okContentTypes = ['image/png', 'image/jpeg', 'image/pjpeg', 'image/jpg', 'image/gif','application/pdf'];
                 def confType=file.getContentType();
                 if (okContentTypes.contains(confType) && file.size > 0){

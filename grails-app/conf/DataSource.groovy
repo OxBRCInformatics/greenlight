@@ -8,6 +8,7 @@ hibernate {
     cache.use_second_level_cache = true
     cache.use_query_cache = false
     cache.region.factory_class = 'net.sf.ehcache.hibernate.EhCacheRegionFactory' // Hibernate 3
+	flush.model = 'manual'
 }
 
 // environment specific settings
@@ -25,12 +26,12 @@ environments {
         }
     }
     production {
-        dataSource {
-            pooled = true
-            dbCreate = "update"
-            url = "jdbc:postgresql://localhost:5432/greenlight"
-            driverClassName = "org.postgresql.Driver"
-            dialect = net.sf.hibernate.dialect.PostgreSQLDialect
-        }
+//        dataSource {
+//            pooled = true
+//            dbCreate = "update"
+//            url = "jdbc:postgresql://localhost:5432/greenlight"
+//            driverClassName = "org.postgresql.Driver"
+//            dialect = net.sf.hibernate.dialect.PostgreSQLDialect
+//        }
     }
 }

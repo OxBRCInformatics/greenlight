@@ -5,7 +5,7 @@ class AppRole {
 	String authority
 
 	static mapping = {
-		cache true
+//		cache true
 	}
 
 	static constraints = {

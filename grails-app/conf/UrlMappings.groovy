@@ -7,14 +7,17 @@ class UrlMappings {
             }
         }
 
-		"/api/consents/${lookupId}?(.${format})?"(controller: "consentStatus")
+		"/api/consents/${lookupId}?(.${format})?"(controller: "consentStatus",action: "getStatus")
         "/consentForm/search" (view:"consentForm/search")
         "/consentForm/cuttingRoom" (view:"consentForm/cuttingRoom")
 		"/attachment/unAnnotatedList" (view:"attachment/unAnnotatedList")
 		"/attachment/annotatedList" (view:"attachment/annotatedList")
+		"/attachment/list" (view:"attachment/unAnnotatedList")
 
         "/"(view:"/index")
-        "404"(view:'/error')
+        "404"(view:'/errors/404')
+        "403"(view:'/errors/403')
+        "400"(view:'/errors/400')
         "500"(view:'/error')
 	}
 }

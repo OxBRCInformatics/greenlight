@@ -4,36 +4,36 @@ import org.apache.commons.lang.builder.HashCodeBuilder
 
 class UserRole implements Serializable {
 
-	AppUser user
-	AppRole role
+	AppUser appUser
+	AppRole appRole
 
 	boolean equals(other) {
 		if (!(other instanceof UserRole)) {
 			return false
 		}
 
-		other.user?.id == user?.id &&
-			other.role?.id == role?.id
+		other.appUser?.id == appUser?.id &&
+			other.appRole?.id == appRole?.id
 	}
 
 	int hashCode() {
 		def builder = new HashCodeBuilder()
-		if (user) builder.append(user.id)
-		if (role) builder.append(role.id)
+		if (appUser) builder.append(appUser.id)
+		if (appRole) builder.append(appRole.id)
 		builder.toHashCode()
 	}
 
 	static UserRole get(long userId, long roleId) {
-		find 'from UserRole where user.id=:userId and role.id=:roleId',
+		find 'from UserRole where appUser.id=:userId and appRole.id=:roleId',
 			[userId: userId, roleId: roleId]
 	}
 
 	static UserRole create(AppUser user, AppRole role, boolean flush = false) {
-		new UserRole(user: user, role: role).save(flush: flush, insert: true)
+		new UserRole(appUser: user, appRole: role).save(flush: flush, insert: true)
 	}
 
 	static boolean remove(AppUser user, AppRole role, boolean flush = false) {
-		UserRole instance = UserRole.findByUserAndRole(user, role)
+		UserRole instance = UserRole.findByAppUserAndAppRole(user, role)
 		if (!instance) {
 			return false
 		}
@@ -43,15 +43,15 @@ class UserRole implements Serializable {
 	}
 
 	static void removeAll(AppUser user) {
-		executeUpdate 'DELETE FROM UserRole WHERE user=:user', [user: user]
+		executeUpdate 'DELETE FROM UserRole WHERE appUser=:user', [user: user]
 	}
 
 	static void removeAll(AppRole role) {
-		executeUpdate 'DELETE FROM UserRole WHERE role=:role', [role: role]
+		executeUpdate 'DELETE FROM UserRole WHERE appRole=:role', [role: role]
 	}
 
 	static mapping = {
-		id composite: ['role', 'user']
+		id composite: ['appRole', 'appUser']
 		version false
 	}
 }

@@ -70,4 +70,77 @@ class StudyServiceSpec extends IntegrationSpec {
 		Study.first().description == "updated Study"
 		updatedStudy.description ==  "updated Study"
 	}
+    def "having one study with a large text, updateStudy will update that one"(){
+
+        given:"there is one study with large text"
+        new Study(description: "A new Study with large text").save(failOnError: true)
+        Study.count() == 1
+
+        when:"updateStudy is called"
+        def updatedStudy = studyService.updateStudy("updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text")
+
+        then:"that study will be updated and returned"
+        Study.first().description == "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text"
+        updatedStudy.description ==  "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text" +
+                "updated Study with large text"
+    }
 }
