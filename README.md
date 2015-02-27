@@ -78,6 +78,7 @@ dataSource {
     url = "jdbc:postgresql://localhost:5432/greenlight"
     username = "greenlightuser"
     password = "mysupersecretpassword"
+   	driverClassName = "org.postgresql.Driver"
 }
 ```
 You also need to set database connection for demographic database where Greenlight retrives patient demographic data from.

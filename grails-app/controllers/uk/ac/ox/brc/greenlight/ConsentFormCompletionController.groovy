@@ -23,6 +23,15 @@ class ConsentFormCompletionController {
                 consentForm: new ConsentForm()
         ]);
 
+
+		//it is already annotated
+		if(attachment?.consentForm?.id){
+			//this form is annotated before by another user
+			flash.error = true
+			flash.annotatedBefore = true
+			flash.annotatedBeforeLink = createLink([controller: "consentFormCompletion",action: "show",id:attachment?.consentForm?.id])
+		}
+
         respond commandInstance, model: [commandInstance: commandInstance]
     }
 
@@ -61,6 +70,20 @@ class ConsentFormCompletionController {
             return
         }
 
+		//if it is in Save mode Not Edit(Update)
+		if(!commandObj?.consentForm?.id){
+			//if this attachment is already attached to a consentForm, so do not save the consentForm
+			//this may happen when two users simultaneously work on the same attachment and one of them saves the
+			//annotated form first
+			if (commandObj?.attachment?.consentForm){
+				//this form is annotated before by another user
+				flash.error = true
+				flash.annotatedBefore = true
+				flash.annotatedBeforeLink = createLink([controller: "consentFormCompletion",action: "show",id:commandObj?.attachment?.consentForm?.id])
+				render view: 'create', model: [commandInstance: commandObj]
+				return
+			}
+		}
         def result = consentFormService.save(commandObj.patient, commandObj.consentForm)
         if (result)
             flash.created = "Patient Consent Form ${commandObj.consentForm.id} Created"

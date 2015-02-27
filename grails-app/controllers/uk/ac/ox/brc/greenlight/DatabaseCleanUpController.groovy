@@ -34,4 +34,29 @@ class DatabaseCleanUpController {
 		}
 		return "AllResponses = ${allResponses}   allConsentResponses = ${allConsentResponses}"
 	}
+
+	private def getConsentFormStatus(){
+		def consentFormCount = ConsentForm.count()
+		def attachmentCount  = Attachment.count()
+		def responsesCount   = Response.count()
+		return "AllAttachments = ${attachmentCount}   allConsentForms = ${consentFormCount} allResponses=${responsesCount}"
+	}
+
+	def RemoveDuplicateConsentForm(){
+
+		def removed
+		def before = getConsentFormStatus()
+		try {
+			removed = databaseCleanupService.RemoveDuplicateConsentForm()
+		}
+		catch(Exception exception){
+			render exception.message
+			return
+		}
+
+		def after = getConsentFormStatus()
+
+		def result = [before: before, after: after,removed: removed]
+		respond result as Object, [formats:['xml','json']] as Map
+	}
 }
