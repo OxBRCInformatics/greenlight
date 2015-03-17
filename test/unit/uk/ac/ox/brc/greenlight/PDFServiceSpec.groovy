@@ -25,6 +25,7 @@ class PDFServiceSpec extends Specification {
 	void "convertPDFToSingleImage will create single Image from all pages in the input PDF"() {
 
 		when:
+		//create multipart file from the test fixture
 		Path path = Paths.get("test/resources/multiPagePDF.pdf");
 		String name = "multiPagePDF.pdf";
 		String originalFileName = "multiPagePDF.pdf";
@@ -34,15 +35,14 @@ class PDFServiceSpec extends Specification {
 
 		//create single image from PDF
 		def finalMultipartFile = service.convertPDFToSingleImage(pdf,"myFileName.jpg");
-
 		//prepare to compare the content of the created image with the expected image
 		File createdImageFile =  File.createTempFile("myTemp","jpg")
 		FileOutputStream fos = new FileOutputStream(createdImageFile);
 		fos.write(finalMultipartFile.getBytes());
 		fos.close();
+		//create TEXT from result image and test-fixture image for comparing them :)
 		String createdJPGFile = createdImageFile.text;
 		String expectedJPGFile = new File("test/resources/multiPageJPG.jpg").text;
-
 
 		then:
 		createdJPGFile == expectedJPGFile
