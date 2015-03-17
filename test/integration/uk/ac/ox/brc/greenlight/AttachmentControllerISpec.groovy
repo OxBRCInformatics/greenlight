@@ -381,45 +381,4 @@ class AttachmentControllerISpec extends IntegrationSpec {
 		"asc"	|	"88"	|		0	|		2	//if not a valid column specified, sort it base on date of consent
 	}
 
-
-	def "save will create one attachment for uploaded JPG file"(){
-
-		given:"JPG file is uploaded"
-		//As we need to also mock the service which is used inside the controller, so we need to add the following line
-		attachmentController.attachmentService = Mock(AttachmentService)
-
-		Path path = Paths.get("test/resources/singlePageJPG.jpg")
-		byte[] jpgFile = Files.readAllBytes(path)
-
-		def multipartFile = new GrailsMockMultipartFile('scannedForms', 'singlePageJPG.jpg', 'image/jpg', jpgFile)
-		attachmentController.request.addFile(multipartFile)
-
-		when:
-		attachmentController.save()
-
-		then:"one attachment should be created"
-		1 * attachmentController.attachmentService.create(_)  >> {new Attachment();}
-	}
-
-
-	def "save will create separate attachments for each page in uploaded multi-page PDF"(){
-
-		given:"two-pages PDF is uploaded"
-		//As we need to also mock the service which is used inside the controller, so we need to add the following line
-		attachmentController.attachmentService = Mock(AttachmentService)
-
-		Path path = Paths.get("test/resources/multiPagePDF.pdf")
-		byte[] pdfContent = Files.readAllBytes(path)
-
-		def multipartFile = new GrailsMockMultipartFile('scannedForms', 'multiPagePDF.pdf', 'application/pdf', pdfContent)
-		attachmentController.request.addFile(multipartFile)
-
-		when:
-		attachmentController.save()
-
-		then:"two attachments should be created"
-		2 * attachmentController.attachmentService.create(_)  >> {new Attachment();}
-	}
-
-
 }
