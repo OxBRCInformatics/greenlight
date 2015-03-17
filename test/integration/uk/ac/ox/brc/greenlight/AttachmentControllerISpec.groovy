@@ -4,12 +4,17 @@ import grails.converters.JSON
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import grails.test.spock.IntegrationSpec
+import org.codehaus.groovy.grails.plugins.testing.GrailsMockMultipartFile
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.mock.web.MockMultipartHttpServletRequest
+import org.springframework.web.multipart.MultipartHttpServletRequest
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Created by soheil on 21/03/2014.
@@ -375,5 +380,46 @@ class AttachmentControllerISpec extends IntegrationSpec {
 		"desc"	|	"88"	|		2	|		0	//if not a valid column specified, sort it base on date of consent
 		"asc"	|	"88"	|		0	|		2	//if not a valid column specified, sort it base on date of consent
 	}
+
+
+	def "save will create one attachment for uploaded JPG file"(){
+
+		given:"JPG file is uploaded"
+		//As we need to also mock the service which is used inside the controller, so we need to add the following line
+		attachmentController.attachmentService = Mock(AttachmentService)
+
+		Path path = Paths.get("test/resources/singlePageJPG.jpg")
+		byte[] jpgFile = Files.readAllBytes(path)
+
+		def multipartFile = new GrailsMockMultipartFile('scannedForms', 'singlePageJPG.jpg', 'image/jpg', jpgFile)
+		attachmentController.request.addFile(multipartFile)
+
+		when:
+		attachmentController.save()
+
+		then:"one attachment should be created"
+		1 * attachmentController.attachmentService.create(_)  >> {new Attachment();}
+	}
+
+
+	def "save will create separate attachments for each page in uploaded multi-page PDF"(){
+
+		given:"two-pages PDF is uploaded"
+		//As we need to also mock the service which is used inside the controller, so we need to add the following line
+		attachmentController.attachmentService = Mock(AttachmentService)
+
+		Path path = Paths.get("test/resources/multiPagePDF.pdf")
+		byte[] pdfContent = Files.readAllBytes(path)
+
+		def multipartFile = new GrailsMockMultipartFile('scannedForms', 'multiPagePDF.pdf', 'application/pdf', pdfContent)
+		attachmentController.request.addFile(multipartFile)
+
+		when:
+		attachmentController.save()
+
+		then:"two attachments should be created"
+		2 * attachmentController.attachmentService.create(_)  >> {new Attachment();}
+	}
+
 
 }
