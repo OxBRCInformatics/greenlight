@@ -1,19 +1,14 @@
 package uk.ac.ox.brc.greenlight
 
-import com.lowagie.text.pdf.codec.TIFFConstants
 import grails.transaction.Transactional
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.web.multipart.MultipartFile
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage
-
 import javax.imageio.ImageIO
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
 
 
 @Transactional
@@ -21,7 +16,7 @@ class PDFService {
 
 	MultipartFile convertPDFToSingleImage(MultipartFile pdfFile,String imageFileName) {
 
-		ArrayList<File> result = new ArrayList<File>();
+		ArrayList<File> tempPageImages = new ArrayList<File>();
 
 		PDDocument document = PDDocument.load(pdfFile.inputStream);
 		document.getDocumentCatalog().getAllPages().eachWithIndex{ PDPage page, pageNumber ->
@@ -38,21 +33,21 @@ class PDFService {
 			File tempFile = File.createTempFile(singlePageName,"jpg")
 			File file = new File(tempFile.absolutePath)
 			singlePage.transferTo(file)
-			result.add(file)
+			tempPageImages.add(file)
 			//close the stream
 			baos.close();
 		}
 
-		if(result.size() == 0)
+		if(tempPageImages.size() == 0)
 			return null;
 		//creating a buffered image array from image files
-		BufferedImage[] buffImages = new BufferedImage[result.size()];
+		BufferedImage[] buffImages = new BufferedImage[tempPageImages.size()];
 		int type = 0;
 		int finalWidth  = 0;
 		int finalHeight = 0;
 
-		for (int i = 0; i < result.size(); i++) {
-			buffImages[i] = ImageIO.read(result[i]);
+		for (int i = 0; i < tempPageImages.size(); i++) {
+			buffImages[i] = ImageIO.read(tempPageImages[i]);
 			//find the max width of all the current pdf pages, it will the
 			//width of the final image
 			if(buffImages[i].getWidth() > finalWidth) {
@@ -76,7 +71,7 @@ class PDFService {
 
 		int positionX = 0;
 		int positionY = 0;
-		for (int i = 0; i < result.size(); i++) {
+		for (int i = 0; i < tempPageImages.size(); i++) {
 			//if the width is smaller than the final width, place it in the centre
 			if(buffImages[i].getWidth() < finalWidth)
 				positionX = (finalWidth - buffImages[i].getWidth()) / 2;
@@ -91,15 +86,14 @@ class PDFService {
 		//write the final result into a temp JPEG file
 		File finalTempFile = File.createTempFile("final",".jpg")
 		ImageIO.write(finalImg, "jpeg", finalTempFile);
-		String contentType = "image/jpeg'";
-		byte[] content = null;
-		content = Files.readAllBytes(finalTempFile.toPath());
+		String contentType = "image/jpeg";
+		byte[] content = Files.readAllBytes(finalTempFile.toPath());
 		MultipartFile finalResult = new MockMultipartFile(imageFileName,finalTempFile.name, contentType, content);
 
 		//remove all temp files
 		finalTempFile.delete();
-		result.each {
-			it.delete();
+		tempPageImages.eachWithIndex{ File entry, int i ->
+			entry.delete();
 		}
 		return  finalResult;
 	}
