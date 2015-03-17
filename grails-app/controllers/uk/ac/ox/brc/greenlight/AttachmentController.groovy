@@ -18,6 +18,7 @@ import java.awt.image.BufferedImage
 class AttachmentController {
 
     def attachmentService
+	def PDFService
 
 	def defaultAction = 'list'
 
@@ -149,6 +150,9 @@ class AttachmentController {
     }
 
     def save() {
+
+		def singleConsentPerPDFFile = params.boolean('singleConsentPerPDFFile');
+
         def attachments = []
         if(request instanceof MultipartHttpServletRequest) {
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)request;
@@ -161,17 +165,27 @@ class AttachmentController {
 
 					// If it's a PDF split the pages out and convert to an image first
 					if(confType=='application/pdf'){
-						PDDocument document = PDDocument.load(file.inputStream)
-						document.getDocumentCatalog().getAllPages().eachWithIndex{ PDPage page, pageNumber ->
 
-							// Create a byte array output stream and write the image to it as an RGB image at 256dpi
-							ByteArrayOutputStream baos = new ByteArrayOutputStream()
-							ImageIO.write(page.convertToImage(BufferedImage.TYPE_INT_RGB, 256), "jpg", baos)
+						//create single image and add all pdf pages into it
+						if(singleConsentPerPDFFile == true){
 
-							String singlePageName = file?.originalFilename + "_page" + pageNumber
-							MockMultipartFile singlePage = new MockMultipartFile(singlePageName, baos.toByteArray())
+							MockMultipartFile singlePage = PDFService.convertPDFToSingleImage(file,file?.originalFilename);
 							Attachment attachment = attachmentService.create(singlePage)
 							attachments.add(attachment)
+
+						}else{
+							PDDocument document = PDDocument.load(file.inputStream)
+							document.getDocumentCatalog().getAllPages().eachWithIndex { PDPage page, pageNumber ->
+
+								// Create a byte array output stream and write the image to it as an RGB image at 256dpi
+								ByteArrayOutputStream baos = new ByteArrayOutputStream()
+								ImageIO.write(page.convertToImage(BufferedImage.TYPE_INT_RGB, 256), "jpg", baos)
+
+								String singlePageName = file?.originalFilename + "_page" + pageNumber
+								MockMultipartFile singlePage = new MockMultipartFile(singlePageName, baos.toByteArray())
+								Attachment attachment = attachmentService.create(singlePage)
+								attachments.add(attachment)
+							}
 						}
 					}
 					else{
