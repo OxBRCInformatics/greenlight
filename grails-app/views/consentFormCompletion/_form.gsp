@@ -124,8 +124,9 @@
                 <g:if test="${commandInstance?.attachment}">
 
                     <a href="${createLink(action: 'show', controller: 'attachment', id: commandInstance?.attachment?.id)}" target="_blank">
-                        <img id="scannedForm" style="margin: 4px; width: 100%;height: 100%" class="Photo" src="${resource(dir:'attachments', file: commandInstance?.attachment?.id + '.jpg')}" />
-
+                        <div  id="scrollerDiv">
+                            <img id="scannedForm" style="margin: 4px; width: 100%;height: 100%" class="Photo" src="${resource(dir:'attachments', file: commandInstance?.attachment?.id + '.jpg')}" />
+                        </div>
                     </a>
 
                 </g:if>
@@ -318,6 +319,10 @@
     $(function(){
 
 
+        if( $("#scrollerDiv img").height() > 1000){
+            $("#scrollerDiv").css( "overflow", "auto" );
+            $("#scrollerDiv").css( "max-height", "700px" );
+        }
          $("input[id='commandInstance.patient.nhsNumber']").blur(function(){
              loadDemographic()
              $("input[id='commandInstance.patient.hospitalNumber']").focus()
