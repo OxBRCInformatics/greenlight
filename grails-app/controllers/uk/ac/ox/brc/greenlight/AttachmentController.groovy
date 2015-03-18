@@ -166,31 +166,85 @@ class AttachmentController {
 					// If it's a PDF split the pages out and convert to an image first
 					if(confType=='application/pdf'){
 
-						//create single image and add all pdf pages into it
+						//create single image and add all pdf pages into it if singleConsentPerPDFFile is TRUE
 						if(singleConsentPerPDFFile == true){
 
-							MockMultipartFile singlePage = PDFService.convertPDFToSingleImage(file,file?.originalFilename);
-							Attachment attachment = attachmentService.create(singlePage)
-							attachments.add(attachment)
+							try {
+								MockMultipartFile singlePage = PDFService.convertPDFToSingleImage(file, file?.originalFilename)
+								Attachment attachment = attachmentService.create(singlePage)
+								attachment.uploadStatus = "Success"
+								attachments.add(attachment)
+							}catch(Throwable ex){
+								//just get track of this faulty attachment
+								Attachment faultyAttachment = new Attachment(
+									fileName: file.originalFilename,
+									attachmentType: Attachment.AttachmentType.IMAGE,
+									dateOfUpload: new Date ()
+								);
+								faultyAttachment.uploadStatus = "Failed"
+								faultyAttachment.uploadMessage = ex.message
+								attachments.add(faultyAttachment)
+							}
 
 						}else{
-							PDDocument document = PDDocument.load(file.inputStream)
-							document.getDocumentCatalog().getAllPages().eachWithIndex { PDPage page, pageNumber ->
 
-								// Create a byte array output stream and write the image to it as an RGB image at 256dpi
-								ByteArrayOutputStream baos = new ByteArrayOutputStream()
-								ImageIO.write(page.convertToImage(BufferedImage.TYPE_INT_RGB, 256), "jpg", baos)
+							PDDocument document
+							try {
+								document = PDDocument.load(file.inputStream)
+							}catch(Throwable ex){
+								//just get track of this faulty attachment
+								Attachment faultyAttachment = new Attachment(
+										fileName: file.originalFilename ,
+										attachmentType: Attachment.AttachmentType.IMAGE,
+										dateOfUpload: new Date ()
+								);
+								faultyAttachment.uploadStatus = "Failed"
+								faultyAttachment.uploadMessage = "Can not read the PDF file!"
+								attachments.add(faultyAttachment)
+							}
 
-								String singlePageName = file?.originalFilename + "_page" + pageNumber
-								MockMultipartFile singlePage = new MockMultipartFile(singlePageName, baos.toByteArray())
-								Attachment attachment = attachmentService.create(singlePage)
-								attachments.add(attachment)
+							//check if document is not NULL
+							document?.getDocumentCatalog()?.getAllPages().eachWithIndex { PDPage page, pageNumber ->
+								try{
+									// Create a byte array output stream and write the image to it as an RGB image at 256dpi
+									ByteArrayOutputStream baos = new ByteArrayOutputStream()
+									ImageIO.write(page.convertToImage(BufferedImage.TYPE_INT_RGB, 256), "jpg", baos)
+
+									String singlePageName = file?.originalFilename + "_page" + pageNumber
+									MockMultipartFile singlePage = new MockMultipartFile(singlePageName, baos.toByteArray())
+									Attachment attachment = attachmentService.create(singlePage)
+									attachment.uploadStatus = "Success"
+									attachments.add(attachment)
+								}catch(Throwable ex){
+									//just get track of this faulty attachment
+									Attachment faultyAttachment = new Attachment(
+											fileName: file.originalFilename + "[Page:${pageNumber+1}]",
+											attachmentType: Attachment.AttachmentType.IMAGE,
+											dateOfUpload: new Date ()
+									);
+									faultyAttachment.uploadStatus = "Failed"
+									faultyAttachment.uploadMessage = ex.message
+									attachments.add(faultyAttachment)
+								}
 							}
 						}
 					}
 					else{
-						def attachment = attachmentService.create(file)
-						attachments.add(attachment)
+						try{
+							def attachment = attachmentService.create(file)
+							attachment.uploadStatus = "Success"
+							attachments.add(attachment)
+						}catch(Throwable ex){
+							//just get track of this faulty attachment
+							Attachment faultyAttachment = new Attachment(
+									fileName: file.originalFilename,
+									attachmentType: Attachment.AttachmentType.IMAGE,
+									dateOfUpload: new Date ()
+							);
+							faultyAttachment.uploadStatus = "Failed"
+							faultyAttachment.uploadMessage = ex.message
+							attachments.add(faultyAttachment)
+						}
 					}
 				}
             }
