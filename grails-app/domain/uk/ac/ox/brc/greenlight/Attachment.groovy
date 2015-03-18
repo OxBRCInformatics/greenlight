@@ -13,6 +13,13 @@ class Attachment {
             consentForm: ConsentForm
     ]
 
+
+	//the status of the uploaded file
+	String uploadStatus;
+	//error message in case of failure in uploading the attachment
+	String uploadMessage;
+	static transients = ['uploadStatus','uploadMessage']
+
     static constraints = {
 		content nullable: true
 		fileUrl nullable: true // Just until we've migrated old attachments over. Remove in 2.0
