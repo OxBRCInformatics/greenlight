@@ -58,8 +58,6 @@ class PDFService {
 		}
 
 		type = buffImages[0].getType();
-		finalHeight += 100;
-		finalWidth  += 100;
 		//Initializing the final image
 		BufferedImage finalImg = new BufferedImage(finalWidth , finalHeight, type);
 		//make the final image background to WHITE
