@@ -199,7 +199,7 @@ class AttachmentController {
 										dateOfUpload: new Date ()
 								);
 								faultyAttachment.uploadStatus = "Failed"
-								faultyAttachment.uploadMessage = "Can not read the PDF file!"
+								faultyAttachment.uploadMessage = ex.message
 								attachments.add(faultyAttachment)
 							}
 

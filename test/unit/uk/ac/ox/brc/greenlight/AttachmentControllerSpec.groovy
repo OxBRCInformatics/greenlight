@@ -36,9 +36,9 @@ class AttachmentControllerSpec extends Specification {
 
 		then:"one attachment should be created"
 		1 * controller.attachmentService.create(_)  >> {new Attachment();}
-		controller.modelAndView.model.attachments
+		controller.modelAndView.model.attachments.size() > 0
 		controller.modelAndView.model.attachments.each {
-			it.uploadStatus == "Success"
+			assert it.uploadStatus == "Success"
 		}
 	}
 
@@ -60,9 +60,9 @@ class AttachmentControllerSpec extends Specification {
 
 		then:"two attachments should be created"
 		2 * controller.attachmentService.create(_)  >> {new Attachment();}
-		controller.modelAndView.model.attachments
+		controller.modelAndView.model.attachments.size() > 0
 		controller.modelAndView.model.attachments.each {
-			it.uploadStatus == "Success"
+			assert it.uploadStatus == "Success"
 		}
 	}
 
@@ -89,7 +89,7 @@ class AttachmentControllerSpec extends Specification {
 		then:"one attachment should be created"
 		1 * controller.PDFService.convertPDFToSingleImage(_,_) >> {}
 		1 * controller.attachmentService.create(_)  >> {new Attachment();}
-		controller.modelAndView.model.attachments
+		controller.modelAndView.model.attachments.size() > 0
 		controller.modelAndView.model.attachments[0].uploadStatus == "Success"
 	}
 
@@ -115,9 +115,9 @@ class AttachmentControllerSpec extends Specification {
 		then:"two attachments should be created and convertPDFToSingleImage should NOT be called"
 		0 * controller.PDFService.convertPDFToSingleImage(_,_) >> {}
 		2 * controller.attachmentService.create(_)  >> {new Attachment();}
-		controller.modelAndView.model.attachments
+		controller.modelAndView.model.attachments.size() > 0
 		controller.modelAndView.model.attachments.each {
-			it.uploadStatus == "Success"
+			assert it.uploadStatus == "Success"
 		}
 	}
 
@@ -143,7 +143,7 @@ class AttachmentControllerSpec extends Specification {
 		then:"No attachment should be created"
 		1 * controller.PDFService.convertPDFToSingleImage(_,_) >> { throw new OutOfMemoryError("OutOfMemory in processing the PDF file")}
 		0 * controller.attachmentService.create(_)  >> {new Attachment();}
-		controller.modelAndView.model.attachments
+		controller.modelAndView.model.attachments.size() > 0
 		controller.modelAndView.model.attachments[0].uploadStatus  == "Failed"
 		controller.modelAndView.model.attachments[0].uploadMessage == "OutOfMemory in processing the PDF file"
 		controller.modelAndView.model.attachments[0].fileName == "multiPagePDF.pdf"
@@ -171,11 +171,11 @@ class AttachmentControllerSpec extends Specification {
 
 		then:"No attachment should be created"
 		2 * controller.attachmentService.create(_)  >> {throw new Exception("Exception in creating the attachment");}
-		controller.modelAndView.model.attachments
+		controller.modelAndView.model.attachments.size() > 0
 		controller.modelAndView.model.attachments.eachWithIndex  { Attachment attachment, int index ->
-			attachment.uploadStatus  == "Failed"
-			attachment.uploadMessage == "Exception in creating the attachment"
-			attachment.fileName == "multiPagePDF.pdf[Page:${index+1}]"
+			assert attachment.uploadStatus  == "Failed"
+			assert attachment.uploadMessage == "Exception in creating the attachment"
+			assert attachment.fileName == "multiPagePDF.pdf[Page:${index+1}]"
 		}
 
 	}
@@ -213,7 +213,7 @@ class AttachmentControllerSpec extends Specification {
 		Path path = Paths.get("test/resources/corruptedPDFFile.pdf")
 		byte[] pdfContent = Files.readAllBytes(path)
 
-		def multipartFile = new GrailsMockMultipartFile('scannedForms', 'multiPagePDF.pdf', 'application/pdf', pdfContent)
+		def multipartFile = new GrailsMockMultipartFile('scannedForms', 'corruptedPDFFile.pdf', 'application/pdf', pdfContent)
 		controller.request.addFile(multipartFile)
 
 		//if all pages in the PDF belongs to the same consent
@@ -225,10 +225,11 @@ class AttachmentControllerSpec extends Specification {
 		then:"No attachment should be created"
 		0 * controller.attachmentService.create(_)  >> {}
 		controller.modelAndView.model.attachments
+		controller.modelAndView.model.attachments.size() > 0
 		controller.modelAndView.model.attachments.eachWithIndex  { Attachment attachment, int index ->
-			attachment.uploadStatus  == "Failed"
-			attachment.uploadMessage == "Can not read the PDF file!"
-			attachment.fileName == "corruptedPDFFile.pdf"
+			assert attachment.uploadStatus  == "Failed"
+			assert attachment.uploadMessage == "Error: Expected a long type at offset 310147, instead got '>'"
+			assert attachment.fileName == "corruptedPDFFile.pdf"
 		}
 
 	}
