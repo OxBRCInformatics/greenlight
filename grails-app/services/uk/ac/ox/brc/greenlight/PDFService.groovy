@@ -21,9 +21,9 @@ class PDFService {
 		PDDocument document = PDDocument.load(pdfFile.inputStream);
 		document.getDocumentCatalog().getAllPages().eachWithIndex{ PDPage page, pageNumber ->
 
-			// Create a byte array output stream and write the image to it as an RGB image at 256dpi
+			// Create a byte array output stream and write the image to it as an RGB image at 100dpi
 			ByteArrayOutputStream baos = new ByteArrayOutputStream()
-			ImageIO.write(page.convertToImage(BufferedImage.TYPE_INT_RGB, 150), "jpg", baos)
+			ImageIO.write(page.convertToImage(BufferedImage.TYPE_INT_RGB, 100), "jpg", baos)
 
 			//create temp fileName
 			String singlePageName = pdfFile?.originalFilename + "_page" + pageNumber
