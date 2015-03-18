@@ -59,7 +59,7 @@ class PDFService {
 
 		type = buffImages[0].getType();
 		//Initializing the final image
-		BufferedImage finalImg = new BufferedImage(finalWidth , finalHeight, type);
+		BufferedImage finalImg = new BufferedImage(finalWidth , finalHeight, BufferedImage.TYPE_INT_RGB);
 		//make the final image background to WHITE
 		def graphics = finalImg.createGraphics()
 		graphics.setColor(Color.WHITE);
