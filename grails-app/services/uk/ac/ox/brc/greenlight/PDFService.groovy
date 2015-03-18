@@ -27,14 +27,12 @@ class PDFService {
 
 			//create temp fileName
 			String singlePageName = pdfFile?.originalFilename + "_page" + pageNumber
-			MockMultipartFile singlePage = new MockMultipartFile(singlePageName, baos.toByteArray())
-
-			//create temp file
-			File tempFile = File.createTempFile(singlePageName,"jpg")
-			File file = new File(tempFile.absolutePath)
-			singlePage.transferTo(file)
+			File file = new File(singlePageName+".jpg");
+			FileOutputStream fos = new FileOutputStream (file)
+			baos.writeTo(fos)
 			tempPageImages.add(file)
 			//close the stream
+			fos.close();
 			baos.close();
 		}
 
