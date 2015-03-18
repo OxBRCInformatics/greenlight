@@ -319,10 +319,6 @@
     $(function(){
 
 
-        if( $("#scrollerDiv img").height() > 1000){
-            $("#scrollerDiv").css( "overflow", "auto" );
-            $("#scrollerDiv").css( "max-height", "700px" );
-        }
          $("input[id='commandInstance.patient.nhsNumber']").blur(function(){
              loadDemographic()
              $("input[id='commandInstance.patient.hospitalNumber']").focus()
@@ -402,5 +398,14 @@
  });
 
 
+    //As we need to change css of an image, we need to wait and act after it is loaded
+    //as $() jquery runs when DOM fully loaded, but
+    //$(window).load() executes when all other things are loaded as well, such as the images
+    $(window).load(function() {
+        if( $("#scrollerDiv img").height() > 1000){
+            $("#scrollerDiv").css( "overflow", "auto" );
+            $("#scrollerDiv").css( "max-height", "700px" );
+        }
+    });
 
 </g:javascript>
