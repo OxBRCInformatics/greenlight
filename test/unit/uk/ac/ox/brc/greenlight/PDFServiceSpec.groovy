@@ -1,6 +1,7 @@
 package uk.ac.ox.brc.greenlight
 
 import grails.test.mixin.TestFor
+import org.apache.commons.io.FileUtils
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.web.multipart.MultipartFile
 import spock.lang.Specification
@@ -41,8 +42,8 @@ class PDFServiceSpec extends Specification {
 		fos.write(finalMultipartFile.getBytes());
 		fos.close();
 		//create TEXT from result image and test-fixture image for comparing them :)
-		String createdJPGFile = createdImageFile.text;
-		String expectedJPGFile = new File("test/resources/multiPageJPG.jpg").text;
+		String createdJPGFile  = FileUtils.readFileToString(createdImageFile, "utf-8");
+		String expectedJPGFile = FileUtils.readFileToString(new File("test/resources/multiPageJPG.jpg"), "utf-8");
 
 		then:
 		createdJPGFile == expectedJPGFile
