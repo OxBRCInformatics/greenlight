@@ -23,7 +23,7 @@ class PDFService {
 
 			// Create a byte array output stream and write the image to it as an RGB image at 256dpi
 			ByteArrayOutputStream baos = new ByteArrayOutputStream()
-			ImageIO.write(page.convertToImage(BufferedImage.TYPE_INT_RGB, 256), "jpg", baos)
+			ImageIO.write(page.convertToImage(BufferedImage.TYPE_INT_RGB, 150), "jpg", baos)
 
 			//create temp fileName
 			String singlePageName = pdfFile?.originalFilename + "_page" + pageNumber
