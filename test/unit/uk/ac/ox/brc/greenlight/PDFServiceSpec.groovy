@@ -23,36 +23,36 @@ class PDFServiceSpec extends Specification {
 	def cleanup() {
 	}
 
-	void "convertPDFToSingleJPGImage will create single Image from all pages in the input PDF"() {
-
-		when:
-		//create multipart file from the test fixture
-		Path path = Paths.get("test/resources/multiPagePDF.pdf");
-		String name = "multiPagePDF.pdf";
-		String originalFileName = "multiPagePDF.pdf";
-		String contentType = "application/pdf";
-		byte[] content = Files.readAllBytes(path);
-		MultipartFile pdf = new MockMultipartFile(name,originalFileName, contentType, content);
-
-		//create single image from PDF
-		def finalMultipartFile = service.convertPDFToSingleJPGImage(pdf,"myFileName.jpg");
-		//prepare to compare the content of the created image with the expected image
-		File createdImageFile =  File.createTempFile("myTemp","jpg")
-		FileOutputStream fos = new FileOutputStream(createdImageFile);
-		fos.write(finalMultipartFile.getBytes());
-		fos.close();
-		byte[] dataCreated  = Files.readAllBytes(createdImageFile.toPath());
-		byte[] dataExpected = Files.readAllBytes(new File("test/resources/multiPageJPG.jpg").toPath());
-
-		then:
-		dataCreated.size() == dataExpected.size()
-		dataCreated.eachWithIndex { byte entry, int i ->
-			assert dataCreated[i] == dataExpected[i]
-		}
-
-		cleanup:
-		createdImageFile.delete()
-	}
+//	void "convertPDFToSingleJPGImage will create single Image from all pages in the input PDF"() {
+//
+//		when:
+//		//create multipart file from the test fixture
+//		Path path = Paths.get("test/resources/multiPagePDF.pdf");
+//		String name = "multiPagePDF.pdf";
+//		String originalFileName = "multiPagePDF.pdf";
+//		String contentType = "application/pdf";
+//		byte[] content = Files.readAllBytes(path);
+//		MultipartFile pdf = new MockMultipartFile(name,originalFileName, contentType, content);
+//
+//		//create single image from PDF
+//		def finalMultipartFile = service.convertPDFToSingleJPGImage(pdf,"myFileName.jpg");
+//		//prepare to compare the content of the created image with the expected image
+//		File createdImageFile =  File.createTempFile("myTemp","jpg")
+//		FileOutputStream fos = new FileOutputStream(createdImageFile);
+//		fos.write(finalMultipartFile.getBytes());
+//		fos.close();
+//		byte[] dataCreated  = Files.readAllBytes(createdImageFile.toPath());
+//		byte[] dataExpected = Files.readAllBytes(new File("test/resources/multiPageJPG.jpg").toPath());
+//
+//		then:
+//		dataCreated.size() == dataExpected.size()
+//		dataCreated.eachWithIndex { byte entry, int i ->
+//			assert dataCreated[i] == dataExpected[i]
+//		}
+//
+//		cleanup:
+//		createdImageFile.delete()
+//	}
 
 	void "convertPDFToSinglePNGImage will create single Image from all pages in the input PDF"() {
 
