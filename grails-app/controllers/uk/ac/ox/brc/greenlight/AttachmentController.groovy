@@ -170,7 +170,7 @@ class AttachmentController {
 						if(singleConsentPerPDFFile == true){
 
 							try {
-								MockMultipartFile singlePage = PDFService.convertPDFToSingleImage(file, file?.originalFilename)
+								MockMultipartFile singlePage = PDFService.convertPDFToSingleJPGImage(file, file?.originalFilename)
 								Attachment attachment = attachmentService.create(singlePage)
 								attachment.uploadStatus = "Success"
 								attachments.add(attachment)
