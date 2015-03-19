@@ -72,14 +72,20 @@ class PDFServiceSpec extends Specification {
 		FileOutputStream fos = new FileOutputStream(createdImageFile);
 		fos.write(finalMultipartFile.getBytes());
 		fos.close();
-		byte[] dataCreated  = Files.readAllBytes(createdImageFile.toPath());
-		byte[] dataExpected = Files.readAllBytes(new File("test/resources/multiPagePNG.png").toPath());
+//		byte[] dataCreated  = Files.readAllBytes(createdImageFile.toPath());
+//		byte[] dataExpected = Files.readAllBytes(new File("test/resources/multiPagePNG.png").toPath());
+
+		//create TEXT from result image and test-fixture image for comparing them :)
+		String createdPNGFile  = FileUtils.readFileToString(createdImageFile, "utf-8");
+		String expectedPNGFile = FileUtils.readFileToString(new File("test/resources/multiPagePNG.png"), "utf-8");
+
 
 		then:
-		dataCreated.size() == dataExpected.size()
-		dataCreated.eachWithIndex { byte entry, int i ->
-			assert dataCreated[i] == dataExpected[i]
-		}
+		createdPNGFile == expectedPNGFile
+		//createdImageFile.size() == new File("test/resources/multiPagePNG.png").size()
+//		dataCreated.eachWithIndex { byte entry, int i ->
+//			assert dataCreated[i] == dataExpected[i]
+//		}
 
 		cleanup:
 		createdImageFile.delete()
