@@ -23,7 +23,7 @@ class PDFServiceSpec extends Specification {
 	def cleanup() {
 	}
 
-	void "convertPDFToSingleImage will create single Image from all pages in the input PDF"() {
+	void "convertPDFToSingleJPGImage will create single Image from all pages in the input PDF"() {
 
 		when:
 		//create multipart file from the test fixture
@@ -35,7 +35,7 @@ class PDFServiceSpec extends Specification {
 		MultipartFile pdf = new MockMultipartFile(name,originalFileName, contentType, content);
 
 		//create single image from PDF
-		def finalMultipartFile = service.convertPDFToSingleImage(pdf,"myFileName.jpg");
+		def finalMultipartFile = service.convertPDFToSingleJPGImage(pdf,"myFileName.jpg");
 		//prepare to compare the content of the created image with the expected image
 		File createdImageFile =  File.createTempFile("myTemp","jpg")
 		FileOutputStream fos = new FileOutputStream(createdImageFile);

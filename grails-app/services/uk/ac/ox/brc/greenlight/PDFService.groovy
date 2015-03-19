@@ -114,7 +114,7 @@ class PDFService {
 		return  finalResult;
 	}
 
-	MultipartFile convertPDFToSingleImage(MultipartFile pdfFile,String imageFileName) {
+	MultipartFile convertPDFToSingleJPGImage(MultipartFile pdfFile,String imageFileName) {
 
 		ArrayList<File> tempPageImages = new ArrayList<File>();
 
