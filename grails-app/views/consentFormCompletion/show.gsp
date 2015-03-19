@@ -148,7 +148,9 @@
 
                                         <g:if test="${commandInstance?.attachment?.attachmentType == Attachment.AttachmentType.IMAGE}">
 
-                                            <img id="scannedForm" style="margin: 4px; width: 100%;height: 100%" class="Photo" src="${resource(dir:'attachments', file: commandInstance?.attachment?.id + '.jpg')}" />
+                                            <div  id="scrollerDiv">
+                                                <img id="scannedForm" style="margin: 4px; width: 100%;height: 100%" class="Photo" src="${resource(dir:'attachments', file: commandInstance?.attachment?.id + '.jpg')}" />
+                                            </div>
 
                                         </g:if>
                                         <g:elseif test="${commandInstance?.attachment?.attachmentType == Attachment.AttachmentType.PDF}">
@@ -218,5 +220,19 @@
             </g:form>
         </div>
 </div>
+
+<script type="text/javascript">
+    //As we need to change css of an image, we need to wait and act after it is loaded
+    //as $() jquery runs when DOM fully loaded, but
+    //$(window).load() executes when all other things are loaded as well, such as the images
+    $(window).load(function() {
+        if( $("#scrollerDiv img").height() > 1000){
+            $("#scrollerDiv").css( "overflow", "auto" );
+            $("#scrollerDiv").css( "max-height", "700px" );
+        }
+    });
+
+</script>
+
 </body>
 </html>
