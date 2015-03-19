@@ -87,7 +87,7 @@ class AttachmentControllerSpec extends Specification {
 		controller.save()
 
 		then:"one attachment should be created"
-		1 * controller.PDFService.convertPDFToSingleImage(_,_) >> {}
+		1 * controller.PDFService.convertPDFToSinglePNGImage(_,_) >> {}
 		1 * controller.attachmentService.create(_)  >> {new Attachment();}
 		controller.modelAndView.model.attachments.size() > 0
 		controller.modelAndView.model.attachments[0].uploadStatus == "Success"
@@ -112,8 +112,8 @@ class AttachmentControllerSpec extends Specification {
 		when:
 		controller.save()
 
-		then:"two attachments should be created and convertPDFToSingleImage should NOT be called"
-		0 * controller.PDFService.convertPDFToSingleImage(_,_) >> {}
+		then:"two attachments should be created and convertPDFToSinglePNGImage should NOT be called"
+		0 * controller.PDFService.convertPDFToSinglePNGImage(_,_) >> {}
 		2 * controller.attachmentService.create(_)  >> {new Attachment();}
 		controller.modelAndView.model.attachments.size() > 0
 		controller.modelAndView.model.attachments.each {
@@ -121,7 +121,7 @@ class AttachmentControllerSpec extends Specification {
 		}
 	}
 
-	def "save will handle the error message if it is a multi-page PDF and singleConsentPerPDFFile is TRUE and convertPDFToSingleImage throws an exception"(){
+	def "save will handle the error message if it is a multi-page PDF and singleConsentPerPDFFile is TRUE and convertPDFToSinglePNGImage throws an exception"(){
 
 		given:"A large PDF is uploaded and singleConsentPerPDFFile is true"
 		//As we need to also mock the service which is used inside the controller, so we need to add the following line
@@ -141,7 +141,7 @@ class AttachmentControllerSpec extends Specification {
 		controller.save()
 
 		then:"No attachment should be created"
-		1 * controller.PDFService.convertPDFToSingleImage(_,_) >> { throw new OutOfMemoryError("OutOfMemory in processing the PDF file")}
+		1 * controller.PDFService.convertPDFToSinglePNGImage(_,_) >> { throw new OutOfMemoryError("OutOfMemory in processing the PDF file")}
 		0 * controller.attachmentService.create(_)  >> {new Attachment();}
 		controller.modelAndView.model.attachments.size() > 0
 		controller.modelAndView.model.attachments[0].uploadStatus  == "Failed"
