@@ -41,12 +41,14 @@ class PDFServiceSpec extends Specification {
 		FileOutputStream fos = new FileOutputStream(createdImageFile);
 		fos.write(finalMultipartFile.getBytes());
 		fos.close();
-		//create TEXT from result image and test-fixture image for comparing them :)
-		String createdJPGFile  = FileUtils.readFileToString(createdImageFile, "utf-8");
-		String expectedJPGFile = FileUtils.readFileToString(new File("test/resources/multiPageJPG.jpg"), "utf-8");
+		byte[] dataCreated  = Files.readAllBytes(createdImageFile.toPath());
+		byte[] dataExpected = Files.readAllBytes(new File("test/resources/multiPageJPG.jpg").toPath());
 
 		then:
-		createdJPGFile == expectedJPGFile
+		dataCreated.size() == dataExpected.size()
+		dataCreated.eachWithIndex { byte entry, int i ->
+			assert dataCreated[i] == dataExpected[i]
+		}
 
 		cleanup:
 		createdImageFile.delete()
@@ -70,12 +72,14 @@ class PDFServiceSpec extends Specification {
 		FileOutputStream fos = new FileOutputStream(createdImageFile);
 		fos.write(finalMultipartFile.getBytes());
 		fos.close();
-		//create TEXT from result image and test-fixture image for comparing them :)
-		String createdPNGFile  = FileUtils.readFileToString(createdImageFile, "utf-8");
-		String expectedPNGFile = FileUtils.readFileToString(new File("test/resources/multiPagePNG.png"), "utf-8");
+		byte[] dataCreated  = Files.readAllBytes(createdImageFile.toPath());
+		byte[] dataExpected = Files.readAllBytes(new File("test/resources/multiPagePNG.png").toPath());
 
 		then:
-		createdPNGFile == expectedPNGFile
+		dataCreated.size() == dataExpected.size()
+		dataCreated.eachWithIndex { byte entry, int i ->
+			assert dataCreated[i] == dataExpected[i]
+		}
 
 		cleanup:
 		createdImageFile.delete()
