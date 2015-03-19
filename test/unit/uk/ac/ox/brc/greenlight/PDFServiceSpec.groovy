@@ -84,7 +84,7 @@ class PDFServiceSpec extends Specification {
 
 
 		then:
-		//compare files pixle-by-pixel as other approaches like comparing by text value or byte failed on Travis!!
+		//compare files pixel-by-pixel as other approaches like comparing by text value or byte failed on Travis! just because of Memory heap error!
 		createdImage.height == expectedImage.height
 		createdImage.width  == expectedImage.width
 		//compare pixel by pixel
