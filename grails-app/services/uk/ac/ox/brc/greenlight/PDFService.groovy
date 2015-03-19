@@ -27,7 +27,7 @@ class PDFService {
 
 			//create temp fileName
 			String singlePageName = pdfFile?.originalFilename + "_page" + pageNumber
-			File file = new File(singlePageName+".jpg");
+			File file = File.createTempFile(singlePageName,".jpg")
 			FileOutputStream fos = new FileOutputStream (file)
 			baos.writeTo(fos)
 			tempPageImages.add(file)
