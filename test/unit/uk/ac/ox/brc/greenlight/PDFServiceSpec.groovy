@@ -51,4 +51,33 @@ class PDFServiceSpec extends Specification {
 		cleanup:
 		createdImageFile.delete()
 	}
+
+	void "convertPDFToSinglePNGImage will create single Image from all pages in the input PDF"() {
+
+		when:
+		//create multipart file from the test fixture
+		Path path = Paths.get("test/resources/multiPagePDF.pdf");
+		String name = "multiPagePDF.pdf";
+		String originalFileName = "multiPagePDF.pdf";
+		String contentType = "application/pdf";
+		byte[] content = Files.readAllBytes(path);
+		MultipartFile pdf = new MockMultipartFile(name,originalFileName, contentType, content);
+
+		//create single image from PDF
+		def finalMultipartFile = service.convertPDFToSinglePNGImage(pdf,"myFileName.png");
+		//prepare to compare the content of the created image with the expected image
+		File createdImageFile =  File.createTempFile("myTemp","png")
+		FileOutputStream fos = new FileOutputStream(createdImageFile);
+		fos.write(finalMultipartFile.getBytes());
+		fos.close();
+		//create TEXT from result image and test-fixture image for comparing them :)
+		String createdJPGFile  = FileUtils.readFileToString(createdImageFile, "utf-8");
+		String expectedJPGFile = FileUtils.readFileToString(new File("test/resources/multiPageJPG.png"), "utf-8");
+
+		then:
+		createdJPGFile == expectedJPGFile
+
+		cleanup:
+		createdImageFile.delete()
+	}
 }
