@@ -69,6 +69,9 @@ class PDFService {
 	}
 
 
+	/*
+		Using this method is more efficient as it creates the final image file on the disk not in memory but it is an PNG file
+	 */
 	MultipartFile convertPDFToSinglePNGImage(MultipartFile pdfFile,String imageFileName) {
 
 		ArrayList<File> tempPageImages = new ArrayList<File>();
@@ -114,6 +117,10 @@ class PDFService {
 		return  finalResult;
 	}
 
+	/*
+		It is not an efficient method as it uses memory to create the final image and it might cause OutOfMemory
+		but as we have considered DPI as 100, it doen't cause the OutOfMemory, but it is better to use convertPDFToSinglePNGImage
+	 */
 	MultipartFile convertPDFToSingleJPGImage(MultipartFile pdfFile,String imageFileName) {
 
 		ArrayList<File> tempPageImages = new ArrayList<File>();
