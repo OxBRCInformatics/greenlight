@@ -6,6 +6,8 @@ import org.springframework.mock.web.MockMultipartFile
 import org.springframework.web.multipart.MultipartFile
 import spock.lang.Specification
 
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -72,21 +74,30 @@ class PDFServiceSpec extends Specification {
 		FileOutputStream fos = new FileOutputStream(createdImageFile);
 		fos.write(finalMultipartFile.getBytes());
 		fos.close();
-//		byte[] dataCreated  = Files.readAllBytes(createdImageFile.toPath());
-//		byte[] dataExpected = Files.readAllBytes(new File("test/resources/multiPagePNG.png").toPath());
-
+		//byte[] dataCreated  = Files.readAllBytes(createdImageFile.toPath());
+		//byte[] dataExpected = Files.readAllBytes(new File("test/resources/multiPagePNG.png").toPath());
 		//create TEXT from result image and test-fixture image for comparing them :)
-		String createdPNGFile  = FileUtils.readFileToString(createdImageFile, "utf-8");
-		String expectedPNGFile = FileUtils.readFileToString(new File("test/resources/multiPagePNG.png"), "utf-8");
+		//String createdPNGFile  = FileUtils.readFileToString(createdImageFile, "utf-8");
+		//String expectedPNGFile = FileUtils.readFileToString(new File("test/resources/multiPagePNG.png"), "utf-8");
+		BufferedImage createdImage  = ImageIO.read(createdImageFile);
+		BufferedImage expectedImage = ImageIO.read(new File("test/resources/multiPagePNG.png"));
 
 
 		then:
-		createdPNGFile == expectedPNGFile
+		//compare files pixle-by-pixel as other approaches like comparing by text value or byte failed on Travis!!
+		createdImage.height == expectedImage.height
+		createdImage.width  == expectedImage.width
+		//compare pixel by pixel
+		for(int x=0;x<expectedImage.width;x++){
+			for(int y=0;y<expectedImage.height;y++) {
+				assert expectedImage.getRGB(x,y) == createdImage.getRGB(x,y)
+			}
+		}
+		//createdPNGFile == expectedPNGFile
 		//createdImageFile.size() == new File("test/resources/multiPagePNG.png").size()
-//		dataCreated.eachWithIndex { byte entry, int i ->
-//			assert dataCreated[i] == dataExpected[i]
-//		}
-
+		//dataCreated.eachWithIndex { byte entry, int i ->
+		//	assert dataCreated[i] == dataExpected[i]
+		//}
 		cleanup:
 		createdImageFile.delete()
 	}
