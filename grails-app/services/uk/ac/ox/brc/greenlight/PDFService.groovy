@@ -24,6 +24,9 @@ class PDFService {
 
 	/*
 		Using PNGJ library to concat PNG files into a single file
+		This library helps to process huge images without needing to load them fully in memory,
+		but images should be PNG
+		https://github.com/leonbloy/pngj/
 		https://code.google.com/p/pngj/wiki/Snippets
 	 */
 	public  void doTiling(String[] tiles, String dest, int nTilesX) {
