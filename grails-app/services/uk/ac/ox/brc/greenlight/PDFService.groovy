@@ -101,8 +101,8 @@ class PDFService {
 		if(tempPageImages.size() == 0)
 			return null;
 
-		//write the final result into a temp PNG file
-		File finalTempFile = File.createTempFile("final",".png")
+		//write the final result into a temp PNG file but we add JPG extension to it
+		File finalTempFile = File.createTempFile("final",".jpg")
 		doTiling(files, finalTempFile.absolutePath, 1);
 
 		String contentType = "image/png";
