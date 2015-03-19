@@ -71,11 +71,11 @@ class PDFServiceSpec extends Specification {
 		fos.write(finalMultipartFile.getBytes());
 		fos.close();
 		//create TEXT from result image and test-fixture image for comparing them :)
-		String createdJPGFile  = FileUtils.readFileToString(createdImageFile, "utf-8");
-		String expectedJPGFile = FileUtils.readFileToString(new File("test/resources/multiPageJPG.png"), "utf-8");
+		String createdPNGFile  = FileUtils.readFileToString(createdImageFile, "utf-8");
+		String expectedPNGFile = FileUtils.readFileToString(new File("test/resources/multiPagePNG.png"), "utf-8");
 
 		then:
-		createdJPGFile == expectedJPGFile
+		createdPNGFile == expectedPNGFile
 
 		cleanup:
 		createdImageFile.delete()
