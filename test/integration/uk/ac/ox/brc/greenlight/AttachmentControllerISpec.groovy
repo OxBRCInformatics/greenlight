@@ -4,12 +4,17 @@ import grails.converters.JSON
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import grails.test.spock.IntegrationSpec
+import org.codehaus.groovy.grails.plugins.testing.GrailsMockMultipartFile
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.mock.web.MockMultipartHttpServletRequest
+import org.springframework.web.multipart.MultipartHttpServletRequest
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Created by soheil on 21/03/2014.

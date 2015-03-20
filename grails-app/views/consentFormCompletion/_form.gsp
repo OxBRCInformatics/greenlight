@@ -123,10 +123,11 @@
 
                 <g:if test="${commandInstance?.attachment}">
 
-                    <a href="${createLink(action: 'show', controller: 'attachment', id: commandInstance?.attachment?.id)}" target="_blank">
-                        <img id="scannedForm" style="margin: 4px; width: 100%;height: 100%" class="Photo" src="${resource(dir:'attachments', file: commandInstance?.attachment?.id + '.jpg')}" />
-
-                    </a>
+                        <div  id="scrollerDiv">
+                            <a href="${createLink(action: 'show', controller: 'attachment', id: commandInstance?.attachment?.id)}" target="_blank">
+                                <img id="scannedForm" style="margin: 4px; width: 100%;height: 100%" class="Photo" src="${resource(dir:'attachments', file: commandInstance?.attachment?.id + '.jpg')}" />
+                            </a>
+                        </div>
 
                 </g:if>
             </div>
@@ -397,5 +398,14 @@
  });
 
 
+    //As we need to change css of an image, we need to wait and act after it is loaded
+    //as $() jquery runs when DOM fully loaded, but
+    //$(window).load() executes when all other things are loaded as well, such as the images
+    $(window).load(function() {
+        if( $("#scrollerDiv img").height() > 1000){
+            $("#scrollerDiv").css( "overflow", "scroll" );
+            $("#scrollerDiv").css( "max-height", "700px" );
+        }
+    });
 
 </g:javascript>
