@@ -33,12 +33,12 @@ class BootStrap {
 		//We need this code, otherwise Grails will return dates in a default format and
 		//for example for sth like 25-12-2015 it will return 24-12-2015T23:00:00 and it was problematic
 		//this line will fix it
-		JSON.registerObjectMarshaller(Date) {
-			return it?.format("dd-MM-yyyy HH:mm:ss")
-		}
-		XML.registerObjectMarshaller(Date) {
-			return it?.format("dd-MM-yyyy HH:mm:ss")
-		}
+//		JSON.registerObjectMarshaller(Date) {
+//			return it?.format("dd-MM-yyyy HH:mm:ss")
+//		}
+//		XML.registerObjectMarshaller(Date) {
+//			return it?.format("dd-MM-yyyy HH:mm:ss")
+//		}
 
         environments {
             test {

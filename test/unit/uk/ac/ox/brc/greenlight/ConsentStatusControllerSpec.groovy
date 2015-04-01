@@ -22,7 +22,7 @@ class ConsentStatusControllerSpec extends Specification {
 		given:
 		String requestURL = "/api/aNiceURL"
 		String lookupId = "12345"
-		Patient patient = new Patient(givenName: "John Doe", nhsNumber: "12345", hospitalNumber: "NHSOXHOSP1",familyName: "Doe",dateOfBirth: new Date(2000,1,1))
+		Patient patient = new Patient(givenName: "John Doe", nhsNumber: "12345", hospitalNumber: "NHSOXHOSP1",familyName: "Doe",dateOfBirth: Date.parse("yyy-MM-dd HH:mm:ss","2015-01-25 02:10:00"))
 
 
 		def formTypes = [
@@ -31,8 +31,8 @@ class ConsentStatusControllerSpec extends Specification {
 		]
 
 		def latestConsentForms = [
-				new ConsentForm(formID: "GEL123", template: formTypes[0], responses: [new Response(question: formTypes[0].questions[0], answer: Response.ResponseValue.YES)]),
-				new ConsentForm(formID: "GEL456",template: formTypes[1], responses: [new Response(question: formTypes[1].questions[0], answer: Response.ResponseValue.YES), new Response(question: formTypes[1].questions[1], answer: Response.ResponseValue.NO)])
+				new ConsentForm(formID: "GEL123",consentDate: Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00"),template: formTypes[0], responses: [new Response(question: formTypes[0].questions[0], answer: Response.ResponseValue.YES)]),
+				new ConsentForm(formID: "GEL456",consentDate: Date.parse("yyy-MM-dd HH:mm:ss","2015-05-12 14:10:00"),template: formTypes[1], responses: [new Response(question: formTypes[1].questions[0], answer: Response.ResponseValue.YES), new Response(question: formTypes[1].questions[1], answer: Response.ResponseValue.NO)])
 		]
 
 
@@ -54,10 +54,10 @@ class ConsentStatusControllerSpec extends Specification {
 				hospitalNumber: patient.hospitalNumber,
 				firstName: patient.givenName,
 				lastName: patient.familyName,
-				dateOfBirth: patient.dateOfBirth,
+				dateOfBirth: "25-01-2015 02:10:00",
 				consents: [
-						[form: [namePrefix:formTypes[0].namePrefix,  name: formTypes[0].name, version: formTypes[0].templateVersion],lastCompleted: latestConsentForms[0].consentDate, consentStatus: ConsentStatus.FULL_CONSENT.name(), consentTakerName: latestConsentForms[0].consentTakerName,consentFormId:latestConsentForms[0].formID],
-						[form: [namePrefix:formTypes[1].namePrefix, name: formTypes[1].name, version: formTypes[1].templateVersion], lastCompleted: latestConsentForms[1].consentDate, consentStatus: ConsentStatus.NON_CONSENT.name(), consentTakerName: latestConsentForms[1].consentTakerName,consentFormId:latestConsentForms[1].formID]
+						[form: [namePrefix:formTypes[0].namePrefix, name: formTypes[0].name, version: formTypes[0].templateVersion],lastCompleted: "21-05-2015 14:10:00", consentStatus: ConsentStatus.FULL_CONSENT.name(), consentTakerName: latestConsentForms[0].consentTakerName,consentFormId:latestConsentForms[0].formID],
+						[form: [namePrefix:formTypes[1].namePrefix, name: formTypes[1].name, version: formTypes[1].templateVersion],lastCompleted: "12-05-2015 14:10:00",consentStatus: ConsentStatus.NON_CONSENT.name(), consentTakerName: latestConsentForms[1].consentTakerName,consentFormId:latestConsentForms[1].formID]
 				]
 		]
 	}
@@ -118,7 +118,7 @@ class ConsentStatusControllerSpec extends Specification {
 		given:
 		String requestURL = "/api/aNiceURL"
 		String lookupId = "12345"
-		Patient patient = new Patient(givenName: "John Doe", nhsNumber: "12345", hospitalNumber: "NHSOXHOSP1",familyName: "Doe",dateOfBirth: new Date(2000,1,1))
+		Patient patient = new Patient(givenName: "John Doe", nhsNumber: "12345", hospitalNumber: "NHSOXHOSP1",familyName: "Doe",dateOfBirth: Date.parse("yyy-MM-dd HH:mm:ss","2015-01-25 02:10:00"))
 
 
 		def formTypes = [
@@ -127,8 +127,8 @@ class ConsentStatusControllerSpec extends Specification {
 		]
 
 		def latestConsentForms = [
-				new ConsentForm(formID: "GEL123", template: formTypes[0], responses: [new Response(question: formTypes[0].questions[0], answer: Response.ResponseValue.YES)],consentTakerName: "User1"),
-				new ConsentForm(formID: "GEL456",template: formTypes[1], responses: [new Response(question: formTypes[1].questions[0], answer: Response.ResponseValue.YES), new Response(question: formTypes[1].questions[1], answer: Response.ResponseValue.NO)],consentTakerName: "User2")
+				new ConsentForm(formID: "GEL123",consentDate: Date.parse("yyy-MM-dd HH:mm:ss","2015-05-25 14:10:00"), template: formTypes[0], responses: [new Response(question: formTypes[0].questions[0], answer: Response.ResponseValue.YES)],consentTakerName: "User1"),
+				new ConsentForm(formID: "GEL456",consentDate: Date.parse("yyy-MM-dd HH:mm:ss","2015-04-12 14:10:00"),template: formTypes[1], responses: [new Response(question: formTypes[1].questions[0], answer: Response.ResponseValue.YES), new Response(question: formTypes[1].questions[1], answer: Response.ResponseValue.NO)],consentTakerName: "User2")
 		]
 
 
@@ -150,20 +150,15 @@ class ConsentStatusControllerSpec extends Specification {
 				hospitalNumber: patient.hospitalNumber,
 				firstName: patient.givenName,
 				lastName: patient.familyName,
-				dateOfBirth: patient.dateOfBirth,
+				dateOfBirth: "25-01-2015 02:10:00",
 				consents: [
-						[form: [namePrefix:formTypes[0].namePrefix,name: formTypes[0].name, version: formTypes[0].templateVersion],lastCompleted: latestConsentForms[0].consentDate, consentStatus: ConsentStatus.FULL_CONSENT.name(), consentTakerName:latestConsentForms[0].consentTakerName,consentFormId:latestConsentForms[0].formID],
-						[form: [namePrefix:formTypes[1].namePrefix,name: formTypes[1].name, version: formTypes[1].templateVersion], lastCompleted: latestConsentForms[1].consentDate, consentStatus: ConsentStatus.NON_CONSENT.name(), consentTakerName:latestConsentForms[1].consentTakerName,consentFormId:latestConsentForms[1].formID]
+						[form: [namePrefix:formTypes[0].namePrefix,name: formTypes[0].name, version: formTypes[0].templateVersion],lastCompleted: "25-05-2015 14:10:00", consentStatus: ConsentStatus.FULL_CONSENT.name(), consentTakerName:latestConsentForms[0].consentTakerName,consentFormId:latestConsentForms[0].formID],
+						[form: [namePrefix:formTypes[1].namePrefix,name: formTypes[1].name, version: formTypes[1].templateVersion],lastCompleted: "12-04-2015 14:10:00", consentStatus: ConsentStatus.NON_CONSENT.name(), consentTakerName:latestConsentForms[1].consentTakerName,consentFormId:latestConsentForms[1].formID]
 				]
 		]
 	}
 
 	def "Check if JSON marshaller will return the dates in a proper format"(){
-
-		given:
-		JSON.registerObjectMarshaller(Date) {
-			return it?.format("dd-MM-yyyy HH:mm:ss")
-		}
 
 		String requestURL = "/api/aNiceURL"
 		String lookupId = "12345"
@@ -198,11 +193,6 @@ class ConsentStatusControllerSpec extends Specification {
 
 	}
 	def "Check if XML marshaller will return the dates in a proper format"() {
-
-		given:
-		XML.registerObjectMarshaller(Date) {
-			return it?.format("dd-MM-yyyy HH:mm:ss")
-		}
 
 		String requestURL = "/api/aNiceURL"
 		String lookupId = "12345"
