@@ -1,6 +1,7 @@
 package uk.ac.ox.brc.greenlight
 
 import grails.transaction.Transactional
+import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
 
 @Transactional
 class ConsentEvaluationService {
@@ -72,18 +73,5 @@ class ConsentEvaluationService {
 			}
 		}
 		return labels
-	}
-}
-
-enum ConsentStatus
-{
-    FULL_CONSENT("Full consent"),
-    NON_CONSENT("No consent"),
-    CONSENT_WITH_LABELS("Consent with restrictions")
-
-	private final String label
-
-	ConsentStatus(String label){
-		this.label = label
 	}
 }

@@ -4,6 +4,7 @@ import grails.converters.JSON
 import grails.converters.XML
 import grails.test.mixin.TestFor
 import spock.lang.*
+import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
 
 /**
  *

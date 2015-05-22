@@ -4,6 +4,7 @@ import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import greenlight.Study
 import spock.lang.Specification
+import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
 
 /**
  * Created by soheil on 01/04/2014.
