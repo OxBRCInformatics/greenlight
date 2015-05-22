@@ -77,6 +77,11 @@ class ConsentFormService {
 		try {
 
 			patient.save()
+
+			//calculate and save consentStatus
+			def status = consentEvaluationService.getConsentStatus(consentForm)
+			consentForm.consentStatus = status
+
 			consentForm.save(flush: true)
 			return true
 		}
