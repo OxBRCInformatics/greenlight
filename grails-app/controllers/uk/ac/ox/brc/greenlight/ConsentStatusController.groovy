@@ -63,7 +63,7 @@ class ConsentStatusController{
 								namePrefix: consentForm.template.namePrefix
 						],
 						lastCompleted: consentForm.consentDate?.format("dd-MM-yyyy HH:mm:ss"),
-						consentStatus: consentEvaluationService.getConsentStatus(consentForm).name(),
+						consentStatus: consentForm.consentStatus.name(),
 						consentTakerName : consentForm.consentTakerName,
 						consentFormId : consentForm.formID
 				])

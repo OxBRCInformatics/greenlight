@@ -171,7 +171,7 @@ class ConsentFormService {
 					consent.patient.familyName,
 					consent.patient.dateOfBirth.format("dd-MM-yyyy"),
 					consent.template?.namePrefix,
-					consentEvaluationService.getConsentStatus(consent) as String,
+					consent.consentStatus as String,
 					consent.responses?.collect { it.answer as String }.join("|"),
 					escapeForCSV(consent.comment)
 			].join(','))
