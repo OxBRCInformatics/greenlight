@@ -62,7 +62,7 @@
                         </thead>
                         <tbody>
                             <g:each var="consent" in="${consents}">
-                            <g:if test="${consent.consentStatus == uk.ac.ox.brc.greenlight.ConsentStatus.FULL_CONSENT || consent.consentStatus == uk.ac.ox.brc.greenlight.ConsentStatus.CONSENT_WITH_LABELS}">
+                            <g:if test="${consent.consentStatus == uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus.FULL_CONSENT || consent.consentStatus == uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus.CONSENT_WITH_LABELS}">
                                 <tr class="alert alert-info alert-block">
                                     <td>${consent.form.name} <small>(version: ${consent.form.version})</small></td>
                                     <td><g:formatDate format="dd-MM-yyyy" date="${consent.lastCompleted}"/></td>
