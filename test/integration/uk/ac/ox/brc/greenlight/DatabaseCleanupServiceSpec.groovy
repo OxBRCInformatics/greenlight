@@ -84,7 +84,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 	}
 
-	def AddConsentFormsForAttachment() {
+	def AddMoreThanOneConsentFormsToAttachments() {
 
 		def attachment1= new Attachment(id: 1, fileName: 'a.jpg', dateOfUpload: new Date(),
 				attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush: true , failOnError:true )
@@ -214,7 +214,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 	void "RemoveDuplicateConsentForm will removed duplicate consents attached to an attachment"(){
 		given:"A number of attachments are annotated more than once"
-		AddConsentFormsForAttachment()
+		AddMoreThanOneConsentFormsToAttachments()
 		//we have two attachment which each one has 2 consentForm attached to them
 		Patient.list().size() == 2
 		ConsentForm.list().size() == 4
