@@ -180,7 +180,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
                     consentForm.patient.familyName,
                     consentForm.patient.dateOfBirth.format("dd-MM-yyyy"),
                     consentForm.template.namePrefix,
-                    consentEvaluationService.getConsentStatus(consentForm) as String,
+					consentForm.consentStatus as String,
                     consentForm.responses.collect { it.answer as String }.join('|'),
                     getCSVEscapedComment(consentForm.comment)
             ].join(','))
@@ -285,5 +285,100 @@ class ConsentFormServiceSpec extends IntegrationSpec {
 		ConsentForm.count() == consentBefore + 1
 		Response.count() == responseBefore + 4
 		Patient.count() == patientBefore + 1
+	}
+
+
+
+	void "Save will calculate and update ConsentStatus attribute of ConsentForm in Save mode"(){
+
+		given:"An unAnnotated attachment is available & get annotated"
+		def attachment	= new Attachment(id: 200, fileName: 'a.jpg', dateOfUpload: new Date(),attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush:true)
+		def template 	= ConsentFormTemplate.first()
+
+		def patient = new Patient(
+				givenName: "Eric",
+				familyName: "Clapton",
+				dateOfBirth: new Date("30/03/1945"),
+				hospitalNumber: "1002",
+				nhsNumber: "1234567890",
+				consents: []
+		)
+		def consent = new ConsentForm(
+				attachedFormImage: attachment,
+				template: template,
+				patient: patient,
+				consentDate: new Date([year:2014,month:01,date:01]),
+				consentTakerName: "Edward",
+				formID: "GEN12345",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				comment: "a simple unEscapedComment, with characters \' \" \n "
+		)
+		consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: template.questions[0]))
+		consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: template.questions[1]))
+		consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: template.questions[2]))
+		consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: template.questions[3]))
+
+		//check if it is NON_CONSENT Before saving
+		assert consent.consentStatus == ConsentForm.ConsentStatus.NON_CONSENT
+
+		when:"save is called"
+		def result  = consentFormService.save(patient,consent)
+
+		then:"it will update consentStatus attribute of the ConsentForm object"
+		result
+		!consent.hasErrors()
+		consent.consentStatus == ConsentForm.ConsentStatus.FULL_CONSENT
+	}
+
+	void "Save will calculate and update ConsentStatus of the ConsentForm in update mode"(){
+
+		given:"An attachment is annotated"
+		def attachment = Attachment.first()
+		//Form is NOT Consented before update
+		assert attachment?.consentForm?.consentStatus == ConsentForm.ConsentStatus.NON_CONSENT
+
+		//Responses are changed to NO
+		attachment?.consentForm?.responses?.each { response ->
+			response.answer = Response.ResponseValue.YES
+		}
+
+		when:"save is called for annotating the same attachment again"
+		def result  = consentFormService.save(attachment.consentForm.patient,attachment.consentForm)
+
+		then:
+		result
+		attachment?.consentForm?.consentStatus == ConsentForm.ConsentStatus.FULL_CONSENT
+	}
+
+	void "Save will calculate and update ConsentStatus of the ConsentForm in update mode if FormTemplate is even updated"(){
+
+		given:"An attachment is annotated"
+		def attachment	= Attachment.first()
+		attachment?.consentForm?.consentStatus = ConsentForm.ConsentStatus.NON_CONSENT
+		attachment.save(failOnError: true)
+		//Form is NOT Consented before update
+		assert attachment?.consentForm?.consentStatus == ConsentForm.ConsentStatus.NON_CONSENT
+
+		//Attachment is Updated with a different type of Consent Form Template ..........................
+		def newTemplate = new ConsentFormTemplate(id:30, name: "ORB1",templateVersion: "1.1",namePrefix: "CDR")
+				.addToQuestions(new Question(name: 'I read1...'))
+				.addToQuestions(new Question(name: 'I read2...'))
+				.addToQuestions(new Question(name: 'I read3...'))
+				.addToQuestions(new Question(name: 'I read4...'))
+				.save()
+		attachment?.consentForm?.template = newTemplate
+		attachment.consentForm.addToResponses(new Response(answer: Response.ResponseValue.YES,question: newTemplate.questions[0]))
+		attachment.consentForm.addToResponses(new Response(answer: Response.ResponseValue.YES,question: newTemplate.questions[1]))
+		attachment.consentForm.addToResponses(new Response(answer: Response.ResponseValue.YES,question: newTemplate.questions[2]))
+		attachment.consentForm.addToResponses(new Response(answer: Response.ResponseValue.YES,question: newTemplate.questions[3]))
+		//...............................................................................................
+
+		when:"save is called for annotating the same attachment again"
+		def result  = consentFormService.save(attachment.consentForm.patient,attachment.consentForm)
+
+		then:
+		result
+		attachment?.consentForm?.template.id == newTemplate.id
+		attachment?.consentForm?.consentStatus == ConsentForm.ConsentStatus.FULL_CONSENT
 	}
 }
