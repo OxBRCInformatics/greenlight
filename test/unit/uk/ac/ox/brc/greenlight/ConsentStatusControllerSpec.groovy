@@ -32,8 +32,8 @@ class ConsentStatusControllerSpec extends Specification {
 		]
 
 		def latestConsentForms = [
-				new ConsentForm(formID: "GEL123",consentDate: Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00"),template: formTypes[0], responses: [new Response(question: formTypes[0].questions[0], answer: Response.ResponseValue.YES)]),
-				new ConsentForm(formID: "GEL456",consentDate: Date.parse("yyy-MM-dd HH:mm:ss","2015-05-12 14:10:00"),template: formTypes[1], responses: [new Response(question: formTypes[1].questions[0], answer: Response.ResponseValue.YES), new Response(question: formTypes[1].questions[1], answer: Response.ResponseValue.NO)])
+				new ConsentForm(formID: "GEL123", consentStatus: ConsentStatus.FULL_CONSENT,consentDate: Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00"),template: formTypes[0], responses: [new Response(question: formTypes[0].questions[0], answer: Response.ResponseValue.YES)]),
+				new ConsentForm(formID: "GEL456", consentStatus: ConsentStatus.NON_CONSENT ,consentDate: Date.parse("yyy-MM-dd HH:mm:ss","2015-05-12 14:10:00"),template: formTypes[1], responses: [new Response(question: formTypes[1].questions[0], answer: Response.ResponseValue.YES), new Response(question: formTypes[1].questions[1], answer: Response.ResponseValue.NO)])
 		]
 
 
@@ -46,7 +46,6 @@ class ConsentStatusControllerSpec extends Specification {
 		then: "The controller responds with the consent status"
 		1 * controller.patientService.findAllByNHSOrHospitalNumber(lookupId) >> [patient]
 		1 * controller.consentFormService.getLatestConsentForms([patient]) >> latestConsentForms
-		2 * controller.consentEvaluationService.getConsentStatus(_) >>> [ConsentStatus.FULL_CONSENT, ConsentStatus.NON_CONSENT]
 
 		model.stringInstanceMap == [
 				_self: requestURL,
@@ -128,8 +127,8 @@ class ConsentStatusControllerSpec extends Specification {
 		]
 
 		def latestConsentForms = [
-				new ConsentForm(formID: "GEL123",consentDate: Date.parse("yyy-MM-dd HH:mm:ss","2015-05-25 14:10:00"), template: formTypes[0], responses: [new Response(question: formTypes[0].questions[0], answer: Response.ResponseValue.YES)],consentTakerName: "User1"),
-				new ConsentForm(formID: "GEL456",consentDate: Date.parse("yyy-MM-dd HH:mm:ss","2015-04-12 14:10:00"),template: formTypes[1], responses: [new Response(question: formTypes[1].questions[0], answer: Response.ResponseValue.YES), new Response(question: formTypes[1].questions[1], answer: Response.ResponseValue.NO)],consentTakerName: "User2")
+				new ConsentForm(formID: "GEL123", consentStatus: ConsentStatus.FULL_CONSENT,consentDate: Date.parse("yyy-MM-dd HH:mm:ss","2015-05-25 14:10:00"), template: formTypes[0], responses: [new Response(question: formTypes[0].questions[0], answer: Response.ResponseValue.YES)],consentTakerName: "User1"),
+				new ConsentForm(formID: "GEL456", consentStatus: ConsentStatus.NON_CONSENT ,consentDate: Date.parse("yyy-MM-dd HH:mm:ss","2015-04-12 14:10:00"),template: formTypes[1], responses: [new Response(question: formTypes[1].questions[0], answer: Response.ResponseValue.YES), new Response(question: formTypes[1].questions[1], answer: Response.ResponseValue.NO)],consentTakerName: "User2")
 		]
 
 
@@ -142,7 +141,6 @@ class ConsentStatusControllerSpec extends Specification {
 		then: "The controller responds with the consent status"
 		1 * controller.patientService.findAllByNHSOrHospitalNumber(lookupId) >> [patient]
 		1 * controller.consentFormService.getLatestConsentForms([patient]) >> latestConsentForms
-		2 * controller.consentEvaluationService.getConsentStatus(_) >>> [ConsentStatus.FULL_CONSENT, ConsentStatus.NON_CONSENT]
 
 		model.stringInstanceMap == [
 				_self: requestURL,
@@ -172,8 +170,8 @@ class ConsentStatusControllerSpec extends Specification {
 		]
 
 		def latestConsentForms = [
-				new ConsentForm(formID: "GEL123", template: formTypes[0], responses: [new Response(question: formTypes[0].questions[0], answer: Response.ResponseValue.YES)],consentTakerName: "User1"),
-				new ConsentForm(formID: "GEL456",template: formTypes[1], responses: [new Response(question: formTypes[1].questions[0], answer: Response.ResponseValue.YES), new Response(question: formTypes[1].questions[1], answer: Response.ResponseValue.NO)],consentTakerName: "User2")
+				new ConsentForm(formID: "GEL123", consentStatus: ConsentStatus.FULL_CONSENT, template: formTypes[0], responses: [new Response(question: formTypes[0].questions[0], answer: Response.ResponseValue.YES)],consentTakerName: "User1"),
+				new ConsentForm(formID: "GEL456", consentStatus: ConsentStatus.NON_CONSENT ,template: formTypes[1], responses: [new Response(question: formTypes[1].questions[0], answer: Response.ResponseValue.YES), new Response(question: formTypes[1].questions[1], answer: Response.ResponseValue.NO)],consentTakerName: "User2")
 		]
 
 
@@ -188,7 +186,6 @@ class ConsentStatusControllerSpec extends Specification {
 		then: "The controller responds with the consent status"
 		1 * controller.patientService.findAllByNHSOrHospitalNumber(lookupId) >> [patient]
 		1 * controller.consentFormService.getLatestConsentForms([patient]) >> latestConsentForms
-		2 * controller.consentEvaluationService.getConsentStatus(_) >>> [ConsentStatus.FULL_CONSENT, ConsentStatus.NON_CONSENT]
 
 		controller.response.json.toString() == "{\"dateOfBirth\":\"25-01-2015 02:10:00\",\"consents\":[{\"consentTakerName\":\"User1\",\"form\":{\"name\":\"form type 1\",\"namePrefix\":\"GEN\",\"version\":\"1.0\"},\"consentFormId\":\"GEL123\",\"consentStatus\":\"FULL_CONSENT\",\"lastCompleted\":null},{\"consentTakerName\":\"User2\",\"form\":{\"name\":\"form type 2\",\"namePrefix\":\"CRA\",\"version\":\"2.0\"},\"consentFormId\":\"GEL456\",\"consentStatus\":\"NON_CONSENT\",\"lastCompleted\":null}],\"lastName\":\"Doe\",\"errors\":false,\"hospitalNumber\":\"NHSOXHOSP1\",\"nhsNumber\":\"12345\",\"firstName\":\"John Doe\",\"_self\":\"/api/aNiceURL\"}"
 
@@ -206,8 +203,8 @@ class ConsentStatusControllerSpec extends Specification {
 		]
 
 		def latestConsentForms = [
-				new ConsentForm(formID: "GEL123", template: formTypes[0], responses: [new Response(question: formTypes[0].questions[0], answer: Response.ResponseValue.YES)],consentTakerName: "User1"),
-				new ConsentForm(formID: "GEL456",template: formTypes[1], responses: [new Response(question: formTypes[1].questions[0], answer: Response.ResponseValue.YES), new Response(question: formTypes[1].questions[1], answer: Response.ResponseValue.NO)],consentTakerName: "User2")
+				new ConsentForm(formID: "GEL123", consentStatus: ConsentStatus.FULL_CONSENT, template: formTypes[0], responses: [new Response(question: formTypes[0].questions[0], answer: Response.ResponseValue.YES)],consentTakerName: "User1"),
+				new ConsentForm(formID: "GEL456", consentStatus: ConsentStatus.NON_CONSENT ,template: formTypes[1], responses: [new Response(question: formTypes[1].questions[0], answer: Response.ResponseValue.YES), new Response(question: formTypes[1].questions[1], answer: Response.ResponseValue.NO)],consentTakerName: "User2")
 		]
 
 
@@ -222,7 +219,6 @@ class ConsentStatusControllerSpec extends Specification {
 		then: "The controller responds with the consent status"
 		1 * controller.patientService.findAllByNHSOrHospitalNumber(lookupId) >> [patient]
 		1 * controller.consentFormService.getLatestConsentForms([patient]) >> latestConsentForms
-		2 * controller.consentEvaluationService.getConsentStatus(_) >>> [ConsentStatus.FULL_CONSENT, ConsentStatus.NON_CONSENT]
 
 		controller.response.text == "<?xml version=\"1.0\" encoding=\"UTF-8\"?><map><entry key=\"_self\">/api/aNiceURL</entry><entry key=\"errors\">false</entry><entry key=\"nhsNumber\">12345</entry><entry key=\"hospitalNumber\">NHSOXHOSP1</entry><entry key=\"firstName\">John Doe</entry><entry key=\"lastName\">Doe</entry><entry key=\"dateOfBirth\">25-01-2015 02:10:00</entry><entry key=\"consents\"><map><entry key=\"form\"><entry key=\"name\">form type 1</entry><entry key=\"version\">1.0</entry><entry key=\"namePrefix\">GEN</entry></entry><entry key=\"lastCompleted\" /><entry key=\"consentStatus\">FULL_CONSENT</entry><entry key=\"consentTakerName\">User1</entry><entry key=\"consentFormId\">GEL123</entry></map><map><entry key=\"form\"><entry key=\"name\">form type 2</entry><entry key=\"version\">2.0</entry><entry key=\"namePrefix\">CRA</entry></entry><entry key=\"lastCompleted\" /><entry key=\"consentStatus\">NON_CONSENT</entry><entry key=\"consentTakerName\">User2</entry><entry key=\"consentFormId\">GEL456</entry></map></entry></map>"
 
