@@ -1,5 +1,6 @@
 package uk.ac.ox.brc.greenlight
 
+import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import grails.test.spock.IntegrationSpec
 import groovy.sql.Sql
@@ -234,5 +235,102 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		ConsentForm.list().size() == 2
 		Attachment.list().size() == 2
 		Response.list().size()  == 6
+	}
+
+
+	private void AddConsentFormWithoutConsentStatus(){
+
+		def attachment1 = new Attachment(id: 1, fileName: 'a.jpg', dateOfUpload: new Date(),	attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush: true , failOnError:true )
+		def attachment2 = new Attachment(id: 1, fileName: 'a.jpg', dateOfUpload: new Date(),	attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush: true , failOnError:true )
+		def questions = [
+				new Question(name: 'I read1...'),
+				new Question(name: 'I read2...'),
+				new Question(name: 'I read3...'),
+				new Question(name: 'I read4...')
+		];
+		def template=new ConsentFormTemplate(
+				id: 1,
+				name: "ORB1",
+				templateVersion: "1.1",
+				namePrefix: "GNR")
+				.addToQuestions(questions[0])
+				.addToQuestions(questions[1])
+				.addToQuestions(questions[2])
+				.addToQuestions(questions[3])
+				.save(flush: true , failOnError:true )
+
+		def patient1= new Patient(
+				givenName: "Eric",
+				familyName: "Clapton",
+				dateOfBirth: new Date("30/03/1945"),
+				hospitalNumber: "1002",
+				nhsNumber: "1234567890",
+				consents: []
+		).save(flush: true , failOnError:true )
+
+
+		def patient2= new Patient(
+				givenName: "Eric",
+				familyName: "Clapton",
+				dateOfBirth: new Date("30/03/1945"),
+				hospitalNumber: "1000",
+				nhsNumber: "0987654321",
+				consents: []
+		).save(flush: true , failOnError:true )
+
+
+		def consent1 = new ConsentForm(
+				attachedFormImage: attachment1,
+				template: template,
+				consentDate: new Date([year:2014,month:01,date:01]),
+				consentTakerName: "Edward",
+				formID: "GEN12345",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patient1).save(flush: true , failOnError:true )
+		consent1.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[0]))
+		consent1.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[1]))
+		consent1.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[2]))
+		consent1.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[3]))
+		consent1.save(flush: true , failOnError:true )
+
+
+		def consent2 = new ConsentForm(
+				attachedFormImage: attachment2,
+				template: template,
+				consentDate: new Date([year:2014,month:01,date:01]),
+				consentTakerName: "Edward",
+				formID: "GEN12345",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patient2).save(flush: true , failOnError:true )
+		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[0]))
+		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[1]))
+		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[2]))
+		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[3]))
+		consent2.save(flush: true , failOnError:true )
+	}
+
+
+	void "updateAllConsentStatus updates consentStatus attribute in all ConsentForm objects"(){
+
+		given:"all consent objects have null/NONE_CONSENT in consentStatus attribute"
+
+		databaseCleanupService.consentEvaluationService = Mock(ConsentEvaluationService)
+
+		AddConsentFormWithoutConsentStatus()
+		Attachment.count()	 == 2
+		ConsentForm.count()	 == 2
+		ConsentForm.list().each { consentForm ->
+			assert consentForm?.consentStatus == ConsentForm.ConsentStatus.NON_CONSENT
+		}
+
+		when:
+		def updateCount = databaseCleanupService.updateAllConsentStatus()
+
+		then:"ConsentStatus of all consentForms will be updated"
+		2 * databaseCleanupService.consentEvaluationService.getConsentStatus(_) >>{return ConsentForm.ConsentStatus.CONSENT_WITH_LABELS}
+		ConsentForm.list().each { consentForm ->
+			assert consentForm?.consentStatus == ConsentForm.ConsentStatus.CONSENT_WITH_LABELS
+		}
+		updateCount == 2
 	}
 }

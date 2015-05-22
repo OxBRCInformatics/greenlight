@@ -59,4 +59,18 @@ class DatabaseCleanUpController {
 		def result = [before: before, after: after,removed: removed]
 		respond result as Object, [formats:['xml','json']] as Map
 	}
+
+	def updateAllConsentStatus() {
+		def consentFormUpdatedCount = 0
+
+		try {
+			consentFormUpdatedCount = databaseCleanupService.updateAllConsentStatus()
+		}
+		catch (Exception exception) {
+			render exception.message
+			return
+		}
+
+		def result = [updatedRecords: consentFormUpdatedCount]
+		respond result as Object, [formats:['xml','json']] as Map	}
 }

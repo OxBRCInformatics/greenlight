@@ -6,6 +6,7 @@ import groovy.sql.Sql
 @Transactional
 class DatabaseCleanupService {
 
+	def consentEvaluationService
 	def dataSource
  	def cleanOrphanResponses()
 	{
@@ -85,5 +86,18 @@ class DatabaseCleanupService {
 			}
 		}
 		removedConsentForms
+	}
+
+	def "updateAllConsentStatus"(){
+
+		def updatedCount = 0
+		//go through all ConsentForms and update its consentStatus
+		ConsentForm.list().each { consentForm ->
+			def consentStatus  = consentEvaluationService.getConsentStatus(consentForm)
+			consentForm?.consentStatus = consentStatus
+			consentForm.save(failOnError: true)
+			updatedCount++
+		}
+		updatedCount
 	}
 }
