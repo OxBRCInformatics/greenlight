@@ -15,4 +15,15 @@ class PatientService {
 		return Patient.findAllByNhsNumberOrHospitalNumber(patientNumber, patientNumber)
 	}
 
+
+	def groupPatientsByNHSNumber(){
+		def c = Patient.createCriteria()
+		c.list {
+			projections {
+				groupProperty("nhsNumber")
+			}
+			order("nhsNumber")
+		}
+	}
+
 }
