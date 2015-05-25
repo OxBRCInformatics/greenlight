@@ -88,7 +88,7 @@ class DatabaseCleanupService {
 		removedConsentForms
 	}
 
-	def "updateAllConsentStatus"(){
+	def updateAllConsentStatus(){
 
 		def updatedCount = 0
 		//go through all ConsentForms and update its consentStatus
