@@ -2,6 +2,7 @@ package uk.ac.ox.brc.greenlight
 
 import grails.test.mixin.TestFor
 import spock.lang.Specification
+import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
 
 /**
  * Created by rb on 01/04/2014.
@@ -82,4 +83,63 @@ class ConsentFormServiceUnitSpec extends Specification {
         DBL_QUOTE | DBL_QUOTE+DBL_QUOTE
 		null	  | ""
     }
+	def "getPatientWithMoreThanOneConsentForm will return patients who have certain number of full consent form"(){
+
+		given:
+		service.patientService 	   = Mock(PatientService)
+		service.consentFormService = Mock(ConsentFormService)
+		service.consentEvaluationService = Mock(ConsentEvaluationService)
+
+
+		def patientsNHSNumber = ["123456789","1111111111","987654321"]
+		def patients =  [
+				new Patient(id:1, givenName  : 'A', familyName : 'B', nhsNumber : '123456789'),
+				new Patient(id:2, givenName  : 'A', familyName : 'B', nhsNumber : '123456789'),
+				new Patient(id:3, givenName  : 'Z', familyName : 'Z', nhsNumber : '987654321'),
+				new Patient(id:5, givenName  : 'Mr0', familyName : 'Mr0', nhsNumber : '111111111'),
+		]
+
+		def consentsPatient0 = [
+				new ConsentForm(consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "GEL"))
+		]
+
+
+		def consentsPatient1 = [
+						new ConsentForm(consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "GEL")),
+						new ConsentForm(consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "GEL"))
+		]
+		def consentsPatient2 = [
+				new ConsentForm(consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "GEL")),
+				new ConsentForm(consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "GEL")),
+				new ConsentForm(consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "GEL"))
+		]
+
+
+		when:
+		def result = service.getPatientWithMoreThanOneConsentForm()
+
+		then:
+		1 * service.patientService.groupPatientsByNHSNumber() >> {return patientsNHSNumber}
+		3 * service.patientService.findAllByNHSOrHospitalNumber(_) >> {
+			if(it[0] == "123456789"){
+				return [patients[0],patients[1]]
+			}else if(it[0] == "987654321"){
+				return [patients[2]]
+			}else {
+				return [patients[3]]
+			}
+		}
+		3 * service.consentFormService.getLatestConsentForms(_) >>{
+			if(it[0][0].givenName == 'A')
+				return consentsPatient1
+			else if(it[0][0].givenName == 'Z')
+				return consentsPatient2
+			else if(it[0][0].givenName == 'Mr0')
+				return consentsPatient0
+		}
+
+		result.size() == 2
+		result[0].consents.size() == 2
+		result[1].consents.size() == 3
+	}
 }
