@@ -247,4 +247,35 @@ class ConsentFormService {
 		}
 		finalResult
 	}
+
+
+	def exportPatientWithMoreThanOneConsentForm() {
+		StringBuilder sb = new StringBuilder()
+		def headers = [
+				"patientNHS",
+				"patientMRN",
+				"patientName",
+				"patientSurName",
+				"patientDateOfBirth",
+ 				"consentForms",
+				"consentFormsCount"
+		];
+		sb.append(headers.join(','))
+		sb.append("\n")
+
+		def patients = getPatientWithMoreThanOneConsentForm()
+		patients.each { patient ->
+			sb.append([
+					 patient?.nhsNumber,
+					(patient?.hospitalNumber?.trim() ?  patient.hospitalNumber : ""),
+					(patient?.givenName?.trim() ?  patient.givenName : ""),
+					(patient?.familyName?.trim() ?  patient.familyName : ""),
+					 patient?.dateOfBirth.format("dd-MM-yyyy"),
+					 patient?.consentsString.replace(',','|'),
+					 patient?.consentsCount
+			].join(','))
+			sb.append("\n")
+		}
+		return sb.toString()
+	}
 }
