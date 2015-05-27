@@ -168,7 +168,7 @@ grails{
                     // Asset pipeline
                     '/assets/**':           ['permitAll'],
 
-					'/bower_compoennts/**': ['permitAll'],
+					'/bower_components/**': ['permitAll'],
 
                     // Javascript
 					'/js/**':      			['permitAll'],

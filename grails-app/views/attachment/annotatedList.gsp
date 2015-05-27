@@ -15,7 +15,7 @@
             var grailsContextPath = "${ createLinkTo(dir: '/')}";
 
             $('#example').dataTable( {
-                "sDom": "<'row'<'span6'l><'span6'>r>t<'row span10'<ip>>",
+                "sDom": "<'row'<'span7'l><'span7'>r>t<'row span10'<ip>>",
                 "oTableTools": {"sRowSelect": "single"},
                 "aLengthMenu": [[5, 10, 15, 25, 50, 100 , -1], [5, 10, 15, 25, 50, 100, "All"]],
                 "iDisplayLength" : 10,
@@ -27,6 +27,7 @@
                 "aoColumns": [
                     { "mData": "consentDate" },
                     { "mData": "formStatus" },
+                    { "mData": "consentStatus" },
                     { "mData": "template.namePrefix" },
                     { "mData": "formID" },
                     { "mData": "patient.nhsNumber" },
@@ -73,9 +74,10 @@
                             <table class="table table-striped table-bordered" id="example" border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <thead>
                                 <tr>
-                                    <th width="20%">Consent Date</th>
-                                    <th width="12%">Form Status</th>
-                                    <th width="12%">Form Type</th>
+                                    <th width="12%">Consent Date</th>
+                                    <th width="15%">Form Status</th>
+                                    <th width="20%">Consent Status</th>
+                                    <th width="10%">Form Type</th>
                                     <th width="12%">Form Id</th>
                                     <th width="20%">NHS#</th>
 

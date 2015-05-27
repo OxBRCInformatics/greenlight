@@ -18,6 +18,7 @@ import java.awt.image.BufferedImage
 class AttachmentController {
 
     def attachmentService
+	def PDFService
 
 	def defaultAction = 'list'
 
@@ -73,9 +74,10 @@ class AttachmentController {
 		def sortColIndex = params?.iSortCol_0
 		def cols = ["0":"consentDate",
 					"1":"formStatus",
-				    "2":"template.namePrefix",
-					"3":"formID",
-					"4":"patient.nhsNumber" ]
+					"2":"consentStatus",
+				    "3":"template.namePrefix",
+					"4":"formID",
+					"5":"patient.nhsNumber" ]
 		sortCol = cols.containsKey(sortColIndex) ? cols[sortColIndex] : "consentDate"
 
 
@@ -149,6 +151,9 @@ class AttachmentController {
     }
 
     def save() {
+
+		def singleConsentPerPDFFile = params.boolean('singleConsentPerPDFFile');
+
         def attachments = []
         if(request instanceof MultipartHttpServletRequest) {
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)request;
@@ -161,22 +166,86 @@ class AttachmentController {
 
 					// If it's a PDF split the pages out and convert to an image first
 					if(confType=='application/pdf'){
-						PDDocument document = PDDocument.load(file.inputStream)
-						document.getDocumentCatalog().getAllPages().eachWithIndex{ PDPage page, pageNumber ->
 
-							// Create a byte array output stream and write the image to it as an RGB image at 256dpi
-							ByteArrayOutputStream baos = new ByteArrayOutputStream()
-							ImageIO.write(page.convertToImage(BufferedImage.TYPE_INT_RGB, 256), "jpg", baos)
+						//create single image and add all pdf pages into it if singleConsentPerPDFFile is TRUE
+						if(singleConsentPerPDFFile == true){
 
-							String singlePageName = file?.originalFilename + "_page" + pageNumber
-							MockMultipartFile singlePage = new MockMultipartFile(singlePageName, baos.toByteArray())
-							Attachment attachment = attachmentService.create(singlePage)
-							attachments.add(attachment)
+							try {
+								MockMultipartFile singlePage = PDFService.convertPDFToSinglePNGImage(file, file?.originalFilename)
+								Attachment attachment = attachmentService.create(singlePage)
+								attachment.uploadStatus = "Success"
+								attachments.add(attachment)
+							}catch(Throwable ex){
+								//just get track of this faulty attachment
+								Attachment faultyAttachment = new Attachment(
+									fileName: file.originalFilename,
+									attachmentType: Attachment.AttachmentType.IMAGE,
+									dateOfUpload: new Date ()
+								);
+								faultyAttachment.uploadStatus = "Failed"
+								faultyAttachment.uploadMessage = ex.message
+								attachments.add(faultyAttachment)
+							}
+
+						}else{
+
+							PDDocument document
+							try {
+								document = PDDocument.load(file.inputStream)
+							}catch(Throwable ex){
+								//just get track of this faulty attachment
+								Attachment faultyAttachment = new Attachment(
+										fileName: file.originalFilename ,
+										attachmentType: Attachment.AttachmentType.IMAGE,
+										dateOfUpload: new Date ()
+								);
+								faultyAttachment.uploadStatus = "Failed"
+								faultyAttachment.uploadMessage = ex.message
+								attachments.add(faultyAttachment)
+							}
+
+							//check if document is not NULL
+							document?.getDocumentCatalog()?.getAllPages().eachWithIndex { PDPage page, pageNumber ->
+								try{
+									// Create a byte array output stream and write the image to it as an RGB image at 256dpi
+									ByteArrayOutputStream baos = new ByteArrayOutputStream()
+									ImageIO.write(page.convertToImage(BufferedImage.TYPE_INT_RGB, 256), "jpg", baos)
+
+									String singlePageName = file?.originalFilename + "_page" + pageNumber
+									MockMultipartFile singlePage = new MockMultipartFile(singlePageName, baos.toByteArray())
+									Attachment attachment = attachmentService.create(singlePage)
+									attachment.uploadStatus = "Success"
+									attachments.add(attachment)
+								}catch(Throwable ex){
+									//just get track of this faulty attachment
+									Attachment faultyAttachment = new Attachment(
+											fileName: file.originalFilename + "[Page:${pageNumber+1}]",
+											attachmentType: Attachment.AttachmentType.IMAGE,
+											dateOfUpload: new Date ()
+									);
+									faultyAttachment.uploadStatus = "Failed"
+									faultyAttachment.uploadMessage = ex.message
+									attachments.add(faultyAttachment)
+								}
+							}
 						}
 					}
 					else{
-						def attachment = attachmentService.create(file)
-						attachments.add(attachment)
+						try{
+							def attachment = attachmentService.create(file)
+							attachment.uploadStatus = "Success"
+							attachments.add(attachment)
+						}catch(Throwable ex){
+							//just get track of this faulty attachment
+							Attachment faultyAttachment = new Attachment(
+									fileName: file.originalFilename,
+									attachmentType: Attachment.AttachmentType.IMAGE,
+									dateOfUpload: new Date ()
+							);
+							faultyAttachment.uploadStatus = "Failed"
+							faultyAttachment.uploadMessage = ex.message
+							attachments.add(faultyAttachment)
+						}
 					}
 				}
             }

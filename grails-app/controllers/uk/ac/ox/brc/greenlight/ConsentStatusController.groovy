@@ -51,7 +51,7 @@ class ConsentStatusController{
 			response.hospitalNumber = patients[0]?.hospitalNumber
 			response.firstName = patients[0]?.givenName
 			response.lastName = patients[0]?.familyName
-			response.dateOfBirth = patients[0]?.dateOfBirth
+			response.dateOfBirth = patients[0]?.dateOfBirth?.format("dd-MM-yyyy HH:mm:ss")
 			response.consents = []
 
 			def consents = consentFormService.getLatestConsentForms(patients)
@@ -62,8 +62,8 @@ class ConsentStatusController{
 								version: consentForm.template.templateVersion,
 								namePrefix: consentForm.template.namePrefix
 						],
-						lastCompleted: consentForm.consentDate,
-						consentStatus: consentEvaluationService.getConsentStatus(consentForm).name(),
+						lastCompleted: consentForm.consentDate?.format("dd-MM-yyyy HH:mm:ss"),
+						consentStatus: consentForm.consentStatus.name(),
 						consentTakerName : consentForm.consentTakerName,
 						consentFormId : consentForm.formID
 				])

@@ -10,6 +10,7 @@
                             <thead>
                             <tr>
                                 <th>Upload Date</th>
+                                <th>Upload Status</th>
                                 <th>File Name</th>
                                 <th>Preview</th>
                             </tr>
@@ -20,11 +21,14 @@
                                 <tr id="consentFormRow${attachment.id}">
 
                                     <td>"${attachment?.dateOfUpload}"</td>
+                                    <td title="${attachment?.uploadMessage}">"${attachment?.uploadStatus}"</td>
                                     <td>"${attachment?.fileName}"</td>
                                     <td>
-                                        <g:link action="create" class="btn btn-primary" controller="consentFormCompletion" params="[attachmentId:"${attachment.id}"]">Enter details</g:link>
-                                        <g:link action="show" id="${attachment.id}" class="btn btn-success" style="text-decoration:none;">View</g:link>
-                                        <g:remoteLink action="delete" controller="attachment" class="btn  btn-danger" id="${attachment.id}" onSuccess="deleteRow(data,textStatus)">Delete</g:remoteLink>
+                                        <g:if test="${attachment?.uploadStatus == 'Success'}">
+                                            <g:link action="create" class="btn btn-primary" controller="consentFormCompletion" params="[attachmentId:"${attachment.id}"]">Enter details</g:link>
+                                            <g:link action="show" id="${attachment.id}" class="btn btn-success" style="text-decoration:none;">View</g:link>
+                                            <g:remoteLink action="delete" controller="attachment" class="btn  btn-danger" id="${attachment.id}" onSuccess="deleteRow(data,textStatus)">Delete</g:remoteLink>
+                                        </g:if>
                                     </td>
                                 </tr>
                             </g:each>

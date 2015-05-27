@@ -88,6 +88,12 @@
             </li>
             <li><g:link  controller="attachment" action="create">Upload Files</g:link></li>
             <li><g:link  controller="consentForm" action="search">Search</g:link></li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Reports<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><g:link  controller="consentForm" action="reportPatientConsentCount">Participants<span style="font-weight: bold;font-size: 12px;"> (consented to more than one type of Consent Form)</span></g:link></li>
+                </ul>
+            </li>
             <li><g:link  controller="consentForm" action="cuttingRoom">Cut-Up Room</g:link></li>
             <li><g:link  controller="study" action="index">Cut-Up room Text</g:link></li>
 

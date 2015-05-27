@@ -2,6 +2,7 @@ package uk.ac.ox.brc.greenlight
 
 import grails.test.mixin.TestFor
 import spock.lang.Specification
+import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
 
 /**
  * Created by rb on 01/04/2014.
@@ -82,4 +83,64 @@ class ConsentFormServiceUnitSpec extends Specification {
         DBL_QUOTE | DBL_QUOTE+DBL_QUOTE
 		null	  | ""
     }
+	def "getPatientWithMoreThanOneConsentForm will return patients who have certain number of full consent form"(){
+
+		given:
+		service.patientService 	   = Mock(PatientService)
+		service.consentFormService = Mock(ConsentFormService)
+		service.consentEvaluationService = Mock(ConsentEvaluationService)
+
+
+		def patientsHospitalNumber = ["123456789","1111111111","987654321"]
+		def patients =  [
+				new Patient(id:1, givenName  : 'A', familyName : 'B', hospitalNumber : '123456789'),
+				new Patient(id:2, givenName  : 'A', familyName : 'B', hospitalNumber : '123456789'),
+				new Patient(id:3, givenName  : 'Z', familyName : 'Z', hospitalNumber : '987654321'),
+				new Patient(id:5, givenName  : 'Mr0', familyName : 'Mr0', hospitalNumber : '111111111'),
+				new Patient(id:5, givenName  : 'emptyHospitalNumber', familyName : 'emptyHospitalNumber', nhsNumber : '0000000000'),
+		]
+
+		def consentsPatient0 = [
+				new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "GEL"))
+		]
+
+
+		def consentsPatient1 = [
+						new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "GEL")),
+						new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "CDA"))
+		]
+		def consentsPatient2 = [
+				new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "GEL")),
+				new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "ABC")),
+				new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "DEF"))
+		]
+
+
+		when:
+		def result = service.getPatientWithMoreThanOneConsentForm()
+
+		then:
+		1 * service.patientService.groupPatientsByHospitalNumber() >> {return patientsHospitalNumber}
+		3 * service.patientService.findAllByNHSOrHospitalNumber(_) >> {
+			if(it[0] == "123456789"){
+				return [patients[0],patients[1]]
+			}else if(it[0] == "987654321"){
+				return [patients[2]]
+			}else {
+				return [patients[3]]
+			}
+		}
+		3 * service.consentFormService.getLatestConsentForms(_) >>{
+			if(it[0][0].givenName == 'A')
+				return consentsPatient1
+			else if(it[0][0].givenName == 'Z')
+				return consentsPatient2
+			else if(it[0][0].givenName == 'Mr0')
+				return consentsPatient0
+		}
+
+		result.size() == 2
+		result[0].consentsString == "GEL[21-05-2015],CDA[21-05-2015]"
+		result[1].consentsString == "GEL[21-05-2015],ABC[21-05-2015],DEF[21-05-2015]"
+	}
 }

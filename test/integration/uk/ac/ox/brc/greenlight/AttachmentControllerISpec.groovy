@@ -4,12 +4,17 @@ import grails.converters.JSON
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import grails.test.spock.IntegrationSpec
+import org.codehaus.groovy.grails.plugins.testing.GrailsMockMultipartFile
 import org.codehaus.groovy.grails.web.json.JSONArray
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.mock.web.MockMultipartHttpServletRequest
+import org.springframework.web.multipart.MultipartHttpServletRequest
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Created by soheil on 21/03/2014.
@@ -81,7 +86,8 @@ class AttachmentControllerISpec extends IntegrationSpec {
                 consentDate: new Date([year: 2014, month: 01, date: 01]),
                 consentTakerName: "Edmin",
                 formID: "ABC12345",
-                formStatus: ConsentForm.FormStatus.NORMAL
+                formStatus: ConsentForm.FormStatus.NORMAL,
+				consentStatus: ConsentForm.ConsentStatus.CONSENT_WITH_LABELS.CONSENT_WITH_LABELS
         ).save();
 
 
@@ -102,6 +108,7 @@ class AttachmentControllerISpec extends IntegrationSpec {
 				consentDate: new Date([year: 2014, month: 01, date: 02]),
 				consentTakerName: "Edmin",
 				formID: "DEF12345",
+				consentStatus: ConsentForm.ConsentStatus.CONSENT_WITH_LABELS.FULL_CONSENT,
 				formStatus: ConsentForm.FormStatus.DECLINED
 		).save();
 
@@ -122,7 +129,8 @@ class AttachmentControllerISpec extends IntegrationSpec {
 				consentDate: new Date([year: 2014, month: 01, date: 03]),
 				consentTakerName: "Edmin",
 				formID: "GHI12345",
-				formStatus: ConsentForm.FormStatus.SPOILED
+				formStatus: ConsentForm.FormStatus.SPOILED,
+				consentStatus: ConsentForm.ConsentStatus.CONSENT_WITH_LABELS.NON_CONSENT
 		).save(flush: true);
 
 		new Patient(
@@ -327,7 +335,7 @@ class AttachmentControllerISpec extends IntegrationSpec {
 
 
 	@Unroll
-	def "listAnnotatedAttachments returns list of all consentForms specific order sortDire=#sortDir  sortCol=#sortCol  and topIndex=#topIndex and bottomIndex=#bottomIndex"()
+	def "listAnnotatedAttachments returns list of all consentForms specific order testIndex =#testIndex  sortDire=#sortDir  sortCol=#sortCol  and topIndex=#topIndex and bottomIndex=#bottomIndex"()
 	{
 
 		def x
@@ -347,33 +355,37 @@ class AttachmentControllerISpec extends IntegrationSpec {
 		/*
 		 def sortCol = ["0":"consentDate",
 						"1":"formStatus",
-						"2":"template.namePrefix",
-						"3":"formID",
-						"4":"patient.nhsNumber" ]
+						"2":"consentStatus",
+						"3":"template.namePrefix",
+						"4":"formID",
+						"5":"patient.nhsNumber" ]
 		//Actual ConsentForm order
 		ConsentForm([year: 2014, month: 01, date: 01]),"ABC","ABC12345",ConsentForm.FormStatus.NORMAL, nhsNumber: "1234567892"
 		ConsentForm([year: 2014, month: 01, date: 02]),"DEF","DEF12345",ConsentForm.FormStatus.DECLINED, nhsNumber: "1234567890"
 		ConsentForm([year: 2014, month: 01, date: 03]),"GHI","GHI12345",ConsentForm.FormStatus.SPOILED , nhsNumber: "1234567891"
 	   */
 		where:
-		sortDir	|	sortCol	|	topIndex|	bottomIndex
-		"desc"	|	"0"		|		2	|		0
-		"asc"	|	"0"		|		0	|		2
+		 testIndex	|      sortDir	|	sortCol	|	topIndex|	bottomIndex
+		 1			|		"desc"	|	"0"		|		2	|		0
+		 2			|		"asc"	|	"0"		|		0	|		2
 
-		"desc"	|	"1"		| 		2	|		1
-		"asc"	|	"1"		|		1	|		2
+		 3			|		"desc"	|	"1"		| 		2	|		1
+		 4			|		"asc"	|	"1"		|		1	|		2
 
-		"desc"	|	"2"		|		2	|		0
-		"asc"	|	"2"		|		0	|		2
+		 5			|		"desc"	|	"2"		| 		2	|		0
+		 6			|		"asc"	|	"2"		|		0	|		2
 
-		"desc"	|	"3"		|		2	|		0
-		"asc"	|	"3"		|		0	|		2
+		 7			|		"desc"	|	"3"		|		2	|		0
+		 8			|		"asc"	|	"3"		|		0	|		2
 
-		"desc"	|	"4"		|		0	|		1
-		"asc"	|	"4"		|		1	|		0
+		 9			|		"desc"	|	"4"		|		2	|		0
+		 10			|		"asc"	|	"4"		|		0	|		2
 
-		"desc"	|	"88"	|		2	|		0	//if not a valid column specified, sort it base on date of consent
-		"asc"	|	"88"	|		0	|		2	//if not a valid column specified, sort it base on date of consent
+		 11			|		"desc"	|	"5"		|		0	|		1
+		 12			|		"asc"	|	"5"		|		1	|		0
+
+		 13			|		"desc"	|	"88"	|		2	|		0	//if not a valid column specified, sort it base on date of consent
+		 14			|		"asc"	|	"88"	|		0	|		2	//if not a valid column specified, sort it base on date of consent
 	}
 
 }
