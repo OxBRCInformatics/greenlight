@@ -20,6 +20,7 @@ class ConsentFormMarshaller {
 					consentTakerName : consentForm.consentTakerName,
 					formID : consentForm.formID,
 					formStatus : consentForm.formStatus.toString(),
+					consentStatus: consentForm.consentStatus.toString(),
 					comment : consentForm.comment,
 					patient : consentForm.patient,
 					attachment: consentForm.attachedFormImage

@@ -4,6 +4,7 @@ import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import greenlight.Study
 import spock.lang.Specification
+import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
 
 /**
  * Created by soheil on 01/04/2014.
@@ -88,7 +89,6 @@ class ConsentFormControllerSpec extends Specification{
 		 then:"patient consent forms are returned"
 		 1 * controller.patientService.findAllByNHSOrHospitalNumber(_) >> {return [new Patient(nhsNumber: lookupId)]}
 		 1 * controller.consentFormService.getLatestConsentForms(_) >> {return completedForms}
-		 2 * controller.consentEvaluationService.getConsentStatus(_) >>{return ConsentStatus.FULL_CONSENT}
 		 1 * controller.studyService.getStudy() >> {return new Study(description:"New Study")}
 		 controller.modelAndView.model.consents.size() == 2
 		 controller.modelAndView.model.consents[0].form.name == "FORM1"

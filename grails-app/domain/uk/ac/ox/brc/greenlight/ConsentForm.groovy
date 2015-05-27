@@ -12,6 +12,7 @@ class ConsentForm {
     String consentTakerName
     String formID
     FormStatus formStatus = FormStatus.NORMAL
+	ConsentStatus consentStatus = ConsentStatus.NON_CONSENT
 
     List<Response> responses
     String comment
@@ -38,6 +39,7 @@ class ConsentForm {
         consentTakerName nullable: true
         patient nullable: true
         comment nullable: true
+		consentStatus nullable: true
     }
 
     enum FormStatus {
@@ -47,6 +49,21 @@ class ConsentForm {
         String toString() { value; }
         String getKey() { name(); }
     }
+
+	enum ConsentStatus
+	{
+		FULL_CONSENT("Full consent"),
+		NON_CONSENT("No consent"),
+		CONSENT_WITH_LABELS("Consent with restrictions")
+
+		private final String label
+
+		ConsentStatus(String label){
+			this.label = label
+		}
+		String toString() { label; }
+		String getKey() { name(); }
+	}
 
 
 }

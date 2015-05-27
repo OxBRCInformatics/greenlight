@@ -1,11 +1,15 @@
 package uk.ac.ox.brc.greenlight
 
 import grails.transaction.Transactional
+import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
 
 
 class ConsentFormService {
 
 	def consentEvaluationService
+	def patientService
+	def consentFormService
+
 	/**
 	 * Get the latest consent form for these patient objects.
 	 * They should actually be several patient objects with the same NHS or hospital number
@@ -77,6 +81,11 @@ class ConsentFormService {
 		try {
 
 			patient.save()
+
+			//calculate and save consentStatus
+			def status = consentEvaluationService.getConsentStatus(consentForm)
+			consentForm.consentStatus = status
+
 			consentForm.save(flush: true)
 			return true
 		}
@@ -97,30 +106,6 @@ class ConsentFormService {
 		}
 	}
 
-	def checkConsent(params) {
-		def searchInput = params["searchInput"];
-
-		def result = [
-				consentForm: null,
-				consented: false
-		]
-
-		if (!searchInput)
-			return result;
-
-		def consent = ConsentForm.find("from ConsentForm as c where c.patient.hospitalNumber= :searchInput or c.patient.nhsNumber= :searchInput", [searchInput: searchInput]);
-		if (consent) {
-			result.consentForm = consent
-			result.consented = true
-
-			consent.responses.eachWithIndex { value, i ->
-				if (value.answer != Response.ResponseValue.YES)
-					result.consented = false
-			}
-
-		}
-		return result;
-	}
 
 	def getConsentFormByFormId(formId) {
 		// FormId which ends to 00000 is general and
@@ -171,7 +156,7 @@ class ConsentFormService {
 					consent.patient.familyName,
 					consent.patient.dateOfBirth.format("dd-MM-yyyy"),
 					consent.template?.namePrefix,
-					consentEvaluationService.getConsentStatus(consent) as String,
+					consent.consentStatus as String,
 					consent.responses?.collect { it.answer as String }.join("|"),
 					escapeForCSV(consent.comment)
 			].join(','))
@@ -204,5 +189,86 @@ class ConsentFormService {
 		comment = escapedDblQuote + comment + escapedDblQuote
 
 		return comment
+	}
+
+	def getPatientWithMoreThanOneConsentForm() {
+
+		def patientHospitalNumbers = patientService.groupPatientsByHospitalNumber()
+		def finalResult = []
+
+		patientHospitalNumbers.each { def hospitalNumber ->
+
+			//if hospitalNumber is not null or empty
+			if(hospitalNumber?.trim()) {
+				// Attempt to find all patient objects having this hospitalNumber
+				def patients = patientService.findAllByNHSOrHospitalNumber(hospitalNumber)
+				//Find all consent objects related to this patient (these patient objects)
+				def consents = consentFormService.getLatestConsentForms(patients)
+
+				//if it has equal/more than 2 consents,
+				//so there might be the possibility that there are more than 2 FULL_CONSENTED forms
+				if (consents?.size() >= 2) {
+
+					def fullConsentedCount = 0
+					def consentsString = ""
+					//for each consent, get its status
+					consents.each { consentForm ->
+
+						//if it is fully consented, add it into the list
+						if (consentForm?.consentStatus == ConsentStatus.FULL_CONSENT) {
+							fullConsentedCount++
+							if (!consentsString.isEmpty())
+								consentsString += ","
+							consentsString += "${consentForm?.template?.namePrefix}[${consentForm?.consentDate?.format("dd-MM-yyyy")}]"
+						}
+					}
+					//if count is more than / equal two
+					if (fullConsentedCount >= 2) {
+						def patient = [
+								nhsNumber     : patients[0]?.nhsNumber,
+								hospitalNumber: patients[0]?.hospitalNumber,
+								givenName     : patients[0]?.givenName,
+								familyName    : patients[0]?.familyName,
+								dateOfBirth   : patients[0]?.dateOfBirth,
+								consentsString: consentsString,
+								consentsCount:  fullConsentedCount
+						]
+						finalResult.add(patient)
+					}
+				}
+			}
+		}
+		finalResult
+	}
+
+
+	def exportPatientWithMoreThanOneConsentForm() {
+		StringBuilder sb = new StringBuilder()
+		def headers = [
+				"patientNHS",
+				"patientMRN",
+				"patientName",
+				"patientSurName",
+				"patientDateOfBirth",
+ 				"consentForms",
+				"consentFormsCount"
+		];
+		sb.append(headers.join(','))
+		sb.append("\n")
+
+		def patients = getPatientWithMoreThanOneConsentForm()
+		patients.each { patient ->
+			sb.append([
+					 patient?.nhsNumber,
+					(patient?.hospitalNumber?.trim() ?  patient.hospitalNumber : ""),
+					(patient?.givenName?.trim() ?  patient.givenName : ""),
+					(patient?.familyName?.trim() ?  patient.familyName : ""),
+					 patient?.dateOfBirth.format("dd-MM-yyyy"),
+					 patient?.consentsString.replace(',','|'),
+					 patient?.consentsCount
+			].join(','))
+			sb.append("\n")
+		}
+		return sb.toString()
 	}
 }

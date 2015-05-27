@@ -74,9 +74,10 @@ class AttachmentController {
 		def sortColIndex = params?.iSortCol_0
 		def cols = ["0":"consentDate",
 					"1":"formStatus",
-				    "2":"template.namePrefix",
-					"3":"formID",
-					"4":"patient.nhsNumber" ]
+					"2":"consentStatus",
+				    "3":"template.namePrefix",
+					"4":"formID",
+					"5":"patient.nhsNumber" ]
 		sortCol = cols.containsKey(sortColIndex) ? cols[sortColIndex] : "consentDate"
 
 
