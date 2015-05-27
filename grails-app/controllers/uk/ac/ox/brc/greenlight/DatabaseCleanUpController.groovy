@@ -1,5 +1,8 @@
 package uk.ac.ox.brc.greenlight
 
+import groovy.json.JsonBuilder
+import groovy.json.JsonOutput
+
 /**
  * This controller is used to clean orphan records from database
  * In previous version(1.1.0), a number of orphan responses where created
@@ -10,6 +13,7 @@ package uk.ac.ox.brc.greenlight
 class DatabaseCleanUpController {
 
 	def databaseCleanupService
+	def patientService
 
 	def cleanOrphanResponses() {
 		def responseStr = getResponsesStatusStr()
@@ -72,5 +76,29 @@ class DatabaseCleanUpController {
 		}
 
 		def result = [updatedRecords: consentFormUpdatedCount]
-		respond result as Object, [formats:['xml','json']] as Map	}
+		respond result as Object, [formats:['xml','json']] as Map
+	}
+
+	def dbReports(){
+		def  dbReport
+		try {
+			dbReport = databaseCleanupService.patientDBReport()
+		}
+		catch (Exception exception) {
+			render exception.message
+			return
+		}
+
+
+		if(params?.file) {
+			def fileName = "dbReport-" + (new Date()).format("dd-MM-yyyy")
+			response.setHeader("Content-disposition", "attachment; filename=${fileName}.json")
+			def json = new JsonBuilder(dbReport).toPrettyString()
+			render(contentType: "text/csv;charset=utf-8", text: json);
+		}else {
+			def result = [dbReport: dbReport]
+			respond result as Object, [formats: ['xml', 'json']] as Map
+		}
+
+	}
 }

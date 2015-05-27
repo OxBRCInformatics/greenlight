@@ -333,4 +333,153 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		}
 		updateCount == 2
 	}
+
+	void "patientDBReport returns reports about DB status"(){
+
+		when:""
+		def patient= new Patient(
+				givenName: "A",
+				familyName: "A",
+				dateOfBirth: new Date("30/03/1945"),
+				hospitalNumber: "123",
+				nhsNumber: "5555555555",
+				consents: []
+		).save(flush: true , failOnError:true )
+
+
+		def attachment1 = new Attachment(id: 1, fileName: 'a.jpg', dateOfUpload: new Date(),	attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush: true , failOnError:true )
+		def attachment2 = new Attachment(id: 1, fileName: 'a.jpg', dateOfUpload: new Date(),	attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush: true , failOnError:true )
+
+		//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		def questions1 = [
+				new Question(name: 'I read1...'),
+				new Question(name: 'I read2...'),
+				new Question(name: 'I read3...'),
+				new Question(name: 'I read4...')
+		];
+		def template1=new ConsentFormTemplate(
+				id: 1,
+				name: "ORB1",
+				templateVersion: "1.1",
+				namePrefix: "GNR")
+				.addToQuestions(questions1[0])
+				.addToQuestions(questions1[1])
+				.addToQuestions(questions1[2])
+				.addToQuestions(questions1[3])
+				.save(flush: true , failOnError:true )
+		def consent11 = new ConsentForm(
+				attachedFormImage: attachment1,
+				template: template1,
+				consentDate: new Date([year:2014,month:01,date:01]),
+				consentTakerName: "Edward",
+				formID: "GEN12345",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patient).save(flush: true , failOnError:true )
+		consent11.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions1[0]))
+		consent11.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions1[1]))
+		consent11.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions1[2]))
+		consent11.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions1[3]))
+		consent11.save(flush: true , failOnError:true )
+
+		def consent12 = new ConsentForm(
+				attachedFormImage: attachment1,
+				template: template1,
+				consentDate: new Date([year:2014,month:01,date:01]),
+				consentTakerName: "Edward",
+				formID: "GEN67890",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patient).save(flush: true , failOnError:true )
+		consent12.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions1[0]))
+		consent12.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions1[1]))
+		consent12.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions1[2]))
+		consent12.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions1[3]))
+		consent12.save(flush: true , failOnError:true )
+
+		//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		def questions2 = [
+				new Question(name: 'I read1...'),
+				new Question(name: 'I read2...'),
+				new Question(name: 'I read3...'),
+				new Question(name: 'I read4...')
+		];
+		def template2=new ConsentFormTemplate(
+				id: 1,
+				name: "ORB1",
+				templateVersion: "1.1",
+				namePrefix: "CDR")
+				.addToQuestions(questions2[0])
+				.addToQuestions(questions2[1])
+				.addToQuestions(questions2[2])
+				.addToQuestions(questions2[3])
+				.save(flush: true , failOnError:true )
+
+
+		def consent2 = new ConsentForm(
+				attachedFormImage: attachment2,
+				template: template2,
+				consentDate: new Date([year:2014,month:01,date:01]),
+				consentTakerName: "Edward",
+				formID: "CDR12345",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patient).save(flush: true , failOnError:true )
+		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions2[0]))
+		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions2[1]))
+		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions2[2]))
+		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions2[3]))
+		consent2.save(flush: true , failOnError:true )
+		//@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+
+
+
+
+		//Patient with more than on MRN numbers
+		def patient1= new Patient(
+				givenName: "A",
+				familyName: "A",
+				dateOfBirth: new Date("30/03/1945"),
+				hospitalNumber: "123",
+				nhsNumber: "1234567890",
+				consents: []
+		).save(flush: true , failOnError:true )
+
+		def patient2= new Patient(
+				givenName: "Eric",
+				familyName: "Clapton",
+				dateOfBirth: new Date("30/03/1945"),
+				hospitalNumber: "456",
+				nhsNumber: "1234567890",
+				consents: []
+		).save(flush: true , failOnError:true )
+
+
+
+		//Patient with more than one DOB
+		new Patient(
+				givenName: "A",
+				familyName: "A",
+				dateOfBirth: new Date("10/03/1945"),
+				hospitalNumber: "123",
+				nhsNumber: "8529637410",
+				consents: []
+		).save(flush: true , failOnError:true )
+
+		new Patient(
+				givenName: "B",
+				familyName: "B",
+				dateOfBirth: new Date("01/03/1945"),
+				hospitalNumber: "123",
+				nhsNumber: "8529637410",
+				consents: []
+		).save(flush: true , failOnError:true )
+		//@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+		def result = databaseCleanupService.patientDBReport()
+
+
+		then:""
+		result
+	}
+
 }
