@@ -193,55 +193,48 @@ class ConsentFormService {
 
 	def getPatientWithMoreThanOneConsentForm() {
 
-		def patientNHSNumbers =  patientService.groupPatientsByNHSNumber()
+		def patientHospitalNumbers = patientService.groupPatientsByHospitalNumber()
 		def finalResult = []
 
-		patientNHSNumbers.each { def nhsNumber ->
+		patientHospitalNumbers.each { def hospitalNumber ->
 
-			// Attempt to find all patient objects having this nhs number
-			def patients = patientService.findAllByNHSOrHospitalNumber(nhsNumber)
-			//Find all consent objects related to this patient (these patient objects)
-			def consents = consentFormService.getLatestConsentForms(patients)
+			//if hospitalNumber is not null or empty
+			if(hospitalNumber?.trim()) {
+				// Attempt to find all patient objects having this hospitalNumber
+				def patients = patientService.findAllByNHSOrHospitalNumber(hospitalNumber)
+				//Find all consent objects related to this patient (these patient objects)
+				def consents = consentFormService.getLatestConsentForms(patients)
 
-			//if it has equal/more than 2 consents,
-			//so they might be the possibility that there are more than 2 FULL_CONSENTED forms
-			if (consents.size() >= 2) {
+				//if it has equal/more than 2 consents,
+				//so there might be the possibility that there are more than 2 FULL_CONSENTED forms
+				if (consents?.size() >= 2) {
 
-				def fullConsentedCount = 0
-				def fullConsentList = []
-				def consentsString = ""
-				//for each consent, get its status
-				consents.each { consentForm ->
+					def fullConsentedCount = 0
+					def consentsString = ""
+					//for each consent, get its status
+					consents.each { consentForm ->
 
-					//if it is fully consented, add it into the list
-					if (consentForm?.consentStatus == ConsentStatus.FULL_CONSENT) {
-						fullConsentedCount++
-						if(!consentsString.isEmpty())
-							consentsString +=","
-						consentsString += "${consentForm?.template?.namePrefix}"
-						fullConsentList.push([
-								form   : [
-										name   : consentForm?.template?.name,
-										version: consentForm?.template?.templateVersion
-								],
-								lastCompleted   : consentForm?.consentDate?.format("dd-MM-yyyy HH:mm:ss"),
-								consentStatus   : consentForm?.consentStatus,
-								consentFormId   : consentForm?.formID
-						])
+						//if it is fully consented, add it into the list
+						if (consentForm?.consentStatus == ConsentStatus.FULL_CONSENT) {
+							fullConsentedCount++
+							if (!consentsString.isEmpty())
+								consentsString += ","
+							consentsString += "${consentForm?.template?.namePrefix}[${consentForm?.consentDate?.format("dd-MM-yyyy")}]"
+						}
 					}
-				}
-				//if count is more than / equal two
-				if(fullConsentedCount >= 2) {
-					def patient = [
-							nhsNumber: patients[0]?.nhsNumber,
-							hospitalNumber: patients[0]?.hospitalNumber,
-							givenName: patients[0]?.givenName,
-							familyName: patients[0]?.familyName,
-							dateOfBirth: patients[0]?.dateOfBirth,
-							consents: fullConsentList,
-							consentsString:consentsString
-					]
-					finalResult.add(patient)
+					//if count is more than / equal two
+					if (fullConsentedCount >= 2) {
+						def patient = [
+								nhsNumber     : patients[0]?.nhsNumber,
+								hospitalNumber: patients[0]?.hospitalNumber,
+								givenName     : patients[0]?.givenName,
+								familyName    : patients[0]?.familyName,
+								dateOfBirth   : patients[0]?.dateOfBirth,
+								consentsString: consentsString,
+								consentsCount:  fullConsentedCount
+						]
+						finalResult.add(patient)
+					}
 				}
 			}
 		}
