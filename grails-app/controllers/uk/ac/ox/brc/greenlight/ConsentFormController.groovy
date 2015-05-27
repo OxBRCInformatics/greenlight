@@ -14,6 +14,20 @@ class ConsentFormController {
         render view:"search", model:[consentForms:result]
     }
 
+	def searchPatientConsentCount()
+	{
+		def result = consentFormService.getPatientWithMoreThanOneConsentForm();
+		render view:"reportPatientConsentCount", model:[patients:result]
+	}
+
+	def exportPatientConsentCount (){
+
+		def csvString = consentFormService.exportPatientWithMoreThanOneConsentForm()
+		def fileName ="participants-moreThanOneConsent-"+(new Date()).format("dd-MM-yyyy")
+		response.setHeader("Content-disposition", "attachment; filename=${fileName}.csv");
+		render(contentType: "text/csv;charset=utf-8", text: csvString.toString());
+	}
+
 	/**
 	 * Check the consent status for an NHS or hospital number.
 	 * @return
