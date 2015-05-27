@@ -26,4 +26,27 @@ class PatientService {
 		}
 	}
 
+	def groupPatientsByHospitalNumber() {
+
+		Patient.createCriteria().list {
+			projections {
+				groupProperty("hospitalNumber")
+			}
+		}
+	}
+
+
+	def findPatientWithGenericNHSNumber(){
+
+		def c = Patient.createCriteria()
+		c.list {
+			and{
+				eq("nhsNumber","1111111111")
+			}
+			projections {
+				groupProperty("hospitalNumber")
+			}
+ 		}
+	}
+
 }
