@@ -101,18 +101,18 @@ class ConsentFormServiceUnitSpec extends Specification {
 		]
 
 		def consentsPatient0 = [
-				new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "GEL"))
+				new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "GEL"),formID:"GEL123" )
 		]
 
 
 		def consentsPatient1 = [
-						new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "GEL")),
-						new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "CDA"))
+						new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "GEL"),formID:"GEL123"),
+						new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "CDA"),formID:"CDA123")
 		]
 		def consentsPatient2 = [
-				new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "GEL")),
-				new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "ABC")),
-				new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "DEF"))
+				new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "GEL"),formID:"GEL123"),
+				new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "ABC"),formID:"ABC123"),
+				new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "DEF"),formID:"DEF123")
 		]
 
 
@@ -140,7 +140,7 @@ class ConsentFormServiceUnitSpec extends Specification {
 		}
 
 		result.size() == 2
-		result[0].consentsString == "GEL[21-05-2015],CDA[21-05-2015]"
-		result[1].consentsString == "GEL[21-05-2015],ABC[21-05-2015],DEF[21-05-2015]"
+		result[0].consentsString == "GEL[21-05-2015;GEL123]|CDA[21-05-2015;CDA123]"
+		result[1].consentsString == "GEL[21-05-2015;GEL123]|ABC[21-05-2015;ABC123]|DEF[21-05-2015;DEF123]"
 	}
 }

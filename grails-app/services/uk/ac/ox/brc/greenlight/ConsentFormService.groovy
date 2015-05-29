@@ -218,8 +218,8 @@ class ConsentFormService {
 						if (consentForm?.consentStatus == ConsentStatus.FULL_CONSENT) {
 							fullConsentedCount++
 							if (!consentsString.isEmpty())
-								consentsString += ","
-							consentsString += "${consentForm?.template?.namePrefix}[${consentForm?.consentDate?.format("dd-MM-yyyy")}]"
+								consentsString += "|"
+							consentsString += "${consentForm?.template?.namePrefix}[${consentForm?.consentDate?.format("dd-MM-yyyy")};${consentForm?.formID}]"
 						}
 					}
 					//if count is more than / equal two
@@ -264,7 +264,7 @@ class ConsentFormService {
 					(patient?.givenName?.trim() ?  patient.givenName : ""),
 					(patient?.familyName?.trim() ?  patient.familyName : ""),
 					 patient?.dateOfBirth.format("dd-MM-yyyy"),
-					 patient?.consentsString.replace(',','|'),
+					 patient?.consentsString,
 					 patient?.consentsCount
 			].join(','))
 			sb.append("\n")
