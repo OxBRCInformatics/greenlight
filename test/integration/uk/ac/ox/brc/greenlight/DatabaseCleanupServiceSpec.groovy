@@ -693,9 +693,9 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		databaseStatusReport['consentFormsWithEmptyFields'].size() == 3
 		databaseStatusReport['consentFormWithGenericIDs'].size()   == 2
 		databaseStatusReport['nhsNumberWithMoreThanOneDOB'].size() == 1
-		databaseStatusReport['nhsNumberWithMoreThanOneDOB']["7418529630"] ==  "1941-04-01 , 1940-04-01 , 1947-06-03 "
+		databaseStatusReport['nhsNumberWithMoreThanOneDOB']["7418529630"] ==  "1941-04-01 ,1940-04-01 ,1947-06-03 "
 		databaseStatusReport['hospitalNumberWithMoreThanOneDOB'].size() == 2
-		databaseStatusReport['hospitalNumberWithMoreThanOneDOB']["123"]  == "1941-04-01 , 1947-06-03 "
-		databaseStatusReport['hospitalNumberWithMoreThanOneDOB']["18809"]== "1941-04-01 , 1940-04-01 "
+		databaseStatusReport['hospitalNumberWithMoreThanOneDOB']["123"]  == "1941-04-01 ,1947-06-03 "
+		databaseStatusReport['hospitalNumberWithMoreThanOneDOB']["18809"]== "1941-04-01 ,1940-04-01 "
 	}
 }
