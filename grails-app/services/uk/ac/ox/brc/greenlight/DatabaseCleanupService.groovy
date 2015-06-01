@@ -222,11 +222,13 @@ class DatabaseCleanupService {
 		def nhsNumberWithMoreThanOneDOB = [:]
 		def groupedPatientsByNHSNumber = patientService.groupPatientsByNHSNumber()
 		groupedPatientsByNHSNumber.each { nhsNumber ->
-			def dobs = Patient.executeQuery("select dateOfBirth from Patient as p where p.nhsNumber='${nhsNumber}' and p.consents is not empty  group by dateOfBirth")
-			def dobStr = ""
-			if (dobs.size() > 1) {
-				dobStr = dobs.join(",").replace('00:00:00.0','')
-				nhsNumberWithMoreThanOneDOB.put(nhsNumber, dobStr)
+			if(nhsNumber !='1111111111' && nhsNumber!='0000000000') {
+				def dobs = Patient.executeQuery("select dateOfBirth from Patient as p where p.nhsNumber='${nhsNumber}' and p.consents is not empty  group by dateOfBirth")
+				def dobStr = ""
+				if (dobs.size() > 1) {
+					dobStr = dobs.join(",").replace('00:00:00.0', '')
+					nhsNumberWithMoreThanOneDOB.put(nhsNumber, dobStr)
+				}
 			}
 		}
 		result.put('nhsNumberWithMoreThanOneDOB', nhsNumberWithMoreThanOneDOB)
