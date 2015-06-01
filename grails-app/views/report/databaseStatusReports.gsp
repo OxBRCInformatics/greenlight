@@ -25,7 +25,7 @@
 
 
                                 <br>
-                                <label style="font-weight: bold; font-size: 16px;"> Consent Forms with Blank Elements </label>
+                                <label style="font-weight: bold; font-size: 16px;"> Consent Forms (Blank Elements) </label>
                                 <div class="consentSearchTable">
                                      <div class="table-responsive">
                                         <table class="table  table-hover table-bordered table-condensed">
@@ -54,7 +54,7 @@
                                 </div>
 
                                 <br>
-                                <label style="font-weight: bold; font-size: 16px;"> Consent Forms with Generic NHS Numbers </label>
+                                <label style="font-weight: bold; font-size: 16px;"> Consent Forms (Generic NHS Numbers) </label>
                                 <div class="consentSearchTable">
                                     <div class="table-responsive">
                                         <table class="table  table-hover table-bordered table-condensed">
@@ -84,7 +84,7 @@
 
 
                                 <br>
-                                    <label style="font-weight: bold; font-size: 16px;"> NHS Number with more that one DOB </label>
+                                    <label style="font-weight: bold; font-size: 16px;"> NHS Number (more that one DOB) </label>
                                     <div class="consentSearchTable">
                                         <div class="table-responsive">
                                             <table class="table  table-hover table-bordered table-condensed">
@@ -107,7 +107,7 @@
                                     </div>
 
                                 <br>
-                                    <label style="font-weight: bold; font-size: 16px;"> Hospital Number with more that one DOB </label>
+                                    <label style="font-weight: bold; font-size: 16px;"> Hospital Number (more that one DOB) </label>
                                     <div class="consentSearchTable">
                                         <div class="table-responsive">
                                             <table  class=" table  table-hover table-bordered table-condensed">
