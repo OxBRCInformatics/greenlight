@@ -477,9 +477,222 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 		def result = databaseCleanupService.patientDBReport()
 
+		////
+		def patientEmptyGivenName = new Patient(
+				familyName: "A",
+				dateOfBirth: new Date("30/03/1945"),
+				hospitalNumber: "123",
+				nhsNumber: "1010101010",
+				consents: []
+		).save(flush: true, failOnError: true)
+		def con = new ConsentForm(
+				attachedFormImage: attachment2,
+				template: template2,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edward",
+				formID: "CDR12345",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patientEmptyGivenName).save(flush: true, failOnError: true)
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[0]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[1]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[2]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[3]))
+		con.save(flush: true, failOnError: true)
+		////
+		def patientEmptyHospitalNumber = new Patient(
+				givenName: "A",
+				familyName: "A",
+				dateOfBirth: new Date("30/03/1945"),
+				nhsNumber: "1010101010",
+				consents: []
+		).save(flush: true, failOnError: true)
+		con = new ConsentForm(
+				attachedFormImage: attachment2,
+				template: template2,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edward",
+				formID: "CDR89123",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patientEmptyHospitalNumber).save(flush: true, failOnError: true)
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[0]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[1]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[2]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[3]))
+		con.save(flush: true, failOnError: true)
+		////
+		def patientEmptyNHSNumber = new Patient(
+				givenName: "A",
+				familyName: "A",
+				dateOfBirth: new Date("30/03/1945"),
+				hospitalNumber: "123",
+				consents: []
+		).save(flush: true, failOnError: true)
+		con = new ConsentForm(
+				attachedFormImage: attachment2,
+				template: template2,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edward",
+				formID: "CDR67123",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patientEmptyNHSNumber).save(flush: true, failOnError: true)
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[0]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[1]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[2]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[3]))
+		con.save(flush: true, failOnError: true)
 
-		then:""
+
+
+		def patientGenericNHSNumber = new Patient(
+				givenName: "A",
+				familyName: "A",
+				dateOfBirth: new Date("30/03/1945"),
+				hospitalNumber: "123",
+				nhsNumber: "1111111111",
+				consents: []
+		).save(flush: true, failOnError: true)
+		con = new ConsentForm(
+				attachedFormImage: attachment2,
+				template: template2,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edward",
+				formID: "CDR67000",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patientGenericNHSNumber).save(flush: true, failOnError: true)
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[0]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[1]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[2]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[3]))
+		con.save(flush: true, failOnError: true)
+
+
+
+
+		def patientGenericHospitalNumber = new Patient(
+				givenName: "A",
+				familyName: "A",
+				dateOfBirth: new Date("30/03/1945"),
+				hospitalNumber: "123",
+				nhsNumber: "0000000000",
+				consents: []
+		).save(flush: true, failOnError: true)
+		con = new ConsentForm(
+				attachedFormImage: attachment2,
+				template: template2,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edward",
+				formID: "CDR11000",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patientGenericHospitalNumber).save(flush: true, failOnError: true)
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[0]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[1]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[2]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[3]))
+		con.save(flush: true, failOnError: true)
+
+
+
+
+		def patientWithSameNSHNumberAndDifferentDOB1 = new Patient(
+				givenName: "A",
+				familyName: "A",
+				dateOfBirth: new Date("30/03/1945"),
+				hospitalNumber: "123",
+				nhsNumber: "7418529630",
+				consents: []
+		).save(flush: true, failOnError: true)
+		con = new ConsentForm(
+				attachedFormImage: attachment2,
+				template: template2,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edward",
+				formID: "CDR11000",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patientWithSameNSHNumberAndDifferentDOB1).save(flush: true, failOnError: true)
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[0]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[1]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[2]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[3]))
+		con.save(flush: true, failOnError: true)
+
+		def patientWithSameNHSNumberAndDifferentDOB2 = new Patient(
+				givenName: "A",
+				familyName: "A",
+				dateOfBirth: new Date("04/01/1941"),
+				hospitalNumber: "123",
+				nhsNumber: "7418529630",
+				consents: []
+		).save(flush: true, failOnError: true)
+		con = new ConsentForm(
+				attachedFormImage: attachment2,
+				template: template2,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edward",
+				formID: "CDR11000",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patientWithSameNHSNumberAndDifferentDOB2).save(flush: true, failOnError: true)
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[0]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[1]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[2]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[3]))
+		con.save(flush: true, failOnError: true)
+
+
+
+
+		def patientWithSameHospitalNumberAndDifferentDOB1 = new Patient(
+				givenName: "A",
+				familyName: "A",
+				dateOfBirth: new Date("04/01/1941"),
+				hospitalNumber: "18809",
+				nhsNumber: "7418529630",
+				consents: []
+		).save(flush: true, failOnError: true)
+		con = new ConsentForm(
+				attachedFormImage: attachment2,
+				template: template2,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edward",
+				formID: "CDR11000",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patientWithSameHospitalNumberAndDifferentDOB1).save(flush: true, failOnError: true)
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[0]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[1]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[2]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[3]))
+		con.save(flush: true, failOnError: true)
+
+		def patientWithSameHospitalNumberAndDifferentDOB2 = new Patient(
+				givenName: "A",
+				familyName: "A",
+				dateOfBirth: new Date("04/01/1940"),
+				hospitalNumber: "18809",
+				nhsNumber: "7418529630",
+				consents: []
+		).save(flush: true, failOnError: true)
+		con = new ConsentForm(
+				attachedFormImage: attachment2,
+				template: template2,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edward",
+				formID: "CDR11000",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patientWithSameHospitalNumberAndDifferentDOB2).save(flush: true, failOnError: true)
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[0]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[1]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[2]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[3]))
+		con.save(flush: true, failOnError: true)
+
+		def dataCleansingReport = databaseCleanupService.databaseStatusReports()
+
+		then: ""
 		result
+		dataCleansingReport.size() == 5
+		dataCleansingReport['ConsentFormCount'] == 12
+		dataCleansingReport['consentFormsWithEmptyFields'].size() == 3
+		dataCleansingReport['consentFormWithGenericIDs'].size()   == 2
+		dataCleansingReport['nhsNumberWithMoreThanOneDOB'].size() == 1
+		dataCleansingReport['hospitalNumberWithMoreThanOneDOB'].size() == 2
 	}
-
 }
