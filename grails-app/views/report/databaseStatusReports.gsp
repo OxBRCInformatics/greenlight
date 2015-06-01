@@ -54,7 +54,7 @@
                                 </div>
 
                                 <br>
-                                <label style="font-weight: bold; font-size: 16px;"> Consent Forms With Generic NHSNumbers </label>
+                                <label style="font-weight: bold; font-size: 16px;"> Consent Forms with Generic NHS Numbers </label>
                                 <div class="consentSearchTable">
                                     <div class="table-responsive">
                                         <table class="table  table-hover table-bordered table-condensed">
