@@ -25,7 +25,7 @@
 
 
                                 <br>
-                                <label style="font-weight: bold; font-size: 16px;"> Consent Forms With Blank Elements </label>
+                                <label style="font-weight: bold; font-size: 16px;"> Consent Forms with Blank Elements </label>
                                 <div class="consentSearchTable">
                                      <div class="table-responsive">
                                         <table class="table  table-hover table-bordered table-condensed">
@@ -33,8 +33,8 @@
                                                 <tr>
                                                     <th>FormID</th>
                                                     <th>NHS Number</th>
-                                                    <th>Family name</th>
-                                                    <th>Given name</th>
+                                                    <th>Last name</th>
+                                                    <th>First name</th>
                                                     <th>Hospital Number</th>
                                                 </tr>
                                             </thead>
@@ -62,8 +62,8 @@
                                             <tr>
                                                 <th>FormID</th>
                                                 <th>NHS Number</th>
-                                                <th>Family name</th>
-                                                <th>Given name</th>
+                                                <th>Last name</th>
+                                                <th>First name</th>
                                                 <th>Hospital Number</th>
                                             </tr>
                                             </thead>

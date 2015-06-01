@@ -250,8 +250,8 @@ class ConsentFormService {
 		def headers = [
 				"patientNHS",
 				"patientMRN",
-				"patientName",
-				"patientSurName",
+				"patientFirstName",
+				"patientLastName",
 				"patientDateOfBirth",
  				"consentForms",
 				"consentFormsCount"
