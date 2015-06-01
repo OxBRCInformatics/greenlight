@@ -32,6 +32,7 @@
                 </g:elseif>
 
             <g:set var="dateOfBirthMax" value="[-100..0]" />
+            <g:set var="consentDateMax" value="[-100..0]" />
 
             <g:form role="form" action="save" controller="consentFormCompletion" >
                 <g:render template="form"/>

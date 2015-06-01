@@ -84,6 +84,7 @@
                 <g:datePicker class="form-control"
                               id="commandInstance.consentForm.ConsentDate"
                               name="commandInstance.consentForm.consentDate"
+                              relativeYears="${consentDateMax}"
                               value="${commandInstance?.consentForm?.consentDate}"
                               placeholder="Consent Date"
                               precision="day" />
