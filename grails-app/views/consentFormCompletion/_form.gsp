@@ -84,6 +84,7 @@
                 <g:datePicker class="form-control"
                               id="commandInstance.consentForm.ConsentDate"
                               name="commandInstance.consentForm.consentDate"
+                              relativeYears="${consentDateMax}"
                               value="${commandInstance?.consentForm?.consentDate}"
                               placeholder="Consent Date"
                               precision="day" />
@@ -234,19 +235,6 @@
                     regex: /^\d{10}$/,
                     required:true
                 },
-                'commandInstance.patient.hospitalNumber':{
-                    required:true
-                },
-                'commandInstance.patient.givenName':{
-                    required:true
-                },
-                'commandInstance.patient.familyName':{
-                    required:true
-                },
-                'commandInstance.consentForm.consentTakerName':{
-                    required:true
-                },
-
                 'commandInstance.consentForm.formID':{
                     required:true,
                     regex:/^[a-zA-Z]{3}\d{5}$/,

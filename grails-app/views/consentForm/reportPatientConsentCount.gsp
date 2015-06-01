@@ -2,47 +2,7 @@
 <html>
 <head>
     <meta name="layout" content="main">
-    <title>Consent Forms</title>
-
-
-    <script type="text/javascript">
-
-        var editor; // use a global for the submit and return data rendering in the examples
-
-        $(document).ready(function() {
-
-            var grailsContextPath = "${ createLinkTo(dir: '/')}";
-
-            $('#example').dataTable( {
-                "sDom": "<'row'<'span6'l><'span6'>r>t<'row span10'<ip>>",
-                "oTableTools": {"sRowSelect": "single"},
-                "aLengthMenu": [[5, 10, 15, 25, 50, 100 , -1], [5, 10, 15, 25, 50, 100, "All"]],
-                "iDisplayLength" : 10,
-                "sPaginationType": "two_button",
-                "bProcessing": true,
-                "bServerSide": true,
-                "sAjaxSource": "lisAnnotatedAttachments.json",
-                "sServerMethod": "POST",
-                "aoColumns": [
-                    { "mData": "consentDate" },
-                    { "mData": "formStatus" },
-                    { "mData": "template.namePrefix" },
-                    { "mData": "formID" },
-                    { "mData": "patient.nhsNumber" },
-                    {"mData":"id","bVisible":    false},
-                    {  "mData": "id",
-                        "bSortable":false,
-                        "fnRender": function (oObj) {
-                            return "<a class='btn btn-success btn-small' href="+grailsContextPath+"consentFormCompletion/show/" + oObj.aData.id + '>' + 'View' + '</a>'
-                        }
-                    }
-                ]
-            } );
-        } );
-
-    </script>
-
-
+    <title>Consent Forms Report</title>
 </head>
 
 <body>
@@ -87,8 +47,8 @@
                                         <tr>
                                             <th>NHS Number</th>
                                             <th>Hospital Number</th>
-                                            <th>Given name</th>
-                                            <th>Family name</th>
+                                            <th>First name</th>
+                                            <th>Last name</th>
                                             <th>DOB</th>
                                             <th>Consent Forms</th>
                                         </tr>

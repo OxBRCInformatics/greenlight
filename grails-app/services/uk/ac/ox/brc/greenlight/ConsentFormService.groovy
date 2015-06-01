@@ -23,9 +23,12 @@ class ConsentFormService {
 		patients.each { patient ->
 			// Find the max date for each form template
 			patient.consents.each { consent ->
-				// Only update the map if the key doesn't exist or the new value is newer than the old value
-				if (!latestTests.containsKey(consent.template) || consent.consentDate > latestTests[consent.template].consentDate) {
-					latestTests[consent.template] = consent
+				// Only if the formStatus is NORMAL
+				if(consent?.formStatus == ConsentForm.FormStatus.NORMAL) {
+					// Only update the map if the key doesn't exist or the new value is newer than the old value
+					if (!latestTests.containsKey(consent.template) || consent.consentDate > latestTests[consent.template].consentDate) {
+						latestTests[consent.template] = consent
+					}
 				}
 			}
 		}
@@ -218,8 +221,8 @@ class ConsentFormService {
 						if (consentForm?.consentStatus == ConsentStatus.FULL_CONSENT) {
 							fullConsentedCount++
 							if (!consentsString.isEmpty())
-								consentsString += ","
-							consentsString += "${consentForm?.template?.namePrefix}[${consentForm?.consentDate?.format("dd-MM-yyyy")}]"
+								consentsString += "|"
+							consentsString += "${consentForm?.template?.namePrefix}[${consentForm?.consentDate?.format("dd-MM-yyyy")};${consentForm?.formID}]"
 						}
 					}
 					//if count is more than / equal two
@@ -247,8 +250,8 @@ class ConsentFormService {
 		def headers = [
 				"patientNHS",
 				"patientMRN",
-				"patientName",
-				"patientSurName",
+				"patientFirstName",
+				"patientLastName",
 				"patientDateOfBirth",
  				"consentForms",
 				"consentFormsCount"
@@ -264,7 +267,7 @@ class ConsentFormService {
 					(patient?.givenName?.trim() ?  patient.givenName : ""),
 					(patient?.familyName?.trim() ?  patient.familyName : ""),
 					 patient?.dateOfBirth.format("dd-MM-yyyy"),
-					 patient?.consentsString.replace(',','|'),
+					 patient?.consentsString,
 					 patient?.consentsCount
 			].join(','))
 			sb.append("\n")
