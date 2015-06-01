@@ -310,7 +310,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 	}
 
 
-	void "updateAllConsentStatus updates consentStatus attribute in all ConsentForm objects"(){
+	void "dataStatusReport updates consentStatus attribute in all ConsentForm objects"(){
 
 		given:"all consent objects have null/NONE_CONSENT in consentStatus attribute"
 
@@ -334,7 +334,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		updateCount == 2
 	}
 
-	void "patientDBReport returns reports about DB status"(){
+	void "databaseStatusReports returns reports about DB status"(){
 
 		when:""
 		def patient= new Patient(
