@@ -203,4 +203,47 @@ class DatabaseCleanupService {
 		result
 	}
 
+
+	def databaseStatusReports(){
+
+		def result = [:]
+		result.put('ConsentFormCount', ConsentForm.count())
+
+		//ConsentForms with Empty Fields
+		def consentFormsWithEmptyFields = ConsentForm.executeQuery("select c.formID,c.patient.nhsNumber,c.patient.familyName,c.patient.givenName,c.patient.hospitalNumber from ConsentForm as c where (c.patient.nhsNumber IS NULL) OR (c.patient.hospitalNumber IS NULL) OR (c.patient.givenName IS NULL) OR (c.patient.familyName IS NULL)")
+		result.put('consentFormsWithEmptyFields', consentFormsWithEmptyFields)
+
+		//ConsentForms with Generic IDs
+		def consentFormsWithGenericIDs = ConsentForm.executeQuery("select c.formID,c.patient.nhsNumber,c.patient.familyName,c.patient.givenName, c.patient.hospitalNumber from ConsentForm as c where c.patient.nhsNumber in ('1111111111','0000000000')")
+		result.put('consentFormWithGenericIDs', consentFormsWithGenericIDs)
+
+
+		//NSHNumber with more than one DOB
+		def nhsNumberWithMoreThanOneDOB = [:]
+		def groupedPatientsByNHSNumber = patientService.groupPatientsByNHSNumber()
+		groupedPatientsByNHSNumber.each { nhsNumber ->
+			def dobs = Patient.executeQuery("select dateOfBirth from Patient as p where p.nhsNumber='${nhsNumber}' and p.consents is not empty  group by dateOfBirth")
+			def dobStr = ""
+			if (dobs.size() > 1) {
+				dobStr = dobs.join(",").replace('00:00:00.0','')
+				nhsNumberWithMoreThanOneDOB.put(nhsNumber, dobStr)
+			}
+		}
+		result.put('nhsNumberWithMoreThanOneDOB', nhsNumberWithMoreThanOneDOB)
+
+
+		//HospitalNumber with more than one DOB
+		def hospitalNumberWithMoreThanOneDOB = [:]
+		def groupedPatientsByHospitalNumber = patientService.groupPatientsByHospitalNumber()
+		groupedPatientsByHospitalNumber.each { hospitalNumber ->
+			def dobs = Patient.executeQuery("select dateOfBirth from Patient as p where p.hospitalNumber='${hospitalNumber}' and p.consents is not empty   group by dateOfBirth")
+			def dobStr = ""
+			if (dobs.size() > 1) {
+				dobStr = dobs.join(",").replace('00:00:00.0','')
+				hospitalNumberWithMoreThanOneDOB.put(hospitalNumber, dobStr)
+			}
+		}
+		result.put('hospitalNumberWithMoreThanOneDOB', hospitalNumberWithMoreThanOneDOB)
+		result
+	}
 }

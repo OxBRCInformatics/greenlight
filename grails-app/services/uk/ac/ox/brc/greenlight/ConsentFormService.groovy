@@ -23,9 +23,12 @@ class ConsentFormService {
 		patients.each { patient ->
 			// Find the max date for each form template
 			patient.consents.each { consent ->
-				// Only update the map if the key doesn't exist or the new value is newer than the old value
-				if (!latestTests.containsKey(consent.template) || consent.consentDate > latestTests[consent.template].consentDate) {
-					latestTests[consent.template] = consent
+				// Only if the formStatus is NORMAL
+				if(consent?.formStatus == ConsentForm.FormStatus.NORMAL) {
+					// Only update the map if the key doesn't exist or the new value is newer than the old value
+					if (!latestTests.containsKey(consent.template) || consent.consentDate > latestTests[consent.template].consentDate) {
+						latestTests[consent.template] = consent
+					}
 				}
 			}
 		}

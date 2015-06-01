@@ -143,4 +143,31 @@ class ConsentFormServiceUnitSpec extends Specification {
 		result[0].consentsString == "GEL[21-05-2015;GEL123]|CDA[21-05-2015;CDA123]"
 		result[1].consentsString == "GEL[21-05-2015;GEL123]|ABC[21-05-2015;ABC123]|DEF[21-05-2015;DEF123]"
 	}
+
+	def "getLatestConsentForms returns the latest NORMAL consent forms for a patient"() {
+
+		given:
+		def formTemplates = [
+				new ConsentFormTemplate(name: "FORM1", namePrefix: "fm1", templateVersion: "1", questions: []),
+				new ConsentFormTemplate(name: "FORM2", namePrefix: "fm2", templateVersion: "1", questions: []),
+				new ConsentFormTemplate(name: "FORM3", namePrefix: "fm3", templateVersion: "1", questions: [])
+		]
+
+		def completedForms = [
+				new ConsentForm(template: formTemplates[0], consentDate: now,formStatus: ConsentForm.FormStatus.SPOILED),
+				new ConsentForm(template: formTemplates[1], consentDate: now),
+				new ConsentForm(template: formTemplates[2], consentDate: now,formStatus: ConsentForm.FormStatus.SPOILED), // latest one from formTemplates[2] template but SPOILED
+				new ConsentForm(template: formTemplates[2], consentDate: now-1,formStatus: ConsentForm.FormStatus.DECLINED),
+				new ConsentForm(template: formTemplates[2], consentDate: now-2)
+		]
+		def latestForms = [completedForms[1],completedForms[4]]
+
+		when: "we get the list of latest NORMAL forms from the service"
+		def returnedForms = service.getLatestConsentForms(new Patient(consents: completedForms))
+
+		then: "the most recent NORMAL form for each type is returned"
+		returnedForms.size() == 2
+		returnedForms.containsAll(latestForms)
+		latestForms.containsAll(returnedForms)
+	}
 }
