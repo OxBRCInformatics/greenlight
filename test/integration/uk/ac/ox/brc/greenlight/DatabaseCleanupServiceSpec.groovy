@@ -684,15 +684,18 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[3]))
 		con.save(flush: true, failOnError: true)
 
-		def dataCleansingReport = databaseCleanupService.databaseStatusReports()
+		def databaseStatusReport = databaseCleanupService.databaseStatusReports()
 
 		then: ""
 		result
-		dataCleansingReport.size() == 5
-		dataCleansingReport['ConsentFormCount'] == 12
-		dataCleansingReport['consentFormsWithEmptyFields'].size() == 3
-		dataCleansingReport['consentFormWithGenericIDs'].size()   == 2
-		dataCleansingReport['nhsNumberWithMoreThanOneDOB'].size() == 1
-		dataCleansingReport['hospitalNumberWithMoreThanOneDOB'].size() == 2
+		databaseStatusReport.size() == 5
+		databaseStatusReport['ConsentFormCount'] == 12
+		databaseStatusReport['consentFormsWithEmptyFields'].size() == 3
+		databaseStatusReport['consentFormWithGenericIDs'].size()   == 2
+		databaseStatusReport['nhsNumberWithMoreThanOneDOB'].size() == 1
+		databaseStatusReport['nhsNumberWithMoreThanOneDOB']["7418529630"] ==  "1941-04-01 , 1940-04-01 , 1947-06-03 "
+		databaseStatusReport['hospitalNumberWithMoreThanOneDOB'].size() == 2
+		databaseStatusReport['hospitalNumberWithMoreThanOneDOB']["123"]  == "1941-04-01 , 1947-06-03 "
+		databaseStatusReport['hospitalNumberWithMoreThanOneDOB']["18809"]== "1941-04-01 , 1940-04-01 "
 	}
 }

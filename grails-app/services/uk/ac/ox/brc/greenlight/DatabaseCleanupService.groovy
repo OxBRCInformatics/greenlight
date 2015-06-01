@@ -225,7 +225,7 @@ class DatabaseCleanupService {
 			def dobs = Patient.executeQuery("select dateOfBirth from Patient as p where p.nhsNumber='${nhsNumber}' and p.consents is not empty  group by dateOfBirth")
 			def dobStr = ""
 			if (dobs.size() > 1) {
-				dobStr = dobs.join(",")
+				dobStr = dobs.join(", ").replace('00:00:00.0','')
 				nhsNumberWithMoreThanOneDOB.put(nhsNumber, dobStr)
 			}
 		}
@@ -239,7 +239,7 @@ class DatabaseCleanupService {
 			def dobs = Patient.executeQuery("select dateOfBirth from Patient as p where p.hospitalNumber='${hospitalNumber}' and p.consents is not empty   group by dateOfBirth")
 			def dobStr = ""
 			if (dobs.size() > 1) {
-				dobStr = dobs.join(",")
+				dobStr = dobs.join(", ").replace('00:00:00.0','')
 				hospitalNumberWithMoreThanOneDOB.put(hospitalNumber, dobStr)
 			}
 		}
