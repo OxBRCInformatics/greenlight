@@ -5,6 +5,7 @@ class Question {
     String name
 	Boolean optional = false
 
+	static hasMany = [validResponses: Response.ResponseValue]
 	// If the response is "no", apply this label
 	String labelIfNotYes
 
@@ -17,6 +18,11 @@ class Question {
     }
 	static mapping = {
 		name type: "text"
+
+		validResponses joinTable: [name: 'question_valid_responses',
+							column: 'validResponse',
+							key: 'question_id']
+
 	}
 
 }
