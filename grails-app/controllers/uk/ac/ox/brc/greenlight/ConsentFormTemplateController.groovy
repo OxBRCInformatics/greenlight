@@ -14,7 +14,11 @@ class ConsentFormTemplateController extends RestfulController {
 
     def list()
     {
-        def consentFormTemplates = ConsentFormTemplate.list()
+		def criteria = ConsentFormTemplate.createCriteria()
+		def consentFormTemplates = criteria.list {
+				order('name', 'asc')
+				order('templateVersion', 'asc')
+		}
         if(request.xhr)
             render consentFormTemplates as JSON
         else
