@@ -124,6 +124,12 @@ class ConsentFormService {
 	}
 
 
+	def findAndExport(params) {
+		def searchResult = search(params)
+		exportConsentObjectsListToCSV(searchResult)
+	}
+	
+
 	def exportAllConsentFormsToCSV() {
 		def allConsents = ConsentForm.list()
 		exportConsentObjectsListToCSV(allConsents)
