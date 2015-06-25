@@ -4,6 +4,7 @@ class Question {
 
     String name
 	Boolean optional = false
+	Response.ResponseValue defaultResponse
 
 	static hasMany = [validResponses: Response.ResponseValue]
 	// If the response is "no", apply this label
@@ -15,6 +16,7 @@ class Question {
 
     static constraints = {
 		labelIfNotYes nullable: true
+		defaultResponse nullable: true
     }
 	static mapping = {
 		name type: "text"
@@ -23,6 +25,7 @@ class Question {
 							column: 'validResponse',
 							key: 'question_id']
 
+		validResponses sort: 'value', order: 'desc'
 	}
 
 }
