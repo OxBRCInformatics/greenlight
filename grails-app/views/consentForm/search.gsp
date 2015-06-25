@@ -59,7 +59,14 @@
 
 
                                             <div class="form-group">
-                                                <input type="submit"  class="btn btn-primary"  value="Search" tabindex="6">
+                                                %{--<input type="submit"  class="btn btn-primary"  value="Search" tabindex="6">--}%
+
+                                                <g:actionSubmit class="btn btn-primary" value="Search" tabindex="6"
+                                                                action="find" param=""></g:actionSubmit>
+
+                                                <g:actionSubmit class="btn btn-primary" value="Export"
+                                                                action="findAndExport"></g:actionSubmit>
+
                                             </div>
                                         </div>
                                         <div class="span4 ">
