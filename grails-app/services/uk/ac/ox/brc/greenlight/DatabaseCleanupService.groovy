@@ -248,4 +248,25 @@ class DatabaseCleanupService {
 		result.put('hospitalNumberWithMoreThanOneDOB', hospitalNumberWithMoreThanOneDOB)
 		result
 	}
+
+
+	def addDefaultValidResponses(){
+
+		def updatedCount = 0
+		Question.list().each { question ->
+			//If it is Empty or Null, update it
+			if(!question.validResponses) {
+				updatedCount++
+				question.addToValidResponses(Response.ResponseValue.YES)
+				question.addToValidResponses(Response.ResponseValue.NO)
+				question.addToValidResponses(Response.ResponseValue.BLANK)
+				question.addToValidResponses(Response.ResponseValue.AMBIGUOUS)
+
+				question.defaultResponse = Response.ResponseValue.BLANK
+				question.save(failOnError: true, flush: true)
+			}
+		}
+		updatedCount
+	}
+
 }
