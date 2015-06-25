@@ -1,10 +1,8 @@
 package uk.ac.ox.brc.greenlight
 
-import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import greenlight.Study
 import spock.lang.Specification
-import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
 
 /**
  * Created by soheil on 01/04/2014.
@@ -27,8 +25,8 @@ class ConsentFormControllerSpec extends Specification{
         when:"calling export action"
         controller.export()
 
-        then:"consentFormService exportToCSV method should be called once"
-        1 * controller.consentFormService.exportToCSV() >>{ return "header1,header2 \r\n data1,data2" }
+        then:"consentFormService exportAllConsentFormsToCSV method should be called once"
+        1 * controller.consentFormService.exportAllConsentFormsToCSV() >>{ return "header1,header2 \r\n data1,data2" }
 
 
         then:"it returns a csv contentType"
@@ -41,8 +39,8 @@ class ConsentFormControllerSpec extends Specification{
         def fileName ="consentForms-"+(new Date()).format("dd-MM-yyyy")
         controller.export()
 
-        then:"consentFormService exportToCSV method should be called once"
-        1 * controller.consentFormService.exportToCSV() >>{ return "header1,header2 \r\n data1,data2" }
+        then:"consentFormService exportAllConsentFormsToCSV method should be called once"
+        1 * controller.consentFormService.exportAllConsentFormsToCSV() >>{ return "header1,header2 \r\n data1,data2" }
 
 
         then:"it returns a csv file with a correct name"

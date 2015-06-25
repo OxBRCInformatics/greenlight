@@ -139,9 +139,9 @@ class ConsentFormServiceSpec extends IntegrationSpec {
 
 
 
-    def "exportToCSV returns CSV content with Headers"() {
-        when:"exportToCSV is called"
-        String csv = consentFormService.exportToCSV()
+    def "exportAllConsentFormsToCSV returns CSV content with Headers"() {
+        when:"exportAllConsentFormsToCSV is called"
+        String csv = consentFormService.exportAllConsentFormsToCSV()
         csv.readLines().size() != 0
         def headers=csv.readLines()[0].tokenize(",")
 
@@ -187,7 +187,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
         }
 
         when: "we export the CSV content"
-        String csv = consentFormService.exportToCSV()
+        String csv = consentFormService.exportAllConsentFormsToCSV()
         def csvConsents = csv.split('\n').toList()
         csvConsents.remove(0) // remove the header row
 

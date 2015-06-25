@@ -65,8 +65,8 @@ class ConsentFormController {
 		render view:"cuttingRoom", model: model
 	}
 
-	def export (){
-        def csvString = consentFormService.exportToCSV()
+	def export(){
+        def csvString = consentFormService.exportAllConsentFormsToCSV()
         def fileName ="consentForms-"+(new Date()).format("dd-MM-yyyy")
         response.setHeader("Content-disposition", "attachment; filename=${fileName}.csv");
 		render(contentType: "text/csv;charset=utf-8", text: csvString.toString());
