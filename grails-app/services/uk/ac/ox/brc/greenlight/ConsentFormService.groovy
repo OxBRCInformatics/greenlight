@@ -124,7 +124,19 @@ class ConsentFormService {
 	}
 
 
-	def exportToCSV() {
+	def findAndExport(params) {
+		def searchResult = search(params)
+		exportConsentObjectsListToCSV(searchResult)
+	}
+	
+
+	def exportAllConsentFormsToCSV() {
+		def allConsents = ConsentForm.list()
+		exportConsentObjectsListToCSV(allConsents)
+	}
+
+	
+	def exportConsentObjectsListToCSV(consentForms){
 		StringBuilder sb = new StringBuilder()
 		def headers = [
 				"consentId",
@@ -145,22 +157,21 @@ class ConsentFormService {
 		sb.append(headers.join(','))
 		sb.append("\n")
 
-		def consents = ConsentForm.list()
-		consents.each { consent ->
+		consentForms?.each { consent ->
 			sb.append([
 					consent.id as String,
 					consent.consentDate.format("dd-MM-yyyy"),
 					consent.formID as String,
-					consent.consentTakerName,
+					(consent.consentTakerName ? consent.consentTakerName : ""),
 					consent.formStatus as String,
-					consent.patient.nhsNumber,
-					consent.patient.hospitalNumber,
-					consent.patient.givenName,
-					consent.patient.familyName,
-					consent.patient.dateOfBirth.format("dd-MM-yyyy"),
-					consent.template?.namePrefix,
-					consent.consentStatus as String,
-					consent.responses?.collect { it.answer as String }.join("|"),
+					(consent?.patient.nhsNumber ? consent?.patient.nhsNumber : ""),
+					(consent?.patient.hospitalNumber ? consent?.patient.hospitalNumber : ""),
+					(consent?.patient.givenName ? consent?.patient.givenName : ""),
+					(consent?.patient.familyName ? consent?.patient.familyName :""),
+					consent?.patient.dateOfBirth.format("dd-MM-yyyy"),
+					consent?.template?.namePrefix,
+					consent?.consentStatus as String,
+					consent?.responses?.collect { it.answer as String }.join("|"),
 					escapeForCSV(consent.comment)
 			].join(','))
 			sb.append("\n")

@@ -139,9 +139,9 @@ class ConsentFormServiceSpec extends IntegrationSpec {
 
 
 
-    def "exportToCSV returns CSV content with Headers"() {
-        when:"exportToCSV is called"
-        String csv = consentFormService.exportToCSV()
+    def "exportAllConsentFormsToCSV returns CSV content with Headers"() {
+        when:"exportAllConsentFormsToCSV is called"
+        String csv = consentFormService.exportAllConsentFormsToCSV()
         csv.readLines().size() != 0
         def headers=csv.readLines()[0].tokenize(",")
 
@@ -187,7 +187,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
         }
 
         when: "we export the CSV content"
-        String csv = consentFormService.exportToCSV()
+        String csv = consentFormService.exportAllConsentFormsToCSV()
         def csvConsents = csv.split('\n').toList()
         csvConsents.remove(0) // remove the header row
 
@@ -220,6 +220,20 @@ class ConsentFormServiceSpec extends IntegrationSpec {
 		nhsNmber		|	count
 		"1234567890"	|	  1
 		""				|	  2
+	}
+
+
+	def "findAndExport will return search result as CSV string"() {
+
+		when: "exportConsentFormSearchResultToCSV is called with specified nhsNumber as search criteria"
+		def param = [:]
+		param.nhsNumber = "1234567890"
+		def resultCSVString  = consentFormService.findAndExport(param)
+		def lines = resultCSVString.split("\n")
+
+		then:"returns result"
+		lines[0].contains("consentId,consentDate,consentformID,consentTakerName,formStatus,patientNHS,patientMRN,patientName,patientSurName,patientDateOfBirth,templateName,consentResult,responses,comments")
+		lines[1].contains("01-02-3914,GEN12345,Edward,Normal,1234567890,1002,Eric,Clapton,03-06-1947,GNR,No consent,Yes|Yes|Yes|Yes,\"a simple unEscapedComment, with characters ' \"\"\"")
 	}
 
 
