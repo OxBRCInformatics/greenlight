@@ -746,4 +746,20 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		databaseStatusReport['hospitalNumberWithMoreThanOneDOB']["123"]  == "1941-04-01 ,1947-06-03 "
 		databaseStatusReport['hospitalNumberWithMoreThanOneDOB']["18809"]== "1941-04-01 ,1940-04-01 "
 	}
+
+
+	void "addDefaultValidResponses will add default validResponses to questions which do not have validResponses"(){
+
+		when:
+		def criteria = Question.where {
+			validResponses?.size() == 0
+		}
+		def expectedCount = criteria.count()
+		def recordsUpdated = databaseCleanupService.addDefaultValidResponses()
+		def afterUpdateCount = criteria.count()
+
+		then:
+		recordsUpdated   == expectedCount
+		afterUpdateCount == 0
+	}
 }

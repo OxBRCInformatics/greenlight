@@ -14,6 +14,15 @@ class ConsentFormController {
         render view:"search", model:[consentForms:result]
     }
 
+	def findAndExport()
+	{
+		def csvString = consentFormService.findAndExport(params);
+
+		def fileName ="consentFormReport-"+(new Date()).format("dd-MM-yyyy HH:mm:ss")
+		response.setHeader("Content-disposition", "attachment; filename=${fileName}.csv");
+		render(contentType: "text/csv;charset=utf-8", text: csvString.toString());
+	}
+
 	def searchPatientConsentCount()
 	{
 		def result = consentFormService.getPatientWithMoreThanOneConsentForm();
@@ -65,8 +74,8 @@ class ConsentFormController {
 		render view:"cuttingRoom", model: model
 	}
 
-	def export (){
-        def csvString = consentFormService.exportToCSV()
+	def export(){
+        def csvString = consentFormService.exportAllConsentFormsToCSV()
         def fileName ="consentForms-"+(new Date()).format("dd-MM-yyyy")
         response.setHeader("Content-disposition", "attachment; filename=${fileName}.csv");
 		render(contentType: "text/csv;charset=utf-8", text: csvString.toString());

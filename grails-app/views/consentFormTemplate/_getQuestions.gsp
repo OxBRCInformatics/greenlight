@@ -15,15 +15,17 @@ Apply to all:
     <g:each in="${questions}" var="question" status="index">
 
         <li class="list-group-item">
+            %{--<span class="label ${ question?.optional?'label-primary' : 'label-inverse' } bootstrapTooltip" style="margin-right: 3px;clear:both;cursor: pointer;"--}%
             <span class="label label-primary bootstrapTooltip" style="margin-right: 3px;clear:both;cursor: pointer;"
-                  data-toggle="tooltip" data-placement="right" data-html="true" title="<div style='text-align:left'>${question?.name}</div>">${index+1}</span>
+                  data-toggle="tooltip" data-placement="right" data-html="true" title="<div style='text-align:left'>${question?.name}<br><br>
+                  ${question?.optional? "<div><strong class='label label-primary'>Optional</strong></div><br>${question?.labelIfNotYes?question?.labelIfNotYes:''}" :""}   ">${index+1}</span>
              %{--<span style="font-size: 10px;">${question.name.substring(0,Math.min(10,question?.name.size()))+ "..."}</span>--}%
 
 
             <g:select class="form-control" id="answers.${index}"
                       name="responses.${index}"
-                      value="${ responses ? responses[index]?.answer.key : Response.ResponseValue.BLANK}"
-                      from="${Response.ResponseValue?.values()}"
+                      value="${ responses ? responses[index]?.answer.key : (question?.defaultResponse? question.defaultResponse : Response.ResponseValue.BLANK)}"
+                      from="${question.validResponses}"
                       optionKey="key"
                       optionValue="value"
                       style="margin-left:5px;width: 80%; display: inline !important"
