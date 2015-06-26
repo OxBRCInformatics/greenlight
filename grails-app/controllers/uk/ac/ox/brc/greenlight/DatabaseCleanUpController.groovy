@@ -101,4 +101,19 @@ class DatabaseCleanUpController {
 		}
 
 	}
+
+
+	def addDefaultValidResponses(){
+		def  recordUpdated
+		try {
+			recordUpdated = databaseCleanupService.addDefaultValidResponses()
+		}
+		catch (Exception exception) {
+			render exception.message
+			return
+		}
+
+		def result = [recordUpdated: recordUpdated]
+		respond result as Object, [formats:['xml','json']] as Map
+	}
 }

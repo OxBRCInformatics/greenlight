@@ -193,8 +193,15 @@
 
                                         <li class="list-group-item">
 
+                                            %{--<span class="label label-primary bootstrapTooltip" style="margin-right: 3px;clear:both;cursor: pointer;"--}%
+                                                  %{--data-toggle="tooltip" data-placement="right" data-html="true" title="<div style='text-align:left'>${question?.name}</div>">${index+1}</span>--}%
+
+
                                             <span class="label label-primary bootstrapTooltip" style="margin-right: 3px;clear:both;cursor: pointer;"
-                                                  data-toggle="tooltip" data-placement="right" data-html="true" title="<div style='text-align:left'>${question?.name}</div>">${index+1}</span>
+                                                  data-toggle="tooltip" data-placement="right" data-html="true" title="<div style='text-align:left'>${question?.name}<br><br>
+                                                    ${question?.optional? "<div><strong class='label label-primary'>Optional</strong></div><br>${question?.labelIfNotYes?question?.labelIfNotYes:''}" :""}   ">${index+1}</span>
+
+
 
                                             &nbsp;  ${commandInstance?.responses[index]?.answer}
                                         </li>
