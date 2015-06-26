@@ -56,8 +56,8 @@ class ConsentStatusControllerSpec extends Specification {
 				lastName: patient.familyName,
 				dateOfBirth: "25-01-2015 02:10:00",
 				consents: [
-						[form: [namePrefix:formTypes[0].namePrefix, name: formTypes[0].name, version: formTypes[0].templateVersion],lastCompleted: "21-05-2015 14:10:00", consentStatus: ConsentStatus.FULL_CONSENT.name(), consentTakerName: latestConsentForms[0].consentTakerName,consentFormId:latestConsentForms[0].formID],
-						[form: [namePrefix:formTypes[1].namePrefix, name: formTypes[1].name, version: formTypes[1].templateVersion],lastCompleted: "12-05-2015 14:10:00",consentStatus: ConsentStatus.NON_CONSENT.name(), consentTakerName: latestConsentForms[1].consentTakerName,consentFormId:latestConsentForms[1].formID]
+						[form: [namePrefix:formTypes[0].namePrefix, name: formTypes[0].name, version: formTypes[0].templateVersion],lastCompleted: "21-05-2015 14:10:00", consentStatus: ConsentStatus.FULL_CONSENT.name(), consentTakerName: latestConsentForms[0].consentTakerName,consentFormId:latestConsentForms[0].formID,consentStatusLabels:""],
+						[form: [namePrefix:formTypes[1].namePrefix, name: formTypes[1].name, version: formTypes[1].templateVersion],lastCompleted: "12-05-2015 14:10:00",consentStatus: ConsentStatus.NON_CONSENT.name(), consentTakerName: latestConsentForms[1].consentTakerName,consentFormId:latestConsentForms[1].formID,consentStatusLabels:""]
 				]
 		]
 	}
@@ -151,8 +151,8 @@ class ConsentStatusControllerSpec extends Specification {
 				lastName: patient.familyName,
 				dateOfBirth: "25-01-2015 02:10:00",
 				consents: [
-						[form: [namePrefix:formTypes[0].namePrefix,name: formTypes[0].name, version: formTypes[0].templateVersion],lastCompleted: "25-05-2015 14:10:00", consentStatus: ConsentStatus.FULL_CONSENT.name(), consentTakerName:latestConsentForms[0].consentTakerName,consentFormId:latestConsentForms[0].formID],
-						[form: [namePrefix:formTypes[1].namePrefix,name: formTypes[1].name, version: formTypes[1].templateVersion],lastCompleted: "12-04-2015 14:10:00", consentStatus: ConsentStatus.NON_CONSENT.name(), consentTakerName:latestConsentForms[1].consentTakerName,consentFormId:latestConsentForms[1].formID]
+						[form: [namePrefix:formTypes[0].namePrefix,name: formTypes[0].name, version: formTypes[0].templateVersion],lastCompleted: "25-05-2015 14:10:00", consentStatus: ConsentStatus.FULL_CONSENT.name(), consentTakerName:latestConsentForms[0].consentTakerName,consentFormId:latestConsentForms[0].formID,consentStatusLabels:""],
+						[form: [namePrefix:formTypes[1].namePrefix,name: formTypes[1].name, version: formTypes[1].templateVersion],lastCompleted: "12-04-2015 14:10:00", consentStatus: ConsentStatus.NON_CONSENT.name(), consentTakerName:latestConsentForms[1].consentTakerName,consentFormId:latestConsentForms[1].formID,consentStatusLabels:""]
 				]
 		]
 	}
@@ -187,7 +187,7 @@ class ConsentStatusControllerSpec extends Specification {
 		1 * controller.patientService.findAllByNHSOrHospitalNumber(lookupId) >> [patient]
 		1 * controller.consentFormService.getLatestConsentForms([patient]) >> latestConsentForms
 
-		controller.response.json.toString() == "{\"dateOfBirth\":\"25-01-2015 02:10:00\",\"consents\":[{\"consentTakerName\":\"User1\",\"form\":{\"name\":\"form type 1\",\"namePrefix\":\"GEN\",\"version\":\"1.0\"},\"consentFormId\":\"GEL123\",\"consentStatus\":\"FULL_CONSENT\",\"lastCompleted\":null},{\"consentTakerName\":\"User2\",\"form\":{\"name\":\"form type 2\",\"namePrefix\":\"CRA\",\"version\":\"2.0\"},\"consentFormId\":\"GEL456\",\"consentStatus\":\"NON_CONSENT\",\"lastCompleted\":null}],\"lastName\":\"Doe\",\"errors\":false,\"hospitalNumber\":\"NHSOXHOSP1\",\"nhsNumber\":\"12345\",\"firstName\":\"John Doe\",\"_self\":\"/api/aNiceURL\"}"
+		controller.response.json.toString() == "{\"dateOfBirth\":\"25-01-2015 02:10:00\",\"consents\":[{\"consentTakerName\":\"User1\",\"form\":{\"name\":\"form type 1\",\"namePrefix\":\"GEN\",\"version\":\"1.0\"},\"consentFormId\":\"GEL123\",\"consentStatusLabels\":\"\",\"consentStatus\":\"FULL_CONSENT\",\"lastCompleted\":null},{\"consentTakerName\":\"User2\",\"form\":{\"name\":\"form type 2\",\"namePrefix\":\"CRA\",\"version\":\"2.0\"},\"consentFormId\":\"GEL456\",\"consentStatusLabels\":\"\",\"consentStatus\":\"NON_CONSENT\",\"lastCompleted\":null}],\"lastName\":\"Doe\",\"errors\":false,\"hospitalNumber\":\"NHSOXHOSP1\",\"nhsNumber\":\"12345\",\"firstName\":\"John Doe\",\"_self\":\"/api/aNiceURL\"}"
 
 	}
 	def "Check if XML marshaller will return the dates in a proper format"() {
@@ -220,7 +220,7 @@ class ConsentStatusControllerSpec extends Specification {
 		1 * controller.patientService.findAllByNHSOrHospitalNumber(lookupId) >> [patient]
 		1 * controller.consentFormService.getLatestConsentForms([patient]) >> latestConsentForms
 
-		controller.response.text == "<?xml version=\"1.0\" encoding=\"UTF-8\"?><map><entry key=\"_self\">/api/aNiceURL</entry><entry key=\"errors\">false</entry><entry key=\"nhsNumber\">12345</entry><entry key=\"hospitalNumber\">NHSOXHOSP1</entry><entry key=\"firstName\">John Doe</entry><entry key=\"lastName\">Doe</entry><entry key=\"dateOfBirth\">25-01-2015 02:10:00</entry><entry key=\"consents\"><map><entry key=\"form\"><entry key=\"name\">form type 1</entry><entry key=\"version\">1.0</entry><entry key=\"namePrefix\">GEN</entry></entry><entry key=\"lastCompleted\" /><entry key=\"consentStatus\">FULL_CONSENT</entry><entry key=\"consentTakerName\">User1</entry><entry key=\"consentFormId\">GEL123</entry></map><map><entry key=\"form\"><entry key=\"name\">form type 2</entry><entry key=\"version\">2.0</entry><entry key=\"namePrefix\">CRA</entry></entry><entry key=\"lastCompleted\" /><entry key=\"consentStatus\">NON_CONSENT</entry><entry key=\"consentTakerName\">User2</entry><entry key=\"consentFormId\">GEL456</entry></map></entry></map>"
+		controller.response.text == "<?xml version=\"1.0\" encoding=\"UTF-8\"?><map><entry key=\"_self\">/api/aNiceURL</entry><entry key=\"errors\">false</entry><entry key=\"nhsNumber\">12345</entry><entry key=\"hospitalNumber\">NHSOXHOSP1</entry><entry key=\"firstName\">John Doe</entry><entry key=\"lastName\">Doe</entry><entry key=\"dateOfBirth\">25-01-2015 02:10:00</entry><entry key=\"consents\"><map><entry key=\"form\"><entry key=\"name\">form type 1</entry><entry key=\"version\">1.0</entry><entry key=\"namePrefix\">GEN</entry></entry><entry key=\"lastCompleted\" /><entry key=\"consentStatus\">FULL_CONSENT</entry><entry key=\"consentTakerName\">User1</entry><entry key=\"consentFormId\">GEL123</entry><entry key=\"consentStatusLabels\"></entry></map><map><entry key=\"form\"><entry key=\"name\">form type 2</entry><entry key=\"version\">2.0</entry><entry key=\"namePrefix\">CRA</entry></entry><entry key=\"lastCompleted\" /><entry key=\"consentStatus\">NON_CONSENT</entry><entry key=\"consentTakerName\">User2</entry><entry key=\"consentFormId\">GEL456</entry><entry key=\"consentStatusLabels\"></entry></map></entry></map>"
 
 	}
 

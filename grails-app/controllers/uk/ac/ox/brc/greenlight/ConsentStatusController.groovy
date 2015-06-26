@@ -56,6 +56,8 @@ class ConsentStatusController{
 
 			def consents = consentFormService.getLatestConsentForms(patients)
 			consents.each{ consentForm ->
+				def consentStatusLabel = consentEvaluationService.getConsentLabels(consentForm)
+
 				response.consents.push([
 						form: [
 						        name: consentForm.template.name,
@@ -65,7 +67,8 @@ class ConsentStatusController{
 						lastCompleted: consentForm.consentDate?.format("dd-MM-yyyy HH:mm:ss"),
 						consentStatus: consentForm.consentStatus.name(),
 						consentTakerName : consentForm.consentTakerName,
-						consentFormId : consentForm.formID
+						consentFormId : consentForm.formID,
+						consentStatusLabels: consentStatusLabel ? consentStatusLabel : ""
 				])
 			}
 		}
