@@ -62,20 +62,36 @@
                         </thead>
                         <tbody>
                             <g:each var="consent" in="${consents}">
-                            <g:if test="${consent.consentStatus == uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus.FULL_CONSENT || consent.consentStatus == uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus.CONSENT_WITH_LABELS}">
-                                <tr class="alert alert-info alert-block">
-                                    <td>${consent.form.name} <small>(version: ${consent.form.version})</small></td>
-                                    <td><g:formatDate format="dd-MM-yyyy" date="${consent.lastCompleted}"/></td>
-                                    <td><h1>Full Consent</h1></td>
-                                </tr>
-                            </g:if>
-                           <g:else>
-                               <tr class="alert alert-danger alert-block">
-                                    <td>${consent.form.name} <small>(version: ${consent.form.version})</small></td>
-                                    <td><g:formatDate format="dd-MM-yyyy" date="${consent.lastCompleted}"/></td>
-                                    <td><h1>${consent.consentStatus.label}</h1></td>
-                               </tr>
-                           </g:else>
+                                <g:if test="${consent.consentStatus == uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus.FULL_CONSENT}" >
+                                    <tr class="alert alert-info alert-block">
+                                        <td>${consent.form.name} <small>(version: ${consent.form.version})</small></td>
+                                        <td><g:formatDate format="dd-MM-yyyy" date="${consent.lastCompleted}"/></td>
+                                        <td><h1>Full Consent</h1></td>
+                                    </tr>
+                                </g:if>
+                                <g:elseif test="${consent.consentStatus == uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus.CONSENT_WITH_LABELS}">
+                                    <tr class="alert alert-info alert-block">
+                                        <td>${consent.form.name} <small>(version: ${consent.form.version})</small></td>
+                                        <td><g:formatDate format="dd-MM-yyyy" date="${consent.lastCompleted}"/></td>
+                                        <td><h1>Full Consent</h1>
+                                            <h3 class="alert-error text-center"><strong>With Restrictions</strong></h3>
+                                            <h5 class="alert-error text-center">
+                                                <ul class="alert-error text-left">
+                                                    <g:each var="label" in="${consent?.labels}">
+                                                        <li >${label}</li>
+                                                    </g:each>
+                                                </ul>
+                                            </h5>
+                                        </td>
+                                    </tr>
+                                </g:elseif>
+                               <g:else>
+                                   <tr class="alert alert-danger alert-block">
+                                        <td>${consent.form.name} <small>(version: ${consent.form.version})</small></td>
+                                        <td><g:formatDate format="dd-MM-yyyy" date="${consent.lastCompleted}"/></td>
+                                        <td><h1>${consent.consentStatus.label}</h1></td>
+                                   </tr>
+                               </g:else>
                            </g:each>
                         </tbody>
                     </table>
