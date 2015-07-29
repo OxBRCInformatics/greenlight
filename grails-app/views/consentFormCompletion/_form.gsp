@@ -318,20 +318,75 @@
 
     }
 
+    function parseGELBarcode(){
+     var ajaxLink= "${createLink(action:'parseGELBarcode', controller:'ConsentFormCompletion')}";
+        var GELParticipant
+        $.ajax({
+            type: 'POST',
+            url: ajaxLink+".json?GELBarcode="+$("input[id='commandInstance.patient.nhsNumber']").val(),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            async:true,
+            success: function (data) {
+
+                    GELParticipant = data.GELParticipant
+
+                    if(GELParticipant.success == true){
+                        $("input[id='commandInstance.patient.nhsNumber']").val(GELParticipant.result.NHSNumber)
+                        $("input[id='commandInstance.patient.hospitalNumber']").val(GELParticipant.result.participantDetails.hospitalNumber)
+                        $("input[id='commandInstance.patient.givenName']").val(GELParticipant.result.participantDetails.forenames)
+                        $("input[id='commandInstance.patient.familyName']").val(GELParticipant.result.participantDetails.surname)
+                        $("select[id='commandInstance.patient.dateOfBirth_day']").val(GELParticipant.result.participantDetails.dobDate)
+                        $("select[id='commandInstance.patient.dateOfBirth_month']").val(GELParticipant.result.participantDetails.dobMonth)
+                        $("select[id='commandInstance.patient.dateOfBirth_year']").val(GELParticipant.result.participantDetails.dobYear)
+
+                        $("input[id='commandInstance.consentForm.nhsNumber']").focus()
+                        $("input[id='commandInstance.consentForm.consentTakerName']").focus()
+                        return true
+                    }
+                    else{
+                        alert(GELParticipant.error)
+                        $("input[id='commandInstance.consentForm.nhsNumber']").focus()
+                        return false
+                       }
+                    },
+            error:function(err){
+                    return false
+            }
+
+          })
+    }
+
+
+   function leaveNHSNumber(){
+        //check if it is GELBarcode
+         var nhsNumberValue = $("input[id='commandInstance.patient.nhsNumber']").val()
+         if(nhsNumberValue.length > 10 && nhsNumberValue.indexOf("|")>-1 && nhsNumberValue.indexOf("8018") == 0){
+            if(parseGELBarcode() == true){
+                loadDemographic()
+                $("input[id='commandInstance.patient.consentTakerName']").focus()
+            }
+
+         }else{
+            loadDemographic();
+            $("input[id='commandInstance.patient.consentTakerName']").focus();
+         }
+   }
+
     $(function(){
 
+        //set default focus on NHSNumber
+        $("input[id='commandInstance.patient.nhsNumber']").focus()
 
          $("input[id='commandInstance.patient.nhsNumber']").blur(function(){
-             loadDemographic()
-             $("input[id='commandInstance.patient.hospitalNumber']").focus()
-              });
+                leaveNHSNumber();
+          });
 
 
         $("input[id='commandInstance.patient.nhsNumber']").keypress(function(e) {
               //Enter key
               if (e.which == 13) {
-                loadDemographic()
-                $("input[id='commandInstance.patient.hospitalNumber']").focus()
+               leaveNHSNumber();
                 return false;
               }
             });
