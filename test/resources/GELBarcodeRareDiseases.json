@@ -1,0 +1,182 @@
+[
+	{
+		"inputBarcode": "8018000000012345678905911234592RGAXY001|AOE|160048|Adam|Smith|23/07/198593Rare Disease941.1.1|03.03.2015",
+		"result": {
+			"error": "",
+			"success": true,
+			"result": {
+				"participantId": "12345",
+				"NHSNumber": "1234567890",
+				"participantDetails": {
+					"hospitalNumber": "160048",
+					"forenames": "Adam",
+					"surname": "Smith",
+					"dateOfBirth": "23/07/1985",
+					"dobYear"  : "1985",
+					"dobMonth" : "7",
+					"dobDate"  : "23"
+				},
+				"diseaseType": "Rare Disease",
+				"SLF": {
+					"version": "1.1.1",
+					"date": "03.03.2015"
+				}
+			}
+		}
+	},
+	{
+		"inputBarcode": "8018000000012345678905911234592RGAXY001|AOE||Adam|Smith|02/07/198593Rare Disease941.1.1|03.03.2015",
+		"result": {
+			"error": "",
+			"success": true,
+			"result": {
+				"participantId": "12345",
+				"NHSNumber": "1234567890",
+				"participantDetails": {
+					"hospitalNumber": "",
+					"forenames": "Adam",
+					"surname": "Smith",
+					"dateOfBirth": "02/07/1985",
+					"dobYear"  : "1985",
+					"dobMonth" : "7",
+					"dobDate"  : "2"
+				},
+				"diseaseType": "Rare Disease",
+				"SLF": {
+					"version": "1.1.1",
+					"date": "03.03.2015"
+				}
+			}
+		}
+	},
+	{
+		"inputBarcode": "8018000000012345678905911234592|AOE||||23/07/198593Rare Disease941.1.1|03.03.2015",
+		"result": {
+			"error": "",
+			"success": true,
+			"result": {
+				"participantId": "12345",
+				"NHSNumber": "1234567890",
+				"participantDetails": {
+					"hospitalNumber": "",
+					"forenames": "",
+					"surname": "",
+					"dateOfBirth": "23/07/1985",
+					"dobYear"  : "1985",
+					"dobMonth" : "7",
+					"dobDate"  : "23"
+				},
+				"diseaseType": "Rare Disease",
+				"SLF": {
+					"version": "1.1.1",
+					"date": "03.03.2015"
+				}
+			}
+		}
+	},
+	{
+		"inputBarcode": "80180000000123456789011234592|93Rare Disease941.1.1|03.03.2015",
+		"result": {
+			"error": "GEL 2D Barcode should have five sections each separated by a GS character",
+			"success": false,
+			"result": {}
+		}
+	},
+	{
+		"inputBarcode": "998000000012345678905911234592|AOE||||23/07/198593Rare Disease941.1.1|03.03.2015",
+		"result": {
+			"error": "GEL 2D Barcode GSRN section should start with 8018",
+			"success": false,
+			"result": {}
+		}
+	},
+	{
+		"inputBarcode": "8018000000012345678905901234592|AOE||||23/07/198593Rare Disease941.1.1|03.03.2015",
+		"result": {
+			"error": "GEL 2D Barcode Participant Id should start with 91",
+			"success": false,
+			"result": {}
+		}
+	},
+	{
+		"inputBarcode": "8018000000012345678905911234598|AOE||||23/07/198593Rare Disease941.1.1|03.03.2015",
+		"result": {
+			"error": "GEL 2D Barcode Participant Details should start with 92",
+			"success": false,
+			"result": {}
+		}
+	},
+	{
+		"inputBarcode": "8018000000012345678905911234592|AOE|||23/07/198593Rare Disease941.1.1|03.03.2015",
+		"result": {
+			"error": "GEL 2D Barcode Participant Details should contain six sections",
+			"success": false,
+			"result": {}
+		}
+	},
+	{
+		"inputBarcode": "8018000000012345678905911234592|AOE|||||23/07/198593Rare Disease941.1.1|03.03.2015",
+		"result": {
+			"error": "GEL 2D Barcode Participant Details should contain six sections",
+			"success": false,
+			"result": {}
+		}
+	},
+	{
+		"inputBarcode": "8018000000012345678905911234592|AOE||||23/07/198590Rare Disease941.1.1|03.03.2015",
+		"result": {
+			"error": "GEL 2D Barcode Disease Type should start with 93",
+			"success": false,
+			"result": {}
+		}
+	},
+	{
+		"inputBarcode": "8018000000012345678905911234592|AOE||||23/07/198593Rare Disease991.1.1|03.03.2015",
+		"result": {
+			"error": "GEL 2D Barcode SLF version and date should start with 94",
+			"success": false,
+			"result": {}
+		}
+	},
+	{
+		"inputBarcode": "8018000000012345678905911234592|AOE||||23/07/198593Rare Disease941.1.1",
+		"result": {
+			"error": "GEL 2D Barcode SLF Detail should contain two sections (version,date)",
+			"success": false,
+			"result": {}
+		}
+	},
+	{
+		"inputBarcode": "8018000000012345678905911234592123|456|MyName|MyFamily|23/07/198593Cancer941.1.1|03.03.2015",
+		"result": {
+			"error": "",
+			"success": true,
+			"result": {
+				"participantId": "12345",
+				"NHSNumber": "1234567890",
+				"participantDetails": {
+					"hospitalNumber": "456",
+					"forenames": "MyName",
+					"surname": "MyFamily",
+					"dateOfBirth": "23/07/1985",
+					"dobYear"  : "1985",
+					"dobMonth" : "7",
+					"dobDate"  : "23"
+				},
+				"diseaseType": "Cancer",
+				"SLF": {
+					"version": "1.1.1",
+					"date": "03.03.2015"
+				}
+			}
+		}
+	},
+	{
+		"inputBarcode": "8018000000012345678905911234592123|456|MyFamily|23/07/198593Cancer941.1.1|03.03.2015",
+		"result": {
+			"error": "GEL 2D Barcode Participant Details should contain five sections",
+			"success": false,
+			"result": {}
+		}
+	}
+]
