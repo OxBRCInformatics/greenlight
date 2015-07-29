@@ -16,11 +16,14 @@ class GELBarcodeParserService {
 
 		def parts = barcodeString?.tokenize(GS)
 		if (parts.size() != 5) {
-			return [
-					error  : "GEL 2D Barcode should have five sections each separated by a GS character",
-					success: false,
-					result : [:]
-			]
+			parts = barcodeString?.tokenize("↔")
+			if (parts.size() != 5) {
+				return [
+						error  : "GEL 2D Barcode should have five sections each separated by a GS character",
+						success: false,
+						result : [:]
+				]
+			}
 		}
 
 		//Find GEL form type
@@ -74,11 +77,14 @@ class GELBarcodeParserService {
 	private parseGELRareDisease(String barcodeString) {
 		def parts = barcodeString?.tokenize(GS)
 		if (parts.size() != 5) {
-			return [
-					error  : "GEL 2D Barcode should have five sections each separated by a GS character",
-					success: false,
-					result : [:]
-			]
+			parts = barcodeString?.tokenize("↔")
+			if (parts.size() != 5) {
+				return [
+						error  : "GEL 2D Barcode should have five sections each separated by a GS character",
+						success: false,
+						result : [:]
+				]
+			}
 		}
 
 		//Find GEL form type
@@ -173,11 +179,14 @@ class GELBarcodeParserService {
 	private parseGELCancer(String barcodeString) {
 		def parts = barcodeString?.tokenize(GS)
 		if (parts.size() != 5) {
-			return [
-					error  : "GEL 2D Barcode should have five sections each separated by a GS character",
-					success: false,
-					result : [:]
-			]
+			parts = barcodeString?.tokenize("↔")
+			if (parts.size() != 5) {
+				return [
+						error  : "GEL 2D Barcode should have five sections each separated by a GS character",
+						success: false,
+						result : [:]
+				]
+			}
 		}
 
 		//Find GEL form type

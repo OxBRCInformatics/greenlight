@@ -172,6 +172,31 @@
 		}
 	},
 	{
+		"inputBarcode": "8018000000012345678905↔9112345↔92123|456|MyName|MyFamily|23/07/1985↔93Cancer↔941.1.1|03.03.2015",
+		"result": {
+			"error": "",
+			"success": true,
+			"result": {
+				"participantId": "12345",
+				"NHSNumber": "1234567890",
+				"participantDetails": {
+					"hospitalNumber": "456",
+					"forenames": "MyName",
+					"surname": "MyFamily",
+					"dateOfBirth": "23/07/1985",
+					"dobYear"  : "1985",
+					"dobMonth" : "7",
+					"dobDate"  : "23"
+				},
+				"diseaseType": "Cancer",
+				"SLF": {
+					"version": "1.1.1",
+					"date": "03.03.2015"
+				}
+			}
+		}
+	},
+	{
 		"inputBarcode": "8018000000012345678905911234592123|456|MyFamily|23/07/198593Cancer941.1.1|03.03.2015",
 		"result": {
 			"error": "GEL 2D Barcode Participant Details should contain five sections",
