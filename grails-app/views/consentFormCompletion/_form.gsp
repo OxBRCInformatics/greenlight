@@ -361,7 +361,7 @@
    function leaveNHSNumber(){
         //check if it is GELBarcode
          var nhsNumberValue = $("input[id='commandInstance.patient.nhsNumber']").val()
-         if(nhsNumberValue.length > 10 && nhsNumberValue.indexOf("|")>-1 && nhsNumberValue.indexOf("8018") == 0){
+         if(nhsNumberValue.length > 10 && (nhsNumberValue.indexOf("|")>-1 || nhsNumberValue.indexOf("~")>-1) && nhsNumberValue.indexOf("8018") == 0){
             if(parseGELBarcode() == true){
                 loadDemographic()
                 $("input[id='commandInstance.patient.consentTakerName']").focus()
