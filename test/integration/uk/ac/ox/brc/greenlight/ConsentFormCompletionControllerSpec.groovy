@@ -23,6 +23,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
 		//As we need to also mock the service which is used inside the controller
 		//so we need to add the following line
 		consentFormController.demographicService = Mock(DemographicService)
+		consentFormController.GELBarcodeParserService = Mock(GELBarcodeParserService)
 
 		def template1=new ConsentFormTemplate(
                 name: "ORB1",
