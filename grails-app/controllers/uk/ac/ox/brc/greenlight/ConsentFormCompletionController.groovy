@@ -7,9 +7,17 @@ class ConsentFormCompletionController {
 
     def consentFormService
     def demographicService
+	def GELBarcodeParserService
 
     def index() {
     }
+
+	def parseGELBarcode(){
+		def barcodeStr = params["GELBarcode"]
+		def GELParticipant = GELBarcodeParserService.parseGELBarcodeString(barcodeStr)
+		def model =[GELParticipant:GELParticipant]
+		respond model
+	}
 
     def create() {
         def attachment = Attachment.get(params?.attachmentId);
