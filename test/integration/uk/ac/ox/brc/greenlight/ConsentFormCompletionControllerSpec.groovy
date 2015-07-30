@@ -23,6 +23,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
 		//As we need to also mock the service which is used inside the controller
 		//so we need to add the following line
 		consentFormController.demographicService = Mock(DemographicService)
+		consentFormController.GELBarcodeParserService = Mock(GELBarcodeParserService)
 
 		def template1=new ConsentFormTemplate(
                 name: "ORB1",
@@ -337,5 +338,65 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
 		consentFormController.response.json.patient.FAMILYNAME == "Smith"
 		consentFormController.response.json.patient.DOB_year == 2010
 		consentFormController.response.json.patient.DOB_month == 4
+	}
+
+
+	void "parseGELBarcode returns GEL participant details"() {
+
+		when: "GELBarcode is passed"
+		consentFormController.params['GELBarcode'] = "123...123"
+		consentFormController.response.format = "json"
+		consentFormController.parseGELBarcode()
+
+
+		then: "parseGELBarcode returns participant detail"
+		consentFormController.response
+		1 * consentFormController.GELBarcodeParserService.parseGELBarcodeString(_) >> {
+			[
+					error  : "",
+					success: true,
+					result : [
+							participantId     : "12345",
+							NHSNumber         : "1234567890",
+							participantDetails: [
+									hospitalNumber: "160048",
+									forenames     : "Adam",
+									surname       : "Smith",
+									dateOfBirth   : "23/07/1985",
+									dobYear  : "1985",
+									dobMonth : "7",
+									dobDay  : "23"
+							],
+							diseaseType       : "Rare Disease",
+							SLF               : [
+									version: "1.1.1",
+									date   : "03.03.2015"
+							]
+					]
+			]
+		}
+
+		consentFormController.response.json.GELParticipant == [
+				error  : "",
+				success: true,
+				result : [
+						participantId     : "12345",
+						NHSNumber         : "1234567890",
+						participantDetails: [
+								hospitalNumber: "160048",
+								forenames     : "Adam",
+								surname       : "Smith",
+								dateOfBirth   : "23/07/1985",
+								dobYear  : "1985",
+								dobMonth : "7",
+								dobDay  : "23"
+						],
+						diseaseType       : "Rare Disease",
+						SLF               : [
+								version: "1.1.1",
+								date   : "03.03.2015"
+						]
+				]
+		]
 	}
 }
