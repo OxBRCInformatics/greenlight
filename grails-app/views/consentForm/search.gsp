@@ -50,7 +50,7 @@
                                             <div class="form-group">
                                                 <label for="formIdFrom">Consent Form Id From</label>
                                                 <br>
-                                                <g:textField  class="form-control" tabindex="1"
+                                                <g:textField  class="form-control" tabindex="7"
                                                               id="formIdFrom" name="formIdFrom"
                                                               value="${params.formIdFrom}"
                                                               placeholder="Form Id like GEN12345"/>
@@ -61,10 +61,10 @@
                                             <div class="form-group">
                                                 %{--<input type="submit"  class="btn btn-primary"  value="Search" tabindex="6">--}%
 
-                                                <g:actionSubmit class="btn btn-primary" value="Search" tabindex="6"
+                                                <g:actionSubmit class="btn btn-primary" value="Search" tabindex="9"
                                                                 action="find" param=""></g:actionSubmit>
 
-                                                <g:actionSubmit class="btn btn-primary" value="Export"
+                                                <g:actionSubmit class="btn btn-primary" value="Export" tabindex="10"
                                                                 action="findAndExport"></g:actionSubmit>
 
                                             </div>
@@ -95,7 +95,7 @@
                                             <div class="form-group">
                                                 <label for="formIdTo">Consent Form Id To</label>
                                                 <br>
-                                                <g:textField  class="form-control" tabindex="1"
+                                                <g:textField  class="form-control" tabindex="8"
                                                               id="formIdTo" name="formIdTo"
                                                               value="${params.formIdTo}"
                                                               placeholder="Form Id like GEN6789"/>
@@ -116,8 +116,15 @@
                                                         placeholder="Consent Taker Name"/>
 
                                             </div>
+                                            <div class="form-group">
+                                                <label for="comment">Comment</label>
+                                                <g:textArea rows="6" cols="40"
+                                                        class="form-control" tabindex="6"
+                                                        name="comment"  id="comment"
+                                                        value="${params.comment}"
+                                                        placeholder="Comment"/>
 
-
+                                            </div>
                                         </div>
                                     </div>
 
@@ -127,44 +134,55 @@
                             <div class="consentSearchTable">
                                 <div class="table-responsive">
                                     <table class="table  table-hover table-bordered">
-                                        <thead>
+                                        <thead >
                                         <tr>
-                                            <th>NHS Number</th>
-                                            <th>Hospital Number</th>
-                                            <th>Form Status</th>
-                                            <th>Form Type</th>
-                                            <th>Form Id</th>
-                                            <th>Upload Date</th>
-                                            <th>Consent Date</th>
-                                            <th>Consent Taker</th>
-                                            <th></th>
+                                            <th style="text-align: center">NHS Number</th>
+                                            <th style="text-align: center">Hospital Number</th>
+                                            <th style="text-align: center">Form Status</th>
+                                            <th style="text-align: center">Form Type</th>
+                                            <th style="text-align: center">Form Id</th>
+                                            <th style="text-align: center">Upload Date</th>
+                                            <th style="text-align: center">Consent Date</th>
+                                            <th style="text-align: center">Consent Taker</th>
+                                            <th style="text-align: center">Comment</th>
+                                            <th style="text-align: center"></th>
                                         </tr>
-                                    </thead>
+                                        </thead>
                                         <tbody>
-                                            <g:each in="${consentForms}" var="consentForm" status="index">
-                                                <tr>
-                                                    <td>${consentForm?.patient?.nhsNumber}</td>
-                                                    <td>${consentForm?.patient?.hospitalNumber}</td>
-                                                    <td>${consentForm?.formStatus}</td>
-                                                    <td>${consentForm?.template?.namePrefix}</td>
-                                                    <td>${consentForm?.formID}</td>
-                                                    <td>
-                                                        <g:formatDate format="yyyy-MM-dd HH:mm" date="${consentForm?.attachedFormImage?.dateOfUpload}"/>
-                                                    </td>
+                                        <g:each in="${consentForms}" var="consentForm" status="index">
+                                            <tr>
+                                                <td style="width:10%">${consentForm?.patient?.nhsNumber}</td>
+                                                <td style="width:10%">${consentForm?.patient?.hospitalNumber}</td>
+                                                <td style="width:10%">${consentForm?.formStatus}</td>
+                                                <td style="width:5%">${consentForm?.template?.namePrefix}</td>
+                                                <td style="width:8%">${consentForm?.formID}</td>
+                                                <td style="width:15%">
+                                                    <g:formatDate format="yyyy-MM-dd HH:mm"
+                                                                  date="${consentForm?.attachedFormImage?.dateOfUpload}"/>
+                                                </td>
 
-                                                    <td>
-                                                        <g:formatDate format="yyyy-MM-dd" date="${consentForm?.consentDate}"/>
-                                                    </td>
+                                                <td style="width:10%">
+                                                    <g:formatDate format="yyyy-MM-dd"
+                                                                  date="${consentForm?.consentDate}"/>
+                                                </td>
 
-                                                    <td>${consentForm?.consentTakerName}</td>
+                                                <td style="width:10%">${consentForm?.consentTakerName}</td>
+                                                %{--<td style="cursor: pointer" title="${consentForm?.comment}">${consentForm?.comment?.split(/\s+/).size()>10 ? consentForm?.comment?.split(/\s+/).toList().subList(0,9).join(' ')+"...." : consentForm?.comment}</td>--}%
 
-                                                    <td>
-                                                        <g:link action="show" id="${consentForm?.id}" class="btn btn-success btn-sm" controller="consentFormCompletion" target="blank">View</g:link>
-                                                    </td>
+                                                <td style="cursor: pointer" title="${consentForm?.comment}">
+                                                    <div class="comment more">${consentForm?.comment?.trim()}</div>
+                                                </td>
 
-                                                </tr>
-                                            </g:each>
-                                    </tbody>
+                                                <td>
+                                                    <g:link action="show" id="${consentForm?.id}"
+                                                            class="btn btn-success btn-sm"
+                                                            controller="consentFormCompletion"
+                                                            target="blank">View</g:link>
+                                                </td>
+
+                                            </tr>
+                                        </g:each>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -177,8 +195,42 @@
     </div>
 </div>
 
-              </body>
-             </html>
+<script type="text/javascript">
+
+    //based on https://github.com/viralpatel/jquery.shorten
+    $(document).ready(function () {
+        var showChar = 40;
+        var ellipsestext = "...";
+        var moretext = "more";
+        var lesstext = "less";
+        $('.more').each(function () {
+            var content = $(this).html();
+            if (content.length > showChar) {
+                var c = content.substr(0, showChar);
+                var h = content.substr(showChar - 1, content.length - showChar);
+                var html = c + '<span class="moreelipses">' + ellipsestext + '</span><span class="morecontent"><span>' + h + '</span>&nbsp;&nbsp;<a href="" class="morelink">' + moretext + '</a></span>';
+                $(this).html(html);
+            }
+        });
+        $(".morelink").click(function () {
+            if ($(this).hasClass("less")) {
+                $(this).removeClass("less");
+                $(this).html(moretext);
+            } else {
+                $(this).addClass("less");
+                $(this).html(lesstext);
+            }
+            $(this).parent().prev().toggle();
+            $(this).prev().toggle();
+            return false;
+        });
+
+    });
+</script>
+
+</body>
+
+</html>
 
 
 
