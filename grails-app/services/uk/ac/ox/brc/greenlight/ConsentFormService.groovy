@@ -48,6 +48,7 @@ class ConsentFormService {
 		def formIdFrom = params["formIdFrom"]?.trim();
 		def formIdTo = params["formIdTo"]?.trim();
 
+		def comment = params["comment"]?.trim();
 
 		def criteria = ConsentForm.createCriteria()
 		def results = criteria.list {
@@ -74,6 +75,9 @@ class ConsentFormService {
 							like("nhsNumber", nhsNumber + "%")
 						}
 					}
+			if (comment && comment.size()>0){
+				ilike("comment","%${comment}%")
+			}
 			order("consentDate", "desc")
 		}
 		return results;

@@ -1,6 +1,7 @@
 package uk.ac.ox.brc.greenlight
 
 import grails.test.spock.IntegrationSpec
+import spock.lang.Unroll
 
 /**
  * Created by soheil on 28/03/2014.
@@ -78,7 +79,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
 				consentTakerName: "Edward",
 				formID: "GEN12345",
 				formStatus: ConsentForm.FormStatus.NORMAL,
-				comment: "a simple unEscapedComment, with characters \' \" \n "
+				comment: "a simple unEscapedComment, entered at 31/07/2015 with characters \' \" \n "
 		).save()
 		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: question1))
 		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: question2))
@@ -394,5 +395,30 @@ class ConsentFormServiceSpec extends IntegrationSpec {
 		result
 		attachment?.consentForm?.template.id == newTemplate.id
 		attachment?.consentForm?.consentStatus == ConsentForm.ConsentStatus.FULL_CONSENT
+	}
+
+	@Unroll
+	def "search will also search on text in comment (for comment:\"#comment\" & nshNumber:\"#nhsNumber\" " () {
+
+		when: "search is called to search for a text in comment"
+		def param = [:]
+		param.comment = comment
+		param.nhsNumber = nhsNumber
+		def result  = consentFormService.search(param)
+
+		then:"returns result"
+		result.size() == count
+
+		where:
+		nhsNumber		|			comment				|	count
+		""				|	  "simple unEscapedComment"	|	2
+		""				|	  "SIMPLE UNEscapedComment"	|	2
+		""				|	  "a sim"					|	2
+		""				|	  "31/07/2015"				|	1
+		""				|	  "with characters ' \""	|	2
+		""				|		"happy!"				|   0
+		""				|		""						|   2
+		""				|		null					|   2
+		"1234567890"	|	 "simple unEscapedComment"	|	1
 	}
 }
