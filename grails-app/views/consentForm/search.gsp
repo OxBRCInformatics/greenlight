@@ -139,7 +139,6 @@
                                             <th style="text-align: center">NHS Number</th>
                                             <th style="text-align: center">Hospital Number</th>
                                             <th style="text-align: center">Form Status</th>
-                                            <th style="text-align: center">Form Type</th>
                                             <th style="text-align: center">Form Id</th>
                                             <th style="text-align: center">Upload Date</th>
                                             <th style="text-align: center">Consent Date</th>
@@ -151,17 +150,16 @@
                                         <tbody>
                                         <g:each in="${consentForms}" var="consentForm" status="index">
                                             <tr>
-                                                <td style="width:10%">${consentForm?.patient?.nhsNumber}</td>
+                                                <td style="width:10%;">${consentForm?.patient?.nhsNumber}</td>
                                                 <td style="width:10%">${consentForm?.patient?.hospitalNumber}</td>
                                                 <td style="width:10%">${consentForm?.formStatus}</td>
-                                                <td style="width:5%">${consentForm?.template?.namePrefix}</td>
-                                                <td style="width:8%">${consentForm?.formID}</td>
-                                                <td style="width:15%">
+                                                <td style="width:7%">${consentForm?.formID}</td>
+                                                <td style="width:15%;font-size: 12px;">
                                                     <g:formatDate format="yyyy-MM-dd HH:mm"
                                                                   date="${consentForm?.attachedFormImage?.dateOfUpload}"/>
                                                 </td>
 
-                                                <td style="width:10%">
+                                                <td style="width:10%;font-size: 12px;">
                                                     <g:formatDate format="yyyy-MM-dd"
                                                                   date="${consentForm?.consentDate}"/>
                                                 </td>
@@ -169,11 +167,11 @@
                                                 <td style="width:10%">${consentForm?.consentTakerName}</td>
                                                 %{--<td style="cursor: pointer" title="${consentForm?.comment}">${consentForm?.comment?.split(/\s+/).size()>10 ? consentForm?.comment?.split(/\s+/).toList().subList(0,9).join(' ')+"...." : consentForm?.comment}</td>--}%
 
-                                                <td style="cursor: pointer" title="${consentForm?.comment}">
+                                                <td style="width:10%" style="cursor: pointer" title="${consentForm?.comment}">
                                                     <div class="comment more">${consentForm?.comment?.trim()}</div>
                                                 </td>
 
-                                                <td>
+                                                <td style="width:8%">
                                                     <g:link action="show" id="${consentForm?.id}"
                                                             class="btn btn-success btn-sm"
                                                             controller="consentFormCompletion"
