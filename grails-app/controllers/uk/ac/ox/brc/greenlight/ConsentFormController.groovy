@@ -1,11 +1,14 @@
 package uk.ac.ox.brc.greenlight
 
+import uk.ac.ox.brc.greenlight.Audit.RequestLog
+
 class ConsentFormController {
 
 	def consentEvaluationService
     def consentFormService
 	def patientService
 	def studyService
+	def requestLogService
 
 
     def find()
@@ -71,6 +74,7 @@ class ConsentFormController {
 			}
 		}
 		model.studies =  studyService.getStudy()?.description
+		requestLogService.add(lookupId,model,RequestLog.RequestType.CutUpRoom)
 		render view:"cuttingRoom", model: model
 	}
 

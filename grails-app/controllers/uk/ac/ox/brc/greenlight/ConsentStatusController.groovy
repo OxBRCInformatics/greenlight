@@ -2,6 +2,7 @@ package uk.ac.ox.brc.greenlight
 
 import grails.plugin.springsecurity.annotation.Secured
 import grails.rest.RestfulController
+import uk.ac.ox.brc.greenlight.Audit.RequestLog
 
 /**
  * API endpoint for retrieving the consent status for a patient. The patient
@@ -13,6 +14,7 @@ class ConsentStatusController{
 	def consentFormService
 	def consentEvaluationService
 	def patientService
+	def requestLogService
 
 	/**
 	 * Get the consent status for a patient. Initially looks up NHS number,
@@ -72,6 +74,7 @@ class ConsentStatusController{
 				])
 			}
 		}
+		requestLogService.add(lookupId,response,RequestLog.RequestType.REST_API)
 		respond response
 	}
 }

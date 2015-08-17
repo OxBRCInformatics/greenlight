@@ -3,6 +3,8 @@ package uk.ac.ox.brc.greenlight
 import grails.test.mixin.TestFor
 import greenlight.Study
 import spock.lang.Specification
+import uk.ac.ox.brc.greenlight.Audit.RequestLog
+import uk.ac.ox.brc.greenlight.Audit.RequestLogService
 
 /**
  * Created by soheil on 01/04/2014.
@@ -13,6 +15,8 @@ class ConsentFormControllerSpec extends Specification{
     def setup()
     {
         controller.consentFormService = Mock(ConsentFormService)
+
+		controller.requestLogService = Mock(RequestLogService)
 
 
         controller.patientService = Mock(PatientService)
@@ -93,4 +97,31 @@ class ConsentFormControllerSpec extends Specification{
 		 controller.modelAndView.model.consents[0].form.version == "12"
 		 controller.modelAndView.model.consents[0].form.namePrefix == "fm1"
 	 }
+
+
+	def "checkConsent will call RequestLogService to save details of the request"()
+	{
+		given:
+		def formTemplates = [
+				new ConsentFormTemplate(name: "FORM1", namePrefix: "fm1", templateVersion: "12", questions: []),
+				new ConsentFormTemplate(name: "FORM2", namePrefix: "fm2", templateVersion: "12", questions: [])
+		]
+
+		def now = new Date()
+		def completedForms = [
+				new ConsentForm(template: formTemplates[0], consentDate: now-14), // 2 weeks ago
+				new ConsentForm(template: formTemplates[1], consentDate: now-1 ), // 1 day ago
+		]
+
+		def lookupId = "nhsNumber"
+
+		when:"available nhsNumber is provided"
+		controller.params.searchInput = lookupId
+		controller.checkConsent()
+
+		then:"patient consent forms are returned"
+		1 * controller.consentFormService.getLatestConsentForms(_) >> {return completedForms}
+		1 * controller.requestLogService.add("nhsNumber",_,RequestLog.RequestType.CutUpRoom) >> { }
+		controller.modelAndView.model.consents.size() == 2
+	}
 }
