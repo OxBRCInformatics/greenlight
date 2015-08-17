@@ -1,5 +1,7 @@
 package uk.ac.ox.brc.greenlight.auth
+import org.codehaus.groovy.grails.plugins.orm.auditable.Stamp
 
+@Stamp
 class AppUser {
 
 	transient springSecurityService
@@ -10,6 +12,10 @@ class AppUser {
 	boolean accountExpired
 	boolean accountLocked
 	boolean passwordExpired
+
+
+	static auditable =  [ignore:['version','lastUpdated','lastUpdatedBy','createdBy','dateCreated']]
+
 
 	static constraints = {
 		username blank: false, unique: true

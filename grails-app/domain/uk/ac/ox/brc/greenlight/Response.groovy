@@ -1,12 +1,16 @@
 package uk.ac.ox.brc.greenlight
 
+import org.codehaus.groovy.grails.plugins.orm.auditable.Stamp
+
+@Stamp
 class Response {
 
     Question question
     ResponseValue answer = ResponseValue.BLANK
     String description
 
-    //static auditable = true
+	static auditable =  [ignore:['version','lastUpdated','lastUpdatedBy','createdBy','dateCreated']]
+
     static belongsTo = [
             consentForm: ConsentForm
     ]

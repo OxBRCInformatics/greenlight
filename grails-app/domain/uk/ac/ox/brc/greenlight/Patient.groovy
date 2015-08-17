@@ -1,8 +1,10 @@
 package uk.ac.ox.brc.greenlight
 
 import groovy.transform.EqualsAndHashCode
+import org.codehaus.groovy.grails.plugins.orm.auditable.Stamp
 
 @EqualsAndHashCode
+@Stamp
 class Patient {
 
     String givenName
@@ -11,7 +13,7 @@ class Patient {
     String nhsNumber
     String hospitalNumber
 
-    // static auditable = true
+	static auditable =  [ignore:['version','lastUpdated','lastUpdatedBy','createdBy','dateCreated']]
 
     static hasMany = [
             consents: ConsentForm

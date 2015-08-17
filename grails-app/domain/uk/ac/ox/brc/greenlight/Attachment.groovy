@@ -1,5 +1,8 @@
 package uk.ac.ox.brc.greenlight
 
+import org.codehaus.groovy.grails.plugins.orm.auditable.Stamp
+
+@Stamp
 class Attachment {
 
     byte[] content // deprecated. Use the fileUrl instead
@@ -13,6 +16,8 @@ class Attachment {
             consentForm: ConsentForm
     ]
 
+
+	static auditable =  [ignore:['version','lastUpdated','lastUpdatedBy','createdBy','dateCreated']]
 
 	//the status of the uploaded file
 	String uploadStatus;
