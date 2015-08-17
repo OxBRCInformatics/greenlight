@@ -731,13 +731,59 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		con.save(flush: true, failOnError: true)
 
 
+		def patientWithGenericFormID1 = new Patient(
+				givenName: "A",
+				familyName: "A",
+				dateOfBirth: new Date("04/01/1940"),
+				hospitalNumber: "18809",
+				nhsNumber: "7410009630",
+				consents: []
+		).save(flush: true, failOnError: true)
+		con = new ConsentForm(
+				attachedFormImage: attachment2,
+				template: template2,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edward",
+				formID: "CDR00000",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patientWithSameHospitalNumberAndDifferentDOB2).save(flush: true, failOnError: true)
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[0]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[1]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[2]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[3]))
+		con.save(flush: true, failOnError: true)
+
+
+
+		def patientWithGenericFormID2 = new Patient(
+				givenName: "A",
+				familyName: "A",
+				dateOfBirth: new Date("04/01/1940"),
+				hospitalNumber: "18809",
+				nhsNumber: "7410009630",
+				consents: []
+		).save(flush: true, failOnError: true)
+		con = new ConsentForm(
+				attachedFormImage: attachment2,
+				template: template2,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edward",
+				formID: "GEL00000",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patientWithSameHospitalNumberAndDifferentDOB2).save(flush: true, failOnError: true)
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[0]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[1]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[2]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[3]))
+		con.save(flush: true, failOnError: true)
+
 
 		def databaseStatusReport = databaseCleanupService.databaseStatusReports()
 
 		then: ""
 		result
-		databaseStatusReport.size() == 5
-		databaseStatusReport['ConsentFormCount'] == 14
+		databaseStatusReport.size() == 6
+		databaseStatusReport['ConsentFormCount'] == 16
 		databaseStatusReport['consentFormsWithEmptyFields'].size() == 3
 		databaseStatusReport['consentFormWithGenericIDs'].size()   == 4
 		databaseStatusReport['nhsNumberWithMoreThanOneDOB'].size() == 1
@@ -745,6 +791,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		databaseStatusReport['hospitalNumberWithMoreThanOneDOB'].size()  == 2
 		databaseStatusReport['hospitalNumberWithMoreThanOneDOB']["123"]  == "1941-04-01 ,1947-06-03 "
 		databaseStatusReport['hospitalNumberWithMoreThanOneDOB']["18809"]== "1941-04-01 ,1940-04-01 "
+		databaseStatusReport['consentWithGenericFormID'].size() == 2
 	}
 
 

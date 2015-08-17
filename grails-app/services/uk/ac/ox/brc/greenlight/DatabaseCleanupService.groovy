@@ -246,6 +246,17 @@ class DatabaseCleanupService {
 			}
 		}
 		result.put('hospitalNumberWithMoreThanOneDOB', hospitalNumberWithMoreThanOneDOB)
+
+
+
+		def consentWithGenericFormID = ConsentForm.createCriteria().list {
+			like("formID","%00000")
+			projections {
+				property('id', 'id')
+			}
+		}
+		result.put('consentWithGenericFormID', consentWithGenericFormID)
+
 		result
 	}
 
