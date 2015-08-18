@@ -200,6 +200,20 @@ class DatabaseCleanupService {
 		result.put('patientObjectsWithEmptyConsent', patientObjectsWithEmptyConsent)
 
 
+		def consentWithGenericFormID = ConsentForm.createCriteria().list {
+			like("formID","%00000")
+			projections {
+				property('id', 'id')
+			}
+		}
+		result.put('consentWithGenericFormID', consentWithGenericFormID)
+
+
+		def GELConsentsV1 = ConsentForm.executeQuery("select c.id,c.formStatus from ConsentForm as c where c.template.namePrefix='GEL' and c.template.templateVersion='Version 1.0 dated  25.08.2014'")
+		def GELConsentsV2 = ConsentForm.executeQuery("select c.id,c.formStatus from ConsentForm as c where c.template.namePrefix='GEL' and c.template.templateVersion='Version 2 dated 14.10.14'")
+		result.put('GELConsentsV1', GELConsentsV1)
+		result.put('GELConsentsV2', GELConsentsV2)
+
 		result
 	}
 
@@ -246,16 +260,6 @@ class DatabaseCleanupService {
 			}
 		}
 		result.put('hospitalNumberWithMoreThanOneDOB', hospitalNumberWithMoreThanOneDOB)
-
-
-
-		def consentWithGenericFormID = ConsentForm.createCriteria().list {
-			like("formID","%00000")
-			projections {
-				property('id', 'id')
-			}
-		}
-		result.put('consentWithGenericFormID', consentWithGenericFormID)
 
 		result
 	}
