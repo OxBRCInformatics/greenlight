@@ -1,7 +1,7 @@
 language: groovy
 jdk:
 - oraclejdk8
-- openjdk8
+- openjdk7
 addons:
   sauce_connect:
     username: $SAUCE_USERNAME
