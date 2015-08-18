@@ -850,6 +850,8 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 	void "updateConsentTemplateVersion will update consentTemplate version"(){
 
 		given:"default consent form template exist"
+		//remove all consentFormTemplates
+		ConsentFormTemplate.deleteAll(ConsentFormTemplate.list())
 		new ConsentFormTemplate(
 				name: "Pre-2014 ORB consent form",
 				namePrefix: "PRE",
@@ -868,6 +870,10 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				templateVersion: "Version 1.0 dated  25.08.2014"
 		).save(failOnError: true)
 
+		assert !ConsentFormTemplate.findByNameAndTemplateVersion("Pre-2014 ORB consent form","Version 1.2 dated 03.03.2009")
+		assert !ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form","Version 2 dated 14.10.2014")
+		assert !ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form","Version 1.0 dated 25.08.2014")
+
 
 		when: "updateConsentTemplateVersion called"
 		databaseCleanupService.updateConsentTemplateVersion()
@@ -878,4 +884,60 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form","Version 1.0 dated 25.08.2014")
 	}
 
+	void "updateCDRUniqueId will add uniqueId to consentFormTemplate"(){
+
+		given:"Default consentFormTemplates are available"
+		//remove all consentFormTemplates
+		ConsentFormTemplate.deleteAll(ConsentFormTemplate.list())
+		new ConsentFormTemplate(
+				name: "ORB General Consent Form",
+				namePrefix: "GEN",
+				templateVersion: "v1 October 2013").save(failOnError: true)
+
+		new ConsentFormTemplate(
+				name: "ORB Specific Programme Clinically Relevant Genomics - Oncology Consent Form for Adults",
+				namePrefix: "CRA",
+				templateVersion: "v1 October 2013").save(failOnError: true)
+
+		new ConsentFormTemplate(
+				name: "100,000 Genomes Project – Cancer Sequencing Consent Form",
+				namePrefix: "GEL",
+				templateVersion: "Version 1.0 dated 25.08.2014" //"Version 1.0 dated  25.08.2014"
+						).save(failOnError: true)
+
+		new ConsentFormTemplate(
+				name: "100,000 Genomes Project – Cancer Sequencing Consent Form",
+				namePrefix: "GEL",
+				templateVersion: "Version 2 dated 14.10.2014"//"Version 2 dated 14.10.14"
+				).save(failOnError: true)
+
+		new ConsentFormTemplate(
+				name: "Pre-2014 ORB consent form",
+				namePrefix: "PRE",
+				templateVersion: "Version 1.2 dated 03.03.2009" //"Version 1.2 dated 3rd March 2009"
+				).save(failOnError: true)
+
+		new ConsentFormTemplate(
+				name: "ORB General Consent Form",
+				namePrefix: "GEN",
+				templateVersion: "v2 April 2014").save(failOnError: true)
+
+		assert !ConsentFormTemplate.findByCdrUniqueId("ORB_PRE_V1_2")
+		assert !ConsentFormTemplate.findByCdrUniqueId("ORB_GEN_V1")
+		assert !ConsentFormTemplate.findByCdrUniqueId("ORB_CRA_V1")
+		assert !ConsentFormTemplate.findByCdrUniqueId("GEL_CSC_V1")
+		assert !ConsentFormTemplate.findByCdrUniqueId("GEL_CSC_V2")
+		assert !ConsentFormTemplate.findByCdrUniqueId("ORB_GEN_V2")
+
+		when:
+		databaseCleanupService.updateCDRUniqueId()
+
+		then:
+		ConsentFormTemplate.findByCdrUniqueId("ORB_PRE_V1_2")
+		ConsentFormTemplate.findByCdrUniqueId("ORB_GEN_V1")
+		ConsentFormTemplate.findByCdrUniqueId("ORB_CRA_V1")
+		ConsentFormTemplate.findByCdrUniqueId("GEL_CSC_V1")
+		ConsentFormTemplate.findByCdrUniqueId("GEL_CSC_V2")
+		ConsentFormTemplate.findByCdrUniqueId("ORB_GEN_V2")
+	}
 }

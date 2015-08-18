@@ -306,4 +306,44 @@ class DatabaseCleanupService {
 		}
 	}
 
+
+	def updateCDRUniqueId() {
+
+		def formTemplate = ConsentFormTemplate.findByNameAndTemplateVersion("ORB General Consent Form", "v1 October 2013")
+		if (formTemplate) {
+			formTemplate.cdrUniqueId = "ORB_GEN_V1"
+			formTemplate.save(flush: true)
+		}
+
+		formTemplate = ConsentFormTemplate.findByNameAndTemplateVersion("ORB Specific Programme Clinically Relevant Genomics - Oncology Consent Form for Adults", "v1 October 2013")
+		if (formTemplate) {
+			formTemplate.cdrUniqueId = "ORB_CRA_V1"
+			formTemplate.save(flush: true)
+		}
+
+		formTemplate = ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form", "Version 1.0 dated 25.08.2014")
+		if (formTemplate) {
+			formTemplate.cdrUniqueId = "GEL_CSC_V1"
+			formTemplate.save(flush: true)
+		}
+
+		formTemplate = ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form", "Version 2 dated 14.10.2014")
+		if (formTemplate) {
+			formTemplate.cdrUniqueId = "GEL_CSC_V2"
+			formTemplate.save(flush: true)
+		}
+
+		formTemplate = ConsentFormTemplate.findByNameAndTemplateVersion("Pre-2014 ORB consent form", "Version 1.2 dated 03.03.2009")
+		if (formTemplate) {
+			formTemplate.cdrUniqueId = "ORB_PRE_V1_2"
+			formTemplate.save(flush: true)
+		}
+
+		formTemplate = ConsentFormTemplate.findByNameAndTemplateVersion("ORB General Consent Form", "v2 April 2014")
+		if (formTemplate) {
+			formTemplate.cdrUniqueId = "ORB_GEN_V2"
+			formTemplate.save(flush: true)
+		}
+	}
+
 }

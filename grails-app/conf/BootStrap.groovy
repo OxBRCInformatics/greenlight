@@ -92,7 +92,8 @@ class BootStrap {
             new ConsentFormTemplate(
                     name: "ORB General Consent Form",
                     namePrefix: "GEN",
-                    templateVersion: "v1 October 2013"
+                    templateVersion: "v1 October 2013",
+					cdrUniqueId : "ORB_GEN_V1"
             ).addToQuestions(new Question(optional: true, name: 'I have read and understood the information sheet for this study (Version 1 dated December 2013). I have had the opportunity to ask questions and have had these answered satisfactorily.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
             ).addToQuestions(new Question(name: 'I agree to give samples for research and/or allow samples already collected as part of my medical care to be used by the biobank.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
             ).addToQuestions(new Question(name: 'I agree that further blood and/or tissue samples may be taken for the biobank during the course of my hospital care.  I understand that I will be asked for permission each time.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
@@ -115,7 +116,8 @@ class BootStrap {
             new ConsentFormTemplate(
                     name: "ORB Specific Programme Clinically Relevant Genomics - Oncology Consent Form for Adults",
                     namePrefix: "CRA",
-                    templateVersion: "v1 October 2013"
+                    templateVersion: "v1 October 2013",
+					cdrUniqueId : "ORB_CRA_V1"
             ).addToQuestions(new Question(optional: true, name: 'I have read and understood the information sheet for this study (Version 1 dated October 2013). I have had the opportunity to ask questions and have had these answered satisfactorily.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
             ).addToQuestions(new Question(name: 'I agree to give samples for research and/or allow samples already collected as part of my medical care to be used by the biobank.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
             ).addToQuestions(new Question(name: 'I agree that further blood and/or tissue samples may be taken for the biobank during the course of my hospital care.  I understand that I will be asked for permission each time.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
@@ -137,7 +139,8 @@ class BootStrap {
 			new ConsentFormTemplate(
 					name: "100,000 Genomes Project – Cancer Sequencing Consent Form",
 					namePrefix: "GEL",
-					templateVersion: "Version 1.0 dated 25.08.2014" //"Version 1.0 dated  25.08.2014"
+					templateVersion: "Version 1.0 dated 25.08.2014", //"Version 1.0 dated  25.08.2014"
+					cdrUniqueId : "GEL_CSC_V1"
 			).addToQuestions(new Question(name: 'I have read and understood the information sheet for this study (Version 1.0 dated 25.08.2014). I have had the opportunity to ask questions and have had these answered satisfactorily.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
 			).addToQuestions(new Question(name: 'I understand that my participation is voluntary, that I am free to withdraw at any time without giving a reason, and that withdrawing will not affect my present or future medical care and legal rights in any way.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
 			).addToQuestions(new Question(name: 'I agree to provide samples and/or allow samples already collected as part of my medical care to be used for this research.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
@@ -222,8 +225,9 @@ class BootStrap {
             new ConsentFormTemplate(
                     name: "100,000 Genomes Project – Cancer Sequencing Consent Form",
                     namePrefix: "GEL",
-                    templateVersion: "Version 2 dated 14.10.2014"//"Version 2 dated 14.10.14"
-            ).addToQuestions(new Question(name: 'I have read and understood the information sheet for this study (Version 1.0 dated 25.08.2014). I have had the opportunity to ask questions and have had these answered satisfactorily.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
+                    templateVersion: "Version 2 dated 14.10.2014",//"Version 2 dated 14.10.14"
+					cdrUniqueId : "GEL_CSC_V2"
+			).addToQuestions(new Question(name: 'I have read and understood the information sheet for this study (Version 1.0 dated 25.08.2014). I have had the opportunity to ask questions and have had these answered satisfactorily.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
             ).addToQuestions(new Question(name: 'I understand that my participation is voluntary, that I am free to withdraw at any time without giving a reason, and that withdrawing will not affect my present or future medical care and legal rights in any way.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
             ).addToQuestions(new Question(name: 'I agree to provide samples and/or allow samples already collected as part of my medical care to be used for this research.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
             ).addToQuestions(new Question(name: 'I agree that further blood samples may be taken for this study during the course of my hospital care, if necessary. I understand that I will be asked for permission each time.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
@@ -244,7 +248,8 @@ class BootStrap {
 			new ConsentFormTemplate(
 					name: "Pre-2014 ORB consent form",
 					namePrefix: "PRE",
-					templateVersion: "Version 1.2 dated 03.03.2009" //"Version 1.2 dated 3rd March 2009"
+					templateVersion: "Version 1.2 dated 03.03.2009", //"Version 1.2 dated 3rd March 2009"
+					cdrUniqueId : "ORB_PRE_V1_2"
 			).addToQuestions(new Question(name: 'I have read and understood the patient information sheet (green v1.2 dated 3rd March 2009). My questions have been answered satisfactorily. I know how to contact the research team.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
 			).addToQuestions(new Question(name: 'I agree to give a sample of blood and/or other tissues for research.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
 			).addToQuestions(new Question(name: 'I agree that further blood and/or tissue samples may be taken for research during the course of my hospital care. I understand that I will be asked for permission each time.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
@@ -265,7 +270,8 @@ class BootStrap {
 			new ConsentFormTemplate(
 					name: "ORB General Consent Form",
 					namePrefix: "GEN",
-					templateVersion: "v2 April 2014"
+					templateVersion: "v2 April 2014",
+					cdrUniqueId : "ORB_GEN_V2"
 			).addToQuestions(new Question(optional: true, name: 'I have read and understood the information sheet for this study (Version 1 dated December 2013). I have had the opportunity to ask questions and have had these answered satisfactorily.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
 			).addToQuestions(new Question(name: 'I agree to give samples for research and/or allow samples already collected as part of my medical care to be used by the biobank.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
 			).addToQuestions(new Question(name: 'I agree that further blood and/or tissue samples may be taken for the biobank during the course of my hospital care.  I understand that I will be asked for permission each time.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
@@ -284,6 +290,7 @@ class BootStrap {
 		//update consent form version label
 		if(ConsentFormTemplate.count() == 6){
 			databaseCleanupService.updateConsentTemplateVersion()
+			databaseCleanupService.updateCDRUniqueId()
 		}
 
 

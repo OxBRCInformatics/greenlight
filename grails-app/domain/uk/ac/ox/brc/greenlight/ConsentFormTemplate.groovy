@@ -2,6 +2,7 @@ package uk.ac.ox.brc.greenlight
 
 class ConsentFormTemplate {
 
+	String cdrUniqueId
     String name
     String namePrefix
     String templateVersion
@@ -14,6 +15,7 @@ class ConsentFormTemplate {
     ]
     static constraints = {
 
+		cdrUniqueId nullable:true, unique: true
     }
     
     String toString()
