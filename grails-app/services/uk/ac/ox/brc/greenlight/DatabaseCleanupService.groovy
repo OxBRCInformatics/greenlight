@@ -284,4 +284,26 @@ class DatabaseCleanupService {
 		updatedCount
 	}
 
+
+	def updateConsentTemplateVersion(){
+
+		def orbTemplate = ConsentFormTemplate.findByNameAndTemplateVersion("Pre-2014 ORB consent form","Version 1.2 dated 3rd March 2009")
+		if(orbTemplate){
+			orbTemplate.templateVersion = "Version 1.2 dated 03.03.2009"
+			orbTemplate.save(flush: true)
+		}
+
+		def gelTemp = ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form","Version 2 dated 14.10.14")
+		if(gelTemp){
+			gelTemp.templateVersion = "Version 2 dated 14.10.2014"
+			gelTemp.save(flush: true)
+		}
+
+		def gelTemp2 = ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form","Version 1.0 dated  25.08.2014")
+		if(gelTemp2){
+			gelTemp2.templateVersion = "Version 1.0 dated 25.08.2014"
+			gelTemp2.save(flush: true)
+		}
+	}
+
 }

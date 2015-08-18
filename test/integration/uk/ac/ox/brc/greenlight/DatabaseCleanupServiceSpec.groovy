@@ -846,4 +846,36 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		recordsUpdated   == expectedCount
 		afterUpdateCount == 0
 	}
+
+	void "updateConsentTemplateVersion will update consentTemplate version"(){
+
+		given:"default consent form template exist"
+		new ConsentFormTemplate(
+				name: "Pre-2014 ORB consent form",
+				namePrefix: "PRE",
+				templateVersion: "Version 1.2 dated 3rd March 2009"
+		).save(failOnError: true)
+
+		new ConsentFormTemplate(
+				name: "100,000 Genomes Project – Cancer Sequencing Consent Form",
+				namePrefix: "GEL",
+				templateVersion: "Version 2 dated 14.10.14"
+		).save(failOnError: true)
+
+		new ConsentFormTemplate(
+				name: "100,000 Genomes Project – Cancer Sequencing Consent Form",
+				namePrefix: "GEL",
+				templateVersion: "Version 1.0 dated  25.08.2014"
+		).save(failOnError: true)
+
+
+		when: "updateConsentTemplateVersion called"
+		databaseCleanupService.updateConsentTemplateVersion()
+
+		then:"consentTemplate version will be updated"
+		ConsentFormTemplate.findByNameAndTemplateVersion("Pre-2014 ORB consent form","Version 1.2 dated 03.03.2009")
+		ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form","Version 2 dated 14.10.2014")
+		ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form","Version 1.0 dated 25.08.2014")
+	}
+
 }
