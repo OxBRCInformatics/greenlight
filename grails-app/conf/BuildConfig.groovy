@@ -48,6 +48,7 @@ grails.project.dependency.resolution = {
         mavenLocal()
         grailsCentral()
         mavenCentral()
+		jcenter()
 
         // For Geb snapshot
         mavenRepo "http://oss.sonatype.org/content/repositories/snapshots"
@@ -77,6 +78,7 @@ grails.project.dependency.resolution = {
 
 		// PDF conversion
 		//compile 'org.apache.pdfbox:pdfbox:1.8.8'
+		compile "uk.ac.ox.ndm.mirth:mirth-datamodel:2.0-SNAPSHOT"
     }
 
     plugins {
