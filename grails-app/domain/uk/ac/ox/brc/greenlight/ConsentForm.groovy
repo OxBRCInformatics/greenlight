@@ -14,6 +14,10 @@ class ConsentForm {
     FormStatus formStatus = FormStatus.NORMAL
 	ConsentStatus consentStatus = ConsentStatus.NON_CONSENT
 
+	boolean savedInCDR
+	Date dateTimeSavedInCDR
+	String savedInCDRStatus
+	
     List<Response> responses
     String comment
 
@@ -33,6 +37,9 @@ class ConsentForm {
     }
 
     static constraints = {
+		savedInCDR nullable:true
+		dateTimeSavedInCDR nullable: true
+		savedInCDRStatus nullable:true
         attachedFormImage nullable: true //remove this later :)
         formID matches: '[a-zA-Z]{3}\\d{5}'
         consentDate nullable: true
