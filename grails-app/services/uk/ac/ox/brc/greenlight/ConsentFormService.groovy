@@ -9,6 +9,7 @@ class ConsentFormService {
 	def consentEvaluationService
 	def patientService
 	def consentFormService
+	def CDRService
 
 	/**
 	 * Get the latest consent form for these patient objects.
@@ -92,6 +93,9 @@ class ConsentFormService {
 			//calculate and save consentStatus
 			consentForm.consentStatus = consentEvaluationService.getConsentStatus(consentForm)
 			consentForm.save(flush: true)
+
+			def saveToCDRStatus = CDRService.saveConsentForm(oldConsentForm,OldPatient,consentForm,patient)
+
 			return true
 		}
 		catch (Exception ex) {
