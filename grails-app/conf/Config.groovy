@@ -192,6 +192,7 @@ grails{
 					'/consentForm/cuttingRoom': 	['permitAll'],
 
 					//just admin access
+					'/databaseCleanUp/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
 					'/securityInfo/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
 					'/role': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
 					'/role/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
