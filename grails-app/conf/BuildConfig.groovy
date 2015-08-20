@@ -77,6 +77,8 @@ grails.project.dependency.resolution = {
 
 		// PDF conversion
 		//compile 'org.apache.pdfbox:pdfbox:1.8.8'
+
+		compile 'joda-time:joda-time:2.8'
     }
 
     plugins {
