@@ -42,6 +42,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
             ).save()
 
        def consent = new ConsentForm(
+			   accessGUID: UUID.randomUUID().toString(),
                 attachedFormImage: attachment,
                 template: template,
                 patient: patient,
@@ -72,6 +73,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
 		).save()
 
 		def consent2 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template,
 				patient: patient2,
@@ -274,6 +276,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
 				consents: []
 		)
 		def consent = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment,
 				template: template,
 				patient: patient,
@@ -319,6 +322,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
 				consents: []
 		)
 		def consent = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment,
 				template: template,
 				patient: patient,

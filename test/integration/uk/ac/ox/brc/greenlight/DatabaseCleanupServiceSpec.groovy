@@ -50,6 +50,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		).save(flush: true)
 
 		def consent = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment,
 				template: template,
 				patient: patient,
@@ -134,6 +135,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 
 		def consent1 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment1,
 				template: template,
 				patient: patient1,
@@ -150,6 +152,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		consent1.save(flush: true , failOnError:true )
 
 		def consent2 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment1,
 				template: template,
 				patient: patient1,
@@ -167,6 +170,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 
 		def consent3 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template,
 				patient: patient2,
@@ -181,6 +185,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		consent3.save(flush: true , failOnError:true )
 
 		def consent4 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template,
 				patient: patient2,
@@ -280,6 +285,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 
 		def consent1 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment1,
 				template: template,
 				consentDate: new Date([year:2014,month:01,date:01]),
@@ -295,6 +301,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 
 		def consent2 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template,
 				consentDate: new Date([year:2014,month:01,date:01]),
@@ -368,6 +375,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				.addToQuestions(questions1[3])
 				.save(flush: true , failOnError:true )
 		def consent11 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment1,
 				template: template1,
 				consentDate: new Date([year:2014,month:01,date:01]),
@@ -382,6 +390,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		consent11.save(flush: true , failOnError:true )
 
 		def consent12 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment1,
 				template: template1,
 				consentDate: new Date([year:2014,month:01,date:01]),
@@ -415,6 +424,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 
 		def consent2 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year:2014,month:01,date:01]),
@@ -495,6 +505,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		def con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -518,6 +529,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -539,6 +551,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				.save(flush: true , failOnError:true )
 
 		 new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: GELTemp1,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -547,6 +560,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				formStatus: ConsentForm.FormStatus.NORMAL,
 				patient: patientTest).save(flush: true, failOnError: true)
 		new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: GELTemp2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -568,6 +582,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -589,6 +604,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -610,6 +626,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -634,6 +651,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -659,6 +677,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -684,6 +703,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -706,6 +726,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -729,6 +750,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -752,6 +774,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -777,6 +800,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -799,6 +823,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
