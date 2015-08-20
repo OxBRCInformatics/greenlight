@@ -117,7 +117,6 @@ class ConsentFormControllerSpec extends Specification{
 		controller?.modelAndView?.model == null
 
 		when:"called for a GUID which is available"
-		controller.request.method = 'POST'
 		controller.params.format = "html"
 		controller.flash?.error = null
 		controller.params["accessGUID"] = "123-456-789"
@@ -128,7 +127,7 @@ class ConsentFormControllerSpec extends Specification{
 		1 * controller.consentEvaluationService.getConsentLabels(_) >> { ["Do not contact","No incidental findings"]}
 		controller.flash?.error == null
 		controller.modelAndView.model.success == true
-		controller.modelAndView.model.consent  
+		controller.modelAndView.model.consent
 				/*[
 				id: null,
 				consentDate: DateTimeFormat.forPattern("yyyy-MM-dd").print(new DateTime(2015,01,25,0,0)),

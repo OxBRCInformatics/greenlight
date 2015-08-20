@@ -124,6 +124,6 @@ class ConsentFormController {
 		]
 
 		def result = [success:true,error:null,consent: consentModel ]
-		respond result as Object, [formats:['xml','json','html'], model:result] as Map
+		respond result as Object, [model:result] as Map
 	}
 }
