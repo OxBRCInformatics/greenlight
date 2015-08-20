@@ -68,5 +68,9 @@ class ConsentForm {
 		String getKey() { name(); }
 	}
 
+	def beforeInsert() {
+		//automatically assign a GUID to the consentForm just beforeInsert
+		this.accessGUID = UUID.randomUUID().toString()
+	}
 
 }
