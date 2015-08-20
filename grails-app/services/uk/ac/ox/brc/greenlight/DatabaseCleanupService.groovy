@@ -346,4 +346,24 @@ class DatabaseCleanupService {
 		}
 	}
 
+
+	def addAccessGUIDtoConsentForms(){
+
+		def total = ConsentForm.count()
+		//check if consentForms don't have accessGUID (a proper GUID), then update them
+		def consentsWithAccessGUID = ConsentForm.executeQuery("from ConsentForm as c where c.accessGUID like '%-%-%-%'")
+		if(consentsWithAccessGUID.size() != 0){
+			return [total:total,updated:0]
+		}
+
+		//update all accessGUIDs
+		def updated = 0
+		ConsentForm.list().each { consent ->
+			consent.accessGUID = UUID.randomUUID().toString()
+			consent.save(flush:true,failOnError: true)
+			updated++
+		}
+		return [total:total,updated:updated]
+	}
+
 }

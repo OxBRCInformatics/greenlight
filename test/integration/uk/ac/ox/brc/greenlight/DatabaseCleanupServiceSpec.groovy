@@ -201,6 +201,25 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 	}
 
+	def AddConsentWithoutAccessGUID(){
+
+		def template=new ConsentFormTemplate(
+				name: "ORB1",
+				templateVersion: "1.1",
+				namePrefix: "GNR")
+				.save(flush: true , failOnError:true )
+
+		//add 2 consentForms without using GORM as it will generate accessGUID for ConsentForm objects in domain beforeInsert method
+		def sql = new Sql(dataSource)
+
+		sql.executeUpdate(
+				'insert into CONSENT_FORM (accessGUID,version,formid,form_status,template_id) values(?, ?, ?, ?, ?)',
+				["1f91bb5c10d922ce6923b657324a6a4f",0, 'GEL12356',"NORMAL",template.id])
+		sql.executeUpdate(
+				'insert into CONSENT_FORM (accessGUID,version,formid,form_status,template_id) values(?, ?, ?, ?, ?)',
+				["1f91bb5c10d91125524a6a4f",0, 'GEL12356',"NORMAL",template.id])
+
+	}
 	void "DatabaseCleanup removes orphan responses"() {
 
 		given:"A number of orphan responses already exists"
@@ -964,5 +983,27 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		ConsentFormTemplate.findByCdrUniqueId("GEL_CSC_V1")
 		ConsentFormTemplate.findByCdrUniqueId("GEL_CSC_V2")
 		ConsentFormTemplate.findByCdrUniqueId("ORB_GEN_V2")
+	}
+
+	def "addAccessGUIDtoConsentForms will add GUID into ConsentForm if they do not have"(){
+
+		given:"two consent already exists"
+		AddConsentWithoutAccessGUID()
+
+		when:"addAccessGUIDtoConsentForms is called"
+		def result = databaseCleanupService.addAccessGUIDtoConsentForms()
+
+		then:"records are updated"
+		result.total   == 2
+		result.updated == 2
+
+
+		when:"addAccessGUIDtoConsentForms is called again"
+		result = databaseCleanupService.addAccessGUIDtoConsentForms()
+
+		then:"it doesn't have any effect"
+		result.total   == 2
+		result.updated == 0
+
 	}
 }
