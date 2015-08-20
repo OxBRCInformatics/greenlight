@@ -289,4 +289,16 @@ class ConsentFormService {
 		}
 		return sb.toString()
 	}
+
+
+	def searchByAccessGUID(accessGUID){
+		if(!accessGUID) {
+			return null
+		}
+		def consent = ConsentForm.findByAccessGUID(accessGUID)
+		if(!consent){
+			return null
+		}
+		consent
+	}
 }
