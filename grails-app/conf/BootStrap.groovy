@@ -5,8 +5,10 @@ import org.codehaus.groovy.grails.web.converters.configuration.ConvertersConfigu
 import org.codehaus.groovy.grails.web.converters.configuration.DefaultConverterConfiguration
 import org.springframework.jca.cci.CciOperationNotSupportedException
 import org.springframework.web.context.support.WebApplicationContextUtils
+import uk.ac.ox.brc.greenlight.Attachment
 import uk.ac.ox.brc.greenlight.ConsentForm
 import uk.ac.ox.brc.greenlight.ConsentFormTemplate
+import uk.ac.ox.brc.greenlight.Patient
 import uk.ac.ox.brc.greenlight.Question
 import uk.ac.ox.brc.greenlight.Response
 import uk.ac.ox.brc.greenlight.auth.AppRole
@@ -55,6 +57,8 @@ class BootStrap {
                 createAdminUser("admin", "password", "support@example.com")
 				createAPIUser("api","api","api@api.cpm")
                 createFormTemplates()
+				createTestUser("test","test","test@test.com")
+				addConsentFormForDevelopment()
             }
 
             production {
@@ -82,6 +86,13 @@ class BootStrap {
 		if(!AppUser.findByUsername(username) ){
 			def user = new AppUser(username: username, enabled: true, emailAddress: email, password: password).save(failOnError: true)
 			UserRole.create user, AppRole.findByAuthority('ROLE_API')
+		}
+	}
+
+	def createTestUser(String username, String password, String email){
+		if(!AppUser.findByUsername(username) ){
+			def user = new AppUser(username: username, enabled: true, emailAddress: email, password: password).save(failOnError: true)
+			UserRole.create user, AppRole.findByAuthority('ROLE_USER')
 		}
 	}
 
@@ -298,4 +309,39 @@ class BootStrap {
 
     def destroy = {
     }
+
+
+	private def addConsentFormForDevelopment(){
+		def attachment = new Attachment(fileName: '1a.jpg', dateOfUpload: new Date([year: 2014, month: 2, date: 4]), attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flash: true)
+
+		def template = new ConsentFormTemplate(
+				id: 1,
+				name: "ORB1",
+				templateVersion: "1.1",
+				namePrefix: "ABC",
+		).addToQuestions(new Question(name: 'I read1...')
+		).save()
+
+
+		def consent = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
+				attachedFormImage: attachment,
+				template: template,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edmin",
+				formID: "ABC12345",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				consentStatus: ConsentForm.ConsentStatus.CONSENT_WITH_LABELS.CONSENT_WITH_LABELS
+		).save();
+
+		new Patient(
+				givenName: "Patient1",
+				familyName: "Clapton",
+				dateOfBirth: new Date("30/03/1945"),
+				hospitalNumber: "1002",
+				nhsNumber: "1234567892",
+				consents: []
+		).addToConsents(consent).save()
+
+	}
 }
