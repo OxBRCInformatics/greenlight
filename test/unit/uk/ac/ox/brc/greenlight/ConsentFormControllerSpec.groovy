@@ -2,6 +2,8 @@ package uk.ac.ox.brc.greenlight
 
 import grails.test.mixin.TestFor
 import greenlight.Study
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import spock.lang.Specification
 
 /**
@@ -93,4 +95,101 @@ class ConsentFormControllerSpec extends Specification{
 		 controller.modelAndView.model.consents[0].form.version == "12"
 		 controller.modelAndView.model.consents[0].form.namePrefix == "fm1"
 	 }
+
+	def "showConsentFormByAccessGUID returns NOT FOUND if can't find consentForm based on accessGUID"(){
+
+		given:"A consent already exists"
+
+		when:"called without accessGUID parameter"
+		controller.showConsentFormByAccessGUID()
+
+		then:"returns NOT FOUND"
+		controller.flash.error == "Not Found"
+		controller?.modelAndView?.model == null
+
+		when:"called for a GUID which is not available"
+		controller.params["accessGUID"] = "NOT-AVAILABLE"
+		controller.showConsentFormByAccessGUID()
+
+		then:"returns NOT FOUND"
+		1 * controller.consentFormService.searchByAccessGUID("NOT-AVAILABLE") >> {null}
+		controller.flash.error == "Not Found"
+		controller?.modelAndView?.model == null
+
+		when:"called for a GUID which is available"
+		controller.request.method = 'POST'
+		controller.params.format = "html"
+		controller.flash?.error = null
+		controller.params["accessGUID"] = "123-456-789"
+		controller.showConsentFormByAccessGUID()
+
+		then:"returns the consent"
+		1 * controller.consentFormService.searchByAccessGUID(_) >> {createConsent()}
+		1 * controller.consentEvaluationService.getConsentLabels(_) >> { ["Do not contact","No incidental findings"]}
+		controller.flash?.error == null
+		controller.modelAndView.model.success == true
+		controller.modelAndView.model.consent  
+				/*[
+				id: null,
+				consentDate: DateTimeFormat.forPattern("yyyy-MM-dd").print(new DateTime(2015,01,25,0,0)),
+				consentTakerName: "Edward",
+				formID: "GEN12345",
+				comment: "TestComment",
+				formStatus: ConsentForm.FormStatus.NORMAL.toString(),
+				consentStatus: ConsentForm.ConsentStatus.FULL_CONSENT.toString(),
+				consentStatusLabels : ["Do not contact","No incidental findings"],
+				responses : [
+							[answer:Response.ResponseValue.YES.toString(), ]
+						new Response(answer: Response.ResponseValue.YES,question: new Question(name: 'I read1...')),
+							 new Response(answer: Response.ResponseValue.YES,question: new Question(name: 'I read2...'))]
+				,
+				attachmentFileUrl: "1.jpg",
+				patient: [
+						id: null,
+						givenName: "Eric",
+						familyName: "Clapton",
+						dateOfBirth: DateTimeFormat.forPattern("yyyy-MM-dd").print(new DateTime(1980,12,25,0,0)),
+						hospitalNumber: "1002",
+						nhsNumber: "1234567890",
+				]
+		]*/
+	}
+
+	private def createConsent(){
+		def attachment= new Attachment(fileUrl: '1.jpg', dateOfUpload: new Date(),attachmentType: Attachment.AttachmentType.IMAGE, content: [])
+
+		def question1 =  new Question(name: 'I read1...')
+		def question2 =  new Question(name: 'I read2...')
+
+		def template=new ConsentFormTemplate(
+				name: "ORB1",
+				templateVersion: "1.1",
+				namePrefix: "GNR",questions: [question1,question2])
+
+		def patient= new Patient(
+				givenName: "Eric",
+				familyName: "Clapton",
+				dateOfBirth: new org.joda.time.DateTime(1980,12,25,0,0),
+				hospitalNumber: "1002",
+				nhsNumber: "1234567890",
+				consents: []
+		)
+		def consent = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
+				attachedFormImage: attachment,
+				template: template,
+				patient: patient,
+				consentDate: new org.joda.time.DateTime(2015,01,25,0,0),
+				consentTakerName: "Edward",
+				formID: "GEN12345",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				consentStatus: ConsentForm.ConsentStatus.FULL_CONSENT,
+				comment: "TestComment",
+				responses: [
+						new Response(answer: Response.ResponseValue.YES,question: question1),
+						new Response(answer: Response.ResponseValue.YES,question: question2)
+				]
+		)
+		consent
+	}
 }

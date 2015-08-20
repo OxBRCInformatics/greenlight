@@ -80,4 +80,50 @@ class ConsentFormController {
         response.setHeader("Content-disposition", "attachment; filename=${fileName}.csv");
 		render(contentType: "text/csv;charset=utf-8", text: csvString.toString());
     }
+
+	def showConsentFormByAccessGUID(){
+		def accessGUID = params["accessGUID"]
+		if(!accessGUID){
+			flash.error = "Not Found"
+			def result = [success:false,error:"Not Found",consent: null ]
+			respond result as Object, [formats:['xml','json']] as Map
+			return
+		}
+
+		def consent = consentFormService.searchByAccessGUID(accessGUID)
+		if(!consent){
+			flash.error = "Not Found"
+			def result = [success:false,error:"Not Found",consent: null ]
+			respond result as Object, [formats:['xml','json']] as Map
+			return
+		}
+
+		def consentModel = [
+		        id: consent?.id,
+				consentDate: consent?.consentDate?.format("yyyy-MM-dd"),
+				consentTakerName: consent?.consentTakerName,
+				formID: consent?.formID,
+				comment: consent?.comment,
+				formStatus: consent?.formStatus?.toString(),
+				consentStatus: consent?.consentStatus?.toString(),
+				consentStatusLabels : consentEvaluationService.getConsentLabels(consent),
+				responses : consent?.responses,
+				attachment:[
+					id: consent?.attachedFormImage?.id,
+					dateOfUpload : consent?.attachedFormImage?.dateOfUpload.format("yyyy-MM-dd HH:mm:ss"),
+					fileName : consent?.attachedFormImage?.fileName
+				],
+				patient: [
+					id: consent?.patient?.id,
+					givenName  : consent?.patient?.givenName,
+					familyName : consent?.patient?.familyName,
+					dateOfBirth: consent?.patient?.dateOfBirth?.format("yyyy-MM-dd"),
+					nhsNumber: consent?.patient?.nhsNumber,
+					hospitalNumber: consent?.patient?.hospitalNumber
+				]
+		]
+
+		def result = [success:true,error:null,consent: consentModel ]
+		respond result as Object, [formats:['xml','json','html'], model:result] as Map
+	}
 }
