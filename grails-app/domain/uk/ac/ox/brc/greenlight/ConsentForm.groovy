@@ -8,6 +8,8 @@ class ConsentForm {
     Attachment attachedFormImage
     ConsentFormTemplate template
 
+	String accessGUID
+
     Date consentDate
     String consentTakerName
     String formID
@@ -33,6 +35,7 @@ class ConsentForm {
     }
 
     static constraints = {
+		accessGUID nullable: false , unique: true
         attachedFormImage nullable: true //remove this later :)
         formID matches: '[a-zA-Z]{3}\\d{5}'
         consentDate nullable: true
