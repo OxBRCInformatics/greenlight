@@ -81,7 +81,8 @@ class ConsentFormController {
 		render(contentType: "text/csv;charset=utf-8", text: csvString.toString());
     }
 
-	def showConsentFormByAccessGUID(){
+	@Secured(['permitAll'])
+	def showConsentFormByAccessGUID() {
 		def accessGUID = params["accessGUID"]
 		if(!accessGUID){
 			flash.error = "Not Found"
