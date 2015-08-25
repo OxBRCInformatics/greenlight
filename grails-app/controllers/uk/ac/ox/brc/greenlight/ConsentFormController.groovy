@@ -94,33 +94,40 @@ class ConsentFormController {
 		def consent = consentFormService.searchByAccessGUID(accessGUID)
 		if(!consent){
 			flash.error = "Not Found"
-			def result = [success:false,error:"Not Found",consent: null ]
-			respond result as Object, [formats:['xml','json']] as Map
+			def result = [success: false, error: "Not Found", consent: null]
+			respond result as Object, [model: result] as Map
 			return
 		}
 
 		def consentModel = [
-		        id: consent?.id,
-				consentDate: consent?.consentDate?.format("yyyy-MM-dd"),
+				id              : consent?.id,
+				formID          : consent?.formID,
+				consentDate     : consent?.consentDate?.format("yyyy-MM-dd"),
 				consentTakerName: consent?.consentTakerName,
-				formID: consent?.formID,
-				comment: consent?.comment,
-				formStatus: consent?.formStatus?.toString(),
-				consentStatus: consent?.consentStatus?.toString(),
-				consentStatusLabels : consentEvaluationService.getConsentLabels(consent),
-				responses : consent?.responses,
-				attachment:[
-					id: consent?.attachedFormImage?.id,
-					dateOfUpload : consent?.attachedFormImage?.dateOfUpload.format("yyyy-MM-dd HH:mm:ss"),
-					fileName : consent?.attachedFormImage?.fileName
+				formStatus      : consent?.formStatus?.toString(),
+				consentStatus   : consent?.consentStatus?.toString(),
+				consentStatusLabels: consentEvaluationService.getConsentLabels(consent),
+				comment         : consent?.comment,
+				consentForm: [
+				  id: consent?.template?.id,
+				  name: consent?.template?.name,
+				  version: consent?.template?.templateVersion,
+				  namePrefix:consent?.template?.namePrefix,
+				  cdrUniqueId: consent?.template?.cdrUniqueId
 				],
-				patient: [
-					id: consent?.patient?.id,
-					givenName  : consent?.patient?.givenName,
-					familyName : consent?.patient?.familyName,
-					dateOfBirth: consent?.patient?.dateOfBirth?.format("yyyy-MM-dd"),
-					nhsNumber: consent?.patient?.nhsNumber,
-					hospitalNumber: consent?.patient?.hospitalNumber
+				responses       : consent?.responses,
+				attachment      : [
+						id          : consent?.attachedFormImage?.id,
+						dateOfUpload: consent?.attachedFormImage?.dateOfUpload.format("yyyy-MM-dd HH:mm:ss"),
+						fileName    : consent?.attachedFormImage?.fileName
+				],
+				patient         : [
+						id            : consent?.patient?.id,
+						nhsNumber     : consent?.patient?.nhsNumber,
+						hospitalNumber: consent?.patient?.hospitalNumber,
+						givenName     : consent?.patient?.givenName,
+						familyName    : consent?.patient?.familyName,
+						dateOfBirth   : consent?.patient?.dateOfBirth?.format("yyyy-MM-dd")
 				]
 		]
 
