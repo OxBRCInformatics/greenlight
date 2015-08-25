@@ -121,7 +121,7 @@ class ConsentFormController {
 				attachment      : [
 						id          : consent?.attachedFormImage?.id,
 						dateOfUpload: consent?.attachedFormImage?.dateOfUpload.format("yyyy-MM-dd HH:mm:ss"),
-						fileName    : consent?.attachedFormImage?.fileName
+						fileName    : consent?.attachedFormImage?.id +".jpg"
 				],
 				patient         : [
 						id            : consent?.patient?.id,
@@ -137,10 +137,11 @@ class ConsentFormController {
 		 * if 'attachment' parameter is provided then return the Attachment file
 		 */
 		if(params["attachment"] != null){
-			def fileName = consent?.attachedFormImage?.id+".jpg"
-			File file = new File(consent?.attachedFormImage?.fileUrl)
+			def fileName = consent?.attachedFormImage?.id + ".jpg"
+			File file = new File( "attachment/" + consent?.attachedFormImage?.id)
 			if (!file.exists()){
-				render "Attachment not found!"
+				def result = [success: false, error: "Attachment not found!", consent: null]
+				respond result as Object, [model: result] as Map
 				return
 			}
 			response.setContentType("application/octet-stream")

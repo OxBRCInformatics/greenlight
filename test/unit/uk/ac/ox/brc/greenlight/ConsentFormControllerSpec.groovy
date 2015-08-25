@@ -114,7 +114,9 @@ class ConsentFormControllerSpec extends Specification{
 		then:"returns NOT FOUND"
 		1 * controller.consentFormService.searchByAccessGUID("NOT-AVAILABLE") >> {null}
 		controller.flash.error == "Not Found"
-		controller?.modelAndView?.model == null
+		controller?.modelAndView?.model?.success == false
+		controller?.modelAndView?.model?.error   == "Not Found"
+
 
 		when:"called for a GUID which is available"
 		controller.params.format = "html"
@@ -152,6 +154,32 @@ class ConsentFormControllerSpec extends Specification{
 						nhsNumber: "1234567890",
 				]
 		]*/
+
+
+		when:"called to return the attachment file, passing attachment param"
+		controller.params.format = "html"
+		controller.flash?.error = null
+		controller.params["accessGUID"] = "123-456-789"
+		controller.params["attachment"] = ""
+		controller.showConsentFormByAccessGUID()
+
+		then:"returns the attachment file"
+		1 * controller.consentFormService.searchByAccessGUID(_) >> {
+			def consent = createConsent()
+			consent.id = 1
+			return consent
+		}
+
+		1 * controller.consentEvaluationService.getConsentLabels(_) >> { ["Do not contact","No incidental findings"]}
+		controller.flash?.error == null
+		controller.response.contentType == "application/octet-stream"
+		controller.response.header("Content-disposition") == "attachment; filename=\"1.jpg\""
+		controller.response.outputStream
+
+
+
+
+
 	}
 
 	private def createConsent(){
