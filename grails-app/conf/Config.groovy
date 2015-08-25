@@ -191,6 +191,9 @@ grails{
 					'/consentForm/checkConsent':	['permitAll'],
 					'/consentForm/cuttingRoom': 	['permitAll'],
 
+					//Allow anonymous access to consentForm and attachment by accessGUID
+					"/consentForm/external/**": 	['permitAll'],
+
 					//just admin access
 					'/securityInfo/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
 					'/role': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
