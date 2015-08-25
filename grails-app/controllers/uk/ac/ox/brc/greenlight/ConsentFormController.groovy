@@ -1,5 +1,7 @@
 package uk.ac.ox.brc.greenlight
 
+import grails.plugin.springsecurity.annotation.Secured
+
 class ConsentFormController {
 
 	def consentEvaluationService
@@ -131,7 +133,26 @@ class ConsentFormController {
 				]
 		]
 
-		def result = [success:true,error:null,consent: consentModel ]
-		respond result as Object, [model:result] as Map
+		/**
+		 * if 'attachment' parameter is provided then return the Attachment file
+		 */
+		if(params["attachment"] != null){
+			def fileName = consent?.attachedFormImage?.id+".jpg"
+			File file = new File(consent?.attachedFormImage?.fileUrl)
+			if (!file.exists()){
+				render "Attachment not found!"
+				return
+			}
+			response.setContentType("application/octet-stream")
+			response.setHeader("Content-disposition", "attachment; filename=\"${fileName}\"")
+			response.outputStream << file.bytes
+			response.outputStream.flush()
+			response.outputStream.close()
+			return null
+		}else {
+			def result = [success: true, error: null, consent: consentModel]
+			respond result as Object, [model: result] as Map
+			return
+		}
 	}
 }
