@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile
 class  AttachmentService {
 
 	def fileUploadService
+	def grailsApplication
 
     def getAllAttachments() {
 		Attachment.list(sort: 'dateOfUpload', order: 'desc');
@@ -107,7 +108,8 @@ class  AttachmentService {
 	}
 
 	def getAttachmentFilePath(attachment){
-		"attachment/${attachment.id}.jpg"
+		def attachmentFolder = grailsApplication.mainContext.getResource('attachments').file.absolutePath
+		"${attachmentFolder}${File.separator}${attachment.id}.jpg"
 	}
 
 	def getAttachmentFileName(attachment){
