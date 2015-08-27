@@ -105,5 +105,13 @@ class  AttachmentService {
 		}
 		return success
 	}
+
+	def getAttachmentFilePath(attachment){
+		"attachment/${attachment.id}.jpg"
+	}
+
+	def getAttachmentFileName(attachment){
+		"${attachment.id}.jpg"
+	}
 }
 
