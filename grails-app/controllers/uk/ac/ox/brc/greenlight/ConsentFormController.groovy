@@ -8,6 +8,7 @@ class ConsentFormController {
     def consentFormService
 	def patientService
 	def studyService
+	def attachmentService
 
 
     def find()
@@ -86,13 +87,6 @@ class ConsentFormController {
 	@Secured(['permitAll'])
 	def showConsentFormByAccessGUID() {
 		def accessGUID = params["accessGUID"]
-		if(!accessGUID){
-			flash.error = "Not Found"
-			def result = [success:false,error:"Not Found",consent: null ]
-			respond result as Object, [formats:['xml','json']] as Map
-			return
-		}
-
 		def consent = consentFormService.searchByAccessGUID(accessGUID)
 		if(!consent){
 			flash.error = "Not Found"
@@ -119,9 +113,8 @@ class ConsentFormController {
 				],
 				responses       : consent?.responses,
 				attachment      : [
-						id          : consent?.attachedFormImage?.id,
 						dateOfUpload: consent?.attachedFormImage?.dateOfUpload.format("yyyy-MM-dd HH:mm:ss"),
-						fileName    : consent?.attachedFormImage?.id +".jpg"
+						fileName    : attachmentService.getAttachmentFileName(consent?.attachedFormImage)
 				],
 				patient         : [
 						id            : consent?.patient?.id,
@@ -137,15 +130,16 @@ class ConsentFormController {
 		 * if 'attachment' parameter is provided then return the Attachment file
 		 */
 		if(params["attachment"] != null){
-			def fileName = consent?.attachedFormImage?.id + ".jpg"
-			File file = new File( "attachment/" + consent?.attachedFormImage?.id)
+			def filePath = attachmentService.getAttachmentFilePath(consent?.attachedFormImage)
+			File file = new File(filePath)
 			if (!file.exists()){
-				def result = [success: false, error: "Attachment not found!", consent: null]
+				flash.error = "Attachment not found"
+				def result = [success: false, error: "Attachment not found", consent: null]
 				respond result as Object, [model: result] as Map
 				return
 			}
 			response.setContentType("application/octet-stream")
-			response.setHeader("Content-disposition", "attachment; filename=\"${fileName}\"")
+			response.setHeader("Content-disposition", "attachment; filename=\"${file.name}\"")
 			response.outputStream << file.bytes
 			response.outputStream.flush()
 			response.outputStream.close()
