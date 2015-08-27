@@ -15,6 +15,7 @@ class QuestionMarshaller {
 					name: question?.name,
 					labelIfNotYes: question?.labelIfNotYes,
 					defaultResponse: question?.defaultResponse,
+					validResponses: question?.validResponses,
 					studyForm: question?.studyForm
 			]
 		}
