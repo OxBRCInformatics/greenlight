@@ -95,8 +95,30 @@ class ConsentFormController {
 			return
 		}
 
+		def responses = []
+		consent?.responses?.each{ response ->
+			responses.add(
+					[
+						question: response?.question?.name,
+						answer: response?.answer?.toString(),
+						optional: response?.question?.optional
+					]
+			)
+		}
+
 		def consentModel = [
-				id              : consent?.id,
+				patient         : [
+						nhsNumber     : consent?.patient?.nhsNumber,
+						hospitalNumber: consent?.patient?.hospitalNumber,
+						givenName     : consent?.patient?.givenName,
+						familyName    : consent?.patient?.familyName,
+						dateOfBirth   : consent?.patient?.dateOfBirth?.format("yyyy-MM-dd")
+				],
+				consentFormType: [
+						name: consent?.template?.name,
+						version: consent?.template?.templateVersion,
+						namePrefix:consent?.template?.namePrefix,
+				],
 				formID          : consent?.formID,
 				consentDate     : consent?.consentDate?.format("yyyy-MM-dd"),
 				consentTakerName: consent?.consentTakerName,
@@ -104,25 +126,10 @@ class ConsentFormController {
 				consentStatus   : consent?.consentStatus?.toString(),
 				consentStatusLabels: consentEvaluationService.getConsentLabels(consent),
 				comment         : consent?.comment,
-				consentForm: [
-				  id: consent?.template?.id,
-				  name: consent?.template?.name,
-				  version: consent?.template?.templateVersion,
-				  namePrefix:consent?.template?.namePrefix,
-				  cdrUniqueId: consent?.template?.cdrUniqueId
-				],
-				responses       : consent?.responses,
+				responses       : responses,
 				attachment      : [
 						dateOfUpload: consent?.attachedFormImage?.dateOfUpload.format("yyyy-MM-dd HH:mm:ss"),
 						fileName    : attachmentService.getAttachmentFileName(consent?.attachedFormImage)
-				],
-				patient         : [
-						id            : consent?.patient?.id,
-						nhsNumber     : consent?.patient?.nhsNumber,
-						hospitalNumber: consent?.patient?.hospitalNumber,
-						givenName     : consent?.patient?.givenName,
-						familyName    : consent?.patient?.familyName,
-						dateOfBirth   : consent?.patient?.dateOfBirth?.format("yyyy-MM-dd")
 				]
 		]
 

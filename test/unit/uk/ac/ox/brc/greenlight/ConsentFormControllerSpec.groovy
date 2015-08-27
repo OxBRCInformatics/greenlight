@@ -131,10 +131,10 @@ class ConsentFormControllerSpec extends Specification{
 		then:"returns consent"
 		1 * controller.consentFormService.searchByAccessGUID(_) >> {createConsent()}
 		1 * controller.consentEvaluationService.getConsentLabels(_) >> { ["Do not contact","No incidental findings"]}
+		1 * controller.attachmentService.getAttachmentFileName(_) >> {"1.jpg"}
 		controller.flash?.error == null
 		controller.modelAndView.model.success == true
 		controller.modelAndView.model.consent.patient == [
-			id: null,
 			givenName: "MrA",
 			familyName: "MrB",
 			dateOfBirth: DateTimeFormat.forPattern("yyyy-MM-dd").print(new DateTime(1980,12,25,0,0)),
@@ -143,26 +143,29 @@ class ConsentFormControllerSpec extends Specification{
 		]
 		controller.modelAndView.model.consent.attachment == [
 				dateOfUpload:DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(new DateTime(2015,8,19,0,0)),
-				fileName:"1.jpg",
+				fileName:"1.jpg"
 		]
-		controller.modelAndView.model.consent.responses[0].id == null
-		controller.modelAndView.model.consent.responses[0].answer == Response.ResponseValue.YES
-		controller.modelAndView.model.consent.responses[0].question.name == "I read1..."
-		controller.modelAndView.model.consent.responses[0].question.labelIfNotYes == null
-		controller.modelAndView.model.consent.responses[0].question.optional == false
-		controller.modelAndView.model.consent.responses[0].question.defaultResponse == Response.ResponseValue.YES
-		controller.modelAndView.model.consent.responses[0].question.validResponses.sort() == [Response.ResponseValue.YES,Response.ResponseValue.NO].sort()
-		controller.modelAndView.model.consent.responses[0].question.studyForm == null
+		controller.modelAndView.model.consent.consentFormType == [
+				name: "ORB1",
+				version: "1.1",
+				namePrefix: "GNR"
+		]
 
-		controller.modelAndView.model.consent.responses[1].id == null
-		controller.modelAndView.model.consent.responses[1].answer == Response.ResponseValue.NO
-		controller.modelAndView.model.consent.responses[1].question.name == "I read2..."
-		controller.modelAndView.model.consent.responses[1].question.labelIfNotYes == null
-		controller.modelAndView.model.consent.responses[1].question.optional == true
-		controller.modelAndView.model.consent.responses[1].question.defaultResponse == Response.ResponseValue.YES
-		controller.modelAndView.model.consent.responses[1].question.validResponses.sort() == [Response.ResponseValue.YES,Response.ResponseValue.NO].sort()
-		controller.modelAndView.model.consent.responses[1].question.studyForm == null
+		controller.modelAndView.model.consent.formID == "GEN12345"
+		controller.modelAndView.model.consent.consentDate == DateTimeFormat.forPattern("yyyy-MM-dd").print(new DateTime(2015,1,25,0,0))
+		controller.modelAndView.model.consent.consentTakerName == "ABC"
+		controller.modelAndView.model.consent.formStatus      == ConsentForm.FormStatus.NORMAL.toString()
+		controller.modelAndView.model.consent.consentStatus   == ConsentForm.ConsentStatus.FULL_CONSENT.toString()
+		controller.modelAndView.model.consent.consentStatusLabels == ["Do not contact", "No incidental findings"]
+		controller.modelAndView.model.consent.comment == "TestComment"
 
+		controller.modelAndView.model.consent.responses[0].question == "I read1..."
+		controller.modelAndView.model.consent.responses[0].answer   == Response.ResponseValue.YES.toString()
+		controller.modelAndView.model.consent.responses[0].optional == false
+
+		controller.modelAndView.model.consent.responses[1].question == "I read2..."
+		controller.modelAndView.model.consent.responses[1].answer   == Response.ResponseValue.NO.toString()
+		controller.modelAndView.model.consent.responses[1].optional == true
 	}
 
 	def "showConsentFormByAccessGUID returns consent details in JSON"(){
