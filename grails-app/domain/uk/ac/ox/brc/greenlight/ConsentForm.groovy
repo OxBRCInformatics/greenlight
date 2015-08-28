@@ -75,13 +75,13 @@ class ConsentForm {
 
 	public boolean equals(Object obj) {
 		if (obj instanceof ConsentForm) {
-			if (template.id == obj.template.id  &&
-				consentDate.compareTo(obj.consentDate) == 0 &&
-				consentTakerName.toLowerCase() == obj.consentTakerName.toLowerCase() &&
-				formID.toLowerCase() == obj.formID.toLowerCase() &&
-				formStatus == obj.formStatus &&
-				consentStatus == obj.consentStatus &&
-				comment.toLowerCase() == obj.comment.toLowerCase())
+			if (template?.id == obj?.template?.id  &&
+				consentDate?.compareTo(obj?.consentDate) == 0 &&
+				consentTakerName?.toLowerCase() == obj?.consentTakerName?.toLowerCase() &&
+				formID?.toLowerCase() == obj?.formID?.toLowerCase() &&
+				formStatus == obj?.formStatus &&
+				consentStatus == obj?.consentStatus &&
+				comment?.toLowerCase() == obj?.comment?.toLowerCase())
 					return true
 		}
 		return false
