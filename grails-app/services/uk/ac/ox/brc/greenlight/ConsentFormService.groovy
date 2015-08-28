@@ -94,7 +94,7 @@ class ConsentFormService {
 			consentForm.consentStatus = consentEvaluationService.getConsentStatus(consentForm)
 			consentForm.save(flush: true)
 
-			def saveToCDRStatus = CDRService.saveConsentForm(oldConsentForm,OldPatient,consentForm,patient)
+			def saveToCDRStatus = CDRService.saveOrUpdateConsentForm(consentForm)
 
 			return true
 		}

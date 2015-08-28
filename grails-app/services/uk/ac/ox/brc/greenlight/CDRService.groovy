@@ -19,7 +19,13 @@ import uk.ac.ox.ndm.mirth.datamodel.rest.client.MirthRestClient
 @Transactional
 class CDRService {
 
-	def saveOrUpdateConsentForm(ConsentForm consentForm, ConsentForm oldConsentForm) {
+	def saveOrUpdateConsentForm(ConsentForm consentForm) {
+
+		ConsentForm oldConsentForm
+		//it is in Update mode
+		if(consentForm.id){
+			oldConsentForm = ConsentForm.get(consentForm.id)
+		}
 
 		//if it is an Update for a previously saved consentForm
 		if(oldConsentForm) {
