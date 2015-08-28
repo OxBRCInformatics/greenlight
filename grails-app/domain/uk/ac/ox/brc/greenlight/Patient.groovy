@@ -28,11 +28,11 @@ class Patient {
 
 	public boolean equals(Object obj) {
 		if (obj instanceof Patient) {
-			if (givenName.toLowerCase()  == obj.givenName.toLowerCase()   &&
-				familyName.toLowerCase() == obj.familyName.toLowerCase() &&
-				dateOfBirth.compareTo(obj.dateOfBirth) == 0 &&
-				nhsNumber == obj.nhsNumber   &&
-				hospitalNumber == obj.hospitalNumber)
+			if (givenName?.toLowerCase()  == obj?.givenName?.toLowerCase()   &&
+				familyName?.toLowerCase() == obj?.familyName?.toLowerCase() &&
+				dateOfBirth?.compareTo(obj?.dateOfBirth) == 0 &&
+				nhsNumber == obj?.nhsNumber   &&
+				hospitalNumber == obj?.hospitalNumber)
 				return true
 		}
 		return false
