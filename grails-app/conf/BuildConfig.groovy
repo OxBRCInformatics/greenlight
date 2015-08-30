@@ -76,9 +76,12 @@ grails.project.dependency.resolution = {
         test "org.gebish:geb-spock:$gebVersion"
         test "org.gebish:geb-junit4:$gebVersion"
 
+
+
 		// PDF conversion
 		//compile 'org.apache.pdfbox:pdfbox:1.8.8'
 		compile "uk.ac.ox.ndm.mirth:mirth-datamodel:2.0-SNAPSHOT"
+		
     }
 
     plugins {

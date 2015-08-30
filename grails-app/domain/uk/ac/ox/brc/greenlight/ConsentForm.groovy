@@ -14,6 +14,8 @@ class ConsentForm {
     FormStatus formStatus = FormStatus.NORMAL
 	ConsentStatus consentStatus = ConsentStatus.NON_CONSENT
 
+
+
 	boolean passedToCDR
 	Date dateTimePassedToCDR
 	String savedInCDRStatus
@@ -37,6 +39,8 @@ class ConsentForm {
     }
 
     static constraints = {
+
+
 		passedToCDR nullable:true
 		dateTimePassedToCDR nullable: true
 		savedInCDRStatus nullable:true
