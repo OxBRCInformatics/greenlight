@@ -8,13 +8,13 @@ class ConsentForm {
     Attachment attachedFormImage
     ConsentFormTemplate template
 
+	String accessGUID
+
     Date consentDate
     String consentTakerName
     String formID
     FormStatus formStatus = FormStatus.NORMAL
 	ConsentStatus consentStatus = ConsentStatus.NON_CONSENT
-
-
 
 	boolean passedToCDR
 	Date dateTimePassedToCDR
@@ -39,11 +39,12 @@ class ConsentForm {
     }
 
     static constraints = {
-
-
-		passedToCDR nullable:true
+		passedToCDR nullable:true, defaultValue:false
 		dateTimePassedToCDR nullable: true
 		savedInCDRStatus nullable:true
+
+		accessGUID nullable: false , unique: true
+
         attachedFormImage nullable: true //remove this later :)
         formID matches: '[a-zA-Z]{3}\\d{5}'
         consentDate nullable: true
@@ -76,6 +77,10 @@ class ConsentForm {
 		String getKey() { name(); }
 	}
 
+	def beforeInsert() {
+		//automatically assign a GUID to the consentForm just beforeInsert
+		this.accessGUID = UUID.randomUUID().toString()
+	}
 
 	public boolean equals(Object obj) {
 		if (obj instanceof ConsentForm) {

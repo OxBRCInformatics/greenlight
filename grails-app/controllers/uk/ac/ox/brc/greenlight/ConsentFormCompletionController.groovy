@@ -48,6 +48,14 @@ class ConsentFormCompletionController {
         def commandObj = new ConsentFormCommand();
         commandObj.buildObject(params);
 
+
+		//if it is in Save mode Not Edit(Update), set a default value to accessGUID,
+		//to just validate the consent object, GORM will add an actual GUID to 'accessGUID' when
+		//inserting the record into the database
+		if(!commandObj?.consentForm?.id){
+			commandObj?.consentForm?.accessGUID = ""
+		}
+
         commandObj.patient.validate()
         commandObj.consentForm.validate()
 

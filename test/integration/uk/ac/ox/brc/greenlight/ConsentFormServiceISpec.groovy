@@ -42,6 +42,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
             ).save()
 
        def consent = new ConsentForm(
+			   accessGUID: UUID.randomUUID().toString(),
                 attachedFormImage: attachment,
                 template: template,
                 patient: patient,
@@ -72,6 +73,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		).save()
 
 		def consent2 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template,
 				patient: patient2,
@@ -274,6 +276,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 				consents: []
 		)
 		def consent = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment,
 				template: template,
 				patient: patient,
@@ -319,6 +322,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 				consents: []
 		)
 		def consent = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment,
 				template: template,
 				patient: patient,
@@ -420,5 +424,26 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		""				|		""						|   2
 		""				|		null					|   2
 		"1234567890"	|	 "simple unEscapedComment"	|	1
+	}
+
+	@Unroll
+	def "searchByAccessGUID returns consentForm based on accessGUID for #accessGUID"(){
+
+		given:"we have a consentForm with specific GUID"
+		def aConsent = ConsentForm.list()[0]
+		aConsent.accessGUID = "c3a25672-cd1f-4ad5-886c-6916572a8ae7"
+		aConsent.save(failOnError: true)
+
+		when:"searchByAccessGUID is called"
+		def result = consentFormService.searchByAccessGUID(accessGUID)
+
+		then:"It returns the right consentForm"
+		result?.formID == resultformID
+
+		where:
+		accessGUID								|	resultformID
+		"c3a25672-cd1f-4ad5-886c-6916572a8ae7"	|	"GEN12345"
+		"A"										|	null
+		null									|	null
 	}
 }

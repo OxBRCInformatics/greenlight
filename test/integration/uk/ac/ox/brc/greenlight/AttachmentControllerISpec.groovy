@@ -81,6 +81,7 @@ class AttachmentControllerISpec extends IntegrationSpec {
 
 
         def consent1 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
                 attachedFormImage: attachment1,
                 template: template1,
                 consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -103,6 +104,7 @@ class AttachmentControllerISpec extends IntegrationSpec {
 
 
 		def consent2 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 02]),
@@ -124,6 +126,7 @@ class AttachmentControllerISpec extends IntegrationSpec {
 
 
 		def consent3 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment3,
 				template: template3,
 				consentDate: new Date([year: 2014, month: 01, date: 03]),

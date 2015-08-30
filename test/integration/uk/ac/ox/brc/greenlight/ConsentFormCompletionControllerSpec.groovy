@@ -60,6 +60,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
 
 
         def consentForm = new ConsentForm([
+				accessGUID: UUID.randomUUID().toString(),
                 attachedFormImage: attachment1,
                 template:template1,
                 consentDate: new Date(),
@@ -191,6 +192,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
 				consents: []
 		)
 		def consent = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment,
 				template: template,
 				patient: patient,

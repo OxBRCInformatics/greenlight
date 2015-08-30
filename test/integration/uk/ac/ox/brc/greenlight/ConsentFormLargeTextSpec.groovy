@@ -41,6 +41,7 @@ class ConsentFormLargeTextSpec extends IntegrationSpec {
             ).save()
 
        def consent = new ConsentForm(
+			   	accessGUID: UUID.randomUUID().toString(),
                 attachedFormImage: attachment,
                 template: template,
                 patient: patient,
