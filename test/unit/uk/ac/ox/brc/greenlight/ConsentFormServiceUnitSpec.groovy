@@ -1,6 +1,7 @@
 package uk.ac.ox.brc.greenlight
 
 import grails.test.mixin.TestFor
+import org.joda.time.DateTime
 import spock.lang.Specification
 import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
 
@@ -11,6 +12,10 @@ import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
 @grails.test.mixin.Mock([ConsentForm, ConsentFormTemplate])
 class ConsentFormServiceUnitSpec extends Specification {
 
+	def setup(){
+		service.consentEvaluationService = Mock(ConsentEvaluationService)
+		service.CDRService = Mock(CDRService)
+	}
 	static Date now = new Date();
     static final String DBL_QUOTE = '\"'
 	def "getLatestConsentForms Get the latest consent forms for a patient"() {
@@ -168,5 +173,22 @@ class ConsentFormServiceUnitSpec extends Specification {
 		returnedForms.size() == 2
 		returnedForms.containsAll(latestForms)
 		latestForms.containsAll(returnedForms)
+	}
+
+	def "save will update consentStatus and cdr details"(){
+		given:
+		def patient = new Patient()
+		def consent = new ConsentForm()
+
+		when:
+		service.save(patient,consent)
+
+		then:
+		1 * service.consentEvaluationService.getConsentStatus(_) >> {ConsentStatus.NON_CONSENT}
+		1 * service.CDRService.saveOrUpdateConsentForm(_,_) >> {return "success_TEST"}
+		consent.consentStatus == ConsentStatus.NON_CONSENT
+		consent.passedToCDR
+		consent.savedInCDRStatus == "success_TEST"
+		new DateTime(consent.dateTimePassedToCDR).toLocalDate().compareTo(new DateTime().toLocalDate()) == 0 // check the date
 	}
 }
