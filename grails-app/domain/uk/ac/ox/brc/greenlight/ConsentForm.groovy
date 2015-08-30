@@ -86,4 +86,24 @@ class ConsentForm {
 		}
 		return false
 	}
+
+	public boolean isChanged() {
+
+		if(this.isDirty()) {
+			return true
+		}
+		//check if responses are updated
+		def responsesUpdated = false
+		responses?.each { response ->
+			if (response.isDirty()) {
+				responsesUpdated =  true
+				return
+			}
+		}
+		if(responsesUpdated){
+			return true
+		}
+
+		false
+	}
 }
