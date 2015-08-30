@@ -6,7 +6,7 @@ import spock.lang.Unroll
 /**
  * Created by soheil on 28/03/2014.
  */
-class ConsentFormServiceSpec extends IntegrationSpec {
+class ConsentFormServiceISpec extends IntegrationSpec {
 
     def   consentFormService
     def   consentEvaluationService
