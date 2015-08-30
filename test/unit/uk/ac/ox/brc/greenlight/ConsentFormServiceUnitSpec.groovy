@@ -87,7 +87,6 @@ class ConsentFormServiceUnitSpec extends Specification {
 
 		given:
 		service.patientService 	   = Mock(PatientService)
-		service.consentFormService = Mock(ConsentFormService)
 		service.consentEvaluationService = Mock(ConsentEvaluationService)
 
 
@@ -115,6 +114,14 @@ class ConsentFormServiceUnitSpec extends Specification {
 				new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "DEF"),formID:"DEF123")
 		]
 
+		service.metaClass.getLatestConsentForms = { param ->
+			if(param[0].givenName == 'A')
+				return consentsPatient1
+			else if(param[0].givenName == 'Z')
+				return consentsPatient2
+			else if(param[0].givenName == 'Mr0')
+				return consentsPatient0
+		}
 
 		when:
 		def result = service.getPatientWithMoreThanOneConsentForm()
@@ -129,14 +136,6 @@ class ConsentFormServiceUnitSpec extends Specification {
 			}else {
 				return [patients[3]]
 			}
-		}
-		3 * service.consentFormService.getLatestConsentForms(_) >>{
-			if(it[0][0].givenName == 'A')
-				return consentsPatient1
-			else if(it[0][0].givenName == 'Z')
-				return consentsPatient2
-			else if(it[0][0].givenName == 'Mr0')
-				return consentsPatient0
 		}
 
 		result.size() == 2

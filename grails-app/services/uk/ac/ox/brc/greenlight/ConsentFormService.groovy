@@ -8,7 +8,6 @@ class ConsentFormService {
 
 	def consentEvaluationService
 	def patientService
-	def consentFormService
 	def CDRService
 
 	/**
@@ -223,7 +222,7 @@ class ConsentFormService {
 				// Attempt to find all patient objects having this hospitalNumber
 				def patients = patientService.findAllByNHSOrHospitalNumber(hospitalNumber)
 				//Find all consent objects related to this patient (these patient objects)
-				def consents = consentFormService.getLatestConsentForms(patients)
+				def consents = getLatestConsentForms(patients)
 
 				//if it has equal/more than 2 consents,
 				//so there might be the possibility that there are more than 2 FULL_CONSENTED forms
