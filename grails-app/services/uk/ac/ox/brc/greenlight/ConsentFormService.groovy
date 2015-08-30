@@ -87,13 +87,20 @@ class ConsentFormService {
 	def save(Patient patient, ConsentForm consentForm) {
 		try {
 
-			patient.save()
-
 			//calculate and save consentStatus
 			consentForm.consentStatus = consentEvaluationService.getConsentStatus(consentForm)
+			//calculate and save consentStatusLabels as well
+
+
+			//save it in CDR
+			consentForm.savedInCDRStatus = CDRService.saveOrUpdateConsentForm(patient,consentForm)
+			consentForm.dateTimePassedToCDR = new Date()
+			consentForm.passedToCDR = true
+
+
+			patient.save()
 			consentForm.save(flush: true)
 
-			def saveToCDRStatus = CDRService.saveOrUpdateConsentForm(consentForm)
 
 			return true
 		}
