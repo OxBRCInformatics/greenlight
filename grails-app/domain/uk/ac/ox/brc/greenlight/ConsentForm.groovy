@@ -14,8 +14,8 @@ class ConsentForm {
     FormStatus formStatus = FormStatus.NORMAL
 	ConsentStatus consentStatus = ConsentStatus.NON_CONSENT
 
-	boolean savedInCDR
-	Date dateTimeSavedInCDR
+	boolean passedToCDR
+	Date dateTimePassedToCDR
 	String savedInCDRStatus
 	
     List<Response> responses
