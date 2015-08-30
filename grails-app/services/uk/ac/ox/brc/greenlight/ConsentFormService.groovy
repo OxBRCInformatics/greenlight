@@ -10,6 +10,7 @@ class ConsentFormService {
 	def patientService
 	def CDRService
 
+	def grailsLinkGenerator
 	/**
 	 * Get the latest consent form for these patient objects.
 	 * They should actually be several patient objects with the same NHS or hospital number
@@ -308,5 +309,9 @@ class ConsentFormService {
 			return null
 		}
 		consent
+	}
+
+	def getAccessGUIDUrl(consentForm){
+		"${grailsLinkGenerator.serverBaseURL}/consent/${consentForm.accessGUID}"
 	}
 }

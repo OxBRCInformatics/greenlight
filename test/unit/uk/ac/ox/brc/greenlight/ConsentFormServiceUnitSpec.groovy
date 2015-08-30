@@ -1,6 +1,7 @@
 package uk.ac.ox.brc.greenlight
 
 import grails.test.mixin.TestFor
+import org.codehaus.groovy.grails.web.mapping.LinkGenerator
 import org.joda.time.DateTime
 import spock.lang.Specification
 import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
@@ -15,6 +16,7 @@ class ConsentFormServiceUnitSpec extends Specification {
 	def setup(){
 		service.consentEvaluationService = Mock(ConsentEvaluationService)
 		service.CDRService = Mock(CDRService)
+		service.grailsLinkGenerator = Mock(LinkGenerator)
 	}
 	static Date now = new Date();
     static final String DBL_QUOTE = '\"'
@@ -190,5 +192,19 @@ class ConsentFormServiceUnitSpec extends Specification {
 		consent.passedToCDR
 		consent.savedInCDRStatus == "success_TEST"
 		new DateTime(consent.dateTimePassedToCDR).toLocalDate().compareTo(new DateTime().toLocalDate()) == 0 // check the date
+	}
+
+	def "getAccessGUIDUrl returns URL to consentForm by accessGUID"(){
+
+		given:
+		def consentForm = new ConsentForm(accessGUID: "1234-5678-0000")
+
+		when:
+		def url = service.getAccessGUIDUrl(consentForm)
+
+		then:
+		1 * service.grailsLinkGenerator.getServerBaseURL() >> {"HTTP-BASE-URL://APP-URL"}
+		url == "HTTP-BASE-URL://APP-URL/consent/1234-5678-0000"
+
 	}
 }
