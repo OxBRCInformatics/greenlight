@@ -12,6 +12,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
     def   consentEvaluationService
 
     def setup() {
+		consentFormService.CDRService = Mock(CDRService)
         def attachment= new Attachment(id: 1, fileName: 'a.jpg', dateOfUpload: new Date(),
                 attachmentType: Attachment.AttachmentType.IMAGE, content: []).save()
 
@@ -254,6 +255,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		def consent = Attachment.first()?.consentForm
 
 		then:
+		1 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_) >>{return "success"}
 		result
 		consent.consentTakerName  == "B.."
 		consent.patient.givenName == "A.."
@@ -299,6 +301,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		def result  = consentFormService.save(patient,consent)
 
 		then:"it will save consentForm,patient and responses"
+		1 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_) >> {return "success"}
 		result
 		ConsentForm.count() == consentBefore + 1
 		Response.count() == responseBefore + 4
@@ -344,6 +347,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		def result  = consentFormService.save(patient,consent)
 
 		then:"it will update consentStatus attribute of the ConsentForm object"
+		1 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_) >>{return "success"}
 		result
 		!consent.hasErrors()
 		consent.consentStatus == ConsentForm.ConsentStatus.FULL_CONSENT
@@ -365,6 +369,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		def result  = consentFormService.save(attachment.consentForm.patient,attachment.consentForm)
 
 		then:
+		1 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_) >>{return "success"}
 		result
 		attachment?.consentForm?.consentStatus == ConsentForm.ConsentStatus.FULL_CONSENT
 	}
@@ -396,6 +401,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		def result  = consentFormService.save(attachment.consentForm.patient,attachment.consentForm)
 
 		then:
+		1 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_) >>{return "success"}
 		result
 		attachment?.consentForm?.template.id == newTemplate.id
 		attachment?.consentForm?.consentStatus == ConsentForm.ConsentStatus.FULL_CONSENT
