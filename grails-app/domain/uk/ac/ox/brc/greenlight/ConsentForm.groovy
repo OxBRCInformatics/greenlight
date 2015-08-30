@@ -37,8 +37,8 @@ class ConsentForm {
     }
 
     static constraints = {
-		savedInCDR nullable:true
-		dateTimeSavedInCDR nullable: true
+		passedToCDR nullable:true
+		dateTimePassedToCDR nullable: true
 		savedInCDRStatus nullable:true
         attachedFormImage nullable: true //remove this later :)
         formID matches: '[a-zA-Z]{3}\\d{5}'
