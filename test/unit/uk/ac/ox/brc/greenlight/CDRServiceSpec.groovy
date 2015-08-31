@@ -33,4 +33,21 @@ class CDRServiceSpec extends Specification {
 		sendConsentToCDRCalled
 		result == "success"
 	}
+	void "saveOrUpdateConsentForm will pass default generic nhs and mrn into CDR when they are not available"() {
+		setup:
+		def sendConsentToCDRCalled = false
+		service.metaClass.sendConsentToCDR = { nhsNumber,hospitalNumber,consent ->
+			assert  nhsNumber == "??????????"
+			assert hospitalNumber == "???"
+			sendConsentToCDRCalled = true
+			return "success"
+		}
+		when:
+		def patient = new Patient(nhsNumber: "1111111111")
+		def result = service.saveOrUpdateConsentForm(patient,new ConsentForm())
+
+		then:
+		sendConsentToCDRCalled
+		result == "success"
+	}
 }

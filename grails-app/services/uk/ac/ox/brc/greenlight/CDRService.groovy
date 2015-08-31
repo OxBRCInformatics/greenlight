@@ -24,8 +24,15 @@ class CDRService {
 	def saveOrUpdateConsentForm(Patient patient,ConsentForm consentForm) {
 
 		//if patient has a generic nhsNumber then send '??????????' to CDR
-		def nhsNumber = patient.nhsNumber == '1111111111' ? '??????????' : patient.nhsNumber
+		def nhsNumber = patient.nhsNumber
+		if(patient.nhsNumber == '1111111111' || patient.nhsNumber?.isEmpty() || !patient.nhsNumber){
+			nhsNumber = '??????????'
+		}
+
 		def mrnNumber = patient.hospitalNumber
+		if(patient.hospitalNumber?.isEmpty() || !patient.hospitalNumber){
+			mrnNumber = '???'
+		}
 
 		//if Consent or Patient are in update mode and
 		//consent or patient are updated
