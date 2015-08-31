@@ -126,6 +126,12 @@
                         <li><a><b>EPDS</b></a></li>
                         <li><g:link controller="testConnection" action='index'>Connection Test</g:link></li>
 
+
+                        <li class="divider"></li>
+                        <li><a><b>Mirth CDR</b></a></li>
+                        <li><g:link controller="testConnection" action='cdr'>Connection Test</g:link></li>
+
+
                     </ul>
                 </li>
                 <li class="dropdown">
