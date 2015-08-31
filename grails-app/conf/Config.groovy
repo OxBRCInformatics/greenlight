@@ -256,3 +256,8 @@ cdr.access.password = "CDR_PASSWORD"
 cdr.facility.id   = 'CDR_FACILITY_ID'
 cdr.facility.name = 'CDR_FACILITY_NAME'
 cdr.facility.description  = 'CDR_FACILITY_DESC'
+
+cdr.organisation.id = "TEST-OUH" //appliesToOrganisation when passing consent
+
+cdr.knownFacility.name = "TEST" //PRODUCTION("OXONCDRPROD", "PROD Oxford Clinical Data Repository", "PRODUCTION environment for Oxford Results Repository"),
+								//TEST("OXONCDRTEST", "TEST Oxfordshire Clinical Data Repository", "TEST environment for Oxford Results Repository.")
