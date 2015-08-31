@@ -84,29 +84,32 @@ class ConsentFormService {
 		return results;
 	}
 
-	@Transactional
 	def save(Patient patient, ConsentForm consentForm) {
-		try {
 
-			//calculate and save consentStatus
-			consentForm.consentStatus = consentEvaluationService.getConsentStatus(consentForm)
-			//calculate and save consentStatusLabels as well
+		//calculate and save consentStatus
+		consentForm.consentStatus = consentEvaluationService.getConsentStatus(consentForm)
+		//calculate and save consentStatusLabels as well
 
-
+		consentForm.dateTimePassedToCDR = new Date()
+		consentForm.passedToCDR = true
+		try{
 			//save it in CDR
 			consentForm.savedInCDRStatus = CDRService.saveOrUpdateConsentForm(patient,consentForm)
-			consentForm.dateTimePassedToCDR = new Date()
-			consentForm.passedToCDR = true
-
-
-			patient.save()
-			consentForm.save(flush: true)
-
-
-			return true
+		}catch(Exception ex){
+			consentForm.savedInCDRStatus = "Failed: " + ex.message
 		}
-		catch (Exception ex) {
-			return false
+
+		//save consent and patient in a transaction
+		ConsentForm.withTransaction { status ->
+			try {
+				patient.save(failOnError: true)
+				consentForm.save(failOnError: true,flush: true)
+				return true
+			}
+			catch (Exception exp) {
+				status.setRollbackOnly()
+				return false
+			}
 		}
 	}
 
