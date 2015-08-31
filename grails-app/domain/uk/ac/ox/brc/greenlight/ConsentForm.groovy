@@ -36,6 +36,7 @@ class ConsentForm {
     static mapping = {
         responses cascade: 'all-delete-orphan'
         comment type: "text"
+		savedInCDRStatus type: "text"
     }
 
     static constraints = {
