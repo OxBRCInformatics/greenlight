@@ -120,4 +120,14 @@ class CDRService {
 		 result
 	}
 
+	 def findKnownFacility(name){
+		def result
+		 KnownFacility.values().each { value ->
+			 if(value.name() == name) {
+				 result = value
+				 return
+			 }
+		 }
+		result
+	}
 }

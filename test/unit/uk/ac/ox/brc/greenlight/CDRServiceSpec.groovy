@@ -68,4 +68,18 @@ class CDRServiceSpec extends Specification {
 		"ORB_GEN_V2"	|	KnownOrganisation.ORB_GEN_V2
 		"UNKNOWN"		|	null
 	}
+
+	def "findKnownFacility will return KnownFacility enum value"(){
+		when:
+		def actual = service.findKnownFacility(facilityName)
+		assert KnownFacility.values().size() == 2
+
+		then:
+		actual == expected
+
+		where:
+		facilityName	|	expected
+		"TEST"			|	KnownFacility.TEST
+		"PRODUCTION"	|	KnownFacility.PRODUCTION
+	}
 }
