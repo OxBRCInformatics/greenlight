@@ -108,4 +108,16 @@ class CDRService {
 		} as Facility
 		return greenlight
 	}
+
+	 def findKnownOrganisation(cdrUniqueId){
+		 def result
+		 KnownOrganisation.values().each { value ->
+			 if(value.name() == cdrUniqueId) {
+				 result = value
+				 return
+			 }
+		 }
+		 result
+	}
+
 }

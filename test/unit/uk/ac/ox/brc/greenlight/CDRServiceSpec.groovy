@@ -50,4 +50,22 @@ class CDRServiceSpec extends Specification {
 		sendConsentToCDRCalled
 		result == "success"
 	}
+	def "findKnownOrganisation will return KnownOrganisation enum value"(){
+		when:
+		def actual = service.findKnownOrganisation(organisationName)
+		assert KnownOrganisation.values().size() == 6
+
+		then:
+		actual == expected
+
+		where:
+		organisationName|	expected
+		"ORB_PRE_V1_2"	|	KnownOrganisation.ORB_PRE_V1_2
+		"ORB_GEN_V1"	|	KnownOrganisation.ORB_GEN_V1
+		"ORB_CRA_V1"	|	KnownOrganisation.ORB_CRA_V1
+		"GEL_CSC_V1"	|	KnownOrganisation.GEL_CSC_V1
+		"GEL_CSC_V2"	|	KnownOrganisation.GEL_CSC_V2
+		"ORB_GEN_V2"	|	KnownOrganisation.ORB_GEN_V2
+		"UNKNOWN"		|	null
+	}
 }
