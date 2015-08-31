@@ -1,12 +1,14 @@
 package uk.ac.ox.brc.greenlight
 
+import com.mirth.results.client.PatientModel
+import com.mirth.results.client.result.ResultModel
 import com.mirth.results.models.AttachmentModel
 import grails.transaction.Transactional
-import uk.ac.ox.ndm.mirth.datamodel.dsl.clinical.patient.Consent
 import uk.ac.ox.ndm.mirth.datamodel.dsl.core.Facility
 import uk.ac.ox.ndm.mirth.datamodel.exception.rest.ClientException
 import uk.ac.ox.ndm.mirth.datamodel.rest.client.KnownFacility
 import uk.ac.ox.ndm.mirth.datamodel.rest.client.KnownOrganisation
+import uk.ac.ox.ndm.mirth.datamodel.rest.client.KnownPatientStatus
 import uk.ac.ox.ndm.mirth.datamodel.rest.client.MirthRestClient
 
 /**
@@ -18,6 +20,8 @@ import uk.ac.ox.ndm.mirth.datamodel.rest.client.MirthRestClient
 class CDRService {
 	def grailsApplication
 
+	def consentFormService
+	def attachmentService
 
 
 
@@ -84,8 +88,64 @@ class CDRService {
 
 	private def sendConsentToCDR(nhsNumber,hospitalNumber, consentForm){
 
-		
-		return "success"
+		def cdrKnownFacilityConfig = grailsApplication.config?.cdr?.knownFacility
+		def cdrOrganisationConfig  = grailsApplication.config?.cdr?.organisation
+
+		if(!cdrKnownFacilityConfig){
+			throw new Exception("cdr KnownFacility Config is not defined in config file")
+		}
+
+		if(!cdrOrganisationConfig){
+			throw new Exception("cdr Organisation Config is not defined in config file")
+		}
+
+		def knownOrganisation = findKnownOrganisation(consentForm?.template?.cdrUniqueId)
+		if(!knownOrganisation){
+			throw new Exception("Can not find KnownOrganisation(Consent Form Template name) '${consentForm?.template?.cdrUniqueId}' in CDR KnownOrganisations")
+		}
+
+		def knownFacility = findKnownFacility(cdrKnownFacilityConfig?.name)
+		if(!knownFacility){
+			throw new Exception("Can not find KnownFacility '${cdrKnownFacilityConfig?.name}' in CDR KnownFacilities")
+		}
+
+		def knownPatientStatus = findKnownPatientStatus(consentForm.consentStatus)
+		if(!knownPatientStatus){
+			throw new Exception("Can not find KnownPatientStatus '${consentForm.consentStatuse}' in CDR KnownPatientStatus")
+		}
+
+
+		def error
+		def resultOfAction //ResultModel<PatientModel>
+		try {
+			def client = getCDRClient()
+			def greenlight = getCDRFacility()
+			resultOfAction = client.createOrUpdatePatientConsent(nhsNumber, hospitalNumber, knownFacility, knownOrganisation,knownPatientStatus) {
+				authoringFacility greenlight
+				appliesToOrganisation {id cdrOrganisationConfig?.id}
+				effectiveOn consentForm.consentDate
+				consentType {code 'OPT_IN'}
+				attachment {
+					URL consentUrl = consentFormService.getAccessGUIDUrl(consentForm)
+					assert consentUrl != null
+					id attachmentService.getAttachmentFileName(consentForm.attachedFormImage)
+					description 'Greenlight Consent Form'
+					sourceFacility greenlight
+					mimeType AttachmentModel.MimeType.PNG
+					// Any notes on the consent
+					notes consentForm.comment
+				}
+			}
+		} catch (ClientException ex) {
+			ex.printStackTrace()
+			return ex.message
+		}
+
+		if (resultOfAction && resultOfAction?.operationSucceeded){
+			return "success"
+		}else{
+			return error
+		}
 	}
 
 	private def getCDRClient(){

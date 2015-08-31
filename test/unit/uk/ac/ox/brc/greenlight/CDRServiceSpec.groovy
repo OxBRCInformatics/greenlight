@@ -3,6 +3,13 @@ package uk.ac.ox.brc.greenlight
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import spock.lang.Specification
+import uk.ac.ox.ndm.mirth.datamodel.dsl.clinical.patient.Consent
+import uk.ac.ox.ndm.mirth.datamodel.dsl.core.Facility
+import uk.ac.ox.ndm.mirth.datamodel.exception.rest.ClientException
+import uk.ac.ox.ndm.mirth.datamodel.rest.client.KnownFacility
+import uk.ac.ox.ndm.mirth.datamodel.rest.client.KnownOrganisation
+import uk.ac.ox.ndm.mirth.datamodel.rest.client.KnownPatientStatus
+import uk.ac.ox.ndm.mirth.datamodel.rest.client.MirthRestClient
 
 /**
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
@@ -50,6 +57,63 @@ class CDRServiceSpec extends Specification {
 		sendConsentToCDRCalled
 		result == "success"
 	}
+
+	void "sendConsentToCDR sends consent into CDR and returns success"(){
+		setup:
+		def nhsNumber = "1234567890"
+		def hospitalNumber = "123"
+		def consentForm = new ConsentForm(template:new ConsentFormTemplate(cdrUniqueId: "GEL") )
+		//Mock the internal methods of the Service
+		service.metaClass.getCDRClient   = {
+			def client = new Object()
+			client.metaClass.createOrUpdatePatientConsent = {
+				String consent, String patient, KnownFacility receivingFacility, KnownOrganisation organisation, KnownPatientStatus consentStatus,Closure clsr ->
+					def result = new Object()
+					result.metaClass.isOperationSucceeded = {
+						return  true
+					}
+					return result
+			}
+			return client
+		}
+		service.metaClass.getCDRFacility = {new Object()}
+		service.metaClass.findKnownOrganisation = {return KnownOrganisation.GEL_CSC_V1}
+		service.metaClass.findKnownFacility = {return KnownFacility.TEST}
+		service.metaClass.grailsApplication.getConfig = { [cdr:[knownFacility:"TEST",organisation:"Greenlight"] ]  }
+
+		when:
+		def result = service.sendConsentToCDR(nhsNumber,hospitalNumber,consentForm);
+
+		then:
+		result == "success"
+	}
+
+	void "sendConsentToCDR returns exception message when has error"(){
+		setup:
+		def nhsNumber = "1234567890"
+		def hospitalNumber = "123"
+		def consentForm = new ConsentForm(template:new ConsentFormTemplate(cdrUniqueId: "GEL") )
+		//Mock the internal methods of the Service
+		service.metaClass.getCDRClient   = {
+			def client = new Object()
+			client.metaClass.createOrUpdatePatientConsent = {
+				String consent, String patient, KnownFacility receivingFacility, KnownOrganisation organisation, KnownPatientStatus consentStatus,Closure clsr ->
+					throw new ClientException("Exception in calling CDR")
+			}
+			return client
+		}
+		service.metaClass.getCDRFacility = {new Object()}
+		service.metaClass.findKnownOrganisation = {return KnownOrganisation.GEL_CSC_V1}
+		service.metaClass.findKnownFacility = {return KnownFacility.TEST}
+		service.metaClass.grailsApplication.getConfig = { [cdr:[knownFacility:"TEST",organisation:"Greenlight"] ]  }
+
+		when:
+		def result = service.sendConsentToCDR(nhsNumber,hospitalNumber,consentForm);
+
+		then:
+		result == "Exception in calling CDR"
+	}
+
 	def "findKnownPatientStatus returns KnownPatientStatus based on ConsentForm.ConsentStatus"(){
 		when:
 		def actual = service.findKnownPatientStatus(consentStatus)
