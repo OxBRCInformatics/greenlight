@@ -50,6 +50,23 @@ class CDRServiceSpec extends Specification {
 		sendConsentToCDRCalled
 		result == "success"
 	}
+	def "findKnownPatientStatus returns KnownPatientStatus based on ConsentForm.ConsentStatus"(){
+		when:
+		def actual = service.findKnownPatientStatus(consentStatus)
+		assert ConsentForm.ConsentStatus.values().size() == 3
+		assert KnownPatientStatus.values().size() == 5
+
+		then:
+		actual == expected
+
+		where:
+		consentStatus							|	expected
+		ConsentForm.ConsentStatus.NON_CONSENT	|	KnownPatientStatus.NON_CONSENT
+		ConsentForm.ConsentStatus.FULL_CONSENT	|	KnownPatientStatus.CONSENTED
+		ConsentForm.ConsentStatus.CONSENT_WITH_LABELS	|	KnownPatientStatus.RESTRICTED_CONSENT
+		'UN-KNOWN'										|	null
+	}
+
 	def "findKnownOrganisation will return KnownOrganisation enum value"(){
 		when:
 		def actual = service.findKnownOrganisation(organisationName)

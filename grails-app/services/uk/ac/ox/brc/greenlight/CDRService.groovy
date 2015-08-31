@@ -130,4 +130,17 @@ class CDRService {
 		 }
 		result
 	}
+
+	def findKnownPatientStatus(consentStatus){
+		switch (consentStatus){
+			case ConsentForm.ConsentStatus.FULL_CONSENT:
+				return KnownPatientStatus.CONSENTED;
+			case ConsentForm.ConsentStatus.CONSENT_WITH_LABELS:
+				return KnownPatientStatus.RESTRICTED_CONSENT;
+			case ConsentForm.ConsentStatus.NON_CONSENT:
+				return KnownPatientStatus.NON_CONSENT;
+			default:
+				return null;
+		}
+	}
 }
