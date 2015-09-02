@@ -86,17 +86,20 @@ class ConsentFormService {
 
 	def save(Patient patient, ConsentForm consentForm) {
 
+		def isNew = false
+		if(!patient.id && !consentForm.id)
+			isNew = true
+
 		//calculate and save consentStatus
 		consentForm.consentStatus = consentEvaluationService.getConsentStatus(consentForm)
 		//calculate and save consentStatusLabels as well
 
-		consentForm.dateTimePassedToCDR = new Date()
-		consentForm.passedToCDR = true
-		try{
-			//save it in CDR
-			consentForm.savedInCDRStatus = CDRService.saveOrUpdateConsentForm(patient,consentForm)
+
+		try {
+			CDRService.saveOrUpdateConsentForm(patient, consentForm, isNew)
 		}catch(Exception ex){
-			consentForm.savedInCDRStatus = "Failed: " + ex.message
+			//it actually should not stop the whole save process
+			log.error(ex.message)
 		}
 
 		//save consent and patient in a transaction
