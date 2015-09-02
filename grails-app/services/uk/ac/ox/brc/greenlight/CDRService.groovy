@@ -22,101 +22,286 @@ class CDRService {
 
 	def consentFormService
 	def attachmentService
+	def patientService
+	def CDRLogService
 
 
+	def saveOrUpdateConsentForm(Patient patient, ConsentForm consentForm, boolean newConsent) {
 
-	def saveOrUpdateConsentForm(Patient patient,ConsentForm consentForm) {
-
-		//if patient has a generic nhsNumber then send '??????????' to CDR
-		def nhsNumber = patient.nhsNumber
-		if(patient.nhsNumber == '1111111111' || patient.nhsNumber?.isEmpty() || !patient.nhsNumber){
-			nhsNumber = '??????????'
+		//in New mode
+		if (newConsent) {
+			return addNewConsent(patient,consentForm)
 		}
+		//in update mode
+		else if (!newConsent) {
 
-		def mrnNumber = patient.hospitalNumber
-		if(patient.hospitalNumber?.isEmpty() || !patient.hospitalNumber){
-			mrnNumber = '???'
-		}
+			//Patient updated, consent NOT updated
+			if (patient.NHSOrHospitalNumberChanged() && !consentForm.isChanged() ) {
 
-		//if Consent or Patient are in update mode and
-		//consent or patient are updated
-		if(consentForm.id && patient.id && (consentForm.isChanged() || patient.isDirty())) {
+				//old consent was saved in CDR (*)
+				if(consentForm.savedInCDR) {
+					//remove oldPatient and OldConsent from CDR
+					def oldNHSNumber = patient.getPersistentValue("nhsNumber")
+					def oldHospitalNumber = patient.getPersistentValue("hospitalNumber")
 
-			//if patientDetails are changed
-			if(patient.isDirty()){
-				//remove oldConsent from CDR
-				//add the new consent into CDR
+					//Remove it from CDR (the oldPatient and its consent)
+					def removeResult = CDR_Remove_Consent(oldNHSNumber, oldHospitalNumber, consentForm, consentForm.template)
+
+					//find latest before consent which are the same type of the old-patient consent which are NOT sent to CDR and pass it
+					ConsentForm olderNotSavedInCDRConsent = consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichAreNotSavedInCDR(oldNHSNumber, oldHospitalNumber, consentForm, consentForm.template)
+					if (olderNotSavedInCDRConsent) {
+						//Pass it to CDR (the oldPatient and its latest before consent)
+						def sendResult = CDR_Send_Consent(oldNHSNumber, oldHospitalNumber, olderNotSavedInCDRConsent, olderNotSavedInCDRConsent?.template)
+					}
+
+					//act the updated consent as a new consent
+					return addNewConsent(patient, consentForm)
+				}else{
+					//old consent was NOT saved in CDR, so nop (*)
+					return [success: true,log:"no operation required"]
+				}
+				//Consent template has changed
+			} else if (!patient.NHSOrHospitalNumberChanged() && consentForm.isChanged() && consentForm.template.id != consentForm.getPersistentValue("template").id ) {
+
+				def oldConsentTemplate = consentForm.getPersistentValue("template")
+
+				//consent was passed to CDR before
+				if(consentForm.savedInCDR){
+					//Remove oldConsent from CDR
+					def removeResult = CDR_Remove_Consent(patient.nhsNumber, patient.hospitalNumber,consentForm,oldConsentTemplate)
+
+					//find latest consent which are the same type of the old-consent which are NOT sent to CDR and pass it
+					ConsentForm latestConsent = consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichAreNotSavedInCDR(patient.nhsNumber, patient.hospitalNumber, consentForm,oldConsentTemplate)
+					if (latestConsent) {
+						//Pass it to CDR
+						def sendResult = CDR_Send_Consent(patient.nhsNumber, patient.hospitalNumber, latestConsent,latestConsent?.template)
+					}
+					//act the updated consent as a new consent
+					return addNewConsent(patient,consentForm)
+				}else{
+					//old consent was NOT saved in CDR, so nop
+					//as it was not saved in CDR, it means that there are newer consent other than that which are saved in CDR
+					//so we do not need to do any operations
+					return [success: true,log:"no operation required"]
+				}
+
+
+			}//consentDate changed
+			 else if (!patient.NHSOrHospitalNumberChanged() && consentForm.isChanged() && consentForm.consentDate.compareTo(consentForm.getPersistentValue("consentDate")) != 0 ) {
+
+				//NOT saved in CDR before, so it is not the latest one, so act it as a new consent
+				if(!consentForm.savedInCDR){
+					return addNewConsent(patient,consentForm)
+				}else{
+
+					//saved before in CDR, so it is the latest consent
+					def oldConsentDate = consentForm.getPersistentValue("consentDate")
+					def newConsentDate = consentForm.consentDate
+
+					//is the new date after the old date ?
+					if(newConsentDate.compareTo(oldConsentDate) > 0 ){
+						//so the consent (which was the latest one) is moved to further date,so just update it in CDR
+						def sendResult = CDR_Send_Consent(patient.nhsNumber, patient.hospitalNumber, consentForm,consentForm?.template)
+						return sendResult
+					}else if (newConsentDate.compareTo(oldConsentDate) < 0 ) {
+						//are there any consent after the new date which are not sent ( of course those which are different from consentForm.id )?
+						ConsentForm latestConsent = consentFormService.findLatestConsentOfSameTypeAfterThisConsentWhichAreNotSavedInCDR(patient.nhsNumber,patient.hospitalNumber,consentForm,consentForm.template)
+						if(latestConsent){
+							//Pass it to CDR & it will update the old one on CDR (retire the old one as well as they both have the same template type)
+							def sendResult = CDR_Send_Consent(patient.nhsNumber, patient.hospitalNumber, latestConsent,latestConsent?.template)
+
+							//update consent status and mention that it is not in CDR
+							consentForm.savedInCDR = false
+							consentForm.passedToCDR = false
+							consentForm.savedInCDRStatus = null
+							consentForm.save(flush: true, failOnError: true)
+							return [success: true,log:"no operation required"]
+						}else{
+							//do nothing just save the new one
+							//update consent status and mention that it is not in CDR
+							consentForm.savedInCDR = false
+							consentForm.passedToCDR = false
+							consentForm.savedInCDRStatus = null
+							consentForm.save(flush: true, failOnError: true)
+							return [success: true,log:"no operation required"]
+						}
+					}else{
+						//it should not get to here
+					}
+				}
 			}
-			//if consentFormDetails are changed
-			else if(consentForm.isChanged()) {
+			//oldConsentForm formStatus was NORMAL and now it is changed to DECLINED or SPOILED, so make the old one DECLINED or SPOILED
+			else if (consentForm.getPersistentValue("formStatus") == ConsentForm.FormStatus.NORMAL &&
+					 consentForm.formStatus != ConsentForm.FormStatus.NORMAL &&  consentForm.savedInCDR) {
 
-				//if formTemplate is changed
-				if (consentForm.getPersistentValue("template")?.id != consentForm.template.id) {
-					//remove oldConsent from CDR
-					//add the new consent into CDR
-				}
-				//oldConsentForm formStatus was NORMAL and now it is changed to DECLINED or SPOILED, so make the old one DECLINED or SPOILED
-				else if (consentForm.getPersistentValue("formStatus")  == ConsentForm.FormStatus.NORMAL &&
-						 consentForm.formStatus != ConsentForm.FormStatus.NORMAL) {
-					//so make the old one DECLINED or SPOILED
-					//add the new consent into CDR
+				//Remove it from CDR
+				def removeResult = CDR_Remove_Consent(patient.nhsNumber, patient.hospitalNumber,consentForm,consentForm.template)
 
-				} //oldConsentForm formStatus was NOT NORMAL and now it is NORMAL, so send it
-				else if (consentForm.getPersistentValue("formStatus") != ConsentForm.FormStatus.NORMAL &&
-						 consentForm.formStatus == ConsentForm.FormStatus.NORMAL) {
-					//add the new consent into CDR
+				//find latest consent which are the same type of the old consent which are NOT sent to CDR and pass it
+				ConsentForm latestConsent = consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichAreNotSavedInCDR(patient.nhsNumber, patient.hospitalNumber, consentForm,consentForm.template)
+				if (latestConsent) {
+					//Pass it to CDR
+					def sendResult = CDR_Send_Consent(patient.nhsNumber, patient.hospitalNumber, latestConsent,latestConsent?.template)
 				}
-					//just other fields are updated, such as responses, so just send it to CDR 'again' & it will update it automatically
-				else {
-
-					//add the new consent into CDR
-				}
+				return removeResult
 			}
-		}//it is a NEW consentForm with a new Patient
-		else if (!consentForm.id && !patient.id){
-			return sendConsentToCDR(nhsNumber,mrnNumber, consentForm)
+			//oldConsentForm formStatus was NOT NORMAL and now it is NORMAL, so send it
+			else if (consentForm.getPersistentValue("formStatus") != ConsentForm.FormStatus.NORMAL &&
+					 consentForm.formStatus == ConsentForm.FormStatus.NORMAL && consentForm.savedInCDR) {
+				//act like a new consentForm which is added
+				return addNewConsent(patient,consentForm)
+			}
+			else if(consentForm.isChanged() && consentForm.savedInCDR &&
+				    (consentForm.getPersistentValue("consentStatus")!=consentForm.consentStatus || consentForm.getPersistentValue("consentStatusLabels")!=consentForm.consentStatusLabels)){
+					//other important details of consent are updated (such as consentStatus,consentStatusLabel, just send it to CDR again
+					def sendResult = CDR_Send_Consent(patient.nhsNumber, patient.hospitalNumber, consentForm,consentForm?.template)
+					return sendResult
+			}else
+			{
+				//do nothing
+			}
 		}
 	}
 
-	private def expireConsentForm(ConsentForm consentForm){
 
+	//Pre process before sending to CDR
+	def addNewConsent(Patient patient, ConsentForm consentForm){
+
+		if(consentForm.formStatus != ConsentForm.FormStatus.NORMAL){
+			return [success: true,log:"no operation required"]
+		}
+
+		//Are there any consents newer than this of this type which are saved in CDR, so do not do any operation
+		def newerSavedInCDRConsents = consentFormService.findConsentsOfSameTypeAfterThisConsentWhichAreSavedInCDR(patient.nhsNumber,patient.hospitalNumber,consentForm)
+		if(newerSavedInCDRConsents.size() > 0){
+			return [success: true,log:"no operation required"]
+		}
+
+		//Is there any consent older than this of this type which are saved in CDR, so remove them from CDR
+		ConsentForm olderSavedInCDRConsent = consentFormService.findAnyConsentOfSameTypeBeforeThisConsentWhichAreSavedInCDR(patient.nhsNumber,patient.hospitalNumber,consentForm)
+		if(olderSavedInCDRConsent) {
+			//Remove it from CDR
+			def removeResult = CDR_Remove_Consent(patient.nhsNumber, patient.hospitalNumber, olderSavedInCDRConsent, olderSavedInCDRConsent.template)
+		}
+
+		//Pass it to CDR
+		def sendResult = CDR_Send_Consent(patient.nhsNumber, patient.hospitalNumber, consentForm,consentForm.template)
+		return sendResult
 	}
 
-	private def deleteConsentForm(ConsentForm  consentForm){
+	def CDR_Remove_Consent(nhsNumber,hospitalNumber,consentForm,template){
+		//Remove it from CDR
+		def removeResult = connectToCDRAndRemoveConsentFrom(nhsNumber, hospitalNumber, template)
+		CDRLogService.add(consentForm.id,template.id,nhsNumber,hospitalNumber,removeResult.success,removeResult.log,"remove")
 
+		//update consent status and mention that it is not in CDR
+		consentForm.savedInCDR  = false
+		consentForm.passedToCDR = false
+		consentForm.savedInCDRStatus = null
+		consentForm.dateTimeSavedInCDR = null
+		consentForm.save(flush: true, failOnError: true)
+		return  removeResult
 	}
 
-	private def sendConsentToCDR(nhsNumber,hospitalNumber, consentForm){
+	def CDR_Send_Consent(nhsNumber,hospitalNumber,consentForm,template){
+		//Pass it to CDR
+		def sendResult = connectToCDRAndSendConsentForm(nhsNumber, hospitalNumber, consentForm)
+		CDRLogService.add(consentForm.id,template.id,nhsNumber,hospitalNumber,sendResult.success,sendResult.log,"save")
+
+		consentForm.savedInCDR  = sendResult.success
+		consentForm.passedToCDR = true
+		consentForm.dateTimeSavedInCDR = new Date()
+		consentForm.savedInCDRStatus = sendResult.log
+		consentForm.save(flush: true, failOnError: true)
+		return sendResult
+	}
+
+
+	def connectToCDRAndRemoveConsentFrom(nhsNumber, hospitalNumber, consentFormTemplate) {
+
+		def cdrKnownFacilityConfig = grailsApplication.config?.cdr?.knownFacility
+		def cdrOrganisationConfig = grailsApplication.config?.cdr?.organisation
+
+		if (!cdrKnownFacilityConfig) {
+			return [success: false, log: "cdr KnownFacility Config is not defined in config file"]
+		}
+
+		if (!cdrOrganisationConfig) {
+			return [success: false, log: "cdr Organisation Config is not defined in config file"]
+		}
+
+		def knownOrganisation = findKnownOrganisation(consentFormTemplate?.cdrUniqueId)
+		if (!knownOrganisation) {
+			return [success: false, log: "Can not find KnownOrganisation(Consent Form Template name) '${consentFormTemplate?.cdrUniqueId}' in CDR KnownOrganisations"]
+		}
+
+		def knownFacility = findKnownFacility(cdrKnownFacilityConfig?.name)
+		if (!knownFacility) {
+			return [success: false, log: "Can not find KnownFacility '${cdrKnownFacilityConfig?.name}' in CDR KnownFacilities"]
+		}
+
+
+		ResultModel<PatientModel> resultOfAction
+		try {
+			def client = getCDRClient()
+			def greenlight = getCDRFacility()
+			resultOfAction = client.removePatientConsent(nhsNumber, hospitalNumber, knownFacility, knownOrganisation) {
+				authoringFacility greenlight
+				appliesToOrganisation { id cdrOrganisationConfig?.id }
+				effectiveOn consentForm.consentDate
+				attachment {
+					URL consentUrl = consentFormService.getAccessGUIDUrl(consentForm)
+					assert consentUrl != null
+					id attachmentService.getAttachmentFileName(consentForm.attachedFormImage)
+					description 'Greenlight Consent Form'
+					sourceFacility greenlight
+					mimeType AttachmentModel.MimeType.PNG
+					// Any notes on the consent
+					notes consentForm.comment
+				}
+			}
+		} catch (ClientException ex) {
+			ex.printStackTrace()
+			return [success: false, log: ex.message]
+		}
+
+		if (resultOfAction && resultOfAction?.operationSucceeded) {
+			return [success: true, log: resultOfAction.conditionDetailsAsString]
+		} else {
+			return [success: false, log: resultOfAction.conditionDetailsAsString]
+		}
+	}
+
+	def connectToCDRAndSendConsentForm(nhsNumber, hospitalNumber, consentForm) {
 
 		def cdrKnownFacilityConfig = grailsApplication.config?.cdr?.knownFacility
 		def cdrOrganisationConfig  = grailsApplication.config?.cdr?.organisation
 
-		if(!cdrKnownFacilityConfig){
-			throw new Exception("cdr KnownFacility Config is not defined in config file")
+		if (!cdrKnownFacilityConfig) {
+			return [success: false, log: "cdr KnownFacility Config is not defined in config file"]
 		}
 
-		if(!cdrOrganisationConfig){
-			throw new Exception("cdr Organisation Config is not defined in config file")
+		if (!cdrOrganisationConfig) {
+			return [success: false, log: "cdr Organisation Config is not defined in config file"]
 		}
 
 		def knownOrganisation = findKnownOrganisation(consentForm?.template?.cdrUniqueId)
-		if(!knownOrganisation){
-			throw new Exception("Can not find KnownOrganisation(Consent Form Template name) '${consentForm?.template?.cdrUniqueId}' in CDR KnownOrganisations")
+		if (!knownOrganisation) {
+			return [success: false, log: "Can not find KnownOrganisation(Consent Form Template name) '${consentForm?.template?.cdrUniqueId}' in CDR KnownOrganisations"]
 		}
 
 		def knownFacility = findKnownFacility(cdrKnownFacilityConfig?.name)
-		if(!knownFacility){
-			throw new Exception("Can not find KnownFacility '${cdrKnownFacilityConfig?.name}' in CDR KnownFacilities")
+		if (!knownFacility) {
+			return [success: false, log: "Can not find KnownFacility '${cdrKnownFacilityConfig?.name}' in CDR KnownFacilities"]
 		}
 
 		def knownPatientStatus = findKnownPatientStatus(consentForm.consentStatus)
-		if(!knownPatientStatus){
-			throw new Exception("Can not find KnownPatientStatus '${consentForm.consentStatuse}' in CDR KnownPatientStatus")
+		if (!knownPatientStatus) {
+			return [success: false, log: "Can not find KnownPatientStatus '${consentForm.consentStatuse}' in CDR KnownPatientStatus"]
 		}
 
-
-		def error
-		def resultOfAction //ResultModel<PatientModel>
+		//def error
+		ResultModel<PatientModel> resultOfAction
 		try {
 			def client = getCDRClient()
 			def greenlight = getCDRFacility()
