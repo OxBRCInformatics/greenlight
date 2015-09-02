@@ -138,13 +138,13 @@ class CDRService {
 			}
 		} catch (ClientException ex) {
 			ex.printStackTrace()
-			return ex.message
+			return [success: false, log: ex.message]
 		}
 
-		if (resultOfAction && resultOfAction?.operationSucceeded){
-			return "success"
-		}else{
-			return error
+		if (resultOfAction && resultOfAction?.operationSucceeded) {
+			return [success: true, log: resultOfAction.conditionDetailsAsString]
+		} else {
+			return [success: false, log: resultOfAction.conditionDetailsAsString]
 		}
 	}
 
