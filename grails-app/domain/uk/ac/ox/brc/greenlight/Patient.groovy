@@ -39,4 +39,7 @@ class Patient {
 	}
 
 
+	def NHSOrHospitalNumberChanged(){
+		return (this.isDirty() && (this.isDirty("nhsNumber") || this.isDirty("hospitalNumber")))
+	}
 }
