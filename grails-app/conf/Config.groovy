@@ -253,9 +253,10 @@ epds.conString.url='jdbc:oracle:thin:@serverName:1521:SIDName'
 cdr.access.username = "CDR_USERNAME"
 cdr.access.password = "CDR_PASSWORD"
 
-cdr.facility.id   = 'CDR_FACILITY_ID'
-cdr.facility.name = 'CDR_FACILITY_NAME'
-cdr.facility.description  = 'CDR_FACILITY_DESC'
+cdr.facility.id   = 'CDR_FACILITY_ID' 		//id 'TEST-BRC-GREENLIGHT'
+cdr.facility.name = 'CDR_FACILITY_NAME'		//name 'Test Greenlight System'
+cdr.facility.description  = 'CDR_FACILITY_DESC' //description 'Test facility for Greenlight Consent management'
+
 
 cdr.organisation.id = "TEST-OUH" //appliesToOrganisation when passing consent
 
