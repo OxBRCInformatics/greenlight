@@ -17,7 +17,8 @@ class ConsentForm {
 	ConsentStatus consentStatus = ConsentStatus.NON_CONSENT
 
 	boolean passedToCDR
-	Date dateTimePassedToCDR
+	boolean savedInCDR
+	Date dateTimeSavedInCDR
 	String savedInCDRStatus
 	
     List<Response> responses
@@ -41,8 +42,9 @@ class ConsentForm {
 
     static constraints = {
 		passedToCDR nullable:true, defaultValue:false
-		dateTimePassedToCDR nullable: true
+		dateTimeSavedInCDR nullable: true
 		savedInCDRStatus nullable:true
+		savedInCDR nullable:true
 
 		accessGUID nullable: false , unique: true
 
