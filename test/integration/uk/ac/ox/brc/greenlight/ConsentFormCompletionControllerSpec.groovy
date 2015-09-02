@@ -154,7 +154,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         consentFormController.save()
 
         then:
-		1 * consentFormController.consentFormService.CDRService.saveOrUpdateConsentForm(_,_) >>{return "success"}
+		1 * consentFormController.consentFormService.CDRService.saveOrUpdateConsentForm(_,_,_) >>{return "success"}
 		consentFormController.response.redirectedUrl == "/attachment/annotatedList"
         Patient.count() == patientCountBefore + 1
     }
@@ -170,7 +170,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         consentFormController.save()
 
         then:
-		1 * consentFormController.consentFormService.CDRService.saveOrUpdateConsentForm(_,_) >>{return "success"}
+		1 * consentFormController.consentFormService.CDRService.saveOrUpdateConsentForm(_,_,_) >>{return "success"}
         consentFormController.response.redirectedUrl == "/attachment/annotatedList"
         ConsentForm.count() == consentFormCountBefore + 1
 
@@ -242,7 +242,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         consentFormController.save()
 
         then:
-		1 * consentFormController.consentFormService.CDRService.saveOrUpdateConsentForm(_,_) >>{return "success"}
+		1 * consentFormController.consentFormService.CDRService.saveOrUpdateConsentForm(_,_,_) >>{return "success"}
         consentFormController.response.redirectedUrl == "/attachment/annotatedList"
         attachment.consentForm!=null
 

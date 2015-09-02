@@ -255,7 +255,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		def consent = Attachment.first()?.consentForm
 
 		then:
-		1 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_) >>{return "success"}
+		1 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_,_) >>{return "success"}
 		result
 		consent.consentTakerName  == "B.."
 		consent.patient.givenName == "A.."
@@ -392,7 +392,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		def result  = consentFormService.save(patient,consent)
 
 		then:"it will update consentStatus attribute of the ConsentForm object"
-		1 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_) >>{return "success"}
+		1 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_,_) >>{return "success"}
 		result
 		!consent.hasErrors()
 		consent.consentStatus == ConsentForm.ConsentStatus.FULL_CONSENT
@@ -414,7 +414,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		def result  = consentFormService.save(attachment.consentForm.patient,attachment.consentForm)
 
 		then:
-		1 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_) >>{return "success"}
+		1 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_,_) >>{return "success"}
 		result
 		attachment?.consentForm?.consentStatus == ConsentForm.ConsentStatus.FULL_CONSENT
 	}
@@ -446,7 +446,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		def result  = consentFormService.save(attachment.consentForm.patient,attachment.consentForm)
 
 		then:
-		1 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_) >>{return "success"}
+		1 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_,_) >>{return "success"}
 		result
 		attachment?.consentForm?.template.id == newTemplate.id
 		attachment?.consentForm?.consentStatus == ConsentForm.ConsentStatus.FULL_CONSENT
