@@ -324,6 +324,8 @@ class ConsentFormService {
 	}
 
 	def getAccessGUIDUrl(consentForm){
+		//make sure that the consentForm has 'accessGUID' and it is not null or empty
+		assert consentForm.accessGUID && !consentForm.accessGUID.isEmpty()
 		"${grailsLinkGenerator.serverBaseURL}/consent/${consentForm.accessGUID}"
 	}
 }
