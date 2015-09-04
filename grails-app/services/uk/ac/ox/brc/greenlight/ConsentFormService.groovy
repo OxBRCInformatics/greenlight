@@ -94,8 +94,13 @@ class ConsentFormService {
 		consentForm.consentStatus = consentEvaluationService.getConsentStatus(consentForm)
 		//calculate and save consentStatusLabels as well
 		consentForm.consentStatusLabels = consentEvaluationService.getConsentLabelsAsString(consentForm)
+		//Assign accessGUID to the consentForm if it is not assigned yet (it is in NEW mode)
+		if(!consentForm.id) {
+			consentForm.accessGUID = UUID.randomUUID().toString()
+		}
 
 
+		//first send it to CDR
 		try {
 			CDRService.saveOrUpdateConsentForm(patient, consentForm, isNew)
 		}catch(Exception ex){

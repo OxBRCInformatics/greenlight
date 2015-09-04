@@ -10,7 +10,7 @@ import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
  * Created by rb on 01/04/2014.
  */
 @TestFor(ConsentFormService)
-@grails.test.mixin.Mock([ConsentForm, ConsentFormTemplate])
+@grails.test.mixin.Mock([ConsentForm, ConsentFormTemplate,Patient])
 class ConsentFormServiceUnitSpec extends Specification {
 
 	def setup(){
@@ -177,7 +177,7 @@ class ConsentFormServiceUnitSpec extends Specification {
 		latestForms.containsAll(returnedForms)
 	}
 
-	def "save will update consentStatus and consentStatusLabels details"(){
+	def "save will set consentStatus, consentStatusLabels and accessGUID for a consent"(){
 		given:
 		def patient = new Patient()
 		def consent = new ConsentForm(accessGUID: "TEST")
@@ -191,7 +191,27 @@ class ConsentFormServiceUnitSpec extends Specification {
 		1 * service.CDRService.saveOrUpdateConsentForm(patient,consent,_) >> {return "success_TEST"}
 		consent.consentStatus       == ConsentStatus.NON_CONSENT
 		consent.consentStatusLabels == "Label1\nLabel2"
+		consent.accessGUID != "TEST"
 	}
+
+	def "save will not update accessGUID for a consent if it is already saved"(){
+		given:
+		def patient = new Patient().save(failOnError: true,flush: true)
+		def template = new ConsentFormTemplate(name:"ABC",namePrefix: "ABC",templateVersion: "v1").save(failOnError: true,flush: true)
+		def consent = new ConsentForm(accessGUID: "HAS_VALUE_SO_SHOULD_NOT_BE_UPDATED",patient:patient,template:template,formID: "ABC12345").save(failOnError: true,flush: true)
+
+		when:
+		service.save(patient,consent)
+
+		then:
+		1 * service.consentEvaluationService.getConsentStatus(consent) >> {ConsentStatus.NON_CONSENT}
+		1 * service.consentEvaluationService.getConsentLabelsAsString(consent) >> {"Label1\nLabel2"}
+		1 * service.CDRService.saveOrUpdateConsentForm(patient,consent,_) >> {return "success_TEST"}
+		consent.consentStatus       == ConsentStatus.NON_CONSENT
+		consent.consentStatusLabels == "Label1\nLabel2"
+		consent.accessGUID == "HAS_VALUE_SO_SHOULD_NOT_BE_UPDATED"
+	}
+
 
 	def "getAccessGUIDUrl returns URL to consentForm by accessGUID"(){
 

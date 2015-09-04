@@ -8,24 +8,24 @@ import grails.test.spock.IntegrationSpec
  */
 class ConsentFormISpec extends IntegrationSpec {
 
-	void "Gorm will add a GUID into accessGUID before inserting the object"() {
-
-		when:"ConsentForm is inserted"
-		def con = createTestConsent()
-		con.save(failOnError: true,flush: true)
-
-		then:"accessGUID is added"
-		con.accessGUID != null
-
-
-		when:"ConsentForm is updated"
-		con.comment = "TEST COMMENT"
-		def accessGUID = con.accessGUID
-		con.save(failOnError: true,flush: true)
-
-		then:"accessGUID is not changed"
-		accessGUID == con.accessGUID
-	}
+//	void "Gorm will add a GUID into accessGUID before inserting the object"() {
+//
+//		when:"ConsentForm is inserted"
+//		def con = createTestConsent()
+//		con.save(failOnError: true,flush: true)
+//
+//		then:"accessGUID is added"
+//		con.accessGUID != null
+//
+//
+//		when:"ConsentForm is updated"
+//		con.comment = "TEST COMMENT"
+//		def accessGUID = con.accessGUID
+//		con.save(failOnError: true,flush: true)
+//
+//		then:"accessGUID is not changed"
+//		accessGUID == con.accessGUID
+//	}
 
 	void "accessGUID should be unique"() {
 
