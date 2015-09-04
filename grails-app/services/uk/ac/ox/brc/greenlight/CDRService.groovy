@@ -299,6 +299,9 @@ class CDRService {
 		if (!knownPatientStatus) {
 			return [success: false, log: "Can not find KnownPatientStatus '${consentForm.consentStatus}' in CDR KnownPatientStatus"]
 		}
+		def consentStatusCode = "OPT-IN"
+		if(consentForm.consentStatus == ConsentForm.ConsentStatus.NON_CONSENT) {
+			consentStatusCode = "OPT-OUT"
 		}
 
 		def consentURL = consentFormService.getAccessGUIDUrl(consentForm).toString()
@@ -311,7 +314,7 @@ class CDRService {
 				authoringFacility greenlight
 				appliesToOrganisation {id cdrOrganisationConfig?.id}
 				effectiveOn consentForm.consentDate
-				consentType {code 'OPT_IN'}
+				consentType { code consentStatusCode }
 				attachment {
 					description 'Greenlight Consent Form'
 					sourceFacility greenlight
