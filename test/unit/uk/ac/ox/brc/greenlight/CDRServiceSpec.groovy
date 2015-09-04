@@ -4,8 +4,12 @@ import com.mirth.results.client.PatientModel
 import com.mirth.results.client.result.ResultModel
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
+import org.apache.commons.lang3.tuple.Triple
 import spock.lang.Specification
+import spock.lang.Unroll
 import uk.ac.ox.brc.greenlight.Audit.CDRLog
+import uk.ac.ox.ndm.mirth.datamodel.dsl.clinical.patient.Consent
+import uk.ac.ox.ndm.mirth.datamodel.dsl.core.Facility
 import uk.ac.ox.ndm.mirth.datamodel.exception.rest.ClientException
 import uk.ac.ox.ndm.mirth.datamodel.rest.client.KnownFacility
 import uk.ac.ox.ndm.mirth.datamodel.rest.client.KnownOrganisation
@@ -30,12 +34,13 @@ class CDRServiceSpec extends Specification {
 		setup:
 		def nhsNumber = "1234567890"
 		def hospitalNumber = "123"
-		def consentForm = new ConsentForm(template:new ConsentFormTemplate(cdrUniqueId: "GEL") )
+		def consentForm = new ConsentForm(template:new ConsentFormTemplate(cdrUniqueId: "GEL_CSC_V1") )
 		//Mock the internal methods of the Service
 		service.metaClass.getCDRClient   = {
 			def client = new Object()
 			client.metaClass.createOrUpdatePatientConsent = {
-				String consent, String patient, KnownFacility receivingFacility, KnownOrganisation organisation, KnownPatientStatus consentStatus,Closure clsr ->
+				Consent consent, String nhsNum, String mrnIdentity,KnownFacility receivingFacility,
+				KnownOrganisation organisation, Collection<String>patientGroups,KnownPatientStatus consentStatus ->
 					def result = new ResultModel<PatientModel>()
 					result.metaClass.isOperationSucceeded = {
 						return  true
@@ -47,8 +52,9 @@ class CDRServiceSpec extends Specification {
 			}
 			return client
 		}
-		service.metaClass.getCDRFacility = {new Object()}
-		service.metaClass.findKnownOrganisation = {return KnownOrganisation.GEL_CSC_V1}
+		service.metaClass.getCDRFacility = {new Facility()}
+		service.metaClass.findKnownOrganisation = {return KnownOrganisation.GEL_PILOT}
+		service.metaClass.findPatientGroup = {return "GEL_CSC_V1"}
 		service.metaClass.findKnownFacility = {return KnownFacility.TEST}
 		service.metaClass.grailsApplication.getConfig = { [cdr:[knownFacility:"TEST",organisation:"Greenlight"] ]  }
 
@@ -64,22 +70,27 @@ class CDRServiceSpec extends Specification {
 		setup:
 		def nhsNumber = "1234567890"
 		def hospitalNumber = "123"
-		def consentForm = new ConsentForm(template:new ConsentFormTemplate(cdrUniqueId: "GEL") )
+		def consentForm = new ConsentForm(template:new ConsentFormTemplate(cdrUniqueId: "GEL_CSC_V1") )
 		//Mock the internal methods of the Service
 		service.metaClass.getCDRClient   = {
 			def client = new Object()
 			client.metaClass.createOrUpdatePatientConsent = {
-				String consent, String patient, KnownFacility receivingFacility, KnownOrganisation organisation, KnownPatientStatus consentStatus,Closure clsr ->
+				Consent consent, String nhsNum, String mrnIdentity,
+				KnownFacility receivingFacility,KnownOrganisation organisation,
+				Collection<String>patientGroups,KnownPatientStatus consentStatus ->
 					throw new ClientException("Exception in calling CDR")
 			}
 			return client
 		}
-		service.metaClass.getCDRFacility = {new Object()}
-		service.metaClass.findKnownOrganisation = {return KnownOrganisation.GEL_CSC_V1}
+		service.metaClass.getCDRFacility = {new Facility()}
+		service.metaClass.findKnownOrganisation = { return KnownOrganisation.GEL_PILOT}
+		service.metaClass.findPatientGroup = {return "GEL_CSC_V1"}
 		service.metaClass.findKnownFacility = {return KnownFacility.TEST}
 		service.metaClass.grailsApplication.getConfig = { [cdr:[knownFacility:"TEST",organisation:"Greenlight"] ]  }
 
+
 		when:
+		1 * service.consentFormService.getAccessGUIDUrl(_) >> {"TEST_PATH"}
 		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,consentForm);
 
 		then:
@@ -104,23 +115,42 @@ class CDRServiceSpec extends Specification {
 		'UN-KNOWN'										|	null
 	}
 
-	def "findKnownOrganisation will return KnownOrganisation enum value"(){
+
+	def "findKnownOrganisation will return Organisation enum value"() {
 		when:
-		def actual = service.findKnownOrganisation(organisationName)
-		assert KnownOrganisation.values().size() == 6
+		def actual = service.findKnownOrganisation(consentPrefix)
+		assert KnownOrganisation.values().size() == 3
 
 		then:
 		actual == expected
 
 		where:
-		organisationName|	expected
-		"ORB_PRE_V1_2"	|	KnownOrganisation.ORB_PRE_V1_2
-		"ORB_GEN_V1"	|	KnownOrganisation.ORB_GEN_V1
-		"ORB_CRA_V1"	|	KnownOrganisation.ORB_CRA_V1
-		"GEL_CSC_V1"	|	KnownOrganisation.GEL_CSC_V1
-		"GEL_CSC_V2"	|	KnownOrganisation.GEL_CSC_V2
-		"ORB_GEN_V2"	|	KnownOrganisation.ORB_GEN_V2
-		"UNKNOWN"		|	null
+		consentPrefix|	expected
+		"GEL"		|	KnownOrganisation.GEL_PILOT
+		"GEN"		|	KnownOrganisation.ORB_GEN
+		"CRA"		|	KnownOrganisation.ORB_CRA
+		"UNKNOWN"	|	null
+
+	}
+
+ 	def "findPatientGroup will return patientGroup(ConsentTemplateType) enum value"(){
+		when:
+		def actual = service.findPatientGroup(organisationName, consentUniqueId)
+		assert KnownOrganisation.values().size() == 3
+		//assert KnownOrganisation.GEL_PILOT.getPatientGroups()
+
+		then:
+		actual == expected
+
+		where:
+		organisationName			|	consentUniqueId 	|	expected
+		KnownOrganisation.GEL_PILOT	|	"GEL_CSC_V1"		|   "GEL_CSC_V1"
+		KnownOrganisation.GEL_PILOT	|	"GEL_CSC_V2"		|	"GEL_CSC_V2"
+		KnownOrganisation.ORB_GEN	|	"ORB_GEN_V1"	 	|	"ORB_GEN_V1"
+		KnownOrganisation.ORB_GEN	|	"ORB_GEN_V2"	 	|	"ORB_GEN_V2"
+		KnownOrganisation.ORB_GEN	|	"ORB_PRE_V1_2"		|	"ORB_PRE_V1_2"
+		KnownOrganisation.ORB_CRA	|	"ORB_CRA_V1"		|   "ORB_CRA_V1"
+		KnownOrganisation.ORB_CRA	|    "UNKNOWN" 			|    null
 	}
 
 	def "findKnownFacility will return KnownFacility enum value"(){
@@ -625,7 +655,7 @@ class CDRServiceSpec extends Specification {
 		def consentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.SPOILED, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
 
 		def connectToCDRAndRemoveConsentFrom_Called = false
-		service.metaClass.connectToCDRAndRemoveConsentFrom = { nhsNumber, hospitalNumber, temp ->
+		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,ConsentFormTemplate consFormTemp ->
 			connectToCDRAndRemoveConsentFrom_Called = true
 			return [success: true,log:"Removed_LOG_TEXT"]
 		}
@@ -651,7 +681,7 @@ class CDRServiceSpec extends Specification {
 		def consentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.SPOILED, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
 
 		def connectToCDRAndSendConsentForm_Called = false
-		service.metaClass.connectToCDRAndSendConsentForm = { nhsNumber, hospitalNumber, cons ->
+		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,ConsentForm consForm ->
 			connectToCDRAndSendConsentForm_Called = true
 			return [success: false,log:"NOT_SAVE_IN_CDR_TEST_LOG"]
 		}
