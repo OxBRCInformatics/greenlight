@@ -199,8 +199,8 @@ class CDRService {
 		consentForm.savedInCDR  = false
 		consentForm.passedToCDR = false
 		consentForm.savedInCDRStatus = null
-		consentForm.dateTimeSavedInCDR = null
 		consentForm.save(flush: true, failOnError: true)
+		consentForm.dateTimePassedToCDR = null
 		return  removeResult
 	}
 
@@ -211,7 +211,7 @@ class CDRService {
 
 		consentForm.savedInCDR  = sendResult.success
 		consentForm.passedToCDR = true
-		consentForm.dateTimeSavedInCDR = new Date()
+		consentForm.dateTimePassedToCDR = new Date()
 		consentForm.savedInCDRStatus = sendResult.log
 		consentForm.save(flush: true, failOnError: true)
 		return sendResult

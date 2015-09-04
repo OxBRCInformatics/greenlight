@@ -667,7 +667,7 @@ class CDRServiceSpec extends Specification {
 		consentForm.savedInCDR  == false
 		consentForm.passedToCDR == false
 		consentForm.savedInCDRStatus   == null
-		consentForm.dateTimeSavedInCDR == null
+		consentForm.dateTimePassedToCDR == null
 		result.success
 		result.log == "Removed_LOG_TEXT"
 	}
@@ -693,7 +693,7 @@ class CDRServiceSpec extends Specification {
 		consentForm.savedInCDR  == false
 		consentForm.passedToCDR == true
 		consentForm.savedInCDRStatus == "NOT_SAVE_IN_CDR_TEST_LOG"
-		consentForm.dateTimeSavedInCDR
+		consentForm.dateTimePassedToCDR
 		!result.success
 		result.log == "NOT_SAVE_IN_CDR_TEST_LOG"
 	}
