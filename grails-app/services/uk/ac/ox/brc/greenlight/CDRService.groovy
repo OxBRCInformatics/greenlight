@@ -240,6 +240,7 @@ class CDRService {
 			return [success: false, log: "Can not find KnownFacility '${cdrKnownFacilityConfig?.name}' in CDR KnownFacilities"]
 		}
 
+		def consentURL = consentFormService.getAccessGUIDUrl(consentForm).toString()
 
 		ResultModel<PatientModel> resultOfAction
 		try {
@@ -250,14 +251,13 @@ class CDRService {
 				appliesToOrganisation { id cdrOrganisationConfig?.id }
 				effectiveOn consentForm.consentDate
 				attachment {
-					URL consentUrl = consentFormService.getAccessGUIDUrl(consentForm)
-					assert consentUrl != null
-					id attachmentService.getAttachmentFileName(consentForm.attachedFormImage)
+					url consentURL
+//					id attachmentService.getAttachmentFileName(consentForm.attachedFormImage)
+//					mimeType AttachmentModel.MimeType.PNG
 					description 'Greenlight Consent Form'
 					sourceFacility greenlight
-					mimeType AttachmentModel.MimeType.PNG
 					// Any notes on the consent
-					notes consentForm.comment
+					//notes consentForm.comment
 				}
 			}
 		} catch (ClientException ex) {
