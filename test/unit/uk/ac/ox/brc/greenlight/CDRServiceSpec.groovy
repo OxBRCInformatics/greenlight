@@ -34,7 +34,7 @@ class CDRServiceSpec extends Specification {
 		def hospitalNumber = "123"
 		def consentForm = new ConsentForm(template:new ConsentFormTemplate(cdrUniqueId: "GEL_CSC_V1") )
 		//Mock the internal methods of the Service
-		service.metaClass.getCDRClient   = {
+		service.metaClass.createCDRClient   = {
 			def client = new Object()
 			client.metaClass.createOrUpdatePatientConsent = {
 				Consent consent, String nhsNum, String mrnIdentity,KnownFacility receivingFacility,
@@ -50,7 +50,7 @@ class CDRServiceSpec extends Specification {
 			}
 			return client
 		}
-		service.metaClass.getCDRFacility = {new Facility()}
+		service.metaClass.createCDRFacility = {new Facility()}
 		service.metaClass.findKnownOrganisation = {return KnownOrganisation.GEL_PILOT}
 		service.metaClass.findPatientGroup = {return "GEL_CSC_V1"}
 		service.metaClass.findKnownFacility = {return KnownFacility.TEST}
@@ -70,7 +70,7 @@ class CDRServiceSpec extends Specification {
 		def hospitalNumber = "123"
 		def consentForm = new ConsentForm(template:new ConsentFormTemplate(cdrUniqueId: "GEL_CSC_V1") )
 		//Mock the internal methods of the Service
-		service.metaClass.getCDRClient   = {
+		service.metaClass.createCDRClient   = {
 			def client = new Object()
 			client.metaClass.createOrUpdatePatientConsent = {
 				Consent consent, String nhsNum, String mrnIdentity,
@@ -80,7 +80,7 @@ class CDRServiceSpec extends Specification {
 			}
 			return client
 		}
-		service.metaClass.getCDRFacility = {new Facility()}
+		service.metaClass.createCDRFacility = {new Facility()}
 		service.metaClass.findKnownOrganisation = { return KnownOrganisation.GEL_PILOT}
 		service.metaClass.findPatientGroup = {return "GEL_CSC_V1"}
 		service.metaClass.findKnownFacility = {return KnownFacility.TEST}

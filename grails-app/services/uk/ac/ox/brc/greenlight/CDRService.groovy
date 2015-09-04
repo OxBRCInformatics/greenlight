@@ -245,8 +245,8 @@ class CDRService {
 
 		ResultModel<PatientModel> resultOfAction
 		try {
-			def client = getCDRClient()
-			def greenlight = getCDRFacility()
+			def client = createCDRClient()
+			def greenlight = createCDRFacility()
 			resultOfAction = client.removePatientConsent(nhsNumber, hospitalNumber, knownFacility, knownOrganisation) {
 				authoringFacility greenlight
 				appliesToOrganisation { id cdrOrganisationConfig?.id }
@@ -320,11 +320,11 @@ class CDRService {
 
 		ResultModel<PatientModel> resultOfAction
 		try {
-			def client = getCDRClient()
-			def greenlight = getCDRFacility()
-			def model = new MirthModelDsl()
+			def client = createCDRClient()
+			def greenlight = createCDRFacility()
+			def mirthModelDsl = new MirthModelDsl()
 
-			def consent =  model.consent {
+			def consent =  mirthModelDsl.consent {
 				authoringFacility greenlight
 				appliesToOrganisation {id cdrOrganisationConfig?.id}
 				effectiveOn consentForm.consentDate
@@ -354,7 +354,7 @@ class CDRService {
 		}
 	}
 
-	def getCDRClient(){
+	def createCDRClient(){
 		def cdrAccessConfig  = grailsApplication.config?.cdr?.access
 		if(!cdrAccessConfig){
 			throw new Exception("cdr.access Config is not defined in config file")
@@ -378,12 +378,13 @@ class CDRService {
 		return [success:true,errors:null]
 	}
 
-	private def getCDRFacility(){
+	def createCDRFacility(){
 		def cdrFacilityConfig  = grailsApplication.config?.cdr?.facility
 		if(!cdrFacilityConfig){
 			throw new Exception("cdr.facility Config is not defined in config file")
 		}
-		Facility greenlight = facility {
+		def mirthModelDsl = new MirthModelDsl()
+		Facility greenlight = mirthModelDsl.facility {
 			id cdrFacilityConfig.id
 			name cdrFacilityConfig.name
 			description cdrFacilityConfig.description
