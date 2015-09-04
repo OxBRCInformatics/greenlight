@@ -272,7 +272,7 @@ class CDRService {
 		}
 	}
 
-	def connectToCDRAndSendConsentForm(nhsNumber, hospitalNumber, consentForm) {
+	def connectToCDRAndSendConsentForm(String nhsNumber,String  hospitalNumber,ConsentForm consentForm) {
 
 		def cdrKnownFacilityConfig = grailsApplication.config?.cdr?.knownFacility
 		def cdrOrganisationConfig  = grailsApplication.config?.cdr?.organisation
