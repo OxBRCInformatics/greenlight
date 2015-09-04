@@ -322,7 +322,9 @@ class CDRService {
 		try {
 			def client = getCDRClient()
 			def greenlight = getCDRFacility()
-			resultOfAction = client.createOrUpdatePatientConsent(nhsNumber, hospitalNumber, knownFacility, knownOrganisation,knownPatientStatus) {
+			def model = new MirthModelDsl()
+
+			def consent =  model.consent {
 				authoringFacility greenlight
 				appliesToOrganisation {id cdrOrganisationConfig?.id}
 				effectiveOn consentForm.consentDate
@@ -335,8 +337,9 @@ class CDRService {
 					// Any notes on the consent
 					notes consentForm.comment
 				}
-			}
-		} catch (ClientException ex) {
+			} as Consent
+			resultOfAction = client.createOrUpdatePatientConsent(consent, nhsNumber,hospitalNumber,knownFacility,knownOrganisation,patientGroups,knownPatientStatus)
+																																																																																																														 } catch (ClientException ex) {
 			ex.printStackTrace()
 			return [success: false, log: ex.message]
 		}
