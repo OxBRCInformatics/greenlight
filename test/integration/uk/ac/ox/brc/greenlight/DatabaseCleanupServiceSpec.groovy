@@ -16,6 +16,10 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 	def databaseCleanupService
 	def dataSource
 
+	def setup(){
+		databaseCleanupService.consentEvaluationService = Mock(ConsentEvaluationService)
+	}
+
 	def AddOrphanResponses() {
 
 		def attachment= new Attachment(id: 1, fileName: 'a.jpg', dateOfUpload: new Date(),
@@ -220,6 +224,65 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				["1f91bb5c10d91125524a6a4f",0, 'GEL12356',"NORMAL",template.id,false,false])
 
 	}
+
+
+	def AddConsentWitNullConsentStatusLabels(){
+
+		def attachment1 = new Attachment(fileName: 'a.jpg', dateOfUpload: new Date(),attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush: true , failOnError:true )
+		def attachment2 = new Attachment(fileName: 'a.jpg', dateOfUpload: new Date(),attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush: true , failOnError:true )
+
+		def questions = [
+				new Question(name: 'I read1...'),
+				new Question(name: 'I read2...'),
+				new Question(name: 'I read3...'),
+				new Question(name: 'I read4...')
+		];
+
+		def template = new ConsentFormTemplate(namePrefix: "GNR",name:"GEL TEST",templateVersion:"1.1")
+				.addToQuestions(questions[0])
+				.addToQuestions(questions[1])
+				.addToQuestions(questions[2])
+				.addToQuestions(questions[3])
+				.save(flush: true , failOnError:true )
+
+		def patient1 = new Patient(givenName: "A",familyName: "B",consents: []).save(flush: true , failOnError:true)
+		def patient2 = new Patient(givenName: "C",familyName: "D",consents: []).save(flush: true , failOnError:true)
+
+		def consent1 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
+				attachedFormImage: attachment1,
+				template: template,
+				patient: patient1,
+				consentDate: new Date([year:2014,month:01,date:01]),
+				consentTakerName: "Edward",
+				formID: "GEN12345",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				comment: "a simple unEscapedComment, with characters \' \" \n "
+		).save(flush: true , failOnError:true )
+		consent1.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[0]))
+		consent1.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[1]))
+		consent1.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[2]))
+		consent1.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[3]))
+		consent1.save(flush: true , failOnError:true )
+
+		def consent2 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
+				attachedFormImage: attachment2,
+				template: template,
+				patient: patient2,
+				consentDate: new Date([year:2014,month:01,date:01]),
+				consentTakerName: "Edward",
+				formID: "GEN99999",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				comment: "a simple unEscapedComment, with characters \' \" \n "
+		).save(flush: true , failOnError:true )
+		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[0]))
+		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[1]))
+		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[2]))
+		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[3]))
+		consent2.save(flush: true , failOnError:true )
+
+	}
 	void "DatabaseCleanup removes orphan responses"() {
 
 		given:"A number of orphan responses already exists"
@@ -340,7 +403,6 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 		given:"all consent objects have null/NONE_CONSENT in consentStatus attribute"
 
-		databaseCleanupService.consentEvaluationService = Mock(ConsentEvaluationService)
 
 		AddConsentFormWithoutConsentStatus()
 		Attachment.count()	 == 2
@@ -1005,5 +1067,21 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		result.total   == 2
 		result.updated == 0
 
+	}
+
+	def "addConsentStatusLabelToConsentForms will update consentStatusLabels for all consentForms"(){
+
+		given:"two consent already exists"
+		AddConsentWitNullConsentStatusLabels()
+
+		when:"addConsentStatusLabelToConsentForms is called"
+		def result = databaseCleanupService.addConsentStatusLabelToConsentForms()
+
+		then:"records are updated"
+		2 * databaseCleanupService.consentEvaluationService.getConsentLabelsAsString(_) >> {"Label1\nLabel2"}
+		result.total   == 2
+		result.consentsWithNullConsentStatusLabelBefore == 2
+		result.consentsWithNullConsentStatusLabelAfter  == 0
+		result.updated == 2
 	}
 }

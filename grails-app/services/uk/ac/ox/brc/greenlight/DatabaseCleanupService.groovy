@@ -366,4 +366,21 @@ class DatabaseCleanupService {
 		return [total:total,updated:updated]
 	}
 
+
+	def addConsentStatusLabelToConsentForms(){
+
+		def total = ConsentForm.count()
+		def consentsWithNullConsentStatusLabelBefore = ConsentForm.countByConsentStatusLabelsIsNull()
+
+		//update all consentStatusLabels
+		def updated = 0
+		ConsentForm.list().each { consent ->
+			consent.consentStatusLabels = consentEvaluationService.getConsentLabelsAsString(consent)
+			consent.save(flush:true,failOnError: true)
+			updated++
+		}
+
+		def consentsWithNullConsentStatusLabelAfter = ConsentForm.countByConsentStatusLabelsIsNull()
+		[total:total,consentsWithNullConsentStatusLabelBefore:consentsWithNullConsentStatusLabelBefore,consentsWithNullConsentStatusLabelAfter:consentsWithNullConsentStatusLabelAfter,updated: updated]
+	}
 }
