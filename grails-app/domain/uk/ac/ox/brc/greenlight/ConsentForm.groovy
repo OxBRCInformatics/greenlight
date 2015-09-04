@@ -24,6 +24,8 @@ class ConsentForm {
     List<Response> responses
     String comment
 
+	String consentStatusLabels
+
     //static auditable = true
 
     static belongsTo = [
@@ -55,6 +57,7 @@ class ConsentForm {
         patient nullable: true
         comment nullable: true
 		consentStatus nullable: true
+		consentStatusLabels nullable: true
     }
 
     enum FormStatus {
