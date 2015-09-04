@@ -448,9 +448,9 @@ class CDRService {
 		patientGroups << patientGroup
 
 
-		def consentStatusCode = "OPT-IN"
+		def consentStatusCode = "OPT_IN"
 		if(consentForm.consentStatus == ConsentForm.ConsentStatus.NON_CONSENT) {
-			consentStatusCode = "OPT-OUT"
+			consentStatusCode = "OPT_OUT"
 		}
 
 		def consentURL = consentFormService.getAccessGUIDUrl(consentForm).toString()
