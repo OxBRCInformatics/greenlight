@@ -2,8 +2,9 @@ package uk.ac.ox.brc.greenlight
 
 import com.mirth.results.client.PatientModel
 import com.mirth.results.client.result.ResultModel
-import com.mirth.results.models.AttachmentModel
 import grails.transaction.Transactional
+import uk.ac.ox.ndm.mirth.datamodel.dsl.MirthModelDsl
+import uk.ac.ox.ndm.mirth.datamodel.dsl.clinical.patient.Consent
 import uk.ac.ox.ndm.mirth.datamodel.dsl.core.Facility
 import uk.ac.ox.ndm.mirth.datamodel.exception.rest.ClientException
 import uk.ac.ox.ndm.mirth.datamodel.rest.client.KnownFacility
@@ -299,6 +300,17 @@ class CDRService {
 		if (!knownPatientStatus) {
 			return [success: false, log: "Can not find KnownPatientStatus '${consentForm.consentStatus}' in CDR KnownPatientStatus"]
 		}
+
+		//PatientGroup is actually the consentType in CDR definition
+		def patientGroup = findPatientGroup(knownOrganisation,consentForm.template.cdrUniqueId)
+		if (!patientGroup) {
+			return [success: false, log: "Can not find consent(PatientGroup) '${consentForm.template.cdrUniqueId}' in CDR PatientGroup"]
+		}
+		//create a collection of patientGroups
+		Collection<String> patientGroups = []
+		patientGroups << patientGroup
+
+
 		def consentStatusCode = "OPT-IN"
 		if(consentForm.consentStatus == ConsentForm.ConsentStatus.NON_CONSENT) {
 			consentStatusCode = "OPT-OUT"
