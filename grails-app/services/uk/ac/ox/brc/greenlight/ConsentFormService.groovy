@@ -93,6 +93,7 @@ class ConsentFormService {
 		//calculate and save consentStatus
 		consentForm.consentStatus = consentEvaluationService.getConsentStatus(consentForm)
 		//calculate and save consentStatusLabels as well
+		consentForm.consentStatusLabels = consentEvaluationService.getConsentLabelsAsString(consentForm)
 
 
 		try {
