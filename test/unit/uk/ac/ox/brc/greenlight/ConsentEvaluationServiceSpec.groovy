@@ -182,5 +182,16 @@ class ConsentEvaluationServiceSpec extends Specification {
 
 		then:"it will create a string of result separated by new line"
 		result == "Label1\nLabel2\nLabel3"
+
+
+		when:"getConsentLabelsAsString is called for empty labels"
+		//mock getConsentLabels method
+		service.metaClass.getConsentLabels = { ConsentForm cntForm ->
+			return []
+		}
+		result = service.getConsentLabelsAsString(consentForm)
+
+		then:"it will return null"
+		result == ""
 	}
 }
