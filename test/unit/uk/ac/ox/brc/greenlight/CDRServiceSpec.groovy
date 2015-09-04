@@ -36,9 +36,7 @@ class CDRServiceSpec extends Specification {
 		//Mock the internal methods of the Service
 		service.metaClass.createCDRClient   = {
 			def client = new Object()
-			client.metaClass.createOrUpdatePatientConsent = {
-				Consent consent, String nhsNum, String mrnIdentity,KnownFacility receivingFacility,
-				KnownOrganisation organisation, Collection<String>patientGroups,KnownPatientStatus consentStatus ->
+			client.metaClass.createOrUpdatePatientConsent = {Consent consent, uk.ac.ox.ndm.mirth.datamodel.dsl.clinical.patient.Patient patient, KnownFacility receivingFacility,String consentStatus, String appliedOrganisation,Collection<String> patientGroupsInOrganisation ->
 					def result = new ResultModel<PatientModel>()
 					result.metaClass.isOperationSucceeded = {
 						return  true
@@ -57,7 +55,7 @@ class CDRServiceSpec extends Specification {
 		service.metaClass.grailsApplication.getConfig = { [cdr:[knownFacility:"TEST",organisation:"Greenlight"] ]  }
 
 		when:
-		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,consentForm);
+		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,null,consentForm);
 
 		then:
 		result.success
@@ -72,10 +70,7 @@ class CDRServiceSpec extends Specification {
 		//Mock the internal methods of the Service
 		service.metaClass.createCDRClient   = {
 			def client = new Object()
-			client.metaClass.createOrUpdatePatientConsent = {
-				Consent consent, String nhsNum, String mrnIdentity,
-				KnownFacility receivingFacility,KnownOrganisation organisation,
-				Collection<String>patientGroups,KnownPatientStatus consentStatus ->
+			client.metaClass.createOrUpdatePatientConsent = {Consent consent, uk.ac.ox.ndm.mirth.datamodel.dsl.clinical.patient.Patient patient, KnownFacility receivingFacility,String consentStatus, String appliedOrganisation,Collection<String> patientGroupsInOrganisation ->
 					throw new ClientException("Exception in calling CDR")
 			}
 			return client
@@ -89,7 +84,7 @@ class CDRServiceSpec extends Specification {
 
 		when:
 		1 * service.consentFormService.getAccessGUIDUrl(_) >> {"TEST_PATH"}
-		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,consentForm);
+		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,null,consentForm);
 
 		then:
 		!result.success

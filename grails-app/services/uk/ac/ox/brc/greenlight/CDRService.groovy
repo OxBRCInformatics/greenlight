@@ -296,26 +296,45 @@ class CDRService {
 			return [success: false, log: "Can not find KnownFacility '${cdrKnownFacilityConfig?.name}' in CDR KnownFacilities"]
 		}
 
+		//PatientGroup is actually the consentType in CDR definition
+		def patientGroup = findPatientGroup(knownOrganisation,consentFormTemplate?.cdrUniqueId)
+		if (!patientGroup) {
+			return [success: false, log: "Can not find consent(PatientGroup) '${consentFormTemplate.cdrUniqueId}' in CDR PatientGroup"]
+		}
+		//create a collection of patientGroups
+		Collection<String> patientGroups = []
+		patientGroups << patientGroup
+
+
 		def consentURL = consentFormService.getAccessGUIDUrl(consentForm).toString()
 
 		ResultModel<PatientModel> resultOfAction
 		try {
 			def client = createCDRClient()
 			def greenlight = createCDRFacility()
-			resultOfAction = client.removePatientConsent(nhsNumber, hospitalNumber, knownFacility, knownOrganisation) {
+			def mirthModelDsl = new MirthModelDsl()
+
+			def consent = mirthModelDsl.consent {
 				authoringFacility greenlight
 				appliesToOrganisation { id cdrOrganisationConfig?.id }
 				effectiveOn consentForm.consentDate
 				attachment {
+					assert consentURL
 					url consentURL
-//					id attachmentService.getAttachmentFileName(consentForm.attachedFormImage)
-//					mimeType AttachmentModel.MimeType.PNG
 					description 'Greenlight Consent Form'
 					sourceFacility greenlight
-					// Any notes on the consent
-					//notes consentForm.comment
 				}
 			}
+
+			uk.ac.ox.ndm.mirth.datamodel.dsl.clinical.patient.Patient patient = mirthModelDsl.patient {
+				nhsNumber patientNHSNumber
+				mrn patientHospitalNumber
+				if(patientAlias) {
+					alias patientAlias
+				}
+			} as uk.ac.ox.ndm.mirth.datamodel.dsl.clinical.patient.Patient
+
+			resultOfAction = client.removePatientConsent(consent,patient,knownFacility,knownOrganisation,patientGroups)
 		} catch (ClientException ex) {
 			ex.printStackTrace()
 			return [success: false, log: ex.message]
@@ -461,6 +480,17 @@ class CDRService {
 			def greenlight = createCDRFacility()
 			def mirthModelDsl = new MirthModelDsl()
 
+
+			uk.ac.ox.ndm.mirth.datamodel.dsl.clinical.patient.Patient patient = mirthModelDsl.patient {
+				nhsNumber patientNHSNumber
+				mrn patientHospitalNumber
+				if(patientAlias) {
+					alias patientAlias
+				}
+			} as uk.ac.ox.ndm.mirth.datamodel.dsl.clinical.patient.Patient
+
+
+
 			def consent =  mirthModelDsl.consent {
 				authoringFacility greenlight
 				appliesToOrganisation {id cdrOrganisationConfig?.id}
@@ -478,7 +508,8 @@ class CDRService {
 					url consentURL
 				}
 			} as Consent
-			resultOfAction = client.createOrUpdatePatientConsent(consent, nhsNumber,hospitalNumber,knownFacility,knownOrganisation,patientGroups,knownPatientStatus)
+			resultOfAction = client.createOrUpdatePatientConsent(consent,patient,knownFacility,knownPatientStatus.toString(),knownOrganisation.toString(),patientGroups)
+
 		}catch (ClientException ex) {
 			ex.printStackTrace()
 			return [success: false, log: ex.message]
