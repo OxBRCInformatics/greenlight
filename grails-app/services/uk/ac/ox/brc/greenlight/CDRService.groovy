@@ -341,8 +341,8 @@ class CDRService {
 					url consentURL
 				}
 			} as Consent
-			resultOfAction = client.createOrUpdatePatientConsent(consent, nhsNumber,hospitalNumber,knownFacility,knownOrganisation,patientGroups,knownPatientStatus)																																																																					 } catch (ClientException ex) {
-		} catch (ClientException ex) {
+			resultOfAction = client.createOrUpdatePatientConsent(consent, nhsNumber,hospitalNumber,knownFacility,knownOrganisation,patientGroups,knownPatientStatus)
+		}catch (ClientException ex) {
 			ex.printStackTrace()
 			return [success: false, log: ex.message]
 		}
