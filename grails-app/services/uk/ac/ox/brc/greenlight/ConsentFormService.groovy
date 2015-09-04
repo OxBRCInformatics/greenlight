@@ -100,14 +100,6 @@ class ConsentFormService {
 		}
 
 
-		//first send it to CDR
-		try {
-			CDRService.saveOrUpdateConsentForm(patient, consentForm, isNew)
-		}catch(Exception ex){
-			//it actually should not stop the whole save process
-			log.error(ex.message)
-		}
-
 		//save consent and patient in a transaction
 		ConsentForm.withTransaction { status ->
 			try {
@@ -120,6 +112,16 @@ class ConsentFormService {
 				return false
 			}
 		}
+
+		//first send it to CDR
+		try {
+			CDRService.saveOrUpdateConsentForm(patient, consentForm, isNew)
+		}catch(Exception ex){
+			//it actually should not stop the whole save process
+			log.error(ex.message)
+		}
+
+	}
 	}
 
 
