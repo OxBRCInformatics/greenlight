@@ -285,9 +285,9 @@ class CDRService {
 			return [success: false, log: "cdr Organisation Config is not defined in config file"]
 		}
 
-		def knownOrganisation = findKnownOrganisation(consentForm?.template?.cdrUniqueId)
+		def knownOrganisation = findKnownOrganisation(consentForm?.template?.namePrefix)
 		if (!knownOrganisation) {
-			return [success: false, log: "Can not find KnownOrganisation(Consent Form Template name) '${consentForm?.template?.cdrUniqueId}' in CDR KnownOrganisations"]
+			return [success: false, log: "Can not find KnownOrganisation(Consent Form Prefix name) '${consentForm?.template?.namePrefix}' in CDR KnownOrganisations"]
 		}
 
 		def knownFacility = findKnownFacility(cdrKnownFacilityConfig?.name)
