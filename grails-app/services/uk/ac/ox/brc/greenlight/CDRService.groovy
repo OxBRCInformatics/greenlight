@@ -370,15 +370,21 @@ class CDRService {
 		return greenlight
 	}
 
-	 def findKnownOrganisation(cdrUniqueId){
-		 def result
-		 KnownOrganisation.values().each { value ->
-			 if(value.name() == cdrUniqueId) {
-				 result = value
-				 return
-			 }
+	 def findKnownOrganisation(String consentFormPrefix) {
+		 switch (consentFormPrefix) {
+			 case "GEL":
+				 return KnownOrganisation.GEL_PILOT
+			 case "GEN":
+				 return KnownOrganisation.ORB_GEN
+			 case "CRA":
+				 return KnownOrganisation.ORB_CRA
+			 default:
+				 return null
 		 }
-		 result
+	 }
+
+	def findPatientGroup(KnownOrganisation knownOrganisation,String patientGroup){
+		knownOrganisation.getPatientGroupIds().find {it == patientGroup }
 	}
 
 	 def findKnownFacility(name){
