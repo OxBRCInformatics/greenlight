@@ -348,7 +348,7 @@ class CDRService {
 		}
 	}
 
-	private def getCDRClient(){
+	def getCDRClient(){
 		def cdrAccessConfig  = grailsApplication.config?.cdr?.access
 		if(!cdrAccessConfig){
 			throw new Exception("cdr.access Config is not defined in config file")
