@@ -170,7 +170,7 @@ class CDRServiceSpec extends Specification {
 		def patient = new Patient(nhsNumber: "1234567890",hospitalNumber: "123").save(failOnError: true,flush: true)
 		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
 		def consentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
-		def newerConsentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:template, patient:patient,consentDate: new Date().plus(1),savedInCDR: true).save(failOnError: true,flush: true)
+		def newerConsentForm = new ConsentForm(formID: "GEL12345",accessGUID: "456", template:template, patient:patient,consentDate: new Date().plus(1),savedInCDR: true).save(failOnError: true,flush: true)
 
 		when:"Saving a NEW consent which its consentDate is older than that new one"
 		1 * service.consentFormService.findConsentsOfSameTypeAfterThisConsentWhichAreSavedInCDR(_,_,_) >> {[newerConsentForm]}
@@ -186,7 +186,7 @@ class CDRServiceSpec extends Specification {
 		def patient = new Patient(nhsNumber: "1234567890",hospitalNumber: "123").save(failOnError: true,flush: true)
 		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
 
-		def newerConsentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
+		def newerConsentForm = new ConsentForm(formID: "GEL12345",accessGUID: "456", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
 		def olderConsentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:template, patient:patient,consentDate: new Date().minus(1),savedInCDR: true).save(failOnError: true,flush: true)
 
 		def CDR_Remove_ConsentCalled = false
@@ -243,7 +243,7 @@ class CDRServiceSpec extends Specification {
 		given:"patient updated and consent NOT updated"
 		def patient = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
 		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
-		def consentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
+		def consentForm = new ConsentForm(formID: "GEL12345",accessGUID: "0123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
 
 		def olderConsentForm  = new ConsentForm(formID: "GEL67890",accessGUID: "456", template:template, patient:patient,consentDate: new Date().minus(1),savedInCDR: false).save(failOnError: true,flush: true)
 		def oldestConsentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:template, patient:patient,consentDate: new Date().minus(2),savedInCDR: false).save(failOnError: true,flush: true)
@@ -344,7 +344,7 @@ class CDRServiceSpec extends Specification {
 		def oldTemplate = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
 		def newTemplate = new ConsentFormTemplate(name:"temp2",namePrefix:"TEMP2",templateVersion: "V1" ).save(failOnError: true,flush: true)
 
-		def consentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:oldTemplate, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
+		def consentForm = new ConsentForm(formID: "GEL12345",accessGUID: "789", template:oldTemplate, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
 
 		def olderConsentForm  = new ConsentForm(formID: "GEL67890",accessGUID: "456", template:oldTemplate, patient:patient,consentDate: new Date().minus(1),savedInCDR: false).save(failOnError: true,flush: true)
 		def oldestConsentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:oldTemplate, patient:patient,consentDate: new Date().minus(2),savedInCDR: false).save(failOnError: true,flush: true)
@@ -491,7 +491,7 @@ class CDRServiceSpec extends Specification {
 		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
 
 
-		def latestConsentForm  = new ConsentForm(formID: "GEL78950",accessGUID: "123", template:template, patient:patient,consentDate: new Date().minus(5),savedInCDR: false).save(failOnError: true,flush: true)
+		def latestConsentForm  = new ConsentForm(formID: "GEL78950",accessGUID: "456", template:template, patient:patient,consentDate: new Date().minus(5),savedInCDR: false).save(failOnError: true,flush: true)
 		def consentForm = new ConsentForm(formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
 		consentForm.consentDate = new Date().minus(10)
 
@@ -576,7 +576,7 @@ class CDRServiceSpec extends Specification {
 		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
 
 		def olderConsentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date().minus(1),savedInCDR: true).save(failOnError: true,flush: true)
-		def consentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
+		def consentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: "456", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
 		consentForm.formStatus = ConsentForm.FormStatus.SPOILED
 
 		def CDR_Remove_ConsentCalled = false
