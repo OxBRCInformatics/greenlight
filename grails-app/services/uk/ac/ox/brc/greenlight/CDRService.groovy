@@ -301,7 +301,8 @@ class CDRService {
 		}
 		}
 
-		//def error
+		def consentURL = consentFormService.getAccessGUIDUrl(consentForm).toString()
+
 		ResultModel<PatientModel> resultOfAction
 		try {
 			def client = getCDRClient()
@@ -312,12 +313,10 @@ class CDRService {
 				effectiveOn consentForm.consentDate
 				consentType {code 'OPT_IN'}
 				attachment {
-					URL consentUrl = consentFormService.getAccessGUIDUrl(consentForm)
-					assert consentUrl != null
-					id attachmentService.getAttachmentFileName(consentForm.attachedFormImage)
 					description 'Greenlight Consent Form'
 					sourceFacility greenlight
-					mimeType AttachmentModel.MimeType.PNG
+					//mimeType AttachmentModel.MimeType.PNG
+					//id attachmentService.getAttachmentFileName(consentForm.attachedFormImage)
 					// Any notes on the consent
 					notes consentForm.comment
 				}
