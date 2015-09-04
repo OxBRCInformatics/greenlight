@@ -127,4 +127,15 @@ class DatabaseCleanUpController {
 		def result = [recordUpdated: recordUpdated]
 		respond result as Object, [formats:['xml','json']] as Map
 	}
+
+	def addConsentStatusLabelsToConsentForms(){
+		def recordUpdated
+		try{
+			recordUpdated = databaseCleanupService.addConsentStatusLabelToConsentForms()
+		}catch(Exception ex){
+			render ex.message
+		}
+		def result = [recordUpdated: recordUpdated]
+		respond result as Object, [formats:['xml','json']] as Map
+	}
 }
