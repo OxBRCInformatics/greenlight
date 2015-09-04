@@ -697,4 +697,15 @@ class CDRServiceSpec extends Specification {
 		!result.success
 		result.log == "NOT_SAVE_IN_CDR_TEST_LOG"
 	}
+
+
+	def "createCDRFacility creates Greenlight facility for CDR"(){
+		when:"createCDRFacility is called"
+		def expected = service.createCDRFacility()
+
+		then:"it returns a facility object"
+		expected.getModel().id == "CDR_FACILITY_ID"
+		expected.getModel().name  == "CDR_FACILITY_NAME"
+		expected.getModel().descr == "CDR_FACILITY_DESC"
+	}
 }
