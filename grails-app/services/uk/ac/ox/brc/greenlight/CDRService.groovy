@@ -297,7 +297,8 @@ class CDRService {
 
 		def knownPatientStatus = findKnownPatientStatus(consentForm.consentStatus)
 		if (!knownPatientStatus) {
-			return [success: false, log: "Can not find KnownPatientStatus '${consentForm.consentStatuse}' in CDR KnownPatientStatus"]
+			return [success: false, log: "Can not find KnownPatientStatus '${consentForm.consentStatus}' in CDR KnownPatientStatus"]
+		}
 		}
 
 		//def error
