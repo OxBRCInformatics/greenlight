@@ -4,9 +4,7 @@ import com.mirth.results.client.PatientModel
 import com.mirth.results.client.result.ResultModel
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
-import org.apache.commons.lang3.tuple.Triple
 import spock.lang.Specification
-import spock.lang.Unroll
 import uk.ac.ox.brc.greenlight.Audit.CDRLog
 import uk.ac.ox.ndm.mirth.datamodel.dsl.clinical.patient.Consent
 import uk.ac.ox.ndm.mirth.datamodel.dsl.core.Facility
@@ -215,7 +213,7 @@ class CDRServiceSpec extends Specification {
 
 		when:"Saving a NEW consent which its consentDate is newer than that old one"
 		1 * service.consentFormService.findConsentsOfSameTypeAfterThisConsentWhichAreSavedInCDR(_,_,_) >> {[]}
-		1 * service.consentFormService.findAnyConsentOfSameTypeBeforeThisConsentWhichAreSavedInCDR(_,_,_) >> {olderConsentForm}
+		1 * service.consentFormService.findAnyConsentOfSameTypeBeforeThisConsentWhichIsSavedInCDR(_,_,_) >> {olderConsentForm}
 
 		def result = service.saveOrUpdateConsentForm(patient,newerConsentForm,true)
 
@@ -288,7 +286,7 @@ class CDRServiceSpec extends Specification {
 		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
 
 		then:"It should remove the old one and add the latest older before and add the new one"
-		1 *  service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichAreNotSavedInCDR(_,_,_,_) >> {olderConsentForm}
+		1 *  service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(_,_,_,_) >> {olderConsentForm}
 		CDR_Remove_ConsentCalled
 		CDR_Send_ConsentCalled
 		addNewConsentCalled
@@ -331,7 +329,7 @@ class CDRServiceSpec extends Specification {
 		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
 
 		then:"It should remove the old one and add the new one"
-		1 *  service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichAreNotSavedInCDR(_,_,_,_) >> {null}
+		1 *  service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(_,_,_,_) >> {null}
 		CDR_Remove_ConsentCalled
 		!CDR_Send_ConsentCalled
 		addNewConsentCalled
@@ -389,7 +387,7 @@ class CDRServiceSpec extends Specification {
 		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
 
 		then:"It should remove the old one and add the latest older before and add the new one"
-		1 *  service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichAreNotSavedInCDR(_,_,_,_) >> {olderConsentForm}
+		1 *  service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(_,_,_,_) >> {olderConsentForm}
 		CDR_Remove_ConsentCalled
 		CDR_Send_ConsentCalled
 		addNewConsentCalled
@@ -421,7 +419,7 @@ class CDRServiceSpec extends Specification {
 		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
 
 		then:"It should remove the old one and add the latest older before and add the new one"
-		0 *  service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichAreNotSavedInCDR(_,_,_,_) >> {}
+		0 *  service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(_,_,_,_) >> {}
 		!CDR_Remove_ConsentCalled
 		!CDR_Send_ConsentCalled
 		!addNewConsentCalled
@@ -520,7 +518,7 @@ class CDRServiceSpec extends Specification {
 		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
 
 		then:"It should just pass the latestConsentForm to CDR and make the new consent as not sent to CDR"
-		1 * service.consentFormService.findLatestConsentOfSameTypeAfterThisConsentWhichAreNotSavedInCDR(_,_,_,_) >> {latestConsentForm}
+		1 * service.consentFormService.findLatestConsentOfSameTypeAfterThisConsentWhichIsNotSavedInCDR(_,_,_,_) >> {latestConsentForm}
 
 		!CDR_Remove_ConsentCalled
 		CDR_Send_ConsentCalled
@@ -563,7 +561,7 @@ class CDRServiceSpec extends Specification {
 		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
 
 		then:"It should just remove the old one from CDR"
-		1 * service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichAreNotSavedInCDR(_,_,_,_) >> {null}
+		1 * service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(_,_,_,_) >> {null}
 
 		CDR_Remove_ConsentCalled
 		!CDR_Send_ConsentCalled
@@ -608,7 +606,7 @@ class CDRServiceSpec extends Specification {
 		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
 
 		then:"It should just remove the old one from CDR and add the older consent"
-		1 * service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichAreNotSavedInCDR(_,_,_,_) >> {olderConsentForm}
+		1 * service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(_,_,_,_) >> {olderConsentForm}
 
 		CDR_Remove_ConsentCalled
 		CDR_Send_ConsentCalled

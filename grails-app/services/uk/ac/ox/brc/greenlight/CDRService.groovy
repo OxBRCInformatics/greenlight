@@ -49,7 +49,7 @@ class CDRService {
 					def removeResult = CDR_Remove_Consent(oldNHSNumber, oldHospitalNumber, consentForm, consentForm.template)
 
 					//find latest before consent which are the same type of the old-patient consent which are NOT sent to CDR and pass it
-					ConsentForm olderNotSavedInCDRConsent = consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichAreNotSavedInCDR(oldNHSNumber, oldHospitalNumber, consentForm, consentForm.template)
+					ConsentForm olderNotSavedInCDRConsent = consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(oldNHSNumber, oldHospitalNumber, consentForm, consentForm.template)
 					if (olderNotSavedInCDRConsent) {
 						//Pass it to CDR (the oldPatient and its latest before consent)
 						def sendResult = CDR_Send_Consent(oldNHSNumber, oldHospitalNumber, olderNotSavedInCDRConsent, olderNotSavedInCDRConsent?.template)
@@ -72,7 +72,7 @@ class CDRService {
 					def removeResult = CDR_Remove_Consent(patient.nhsNumber, patient.hospitalNumber,consentForm,oldConsentTemplate)
 
 					//find latest consent which are the same type of the old-consent which are NOT sent to CDR and pass it
-					ConsentForm latestConsent = consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichAreNotSavedInCDR(patient.nhsNumber, patient.hospitalNumber, consentForm,oldConsentTemplate)
+					ConsentForm latestConsent = consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(patient.nhsNumber, patient.hospitalNumber, consentForm,oldConsentTemplate)
 					if (latestConsent) {
 						//Pass it to CDR
 						def sendResult = CDR_Send_Consent(patient.nhsNumber, patient.hospitalNumber, latestConsent,latestConsent?.template)
@@ -106,7 +106,7 @@ class CDRService {
 						return sendResult
 					}else if (newConsentDate.compareTo(oldConsentDate) < 0 ) {
 						//are there any consent after the new date which are not sent ( of course those which are different from consentForm.id )?
-						ConsentForm latestConsent = consentFormService.findLatestConsentOfSameTypeAfterThisConsentWhichAreNotSavedInCDR(patient.nhsNumber,patient.hospitalNumber,consentForm,consentForm.template)
+						ConsentForm latestConsent = consentFormService.findLatestConsentOfSameTypeAfterThisConsentWhichIsNotSavedInCDR(patient.nhsNumber,patient.hospitalNumber,consentForm,consentForm.template)
 						if(latestConsent){
 							//Pass it to CDR & it will update the old one on CDR (retire the old one as well as they both have the same template type)
 							def sendResult = CDR_Send_Consent(patient.nhsNumber, patient.hospitalNumber, latestConsent,latestConsent?.template)
@@ -139,7 +139,7 @@ class CDRService {
 				def removeResult = CDR_Remove_Consent(patient.nhsNumber, patient.hospitalNumber,consentForm,consentForm.template)
 
 				//find latest consent which are the same type of the old consent which are NOT sent to CDR and pass it
-				ConsentForm latestConsent = consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichAreNotSavedInCDR(patient.nhsNumber, patient.hospitalNumber, consentForm,consentForm.template)
+				ConsentForm latestConsent = consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(patient.nhsNumber, patient.hospitalNumber, consentForm,consentForm.template)
 				if (latestConsent) {
 					//Pass it to CDR
 					def sendResult = CDR_Send_Consent(patient.nhsNumber, patient.hospitalNumber, latestConsent,latestConsent?.template)
@@ -179,7 +179,7 @@ class CDRService {
 		}
 
 		//Is there any consent older than this of this type which are saved in CDR, so remove them from CDR
-		ConsentForm olderSavedInCDRConsent = consentFormService.findAnyConsentOfSameTypeBeforeThisConsentWhichAreSavedInCDR(patient.nhsNumber,patient.hospitalNumber,consentForm)
+		ConsentForm olderSavedInCDRConsent = consentFormService.findAnyConsentOfSameTypeBeforeThisConsentWhichIsSavedInCDR(patient.nhsNumber,patient.hospitalNumber,consentForm)
 		if(olderSavedInCDRConsent) {
 			//Remove it from CDR
 			def removeResult = CDR_Remove_Consent(patient.nhsNumber, patient.hospitalNumber, olderSavedInCDRConsent, olderSavedInCDRConsent.template)
