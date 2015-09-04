@@ -336,6 +336,9 @@ class CDRService {
 					//id attachmentService.getAttachmentFileName(consentForm.attachedFormImage)
 					// Any notes on the consent
 					notes consentForm.comment
+					//note "\n${consentForm?.consentStatusLabels.join['\n']}"
+					note "\n${consentForm?.consentStatusLabels}"
+					url consentURL
 				}
 			} as Consent
 			resultOfAction = client.createOrUpdatePatientConsent(consent, nhsNumber,hospitalNumber,knownFacility,knownOrganisation,patientGroups,knownPatientStatus)
