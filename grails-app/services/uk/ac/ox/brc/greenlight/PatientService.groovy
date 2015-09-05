@@ -49,8 +49,8 @@ class PatientService {
  		}
 	}
 
-	def hasGenericNHSNumber(nhsNumber){
-		return (nhsNumber == "1111111111" || nhsNumber == "0000000000")
+	def isGenericNHSNumber(nhsNumber){
+		return nhsNumber == "1111111111"
 	}
 
 }
