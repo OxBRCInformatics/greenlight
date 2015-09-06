@@ -138,4 +138,16 @@ class DatabaseCleanUpController {
 		def result = [recordUpdated: recordUpdated]
 		respond result as Object, [formats:['xml','json']] as Map
 	}
+
+
+	def verifyAllPatientsDemographicAgainstCDR(){
+		def patientResult
+		try{
+			patientResult = databaseCleanupService.verifyAllPatientsDemographicAgainstCDR()
+		}catch(Exception ex){
+			render ex.message
+		}
+		def result = [result: patientResult]
+		respond result as Object, [formats:['xml','json']] as Map
+	}
 }

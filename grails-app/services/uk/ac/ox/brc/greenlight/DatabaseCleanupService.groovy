@@ -1,7 +1,14 @@
 package uk.ac.ox.brc.greenlight
 
+import com.mirth.results.client.PatientAliasModel
+import com.mirth.results.client.PatientAliasType
+import com.mirth.results.client.PatientModel
 import grails.transaction.Transactional
 import groovy.sql.Sql
+
+import javax.xml.datatype.DatatypeFactory
+import javax.xml.datatype.XMLGregorianCalendar
+import java.text.SimpleDateFormat
 
 @Transactional
 class DatabaseCleanupService {
@@ -10,6 +17,7 @@ class DatabaseCleanupService {
 	def patientService
 
 	def dataSource
+	def CDRService
 
 	def cleanOrphanResponses() {
 		//have to do this to cleanup the old records,
@@ -383,4 +391,79 @@ class DatabaseCleanupService {
 		def consentsWithNullConsentStatusLabelAfter = ConsentForm.countByConsentStatusLabelsIsNull()
 		[total:total,consentsWithNullConsentStatusLabelBefore:consentsWithNullConsentStatusLabelBefore,consentsWithNullConsentStatusLabelAfter:consentsWithNullConsentStatusLabelAfter,updated: updated]
 	}
+
+
+	def verifyAllPatientsDemographicAgainstCDR(){
+		def records = []
+
+		def totalCount = 0
+		def misMatched = 0
+		def notFound   = 0
+		def matched = 0
+		def error 	= 0
+
+		Patient.list().each { patient ->
+			totalCount++
+
+			def result = CDRService.findPatient(patient.nhsNumber, patient.hospitalNumber)
+			if(result?.success){
+				if(!result?.patient){
+					//not found, can not find patient by NHSNumber or MRNNumber in CDR!!!!
+					notFound++
+					records << [
+					        nhsNumber: patient?.nhsNumber,
+							mrnNumber: patient?.hospitalNumber,
+							foundInCDR: false,
+							demographicMatched:false,
+							log:""]
+				}
+				else
+				{
+					if(patient?.givenName?.toLowerCase()?.trim() == result?.patient?.firstName?.toLowerCase()?.trim() &&
+					   patient?.familyName?.toLowerCase()?.trim() == result?.patient?.lastName?.toLowerCase()?.trim() &&
+					   patient?.dateOfBirth?.format("yyyyMMdd") == result?.patient?.dateOfBirth?.format("yyyyMMdd")){
+						matched++
+						//verified, DO NOTHING then
+					}else{
+						//patient found but demographic does not match
+						misMatched++
+						records << [
+								nhsNumber: patient?.nhsNumber,
+								mrnNumber: patient?.hospitalNumber,
+								foundInCDR: true,
+								demographicMatched:false,
+								log: [
+								        Greenlight_firstName: patient?.givenName,
+										Greenlight_lastName: patient?.familyName,
+										Greenlight_dob: patient?.dateOfBirth?.format("yyyy-MM-dd"),
+										CDR_firstName: result?.patient?.firstName,
+										CDR_lastName: result?.patient?.lastName,
+										CDR_dob: result?.patient?.dateOfBirth?.format("yyyy-MM-dd")]]
+					}
+				}
+			}else{
+				error++
+				records << [
+						nhsNumber: patient?.nhsNumber,
+						mrnNumber: patient?.hospitalNumber,
+						foundInCDR: false,
+						demographicMatched:false,
+						log:"Exception in calling CDR: ${result?.log}"]
+			}
+		}
+
+		[report:[ totalCount:totalCount,
+				  misMatched:misMatched,
+				  notFound:notFound,
+				  matched:matched,
+				  error:error],
+		 records:records
+		]
+	}
+
+
+	def sendAllLatestConsentsToCDR(){
+
+	}
+
 }

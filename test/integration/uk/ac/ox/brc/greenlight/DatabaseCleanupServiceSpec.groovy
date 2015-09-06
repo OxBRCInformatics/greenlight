@@ -1084,4 +1084,51 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		result.consentsWithNullConsentStatusLabelAfter  == 0
 		result.updated == 2
 	}
+
+	def "verifyAllPatientsDemographicAgainstCDR checks all patients demographics against CDR"() {
+
+		given:
+		new Patient(nhsNumber: "1234567890", hospitalNumber: "1", givenName: "A", familyName: "B", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+		new Patient(nhsNumber: "1234567891", hospitalNumber: "2", givenName: "A", familyName: "B", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+		new Patient(nhsNumber: "1234567892", hospitalNumber: "3", givenName: "A", familyName: "B", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+		new Patient(nhsNumber: "1234567893", hospitalNumber: "4", givenName: "A", familyName: "B", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+		new Patient(nhsNumber: "1111111111", hospitalNumber: "5", givenName: "C", familyName: "D", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+		databaseCleanupService.CDRService.metaClass.findPatient =  { String nhs, String mrn ->
+			switch (nhs) {
+				case "1234567890": //found and matched
+					return [success: true, log: "", patient: [firstName: "A", lastName: "B", dateOfBirth: new Date()]]
+				case "1234567891": //found and not matched
+					return [success: true, log: "", patient: [firstName: "AZ", lastName: "BZ", dateOfBirth: new Date().minus(100)]]
+				case "1234567892": //not Found
+					return [success: true, log: "Not Found", patient: null]
+				case "1234567893": //Error
+					return [success: false, log: "Error", patient: null]
+				case "1111111111"://found
+					return [success: true, log: "", patient: [firstName: "C", lastName: "D", dateOfBirth: new Date()]]
+			}
+		}
+
+		when:
+		def result = databaseCleanupService.verifyAllPatientsDemographicAgainstCDR()
+
+		then:
+		result.report.totalCount == 5
+		result.report.misMatched == 1
+		result.report.notFound == 1
+		result.report.matched  == 2
+		result.report.error    == 1
+		result.records[0] == [
+				nhsNumber:"1234567891",
+				mrnNumber:"2",
+				foundInCDR:true,
+				demographicMatched:false,
+				log : [
+				Greenlight_firstName:"A",
+				Greenlight_lastName: "B",
+				Greenlight_dob: new Date().format("yyyy-MM-dd"),
+				CDR_firstName: "AZ",
+				CDR_lastName: "BZ",
+				CDR_dob: new Date().minus(100).format("yyyy-MM-dd")]
+		]
+	}
 }
