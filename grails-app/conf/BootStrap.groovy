@@ -58,7 +58,7 @@ class BootStrap {
 				createAPIUser("api","api","api@api.cpm")
                 createFormTemplates()
 				createTestUser("test","test","test@test.com")
-				addConsentFormForDevelopment()
+				//addConsentFormForDevelopment()
             }
 
             production {
