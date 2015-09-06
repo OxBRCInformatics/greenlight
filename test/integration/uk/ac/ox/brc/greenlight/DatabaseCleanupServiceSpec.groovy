@@ -196,6 +196,39 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 	}
 
+
+
+
+	def "removePatientsWithoutAnyConsent removes patients that do not have any consents"() {
+		given: "There are patients that do not have any consents"
+		new Patient(nhsNumber: "1234567890", hospitalNumber: "1", givenName: "A", familyName: "B", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+		new Patient(nhsNumber: "1234567890", hospitalNumber: "1", givenName: "A", familyName: "B", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+		new Patient(nhsNumber: "1234567890", hospitalNumber: "1", givenName: "A", familyName: "B", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+		def patient = new Patient(nhsNumber: "1234567890", hospitalNumber: "1", givenName: "A", familyName: "B", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+
+
+		def attachment= new Attachment(attachmentType: Attachment.AttachmentType.IMAGE, content: [],dateOfUpload:new Date(),fileName:"1.jpg").save(flush: true,failOnError: true)
+		def consent = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
+				attachedFormImage: attachment,
+				template: ConsentFormTemplate.first(),
+				consentDate: new Date([year:2014,month:01,date:01]),
+				consentTakerName: "Edward",
+				formID: "GEN12345"
+		)
+		patient.addToConsents(consent).save(flush:true)
+
+		when:
+		assert Patient.count() == 4
+		databaseCleanupService.removePatientsWithoutAnyConsent()
+
+		then:
+		assert Patient.count() == 1
+		assert ConsentForm.count() == 1
+
+	}
+
+
 	void "DatabaseCleanup removes orphan responses"() {
 
 		given:"A number of orphan responses already exists"

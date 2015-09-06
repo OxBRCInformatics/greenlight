@@ -17,6 +17,20 @@ class DatabaseCleanUpController {
 	def databaseCleanupService
 	def patientService
 
+
+
+	def removePatientsWithoutAnyConsent(){
+		def patientResult
+		try{
+			patientResult = databaseCleanupService.removePatientsWithoutAnyConsent()
+		}catch(Exception ex){
+			render ex.message
+		}
+		def result = [result: patientResult]
+		respond result as Object, [formats:['xml','json']] as Map
+	}
+
+
 	def cleanOrphanResponses() {
 		def responseStr = getResponsesStatusStr()
 
