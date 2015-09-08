@@ -132,4 +132,19 @@ class DatabaseCleanUpController {
 		def result = [recordUpdated: recordUpdated]
 		respond result as Object, [formats:['xml','json']] as Map
 	}
+
+
+	def listAllMrnNHSNumbers(){
+		def  records
+		try {
+			records = databaseCleanupService.listAllMrnNhsNumbers()
+		}
+		catch (Exception exception) {
+			render exception.message
+			return
+		}
+
+		def result = [records: records]
+		respond result as Object, [formats:['xml','json']] as Map
+	}
 }

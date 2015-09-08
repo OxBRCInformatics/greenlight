@@ -369,4 +369,12 @@ class DatabaseCleanupService {
 		}
 	}
 
+	def listAllMrnNhsNumbers(){
+		def allMrnNhsNumbers= []
+		Patient.list().each { patient ->
+			allMrnNhsNumbers << "${patient.nhsNumber};${patient.hospitalNumber}"
+		}
+		allMrnNhsNumbers
+	}
+
 }
