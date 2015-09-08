@@ -83,23 +83,23 @@ class ConsentFormLargeTextSpec extends IntegrationSpec {
         consent.save()
     }
 
-    def "Delete action will delete consentForm and its responses"() {
-
-		given:"A number of consentForms are available"
-		assert ConsentForm.count() == 1
-		def cons = ConsentForm.first()
-		assert cons.responses.size() == 4
-		assert Response.count() == 4
-
-		when:"deleting a consentForm"
-        consentFormService.delete(cons)
-
-
-        then:"the consentForm and its responses are all deleted"
-        ConsentForm.count() == 0
-        Response.count() == 0
-
-		and:"it keeps the patient record"
-        Patient.count() == 1
-    }
+//    def "Delete action will delete consentForm and its responses"() {
+//
+//		given:"A number of consentForms are available"
+//		assert ConsentForm.count() == 1
+//		def cons = ConsentForm.first()
+//		assert cons.responses.size() == 4
+//		assert Response.count() == 4
+//
+//		when:"deleting a consentForm"
+//        consentFormService.delete(cons)
+//
+//
+//        then:"the consentForm and its responses are all deleted"
+//        ConsentForm.count() == 0
+//        Response.count() == 0
+//
+//		and:"it keeps the patient record"
+//        Patient.count() == 1
+//    }
 }
