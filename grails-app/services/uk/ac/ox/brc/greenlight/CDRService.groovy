@@ -207,7 +207,7 @@ class CDRService {
 
 	def CDR_Send_Consent(nhsNumber,hospitalNumber,consentForm,template){
 		//Pass it to CDR
-		def sendResult = connectToCDRAndSendConsentForm(nhsNumber, hospitalNumber, consentForm)
+		def sendResult = connectToCDRAndSendConsentForm(nhsNumber, hospitalNumber,{}, consentForm)
 		CDRLogService.add(consentForm.id,template.id,nhsNumber,hospitalNumber,sendResult.success,sendResult.log,"save")
 
 		consentForm.savedInCDR  = sendResult.success
