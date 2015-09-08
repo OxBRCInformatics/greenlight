@@ -148,7 +148,7 @@ class BootStrap {
 		if(ConsentFormTemplate.count()==2)
 		{
 			new ConsentFormTemplate(
-					name: "100,000 Genomes Project – Cancer Sequencing Consent Form",
+					name: "100,000 Genomes Project (Pilot) – Cancer Sequencing Consent Form",
 					namePrefix: "GEL",
 					templateVersion: "Version 1.0 dated 25.08.2014", //"Version 1.0 dated  25.08.2014"
 					cdrUniqueId : "GEL_CSC_V1"
@@ -234,7 +234,7 @@ class BootStrap {
         if(ConsentFormTemplate.count()==3)
         {
             new ConsentFormTemplate(
-                    name: "100,000 Genomes Project – Cancer Sequencing Consent Form",
+                    name: "100,000 Genomes Project (Pilot) – Cancer Sequencing Consent Form",
                     namePrefix: "GEL",
                     templateVersion: "Version 2 dated 14.10.2014",//"Version 2 dated 14.10.14"
 					cdrUniqueId : "GEL_CSC_V2"
@@ -300,8 +300,8 @@ class BootStrap {
 
 		//update consent form version label
 		if(ConsentFormTemplate.count() == 6){
-			databaseCleanupService.updateConsentTemplateVersion()
-			databaseCleanupService.updateCDRUniqueId()
+			//databaseCleanupService.updateConsentTemplateVersion()
+			//databaseCleanupService.updateCDRUniqueId()
 
 			//UPDATE GEL ConsentName
 			def gelV1 = ConsentFormTemplate.findByCdrUniqueId("GEL_CSC_V1")
