@@ -571,6 +571,7 @@ class CDRService {
 			 case "GEL":
 				 return KnownOrganisation.GEL_PILOT
 			 case "GEN":
+			 case "PRE":
 				 return KnownOrganisation.ORB_GEN
 			 case "CRA":
 				 return KnownOrganisation.ORB_CRA
