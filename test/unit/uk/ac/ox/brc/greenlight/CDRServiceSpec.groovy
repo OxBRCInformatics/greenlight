@@ -54,8 +54,10 @@ class CDRServiceSpec extends Specification {
 		service.metaClass.findKnownFacility = {return KnownFacility.TEST}
 		service.metaClass.grailsApplication.getConfig = { [cdr:[knownFacility:"TEST",organisation:"Greenlight"] ]  }
 
+		def consentDetailsMap = service.buildConsentDetailsMap(consentForm,consentForm.template)
+
 		when:
-		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,null,consentForm);
+		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,null,consentDetailsMap);
 
 		then:
 		result.success
@@ -92,9 +94,12 @@ class CDRServiceSpec extends Specification {
 		service.metaClass.findKnownFacility = {return KnownFacility.TEST}
 		service.metaClass.grailsApplication.getConfig = { [cdr:[knownFacility:"TEST",organisation:"Greenlight"] ]  }
 
+		def consentDetailsMap = service.buildConsentDetailsMap(consentForm,consentForm.template)
+
+
 		when:
 		1 * service.patientService.isGenericNHSNumber(_) >> {true}
-		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,null,consentForm);
+		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,null,consentDetailsMap);
 
 		then:
 		result.success
@@ -120,10 +125,10 @@ class CDRServiceSpec extends Specification {
 		service.metaClass.findKnownFacility = {return KnownFacility.TEST}
 		service.metaClass.grailsApplication.getConfig = { [cdr:[knownFacility:"TEST",organisation:"Greenlight"] ]  }
 
+		def consentDetailsMap = service.buildConsentDetailsMap(consentForm,consentForm.template)
 
 		when:
-		1 * service.consentFormService.getAccessGUIDUrl(_) >> {"TEST_PATH"}
-		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,null,consentForm);
+		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,null,consentDetailsMap);
 
 		then:
 		!result.success
@@ -687,7 +692,7 @@ class CDRServiceSpec extends Specification {
 		def consentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.SPOILED, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
 
 		def connectToCDRAndRemoveConsentFrom_Called = false
-		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,ConsentForm con,ConsentFormTemplate consFormTemp ->
+		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap ->
 			connectToCDRAndRemoveConsentFrom_Called = true
 			return [success: true,log:"Removed_LOG_TEXT"]
 		}
@@ -696,7 +701,8 @@ class CDRServiceSpec extends Specification {
 		def result = service.CDR_Remove_Consent(patient.nhsNumber,patient.hospitalNumber,consentForm,template)
 
 		then: "connectToCDRAndRemoveConsentFrom is called and also the status of the consent is updated"
-		1 * service.CDRLogService.add(consentForm.id,template.id,patient.nhsNumber,patient.hospitalNumber,true,"Removed_LOG_TEXT","remove") >> {}
+		1 * service.CDRLogService.add(patient.nhsNumber,patient.hospitalNumber,_,true,"Removed_LOG_TEXT","remove") >> {}
+
 		connectToCDRAndRemoveConsentFrom_Called
 		consentForm.savedInCDR  == false
 		consentForm.passedToCDR == false
@@ -713,7 +719,7 @@ class CDRServiceSpec extends Specification {
 		def consentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.SPOILED, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
 
 		def connectToCDRAndSendConsentForm_Called = false
-		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,ConsentForm consForm ->
+		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap ->
 			connectToCDRAndSendConsentForm_Called = true
 			return [success: true,log:"SAVED_IN_CDR"]
 		}
@@ -722,7 +728,7 @@ class CDRServiceSpec extends Specification {
 		def result = service.CDR_Send_Consent(patient.nhsNumber,patient.hospitalNumber,consentForm,template)
 
 		then: "connectToCDRAndSendConsentForm is called and also the status of the consent is updated"
-		1 * service.CDRLogService.add(consentForm.id,template.id,patient.nhsNumber,patient.hospitalNumber,true,"SAVED_IN_CDR","save") >> {}
+		1 * service.CDRLogService.add(patient.nhsNumber,patient.hospitalNumber,_,true,"SAVED_IN_CDR","add") >> {}
 		connectToCDRAndSendConsentForm_Called
 		//// ASSUME THAT ANY CALL TO CDR IS SUCCESSFUL AND THEN WE HANDLE THAT BY CDRLOG
 		consentForm.savedInCDR  == true
@@ -741,7 +747,7 @@ class CDRServiceSpec extends Specification {
 		def consentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.SPOILED, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
 
 		def connectToCDRAndSendConsentForm_Called = false
-		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,ConsentForm consForm ->
+		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap->
 			connectToCDRAndSendConsentForm_Called = true
 			return [success: false,log:"ERROR_IN_SAVING_IN_CDR"]
 		}
@@ -750,7 +756,7 @@ class CDRServiceSpec extends Specification {
 		def result = service.CDR_Send_Consent(patient.nhsNumber,patient.hospitalNumber,consentForm,template)
 
 		then: "connectToCDRAndSendConsentForm is called and also the status of the consent is updated"
-		1 * service.CDRLogService.add(consentForm.id,template.id,patient.nhsNumber,patient.hospitalNumber,false,"ERROR_IN_SAVING_IN_CDR","save") >> {}
+		1 * service.CDRLogService.add(patient.nhsNumber,patient.hospitalNumber,_,false,"ERROR_IN_SAVING_IN_CDR","add") >> {}
 		connectToCDRAndSendConsentForm_Called
 		//// ASSUME THAT ANY CALL TO CDR IS SUCCESSFUL AND THEN WE HANDLE THAT BY CDRLOG
 		consentForm.savedInCDR  == true

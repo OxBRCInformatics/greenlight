@@ -191,10 +191,23 @@ class CDRService {
 		return sendResult
 	}
 
+	def buildConsentDetailsMap(ConsentForm consentForm,ConsentFormTemplate template){
+		[consentId: consentForm.id,
+		consentTemplateId: template.id,
+		consentDate: consentForm.consentDate,
+		consentStatus: consentForm.consentStatus,
+		comment:consentForm.comment,
+		consentStatusLabels: consentForm.consentStatusLabels,
+		cdrUniqueId: template.cdrUniqueId,
+		namePrefix: template.namePrefix,
+		consentURL: consentFormService.getAccessGUIDUrl(consentForm).toString()]
+	}
+
 	def CDR_Remove_Consent(nhsNumber,hospitalNumber,consentForm,template){
 		//Remove it from CDR
-		def removeResult = connectToCDRAndRemoveConsentFrom(nhsNumber, hospitalNumber,{},consentForm, template)
-		CDRLogService.add(consentForm.id,template.id,nhsNumber,hospitalNumber,removeResult.success,removeResult.log,"remove")
+		def consentDetailsMap = buildConsentDetailsMap(consentForm,template)
+		def removeResult = connectToCDRAndRemoveConsentFrom(nhsNumber, hospitalNumber,{},consentDetailsMap)
+		CDRLogService.add(nhsNumber, hospitalNumber, consentDetailsMap, removeResult.success,removeResult.log,"remove")
 
 		//update consent status and mention that it is not in CDR
 		consentForm.savedInCDR  = false
@@ -207,8 +220,10 @@ class CDRService {
 
 	def CDR_Send_Consent(nhsNumber,hospitalNumber,consentForm,template){
 		//Pass it to CDR
-		def sendResult = connectToCDRAndSendConsentForm(nhsNumber, hospitalNumber,{}, consentForm)
-		CDRLogService.add(consentForm.id,template.id,nhsNumber,hospitalNumber,sendResult.success,sendResult.log,"save")
+		def consentDetailsMap = buildConsentDetailsMap(consentForm,template)
+		def sendResult = connectToCDRAndSendConsentForm(nhsNumber, hospitalNumber,{}, consentDetailsMap)
+		CDRLogService.add(nhsNumber, hospitalNumber, consentDetailsMap, sendResult.success,sendResult.log,"add")
+
 
 		//// ASSUME THAT ANY CALL TO CDR IS SUCCESSFUL AND THEN WE HANDLE THAT BY CDRLOG
 		consentForm.savedInCDR  = true //sendResult.success
@@ -220,7 +235,7 @@ class CDRService {
 	}
 
 
-	def connectToCDRAndRemoveConsentFrom(String patientNHSNumber,String  patientHospitalNumber,Closure patientAlias, ConsentForm consentForm, ConsentFormTemplate consentFormTemplate) {
+	def connectToCDRAndRemoveConsentFrom(String patientNHSNumber,String  patientHospitalNumber,Closure patientAlias, Map consentDetailsMap) {
 
 		def cdrKnownFacilityConfig = grailsApplication.config?.cdr?.knownFacility
 		def cdrOrganisationConfig = grailsApplication.config?.cdr?.organisation
@@ -233,9 +248,9 @@ class CDRService {
 			return [success: false, log: "cdr Organisation Config is not defined in config file"]
 		}
 
-		def knownOrganisation = findKnownOrganisation(consentFormTemplate?.namePrefix)
+		def knownOrganisation = findKnownOrganisation(consentDetailsMap?.namePrefix)
 		if (!knownOrganisation) {
-			return [success: false, log: "Can not find KnownOrganisation(Consent Form Prefix name) '${consentFormTemplate?.namePrefix}' in CDR KnownOrganisations"]
+			return [success: false, log: "Can not find KnownOrganisation(Consent Form Prefix name) '${consentDetailsMap?.namePrefix}' in CDR KnownOrganisations"]
 		}
 
 		def knownFacility = findKnownFacility(cdrKnownFacilityConfig?.name)
@@ -244,16 +259,16 @@ class CDRService {
 		}
 
 		//PatientGroup is actually the consentType in CDR definition
-		def patientGroup = findPatientGroup(knownOrganisation,consentFormTemplate?.cdrUniqueId)
+		def patientGroup = findPatientGroup(knownOrganisation,consentDetailsMap?.cdrUniqueId)
 		if (!patientGroup) {
-			return [success: false, log: "Can not find consent(PatientGroup) '${consentFormTemplate.cdrUniqueId}' in CDR PatientGroup"]
+			return [success: false, log: "Can not find consent(PatientGroup) '${consentDetailsMap.cdrUniqueId}' in CDR PatientGroup"]
 		}
 		//create a collection of patientGroups
 		Collection<String> patientGroups = []
 		patientGroups << patientGroup
 
 
-		def consentURL = consentFormService.getAccessGUIDUrl(consentForm).toString()
+		def consentURL = consentDetailsMap.consentURL //  consentFormService.getAccessGUIDUrl(consentForm).toString()
 
 		ResultModel<PatientModel> resultOfAction
 		try {
@@ -264,7 +279,7 @@ class CDRService {
 			def consent = mirthModelDsl.consent {
 				authoringFacility greenlight
 				appliesToOrganisation { id cdrOrganisationConfig?.id }
-				effectiveOn consentForm.consentDate
+				effectiveOn consentDetailsMap.consentDate
 				attachment {
 					assert consentURL
 					url consentURL
@@ -299,7 +314,7 @@ class CDRService {
 
 
 
-	def connectToCDRAndSendConsentForm(String patientNHSNumber,String  patientHospitalNumber,Closure patientAlias ,ConsentForm consentForm) {
+	def connectToCDRAndSendConsentForm(String patientNHSNumber,String  patientHospitalNumber,Closure patientAlias ,Map consentDetailsMap) {
 
 //		If it is a generic NHS number, set it to null
 		if(patientService.isGenericNHSNumber(patientNHSNumber)) {
@@ -317,9 +332,9 @@ class CDRService {
 			return [success: false, log: "cdr Organisation Config is not defined in config file"]
 		}
 
-		def knownOrganisation = findKnownOrganisation(consentForm?.template?.namePrefix)
+		def knownOrganisation = findKnownOrganisation(consentDetailsMap?.namePrefix)
 		if (!knownOrganisation) {
-			return [success: false, log: "Can not find KnownOrganisation(Consent Form Prefix name) '${consentForm?.template?.namePrefix}' in CDR KnownOrganisations"]
+			return [success: false, log: "Can not find KnownOrganisation(Consent Form Prefix name) '${consentDetailsMap?.namePrefix}' in CDR KnownOrganisations"]
 		}
 
 		def knownFacility = findKnownFacility(cdrKnownFacilityConfig?.name)
@@ -327,15 +342,15 @@ class CDRService {
 			return [success: false, log: "Can not find KnownFacility '${cdrKnownFacilityConfig?.name}' in CDR KnownFacilities"]
 		}
 
-		def knownPatientStatus = findKnownPatientStatus(consentForm.consentStatus)
+		def knownPatientStatus = findKnownPatientStatus(consentDetailsMap.consentStatus)
 		if (!knownPatientStatus) {
-			return [success: false, log: "Can not find KnownPatientStatus '${consentForm.consentStatus}' in CDR KnownPatientStatus"]
+			return [success: false, log: "Can not find KnownPatientStatus '${consentDetailsMap.consentStatus}' in CDR KnownPatientStatus"]
 		}
 
 		//PatientGroup is actually the consentType in CDR definition
-		def patientGroup = findPatientGroup(knownOrganisation,consentForm.template.cdrUniqueId)
+		def patientGroup = findPatientGroup(knownOrganisation,consentDetailsMap.cdrUniqueId)
 		if (!patientGroup) {
-			return [success: false, log: "Can not find consent(PatientGroup) '${consentForm.template.cdrUniqueId}' in CDR PatientGroup"]
+			return [success: false, log: "Can not find consent(PatientGroup) '${consentDetailsMap.cdrUniqueId}' in CDR PatientGroup"]
 		}
 		//create a collection of patientGroups
 		Collection<String> patientGroups = []
@@ -343,11 +358,11 @@ class CDRService {
 
 
 		def consentStatusCode = "OPT_IN"
-		if(consentForm.consentStatus == ConsentForm.ConsentStatus.NON_CONSENT) {
+		if(consentDetailsMap.consentStatus == ConsentForm.ConsentStatus.NON_CONSENT) {
 			consentStatusCode = "OPT_OUT"
 		}
 
-		def consentURL = consentFormService.getAccessGUIDUrl(consentForm).toString()
+		def consentURL = consentDetailsMap.consentURL // consentFormService.getAccessGUIDUrl(consentForm).toString()
 
 		ResultModel<PatientModel> resultOfAction
 		try {
@@ -369,7 +384,7 @@ class CDRService {
 			def consent =  mirthModelDsl.consent {
 				authoringFacility greenlight
 				appliesToOrganisation {id cdrOrganisationConfig?.id}
-				effectiveOn consentForm.consentDate
+				effectiveOn consentDetailsMap.consentDate
 				consentType { code consentStatusCode }
 				attachment {
 					description 'Greenlight Consent Form'
@@ -377,9 +392,9 @@ class CDRService {
 					//mimeType AttachmentModel.MimeType.PNG
 					//id attachmentService.getAttachmentFileName(consentForm.attachedFormImage)
 					// Any notes on the consent
-					notes consentForm.comment
+					notes consentDetailsMap.comment
 					//note "\n${consentForm?.consentStatusLabels.join['\n']}"
-					note "\n${consentForm?.consentStatusLabels}"
+					note "\n${consentDetailsMap?.consentStatusLabels}"
 					url consentURL
 				}
 			} as Consent
