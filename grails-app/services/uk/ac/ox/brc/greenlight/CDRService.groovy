@@ -2,7 +2,6 @@ package uk.ac.ox.brc.greenlight
 
 import com.mirth.results.client.PatientModel
 import com.mirth.results.client.result.ResultModel
-import grails.transaction.Transactional
 import uk.ac.ox.ndm.mirth.datamodel.dsl.MirthModelDsl
 import uk.ac.ox.ndm.mirth.datamodel.dsl.clinical.patient.Consent
 import uk.ac.ox.ndm.mirth.datamodel.dsl.core.Facility
@@ -17,7 +16,7 @@ import uk.ac.ox.ndm.mirth.datamodel.rest.client.MirthRestClient
  * This service will pass consentForms into CDR (Clinical Document Repository)
  */
 
-@Transactional
+//@Transactional
 class CDRService {
 	def grailsApplication
 
@@ -26,6 +25,8 @@ class CDRService {
 	def patientService
 	def CDRLogService
 
+
+	static transactional = false
 
 	def saveOrUpdateConsentForm(Patient patient, ConsentForm consentForm, boolean newConsent) {
 
