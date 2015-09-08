@@ -687,7 +687,7 @@ class CDRServiceSpec extends Specification {
 		def consentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.SPOILED, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
 
 		def connectToCDRAndRemoveConsentFrom_Called = false
-		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,ConsentFormTemplate consFormTemp ->
+		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,ConsentFormTemplate consFormTemp ->
 			connectToCDRAndRemoveConsentFrom_Called = true
 			return [success: true,log:"Removed_LOG_TEXT"]
 		}
@@ -713,7 +713,7 @@ class CDRServiceSpec extends Specification {
 		def consentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.SPOILED, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
 
 		def connectToCDRAndSendConsentForm_Called = false
-		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,ConsentForm consForm ->
+		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,ConsentForm consForm ->
 			connectToCDRAndSendConsentForm_Called = true
 			return [success: false,log:"NOT_SAVE_IN_CDR_TEST_LOG"]
 		}
