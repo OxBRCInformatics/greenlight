@@ -84,6 +84,7 @@ class ConsentFormService {
 		return results;
 	}
 
+	@Transactional
 	def save(Patient patient, ConsentForm consentForm) {
 
 		def isNew = false
