@@ -40,7 +40,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
             hospitalNumber: "1002",
             nhsNumber: "1234567890",
             consents: []
-            ).save()
+            ).save(flush: true)
 
        def consent = new ConsentForm(
 			   accessGUID: UUID.randomUUID().toString(),
@@ -52,13 +52,13 @@ class ConsentFormServiceISpec extends IntegrationSpec {
                 formID: "GEN12345",
                 formStatus: ConsentForm.FormStatus.NORMAL,
                 comment: "a simple unEscapedComment, with characters \' \" \n "
-        ).save()
-
+        )
         consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: question1))
         consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: question2))
         consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: question3))
         consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: question4))
-        consent.save()
+        patient.addToConsents(consent)
+		patient.save(flush:true)
 
 
 		def attachment2= new Attachment(id: 1, fileName: 'a.jpg', dateOfUpload: new Date(),
@@ -71,7 +71,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 				hospitalNumber: "1002",
 				nhsNumber: "1234567800",
 				consents: []
-		).save()
+		).save(flush:true)
 
 		def consent2 = new ConsentForm(
 				accessGUID: UUID.randomUUID().toString(),
@@ -83,12 +83,13 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 				formID: "GEN12345",
 				formStatus: ConsentForm.FormStatus.NORMAL,
 				comment: "a simple unEscapedComment, entered at 31/07/2015 with characters \' \" \n "
-		).save()
+		)
 		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: question1))
 		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: question2))
 		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: question3))
 		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: question4))
-		consent2.save()
+		patient2.addToConsents(consent2)
+		patient2.save(flush:true)
     }
 
     def "Delete action will delete consentForm and its responses"() {
@@ -108,8 +109,36 @@ class ConsentFormServiceISpec extends IntegrationSpec {
         Response.count() == 4
 
 		and:"it keeps the patient record"
-        Patient.count() == 2
+        Patient.count() == 1
+		Attachment.count() == 1
     }
+
+	def "Delete action will delete patient if it was the only consentForm for that patient"() {
+
+		given:"A number of consentForms are available"
+		def attachment= new Attachment(attachmentType: Attachment.AttachmentType.IMAGE, content: [],dateOfUpload:new Date(),fileName:"1.jpg").save(flush: true,failOnError: true)
+		def consent = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
+				attachedFormImage: attachment,
+				template: ConsentFormTemplate.first(),
+				consentDate: new Date([year:2014,month:01,date:01]),
+				consentTakerName: "Edward",
+				formID: "GEN12345"
+		)
+		Patient.first().addToConsents(consent).save(flush:true)
+
+		assert Patient.count()     == 2
+		assert ConsentForm.count() == 3
+		assert Attachment.count()  == 3
+		when:"deleting a consentForm"
+		consentFormService.delete(Patient.first().consents[0])
+
+
+		then:"the consentForm, attachment and the patient will be removed as that's the only consent for the patient"
+		ConsentForm.count() == 2
+		Patient.count() 	== 2
+		Attachment.count()  == 2
+	}
 
     def "Check getConsentFormByFormId for not-available FormId "() {
         when:"CheckFormId is called for a non-existing formId"
