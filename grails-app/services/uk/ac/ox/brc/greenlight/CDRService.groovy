@@ -192,7 +192,7 @@ class CDRService {
 
 	def CDR_Remove_Consent(nhsNumber,hospitalNumber,consentForm,template){
 		//Remove it from CDR
-		def removeResult = connectToCDRAndRemoveConsentFrom(nhsNumber, hospitalNumber, template)
+		def removeResult = connectToCDRAndRemoveConsentFrom(nhsNumber, hospitalNumber,{},consentForm, template)
 		CDRLogService.add(consentForm.id,template.id,nhsNumber,hospitalNumber,removeResult.success,removeResult.log,"remove")
 
 		//update consent status and mention that it is not in CDR

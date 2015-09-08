@@ -683,11 +683,11 @@ class CDRServiceSpec extends Specification {
 	def "CDR_Remove_Consent  prepares a consent for removal from CDR and updates its status"(){
 		given:"patient and consent are ready to be removed from CDR"
 		def patient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
-		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"GEL",templateVersion: "V1" ).save(failOnError: true,flush: true)
 		def consentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.SPOILED, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
 
 		def connectToCDRAndRemoveConsentFrom_Called = false
-		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,ConsentFormTemplate consFormTemp ->
+		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,ConsentForm con,ConsentFormTemplate consFormTemp ->
 			connectToCDRAndRemoveConsentFrom_Called = true
 			return [success: true,log:"Removed_LOG_TEXT"]
 		}
