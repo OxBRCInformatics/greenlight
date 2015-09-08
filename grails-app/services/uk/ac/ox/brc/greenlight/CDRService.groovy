@@ -116,7 +116,7 @@ class CDRService {
 							consentForm.savedInCDR = false
 							consentForm.passedToCDR = false
 							consentForm.savedInCDRStatus = null
-							consentForm.save(flush: true, failOnError: true)
+							//consentForm.save(flush: true, failOnError: true)
 							return [success: true,log:"no operation required"]
 						}else{
 							//do nothing just save the new one
@@ -124,7 +124,7 @@ class CDRService {
 							consentForm.savedInCDR = false
 							consentForm.passedToCDR = false
 							consentForm.savedInCDRStatus = null
-							consentForm.save(flush: true, failOnError: true)
+							//consentForm.save(flush: true, failOnError: true)
 							return [success: true,log:"no operation required"]
 						}
 					}else{
@@ -200,7 +200,7 @@ class CDRService {
 		consentForm.savedInCDR  = false
 		consentForm.passedToCDR = false
 		consentForm.savedInCDRStatus = null
-		consentForm.save(flush: true, failOnError: true)
+		//consentForm.save(flush: true, failOnError: true)
 		consentForm.dateTimePassedToCDR = null
 		return  removeResult
 	}
@@ -214,7 +214,7 @@ class CDRService {
 		consentForm.passedToCDR = true
 		consentForm.dateTimePassedToCDR = new Date()
 		consentForm.savedInCDRStatus = sendResult.log
-		consentForm.save(flush: true, failOnError: true)
+		//consentForm.save(flush: true, failOnError: true)
 		return sendResult
 	}
 
