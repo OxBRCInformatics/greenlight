@@ -339,6 +339,9 @@ class CDRService {
 		} catch (ClientException ex) {
 			ex.printStackTrace()
 			return [success: false, log: ex.message]
+		}catch (Exception ex) {
+			ex.printStackTrace()
+			return [success: false, log: ex.message]
 		}
 
 		if (resultOfAction && resultOfAction?.operationSucceeded) {
@@ -517,6 +520,9 @@ class CDRService {
 			resultOfAction = client.createOrUpdatePatientConsent(consent,patient,knownFacility,knownPatientStatus.toString(),knownOrganisation.toString(),patientGroups)
 
 		}catch (ClientException ex) {
+			ex.printStackTrace()
+			return [success: false, log: ex.message]
+		}catch (Exception ex) {
 			ex.printStackTrace()
 			return [success: false, log: ex.message]
 		}
