@@ -210,7 +210,8 @@ class CDRService {
 		def sendResult = connectToCDRAndSendConsentForm(nhsNumber, hospitalNumber,{}, consentForm)
 		CDRLogService.add(consentForm.id,template.id,nhsNumber,hospitalNumber,sendResult.success,sendResult.log,"save")
 
-		consentForm.savedInCDR  = sendResult.success
+		//// ASSUME THAT ANY CALL TO CDR IS SUCCESSFUL AND THEN WE HANDLE THAT BY CDRLOG
+		consentForm.savedInCDR  = true //sendResult.success
 		consentForm.passedToCDR = true
 		consentForm.dateTimePassedToCDR = new Date()
 		consentForm.savedInCDRStatus = sendResult.log
