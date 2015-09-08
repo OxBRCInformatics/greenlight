@@ -57,7 +57,7 @@ class BootStrap {
                 createAdminUser("admin", "password", "support@example.com")
 				createAPIUser("api","api","api@api.cpm")
                 createFormTemplates()
-				createTestUser("test","test","test@test.com")
+				//createTestUser("test","test","test@test.com")
 				//addConsentFormForDevelopment()
             }
 
