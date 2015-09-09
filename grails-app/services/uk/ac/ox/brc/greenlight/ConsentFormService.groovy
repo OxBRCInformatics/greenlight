@@ -88,8 +88,9 @@ class ConsentFormService {
 	def save(Patient patient, ConsentForm consentForm) {
 
 		def isNew = false
-		if(!patient.id && !consentForm.id)
+		if(!patient.id && !consentForm.id) {
 			isNew = true
+		}
 
 		//calculate and save consentStatus
 		consentForm.consentStatus = consentEvaluationService.getConsentStatus(consentForm)
