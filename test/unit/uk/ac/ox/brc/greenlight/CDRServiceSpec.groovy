@@ -655,7 +655,7 @@ class CDRServiceSpec extends Specification {
 	}
 
 	def "saveOrUpdateConsentForm when consent formStatus was UN-NORMAL and now it is changed to NORMAL and patient NOT updated"(){
-		given:"consent formStatus updated from NORMAL to UN-NORMAL and patient NOT updated"
+		given:"consent formStatus updated from  UN-NORMAL to NORMAL and patient NOT updated"
 		def patient = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
 		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
 
