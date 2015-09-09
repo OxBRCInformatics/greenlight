@@ -299,10 +299,10 @@ class CDRService {
 
 			resultOfAction = client.removePatientConsent(consent,patient,knownFacility,knownOrganisation,patientGroups)
 		} catch (ClientException ex) {
-			ex.printStackTrace()
+			//ex.printStackTrace()
 			return [success: false, log: ex.message]
 		}catch (Exception ex) {
-			ex.printStackTrace()
+			//ex.printStackTrace()
 			return [success: false, log: ex.message]
 		}
 
@@ -402,10 +402,10 @@ class CDRService {
 			resultOfAction = client.createOrUpdatePatientConsent(consent,patient,knownFacility,knownPatientStatus.toString(),knownOrganisation.toString(),patientGroups)
 
 		}catch (ClientException ex) {
-			ex.printStackTrace()
+			//ex.printStackTrace()
 			return [success: false, log: ex.message]
 		}catch (Exception ex) {
-			ex.printStackTrace()
+			//ex.printStackTrace()
 			return [success: false, log: ex.message]
 		}
 
