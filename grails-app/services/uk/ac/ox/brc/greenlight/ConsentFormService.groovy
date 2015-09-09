@@ -103,6 +103,7 @@ class ConsentFormService {
 
 		//first send it to CDR
 		try {
+			//Save consentFrom into Database after saveOrUpdateConsentForm as it does NOT persist changes of the consentForm into DB
 			CDRService.saveOrUpdateConsentForm(patient, consentForm, isNew)
 		} catch (Exception ex) {
 			//it actually should not stop the whole save process
