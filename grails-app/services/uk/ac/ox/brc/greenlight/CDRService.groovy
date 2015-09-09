@@ -21,7 +21,6 @@ class CDRService {
 	def grailsApplication
 
 	def consentFormService
-	def attachmentService
 	def patientService
 	def CDRLogService
 
