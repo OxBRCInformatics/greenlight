@@ -119,13 +119,9 @@ class CDRService {
 							//consentForm.save(flush: true, failOnError: true)
 							return [success: true,log:"no operation required"]
 						}else{
-							//do nothing just save the new one
-							//update consent status and mention that it is not in CDR
-							consentForm.savedInCDR = false
-							consentForm.passedToCDR = false
-							consentForm.savedInCDRStatus = null
-							//consentForm.save(flush: true, failOnError: true)
-							return [success: true,log:"no operation required"]
+							//So Pass this one as it is still the latest one
+							def sendResult = CDR_Send_Consent(patient.nhsNumber, patient.hospitalNumber, consentForm,consentForm?.template)
+							return [success: true,log:sendResult.log]
 						}
 					}else{
 						//it should not get to here
