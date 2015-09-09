@@ -149,7 +149,7 @@ class CDRService {
 			}
 			//oldConsentForm formStatus was NOT NORMAL and now it is NORMAL, so send it
 			else if (consentForm.getPersistentValue("formStatus") != ConsentForm.FormStatus.NORMAL &&
-					 consentForm.formStatus == ConsentForm.FormStatus.NORMAL && consentForm.savedInCDR) {
+					 consentForm.formStatus == ConsentForm.FormStatus.NORMAL) {
 				//act like a new consentForm which is added
 				return addNewConsent(patient,consentForm)
 			}
