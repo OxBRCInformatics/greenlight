@@ -182,9 +182,10 @@ class AttachmentController {
 									attachmentType: Attachment.AttachmentType.IMAGE,
 									dateOfUpload: new Date ()
 								);
-								faultyAttachment.uploadStatus = "Failed"
+								faultyAttachment.uploadStatus = "Failed (Processing the pages)"
 								faultyAttachment.uploadMessage = ex.message
 								attachments.add(faultyAttachment)
+								log.error(ex.message)
 							}
 
 						}else{
@@ -199,9 +200,10 @@ class AttachmentController {
 										attachmentType: Attachment.AttachmentType.IMAGE,
 										dateOfUpload: new Date ()
 								);
-								faultyAttachment.uploadStatus = "Failed"
+								faultyAttachment.uploadStatus = "Failed (Reading the file)"
 								faultyAttachment.uploadMessage = ex.message
 								attachments.add(faultyAttachment)
+								log.error(ex.message)
 							}
 
 							//check if document is not NULL
@@ -223,9 +225,10 @@ class AttachmentController {
 											attachmentType: Attachment.AttachmentType.IMAGE,
 											dateOfUpload: new Date ()
 									);
-									faultyAttachment.uploadStatus = "Failed"
+									faultyAttachment.uploadStatus = "Failed (Processing the pages)"
 									faultyAttachment.uploadMessage = ex.message
 									attachments.add(faultyAttachment)
+									log.error(ex.message)
 								}
 							}
 						}
@@ -245,6 +248,7 @@ class AttachmentController {
 							faultyAttachment.uploadStatus = "Failed"
 							faultyAttachment.uploadMessage = ex.message
 							attachments.add(faultyAttachment)
+							log.error(ex.message)
 						}
 					}
 				}
