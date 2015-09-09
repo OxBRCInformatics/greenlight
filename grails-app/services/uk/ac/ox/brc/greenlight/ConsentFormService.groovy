@@ -1,8 +1,8 @@
 package uk.ac.ox.brc.greenlight
 
+import grails.orm.PagedResultList
 import grails.transaction.Transactional
 import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
-
 
 class ConsentFormService {
 
