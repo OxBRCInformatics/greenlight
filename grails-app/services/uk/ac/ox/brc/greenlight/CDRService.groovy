@@ -27,6 +27,25 @@ class CDRService {
 
 	static transactional = false
 
+	def removeConsentForm(Patient patient, ConsentForm consentForm){
+		if(!consentForm.savedInCDR || consentForm.formStatus != ConsentForm.FormStatus.NORMAL){
+			return [success: true,log:"no operation required"]
+		}else {
+			//Remove it from CDR
+			def removeResult = CDR_Remove_Consent(patient.nhsNumber, patient.hospitalNumber, consentForm, consentForm.template)
+			//find latest consent which are the same type of the old consent which is NOT sent to CDR and pass it
+			ConsentForm latestConsent = consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(patient.nhsNumber, patient.hospitalNumber, consentForm, consentForm.template)
+			if (latestConsent) {
+				//Pass it to CDR
+				def sendResult = CDR_Send_Consent(patient.nhsNumber, patient.hospitalNumber, latestConsent, latestConsent?.template)
+
+				//Persist the status of this latestConsent into DB
+				latestConsent.save(flush: true)
+			}
+			return removeResult
+		}
+	}
+
 	def saveOrUpdateConsentForm(Patient patient, ConsentForm consentForm, boolean newConsent) {
 
 		//in New mode

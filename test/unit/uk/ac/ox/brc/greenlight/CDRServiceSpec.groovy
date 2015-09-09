@@ -13,6 +13,8 @@ import uk.ac.ox.ndm.mirth.datamodel.rest.client.KnownFacility
 import uk.ac.ox.ndm.mirth.datamodel.rest.client.KnownOrganisation
 import uk.ac.ox.ndm.mirth.datamodel.rest.client.KnownPatientStatus
 
+import java.text.SimpleDateFormat
+
 /**
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
@@ -776,5 +778,123 @@ class CDRServiceSpec extends Specification {
 		expected.getModel().id == "CDR_FACILITY_ID"
 		expected.getModel().name  == "CDR_FACILITY_NAME"
 		expected.getModel().descr == "CDR_FACILITY_DESC"
+	}
+
+	def "removeConsentForm will have NOP when consentForm is NOT savedInCDR"(){
+		def patient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		def consentForm = new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
+
+		def connectToCDRAndSendConsentForm_Called = false
+		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap->
+			connectToCDRAndSendConsentForm_Called = true
+		}
+
+		def connectToCDRAndRemoveConsentFrom_Called = false
+		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap ->
+			connectToCDRAndRemoveConsentFrom_Called = true
+		}
+
+		when:"removeConsentForm called"
+		def result = service.removeConsentForm(patient,consentForm)
+
+		then:"it doesn't need to pass any messages to CDR"
+		0 *  service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(patient.nhsNumber,patient.hospitalNumber,consentForm,consentForm.template) >> {null}
+		result.success
+		result.log == "no operation required"
+		!connectToCDRAndSendConsentForm_Called
+		!connectToCDRAndRemoveConsentFrom_Called
+	}
+
+	def "removeConsentForm will have NOP when consentForm is NOT NORMAL"(){
+		def patient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		def consentForm = new ConsentForm(savedInCDR: true,formStatus: ConsentForm.FormStatus.SPOILED, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
+
+		def connectToCDRAndSendConsentForm_Called = false
+		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap->
+			connectToCDRAndSendConsentForm_Called = true
+		}
+
+		def connectToCDRAndRemoveConsentFrom_Called = false
+		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap ->
+			connectToCDRAndRemoveConsentFrom_Called = true
+		}
+
+		when:"removeConsentForm called"
+		def result = service.removeConsentForm(patient,consentForm)
+
+		then:"it doesn't need to pass any messages to CDR"
+		0 *  service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(patient.nhsNumber,patient.hospitalNumber,consentForm,consentForm.template) >> {null}
+		result.success
+		result.log == "no operation required"
+		!connectToCDRAndSendConsentForm_Called
+		!connectToCDRAndRemoveConsentFrom_Called
+	}
+
+	def "removeConsentForm will pass a remove message to CDR when consent is savedInCDR"(){
+		def patient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		def consentForm = new ConsentForm(savedInCDR: true,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
+
+		def connectToCDRAndSendConsentForm_Called = false
+		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap->
+			connectToCDRAndSendConsentForm_Called = true
+		}
+
+		def connectToCDRAndRemoveConsentFrom_Called = false
+		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap ->
+			connectToCDRAndRemoveConsentFrom_Called = true
+			[success: true, log:"SUCCESSFULLY REMOVE THE CONSENT"]
+		}
+
+		when:"removeConsentForm called"
+		def result = service.removeConsentForm(patient,consentForm)
+
+		then:"it sends a remove message to CDR"
+		1 *  service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(patient.nhsNumber,patient.hospitalNumber,consentForm,consentForm.template) >> {null}
+		result.success
+		result.log == "SUCCESSFULLY REMOVE THE CONSENT"
+		!connectToCDRAndSendConsentForm_Called
+		connectToCDRAndRemoveConsentFrom_Called
+	}
+
+	def "removeConsentForm will pass a remove message to CDR when consent is savedInCDR and also passes the consent of the same type which is before this consent"(){
+		def dtf = new SimpleDateFormat("yyyyMMdd")
+		def patient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		def consentForm 	  = new ConsentForm(savedInCDR: true,passedToCDR: false,savedInCDRStatus: "",dateTimePassedToCDR: null, formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
+
+		def beforeConsentForm = new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL12345",accessGUID: "456", template:template, patient:patient,consentDate: new Date().minus(10)).save(failOnError: true,flush: true)
+
+		def connectToCDRAndSendConsentForm_Called = false
+		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap ->
+			connectToCDRAndSendConsentForm_Called = true
+			//check it the right consent is passed
+			assert consentDetailsMap.consentFormId ==  beforeConsentForm.id
+			[success: true, log:"SUCCESSFULLY PASSED THE CONSENT"]
+		}
+
+		def connectToCDRAndRemoveConsentFrom_Called = false
+		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap ->
+			connectToCDRAndRemoveConsentFrom_Called = true
+			//check it the right consent is passed
+			assert consentDetailsMap.consentFormId ==  consentForm.id
+			[success: true, log:"SUCCESSFULLY REMOVE THE CONSENT"]
+		}
+
+		when:"removeConsentForm called"
+		def result = service.removeConsentForm(patient,consentForm)
+
+		then:"it sends a remove message to CDR"
+		1 *  service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(patient.nhsNumber,patient.hospitalNumber,consentForm,consentForm.template) >> {beforeConsentForm}
+		result.success
+		result.log == "SUCCESSFULLY REMOVE THE CONSENT"
+		connectToCDRAndSendConsentForm_Called
+		connectToCDRAndRemoveConsentFrom_Called
+		beforeConsentForm.savedInCDR  == true
+		beforeConsentForm.passedToCDR == true
+		dtf.format(beforeConsentForm.dateTimePassedToCDR) == dtf.format(new Date())
+		beforeConsentForm.savedInCDRStatus == "SUCCESSFULLY PASSED THE CONSENT"
 	}
 }
