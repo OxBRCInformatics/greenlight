@@ -105,7 +105,9 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 
 
         then:"the consentForm and its responses are all deleted"
-        ConsentForm.count() == 1
+		1 * consentFormService.CDRService.removeConsentForm(cons.patient,cons) >> { return [success:true,log:"SUCCESS"] }
+
+		ConsentForm.count() == 1
         Response.count() == 4
 
 		and:"it keeps the patient record"
@@ -125,19 +127,31 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 				consentTakerName: "Edward",
 				formID: "GEN12345"
 		)
-		Patient.first().addToConsents(consent).save(flush:true)
+		def patient = Patient.first()
+		patient.addToConsents(consent).save(flush:true)
 
 		assert Patient.count()     == 2
 		assert ConsentForm.count() == 3
 		assert Attachment.count()  == 3
 		when:"deleting a consentForm"
-		consentFormService.delete(Patient.first().consents[0])
+		consentFormService.delete(patient.consents[0])
 
 
-		then:"the consentForm, attachment and the patient will be removed as that's the only consent for the patient"
+		then:"the consentForm, attachment will be removed but not the patient as it still has more consent forms"
+		1 * consentFormService.CDRService.removeConsentForm(patient,patient.consents[0]) >> { return [success:true,log:"SUCCESS"] }
 		ConsentForm.count() == 2
 		Patient.count() 	== 2
 		Attachment.count()  == 2
+
+
+		when:"deleting a consentForm"
+		consentFormService.delete(patient.consents[0])
+
+		then:"the consentForm, attachment and the patient will be removed as that's the only consent for the patient"
+		1 * consentFormService.CDRService.removeConsentForm(patient,patient.consents[0]) >> { return [success:true,log:"SUCCESS"] }
+		ConsentForm.count() == 1
+		Patient.count() 	== 1
+		Attachment.count()  == 1
 	}
 
     def "Check getConsentFormByFormId for not-available FormId "() {
