@@ -109,7 +109,7 @@ class CDRService {
 						//are there any consent after the new date which are not sent ( of course those which are different from consentForm.id )?
 						ConsentForm latestConsent = consentFormService.findLatestConsentOfSameTypeAfterThisConsentWhichIsNotSavedInCDR(patient.nhsNumber,patient.hospitalNumber,consentForm,consentForm.template)
 						if(latestConsent){
-							//Pass it to CDR & it will update the old one on CDR (retire the old one as well as they both have the same template type)
+							//Pass it to CDR & it will update the old one on CDR (retire the old one as well, as they both have the same template type)
 							def sendResult = CDR_Send_Consent(patient.nhsNumber, patient.hospitalNumber, latestConsent,latestConsent?.template)
 
 							//update consent status and mention that it is not in CDR
