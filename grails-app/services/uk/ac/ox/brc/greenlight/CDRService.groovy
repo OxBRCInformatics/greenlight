@@ -339,15 +339,15 @@ class CDRService {
 			return [success: false, log: "Can not find KnownFacility '${cdrKnownFacilityConfig?.name}' in CDR KnownFacilities"]
 		}
 
-		def knownPatientStatus = findKnownPatientStatus(consentDetailsMap.consentStatus)
+		def knownPatientStatus = findKnownPatientStatus(consentDetailsMap?.consentStatus)
 		if (!knownPatientStatus) {
-			return [success: false, log: "Can not find KnownPatientStatus '${consentDetailsMap.consentStatus}' in CDR KnownPatientStatus"]
+			return [success: false, log: "Can not find KnownPatientStatus '${consentDetailsMap?.consentStatus}' in CDR KnownPatientStatus"]
 		}
 
 		//PatientGroup is actually the consentType in CDR definition
-		def patientGroup = findPatientGroup(knownOrganisation,consentDetailsMap.cdrUniqueId)
+		def patientGroup = findPatientGroup(knownOrganisation,consentDetailsMap?.cdrUniqueId)
 		if (!patientGroup) {
-			return [success: false, log: "Can not find consent(PatientGroup) '${consentDetailsMap.cdrUniqueId}' in CDR PatientGroup"]
+			return [success: false, log: "Can not find consent(PatientGroup) '${consentDetailsMap?.cdrUniqueId}' in CDR PatientGroup"]
 		}
 		//create a collection of patientGroups
 		Collection<String> patientGroups = []
