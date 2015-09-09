@@ -132,12 +132,35 @@ class ConsentFormService {
 
 	@Transactional
 	def delete(ConsentForm consentForm) {
+
 		try {
-			consentForm.delete(flush: true)
-			return true
+			//remove it from CDR before deleting it from DB
+			CDRService.removeConsentForm(consentForm.patient, consentForm)
+		} catch (Exception ex) {
+			//it actually should not stop the whole save process
+			log.error(ex.message)
 		}
-		catch (Exception ex) {
-			return false
+
+		//save consent and patient in a transaction
+		ConsentForm.withTransaction { status ->
+			try {
+				def patient = consentForm.patient
+				if(patient.consents.size() == 1) {
+					//if this is the only consent for the patient, then remove the patient and the consent
+					//and it will also remove the attachment
+					patient.delete(flush: true)
+				}else {
+					//else, just remove the consent from the patient and then delete the consent
+					patient.removeFromConsents(consentForm)
+					patient.save(flush: true)
+					consentForm.delete(flush: true)
+				}
+				return true
+			}
+			catch (Exception exp) {
+				status.setRollbackOnly()
+				return false
+			}
 		}
 	}
 

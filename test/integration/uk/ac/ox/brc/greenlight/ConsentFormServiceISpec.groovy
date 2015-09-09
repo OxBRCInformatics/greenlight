@@ -3,6 +3,8 @@ package uk.ac.ox.brc.greenlight
 import grails.test.spock.IntegrationSpec
 import spock.lang.Unroll
 
+import javax.xml.bind.ValidationException
+
 /**
  * Created by soheil on 28/03/2014.
  */
@@ -152,6 +154,29 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		ConsentForm.count() == 1
 		Patient.count() 	== 1
 		Attachment.count()  == 1
+	}
+
+	def "Delete action will delete consentForm and its responses even if CDRService calls fails (Saving the delete in CDR)"() {
+
+		given:"A number of consentForms are available"
+		assert ConsentForm.count() == 2
+		def cons = ConsentForm.first()
+		assert cons.responses.size() == 4
+		assert Response.count() == 8
+
+		when:"deleting a consentForm"
+		consentFormService.delete(cons)
+
+
+		then:"the consentForm and its responses are all deleted"
+		1 * consentFormService.CDRService.removeConsentForm(cons.patient,cons) >> { throw new ValidationException("ERROR IN CDR CALL") }
+
+		ConsentForm.count() == 1
+		Response.count() == 4
+
+		and:"it keeps the patient record"
+		Patient.count() == 1
+		Attachment.count() == 1
 	}
 
     def "Check getConsentFormByFormId for not-available FormId "() {
