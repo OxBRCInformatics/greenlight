@@ -192,8 +192,9 @@ class CDRService {
 	}
 
 	def buildConsentDetailsMap(ConsentForm consentForm,ConsentFormTemplate template){
-		[consentId: consentForm.id,
+		[consentFormId: consentForm.id,
 		consentTemplateId: template.id,
+		consentAccessGUID: consentForm.accessGUID,
 		consentDate: consentForm.consentDate,
 		consentStatus: consentForm.consentStatus,
 		comment:consentForm.comment,
