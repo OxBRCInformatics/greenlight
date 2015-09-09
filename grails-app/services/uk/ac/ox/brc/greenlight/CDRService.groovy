@@ -222,7 +222,7 @@ class CDRService {
 		//Remove it from CDR
 		def consentDetailsMap = buildConsentDetailsMap(consentForm,template)
 		def removeResult = connectToCDRAndRemoveConsentFrom(nhsNumber, hospitalNumber,{},consentDetailsMap)
-		CDRLogService.add(nhsNumber, hospitalNumber, consentDetailsMap, removeResult.success,removeResult.log,"remove")
+		CDRLogService.save(nhsNumber, hospitalNumber, consentDetailsMap, removeResult.success,removeResult.log,CDRLog.CDRActionType.REMOVE)
 
 		//update consent status and mention that it is not in CDR
 		consentForm.savedInCDR  = false
@@ -237,7 +237,7 @@ class CDRService {
 		//Pass it to CDR
 		def consentDetailsMap = buildConsentDetailsMap(consentForm,template)
 		def sendResult = connectToCDRAndSendConsentForm(nhsNumber, hospitalNumber,{}, consentDetailsMap)
-		CDRLogService.add(nhsNumber, hospitalNumber, consentDetailsMap, sendResult.success,sendResult.log,"add")
+		CDRLogService.save(nhsNumber, hospitalNumber, consentDetailsMap, sendResult.success,sendResult.log,CDRLog.CDRActionType.ADD)
 
 
 		//// ASSUME THAT ANY CALL TO CDR IS SUCCESSFUL AND THEN WE HANDLE THAT BY CDRLOG

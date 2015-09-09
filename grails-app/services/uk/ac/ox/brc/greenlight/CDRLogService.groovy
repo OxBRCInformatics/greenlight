@@ -4,7 +4,7 @@ import uk.ac.ox.brc.greenlight.Audit.CDRLog
 
 class CDRLogService {
 
-	def add(String nhsNumber,String hospitalNumber,Map consentDetailsMap,boolean persistedInCDR,String resultDetail,String actionType) {
+	def save(String nhsNumber,String hospitalNumber,Map consentDetailsMap,boolean persistedInCDR,String resultDetail,CDRLog.CDRActionType actionType) {
 		new CDRLog(
 				consentFormId: consentDetailsMap?.consentFormId,
 				consentAccessGUID: consentDetailsMap?.consentAccessGUID,
