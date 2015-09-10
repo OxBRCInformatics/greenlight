@@ -696,14 +696,14 @@ class CDRServiceSpec extends Specification {
 		def connectToCDRAndRemoveConsentFrom_Called = false
 		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap ->
 			connectToCDRAndRemoveConsentFrom_Called = true
-			return [success: true,log:"Removed_LOG_TEXT"]
+			return [success: true,log:"Removed_LOG_TEXT",exception:null]
 		}
 
 		when:"CDR_Remove_Consent is called"
 		def result = service.CDR_Remove_Consent(patient.nhsNumber,patient.hospitalNumber,consentForm,template)
 
 		then: "connectToCDRAndRemoveConsentFrom is called and also the status of the consent is updated"
-		1 * service.CDRLogService.add(patient.nhsNumber,patient.hospitalNumber,_,true,"Removed_LOG_TEXT","remove") >> {}
+		1 * service.CDRLogService.save(patient.nhsNumber,patient.hospitalNumber,_,true,"Removed_LOG_TEXT",null,CDRLog.CDRActionType.REMOVE) >> {}
 
 		connectToCDRAndRemoveConsentFrom_Called
 		consentForm.savedInCDR  == false
@@ -723,7 +723,7 @@ class CDRServiceSpec extends Specification {
 		def connectToCDRAndSendConsentForm_Called = false
 		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap ->
 			connectToCDRAndSendConsentForm_Called = true
-			return [success: true,log:"SAVED_IN_CDR"]
+			return [success: true,log:"SAVED_IN_CDR",exception:null]
 		}
 
 		when:"CDR_Send_Consent is called"

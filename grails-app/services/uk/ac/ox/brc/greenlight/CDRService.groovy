@@ -222,7 +222,7 @@ class CDRService {
 		//Remove it from CDR
 		def consentDetailsMap = buildConsentDetailsMap(consentForm,template)
 		def removeResult = connectToCDRAndRemoveConsentFrom(nhsNumber, hospitalNumber,{},consentDetailsMap)
-		CDRLogService.save(nhsNumber, hospitalNumber, consentDetailsMap, removeResult.success,removeResult.log,CDRLog.CDRActionType.REMOVE)
+		CDRLogService.save(nhsNumber, hospitalNumber, consentDetailsMap, removeResult.success,removeResult.log,removeResult.exception,CDRLog.CDRActionType.REMOVE)
 
 		//update consent status and mention that it is not in CDR
 		consentForm.savedInCDR  = false
@@ -237,7 +237,7 @@ class CDRService {
 		//Pass it to CDR
 		def consentDetailsMap = buildConsentDetailsMap(consentForm,template)
 		def sendResult = connectToCDRAndSendConsentForm(nhsNumber, hospitalNumber,{}, consentDetailsMap)
-		CDRLogService.save(nhsNumber, hospitalNumber, consentDetailsMap, sendResult.success,sendResult.log,CDRLog.CDRActionType.ADD)
+		CDRLogService.save(nhsNumber, hospitalNumber, consentDetailsMap, sendResult.success,sendResult.log,sendResult.execption, CDRLog.CDRActionType.ADD)
 
 
 		//// ASSUME THAT ANY CALL TO CDR IS SUCCESSFUL AND THEN WE HANDLE THAT BY CDRLOG
@@ -256,27 +256,27 @@ class CDRService {
 		def cdrOrganisationConfig = grailsApplication.config?.cdr?.organisation
 
 		if (!cdrKnownFacilityConfig) {
-			return [success: false, log: "cdr KnownFacility Config is not defined in config file"]
+			return [success: false, log: "cdr KnownFacility Config is not defined in config file", execption:null]
 		}
 
 		if (!cdrOrganisationConfig) {
-			return [success: false, log: "cdr Organisation Config is not defined in config file"]
+			return [success: false, log: "cdr Organisation Config is not defined in config file", execption:null]
 		}
 
 		def knownOrganisation = findKnownOrganisation(consentDetailsMap?.namePrefix)
 		if (!knownOrganisation) {
-			return [success: false, log: "Can not find KnownOrganisation(Consent Form Prefix name) '${consentDetailsMap?.namePrefix}' in CDR KnownOrganisations"]
+			return [success: false, log: "Can not find KnownOrganisation(Consent Form Prefix name) '${consentDetailsMap?.namePrefix}' in CDR KnownOrganisations", execption:null]
 		}
 
 		def knownFacility = findKnownFacility(cdrKnownFacilityConfig?.name)
 		if (!knownFacility) {
-			return [success: false, log: "Can not find KnownFacility '${cdrKnownFacilityConfig?.name}' in CDR KnownFacilities"]
+			return [success: false, log: "Can not find KnownFacility '${cdrKnownFacilityConfig?.name}' in CDR KnownFacilities", execption:null]
 		}
 
 		//PatientGroup is actually the consentType in CDR definition
 		def patientGroup = findPatientGroup(knownOrganisation,consentDetailsMap?.cdrUniqueId)
 		if (!patientGroup) {
-			return [success: false, log: "Can not find consent form template (PatientGroup) '${consentDetailsMap?.cdrUniqueId}' in CDR PatientGroup"]
+			return [success: false, log: "Can not find consent form template (PatientGroup) '${consentDetailsMap?.cdrUniqueId}' in CDR PatientGroup", execption:null]
 		}
 		//create a collection of patientGroups
 		Collection<String> patientGroups = []
@@ -314,16 +314,16 @@ class CDRService {
 			resultOfAction = client.removePatientConsent(consent,patient,knownFacility,knownOrganisation,patientGroups)
 		} catch (ClientException ex) {
 			//ex.printStackTrace()
-			return [success: false, log: ex.message]
+			return [success: false, log: ex.message, execption:ex]
 		}catch (Exception ex) {
 			//ex.printStackTrace()
-			return [success: false, log: ex.message]
+			return [success: false, log: ex.message, execption:ex]
 		}
 
 		if (resultOfAction && resultOfAction?.operationSucceeded) {
-			return [success: true, log: resultOfAction.conditionDetailsAsString]
+			return [success: true, log: resultOfAction.conditionDetailsAsString, execption:null]
 		} else {
-			return [success: false, log: resultOfAction.conditionDetailsAsString]
+			return [success: false, log: resultOfAction.conditionDetailsAsString, execption:null]
 		}
 	}
 
@@ -340,32 +340,32 @@ class CDRService {
 		def cdrOrganisationConfig  = grailsApplication.config?.cdr?.organisation
 
 		if (!cdrKnownFacilityConfig) {
-			return [success: false, log: "cdr KnownFacility Config is not defined in config file"]
+			return [success: false, log: "cdr KnownFacility Config is not defined in config file", execption:null]
 		}
 
 		if (!cdrOrganisationConfig) {
-			return [success: false, log: "cdr Organisation Config is not defined in config file"]
+			return [success: false, log: "cdr Organisation Config is not defined in config file", execption:null]
 		}
 
 		def knownOrganisation = findKnownOrganisation(consentDetailsMap?.namePrefix)
 		if (!knownOrganisation) {
-			return [success: false, log: "Can not find KnownOrganisation(Consent Form Prefix name) '${consentDetailsMap?.namePrefix}' in CDR KnownOrganisations"]
+			return [success: false, log: "Can not find KnownOrganisation(Consent Form Prefix name) '${consentDetailsMap?.namePrefix}' in CDR KnownOrganisations", execption:null]
 		}
 
 		def knownFacility = findKnownFacility(cdrKnownFacilityConfig?.name)
 		if (!knownFacility) {
-			return [success: false, log: "Can not find KnownFacility '${cdrKnownFacilityConfig?.name}' in CDR KnownFacilities"]
+			return [success: false, log: "Can not find KnownFacility '${cdrKnownFacilityConfig?.name}' in CDR KnownFacilities", execption:null]
 		}
 
 		def knownPatientStatus = findKnownPatientStatus(consentDetailsMap?.consentStatus)
 		if (!knownPatientStatus) {
-			return [success: false, log: "Can not find KnownPatientStatus '${consentDetailsMap?.consentStatus}' in CDR KnownPatientStatus"]
+			return [success: false, log: "Can not find KnownPatientStatus '${consentDetailsMap?.consentStatus}' in CDR KnownPatientStatus", execption:null]
 		}
 
 		//PatientGroup is actually the consentType in CDR definition
 		def patientGroup = findPatientGroup(knownOrganisation,consentDetailsMap?.cdrUniqueId)
 		if (!patientGroup) {
-			return [success: false, log: "Can not find consent(PatientGroup) '${consentDetailsMap?.cdrUniqueId}' in CDR PatientGroup"]
+			return [success: false, log: "Can not find consent(PatientGroup) '${consentDetailsMap?.cdrUniqueId}' in CDR PatientGroup", execption:null]
 		}
 		//create a collection of patientGroups
 		Collection<String> patientGroups = []
@@ -417,16 +417,19 @@ class CDRService {
 
 		}catch (ClientException ex) {
 			//ex.printStackTrace()
-			return [success: false, log: ex.message]
+			return [success: false, log: ex.message, execption:ex]
 		}catch (Exception ex) {
 			//ex.printStackTrace()
-			return [success: false, log: ex.message]
+			return [success: false, log: ex.message, execption:ex]
 		}
 
 		if (resultOfAction && resultOfAction?.operationSucceeded) {
-			return [success: true, log: resultOfAction.conditionDetailsAsString]
+			return [success: true, log: resultOfAction.conditionDetailsAsString, execption:null]
 		} else {
-			return [success: false, log: resultOfAction.conditionDetailsAsString]
+			return [success: false, log: resultOfAction.conditionDetailsAsString, execption:null]
+		}
+	}
+
 		}
 	}
 
