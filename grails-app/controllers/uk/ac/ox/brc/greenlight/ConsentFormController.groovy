@@ -112,7 +112,7 @@ class ConsentFormController {
 						hospitalNumber: consent?.patient?.hospitalNumber,
 						givenName     : consent?.patient?.givenName,
 						familyName    : consent?.patient?.familyName,
-						dateOfBirth   : consent?.patient?.dateOfBirth?.format("yyyy-MM-dd")
+						dateOfBirth   : consent?.patient?.dateOfBirth?.format("dd/MM/yyyy")
 				],
 				consentFormType: [
 						name: consent?.template?.name,
@@ -120,7 +120,7 @@ class ConsentFormController {
 						namePrefix:consent?.template?.namePrefix,
 				],
 				formID          : consent?.formID,
-				consentDate     : consent?.consentDate?.format("yyyy-MM-dd"),
+				consentDate     : consent?.consentDate?.format("dd/MM/yyyy"),
 				consentTakerName: consent?.consentTakerName,
 				formStatus      : consent?.formStatus?.toString(),
 				consentStatus   : consent?.consentStatus?.toString(),
@@ -128,7 +128,7 @@ class ConsentFormController {
 				comment         : consent?.comment,
 				responses       : responses,
 				attachment      : [
-						dateOfUpload: consent?.attachedFormImage?.dateOfUpload.format("yyyy-MM-dd HH:mm:ss"),
+						dateOfUpload: consent?.attachedFormImage?.dateOfUpload.format("dd/MM/yyyy HH:mm:ss"),
 						fileName    : attachmentService.getAttachmentFileName(consent?.attachedFormImage)
 				]
 		]
