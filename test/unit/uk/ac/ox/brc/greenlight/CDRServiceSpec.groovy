@@ -770,7 +770,7 @@ class CDRServiceSpec extends Specification {
 		def result = service.CDR_Send_Consent(patient.nhsNumber,patient.hospitalNumber,consentForm,template)
 
 		then: "connectToCDRAndSendConsentForm is called and also the status of the consent is updated"
-		1 * service.CDRLogService.add(patient.nhsNumber,patient.hospitalNumber,_,true,"SAVED_IN_CDR","add") >> {}
+		1 * service.CDRLogService.save(patient.nhsNumber,patient.hospitalNumber,_,true,"SAVED_IN_CDR",null,CDRLog.CDRActionType.ADD) >> {}
 		connectToCDRAndSendConsentForm_Called
 		//// ASSUME THAT ANY CALL TO CDR IS SUCCESSFUL AND THEN WE HANDLE THAT BY CDRLOG
 		consentForm.savedInCDR  == true
@@ -782,7 +782,7 @@ class CDRServiceSpec extends Specification {
 	}
 
 
-	def "CDR_Send_Consent  prepares a consent for adding to CDR and updates its status even it CDR returns UN_SUCCESSFULL"(){
+	def "CDR_Send_Consent  prepares a consent for adding to CDR and updates its status even it CDR returns UNSUCCESSFUL"(){
 		given:"patient and consent are ready to be saved in CDR"
 		def patient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
 		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
@@ -798,7 +798,7 @@ class CDRServiceSpec extends Specification {
 		def result = service.CDR_Send_Consent(patient.nhsNumber,patient.hospitalNumber,consentForm,template)
 
 		then: "connectToCDRAndSendConsentForm is called and also the status of the consent is updated"
-		1 * service.CDRLogService.add(patient.nhsNumber,patient.hospitalNumber,_,false,"ERROR_IN_SAVING_IN_CDR","add") >> {}
+		1 * service.CDRLogService.save(patient.nhsNumber,patient.hospitalNumber,_,false,"ERROR_IN_SAVING_IN_CDR",_,CDRLog.CDRActionType.ADD) >> {}
 		connectToCDRAndSendConsentForm_Called
 		//// ASSUME THAT ANY CALL TO CDR IS SUCCESSFUL AND THEN WE HANDLE THAT BY CDRLOG
 		consentForm.savedInCDR  == true

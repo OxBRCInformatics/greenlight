@@ -4,8 +4,10 @@ import uk.ac.ox.brc.greenlight.Audit.CDRLog
 
 class CDRLogService {
 
-	def save(String nhsNumber,String hospitalNumber,Map consentDetailsMap,boolean persistedInCDR,String resultDetail,CDRLog.CDRActionType actionType) {
-		new CDRLog(
+	def CDRService
+
+	def save(String nhsNumber,String hospitalNumber,Map consentDetailsMap,boolean persistedInCDR,String resultDetail,Exception exception, CDRLog.CDRActionType actionType) {
+		def cdr = new CDRLog(
 				consentFormId: consentDetailsMap?.consentFormId,
 				consentAccessGUID: consentDetailsMap?.consentAccessGUID,
 				consentTemplateId: consentDetailsMap?.consentTemplateId,
@@ -23,6 +25,11 @@ class CDRLogService {
 				actionDate: new Date(),
 				action: actionType,
 				persistedInCDR: persistedInCDR,
-				resultDetail: resultDetail).save(flush: true,failOnError: true)
+				resultDetail: resultDetail,
+				//Check if it is a connectionError or mirthResult exception?
+				connectionError: isConnectionError(exception)
+				)
+		cdr.save(failOnError: true)
+	}
 	}
 }
