@@ -28,20 +28,28 @@ class CDRLog {
 	boolean persistedInCDR
 	//the result of passing a message to CDR
 	String resultDetail
+	static mapping = {
+		comment type:"text"
+		resultDetail type: "text"
+		consentStatusLabels type:"text"
+		attemptsLog type:"text"
+	}
 
 	static constraints = {
 
-		consentFormId nullable:true
+		consentFormId nullable:true // for New consentForm which do not have Id at first BUT we can refer to them by their accessGUID
 		consentTemplateId nullable:true
 
-		comment type:"text" , nullable:true
+		comment nullable:true
 		consentStatusLabels nullable: true
 
 		nhsNumber nullable:true
 		hospitalNumber nullable:true
 
-		resultDetail type: "text"
-		consentStatusLabels type:"text"
+
+		attemptsLog nullable:true
+		attemptsCount nullable:true
+		resultDetail nullable: true
 	}
 
 
