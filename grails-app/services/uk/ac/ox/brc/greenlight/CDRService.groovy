@@ -252,6 +252,11 @@ class CDRService {
 
 	def connectToCDRAndRemoveConsentFrom(String patientNHSNumber,String  patientHospitalNumber,Closure patientAlias, Map consentDetailsMap) {
 
+		//If it is a generic NHS number, set it to null
+		if(patientService.isGenericNHSNumber(patientNHSNumber)) {
+			patientNHSNumber = ""
+		}
+
 		def cdrKnownFacilityConfig = grailsApplication.config?.cdr?.knownFacility
 		def cdrOrganisationConfig = grailsApplication.config?.cdr?.organisation
 

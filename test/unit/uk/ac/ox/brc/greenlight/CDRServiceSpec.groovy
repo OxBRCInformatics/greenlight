@@ -108,6 +108,46 @@ class CDRServiceSpec extends Specification {
 		result.log == "Detail_Result_of_Actions"
 	}
 
+	void "connectToCDRAndRemoveConsentFrom sends blank value for NHSNumber if it has a generic(1111111111) value"(){
+		setup:
+		def nhsNumber = "1111111111"
+		def hospitalNumber = "123"
+		def consentForm = new ConsentForm(template:new ConsentFormTemplate(cdrUniqueId: "GEL_CSC_V1") )
+		//Mock the internal methods of the Service
+		service.metaClass.createCDRClient   = {
+			def client = new Object()
+			client.metaClass.removePatientConsent = {Consent consent, uk.ac.ox.ndm.mirth.datamodel.dsl.clinical.patient.Patient patient, KnownFacility receivingFacility,KnownOrganisation appliedOrganisation, Collection<String> patientGroups ->
+
+				//it should not have NHSAlias as blank is passed for patient NHS number
+				assert patient.getNHSAlias() == null
+
+				def result = new ResultModel<PatientModel>()
+				result.metaClass.isOperationSucceeded = {
+					return  true
+				}
+				result.metaClass.getConditionDetailsAsString = {
+					return  "Detail_Result_of_Actions"
+				}
+				return result
+			}
+			return client
+		}
+		service.metaClass.createCDRFacility = {new Facility()}
+		service.metaClass.findKnownOrganisation = {return KnownOrganisation.GEL_PILOT}
+		service.metaClass.findPatientGroup = {return "GEL_CSC_V1"}
+		service.metaClass.findKnownFacility = {return KnownFacility.TEST}
+		service.metaClass.grailsApplication.getConfig = { [cdr:[knownFacility:"TEST",organisation:"Greenlight"] ]  }
+		def consentDetailsMap = service.buildConsentDetailsMap(consentForm,consentForm.template)
+
+		when:
+		1 * service.patientService.isGenericNHSNumber(_) >> {true}
+		def result = service.connectToCDRAndRemoveConsentFrom(nhsNumber,hospitalNumber,null,consentDetailsMap);
+
+		then:
+		result.success
+		result.log == "Detail_Result_of_Actions"
+	}
+
 	void "connectToCDRAndSendConsentForm returns exception message when has error"(){
 		setup:
 		def nhsNumber = "1234567890"
