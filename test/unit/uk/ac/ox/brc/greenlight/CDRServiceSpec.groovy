@@ -791,7 +791,7 @@ class CDRServiceSpec extends Specification {
 		def connectToCDRAndSendConsentForm_Called = false
 		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap->
 			connectToCDRAndSendConsentForm_Called = true
-			return [success: false,log:"ERROR_IN_SAVING_IN_CDR"]
+			return [success: false,log:"ERROR_IN_SAVING_IN_CDR",execption:new Exception("ERROR_IN_SAVING_IN_CDR")]
 		}
 
 		when:"CDR_Send_Consent is called"
