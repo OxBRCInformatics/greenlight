@@ -11,11 +11,12 @@ import java.text.SimpleDateFormat
  */
 
 @TestFor(CDRLogService)
-@Mock([CDRLog])
+@Mock([CDRLog,ConsentForm])
 class CDRLogServiceSpec extends spock.lang.Specification {
 
 	def setup(){
-		service.CDRService = Mock(CDRService)
+		service.CDRService 			= Mock(CDRService)
+		service.consentFormService	= Mock(ConsentFormService)
 	}
 
 	def "resendCDRLogRecordToCDR does not send a CDRLog to CDR if it is Persisted"(){
@@ -50,6 +51,9 @@ class CDRLogServiceSpec extends spock.lang.Specification {
 		CDRLog.metaClass.save = {  Map params ->
 			cdrLogSaveCalled = true
 		}
+
+		def actualConsentForm = new ConsentForm()
+
 		when:"resendCDRLogRecordToCDR called"
 		def result = service.resendCDRLogRecordToCDR(record)
 
@@ -57,6 +61,8 @@ class CDRLogServiceSpec extends spock.lang.Specification {
 		1 * service.CDRService.connectToCDRAndSendConsentForm(record.nhsNumber,record.hospitalNumber,_,record.properties,false) >> {
 			[success:true,log:"SUCCESS",exception:null]
 		}
+		1 * service.consentFormService.searchByAccessGUID(record.consentAccessGUID) >> {actualConsentForm}
+
 		record.attemptsCount == 1
 		!record.connectionError
 		record.persistedInCDR
@@ -64,6 +70,8 @@ class CDRLogServiceSpec extends spock.lang.Specification {
 		dtf.format(record.dateTimePersistedInCDR) == dtf.format(new Date())
 		result == [success: true, log: "Successfully passed to CDR", cdrLog:record]
 		cdrLogSaveCalled
+		actualConsentForm.persistedInCDR == true
+		dtf.format(actualConsentForm.dateTimePersistedInCDR) == dtf.format(new Date())
 	}
 
 	def "resendCDRLogRecordToCDR sends 'REMOVE' message into CDR for REMOVE action"(){
@@ -79,6 +87,9 @@ class CDRLogServiceSpec extends spock.lang.Specification {
 		CDRLog.metaClass.save = {  Map params ->
 			cdrLogSaveCalled = true
 		}
+
+		def actualConsentForm = new ConsentForm()
+
 		when:"resendCDRLogRecordToCDR called"
 		def result = service.resendCDRLogRecordToCDR(record)
 
@@ -86,6 +97,8 @@ class CDRLogServiceSpec extends spock.lang.Specification {
 		1 * service.CDRService.connectToCDRAndRemoveConsentFrom(record.nhsNumber,record.hospitalNumber,_,record.properties,false) >> {
 			[success:true,log:"SUCCESS",exception:null]
 		}
+		1 * service.consentFormService.searchByAccessGUID(record.consentAccessGUID) >> {actualConsentForm}
+
 		record.attemptsCount == 1
 		!record.connectionError
 		record.persistedInCDR
@@ -93,6 +106,8 @@ class CDRLogServiceSpec extends spock.lang.Specification {
 		dtf.format(record.dateTimePersistedInCDR) == dtf.format(new Date())
 		result == [success: true, log: "Successfully passed to CDR", cdrLog:record]
 		cdrLogSaveCalled
+		actualConsentForm.persistedInCDR == true
+		dtf.format(actualConsentForm.dateTimePersistedInCDR) == dtf.format(new Date())
 	}
 
 	def "resendCDRLogRecordToCDR should not pass the message to CDR if there are un-resolved records of the same consent before this record"(){

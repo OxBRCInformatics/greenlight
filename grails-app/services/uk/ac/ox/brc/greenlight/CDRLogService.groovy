@@ -6,6 +6,7 @@ class CDRLogService {
 
 	def CDRService
 	def springSecurityService
+	def consentFormService
 
 
 	def save(Long patientId, String nhsNumber,String hospitalNumber,Map consentDetailsMap,boolean persistedInCDR,String resultDetail,Exception exception, CDRLog.CDRActionType actionType) {
@@ -75,6 +76,15 @@ class CDRLogService {
 			record.persistedInCDR = true
 			record.dateTimePersistedInCDR = new Date()
 			log = "${log} Successfully sent to CDR"
+
+			//find the corresponding consentForm record and update it
+			def consentForm = consentFormService.searchByAccessGUID(record.consentAccessGUID)
+			//it might have been removed form Greenlight, so it exists then update that
+			if(consentForm){
+				consentForm.persistedInCDR = true
+				consentForm.dateTimePersistedInCDR = new Date()
+				consentForm.save(flush: true)
+			}
 		}
 
 		def connectionError = isConnectionError(callResult?.exception)
