@@ -122,7 +122,7 @@ class CDRService {
 	def CDR_Remove_Consent(patientId, nhsNumber,hospitalNumber, consentForm,template){
 		//Remove it from CDR
 		def consentDetailsMap = buildConsentDetailsMap(consentForm,template)
-		def removeResult = connectToCDRAndRemoveConsentFrom(nhsNumber, hospitalNumber,{},consentDetailsMap)
+		def removeResult = connectToCDRAndRemoveConsentFrom(nhsNumber, hospitalNumber,{},consentDetailsMap,true)
 		CDRLogService.save(patientId,nhsNumber, hospitalNumber, consentDetailsMap, removeResult.success,removeResult.log,removeResult.exception,CDRLog.CDRActionType.REMOVE)
 
 		//update consent status and mention that it is not in CDR
@@ -138,7 +138,7 @@ class CDRService {
 	def CDR_Send_Consent(patientId, nhsNumber,hospitalNumber,consentForm,template){
 		//Pass it to CDR
 		def consentDetailsMap = buildConsentDetailsMap(consentForm,template)
-		def sendResult = connectToCDRAndSendConsentForm(nhsNumber, hospitalNumber,{}, consentDetailsMap)
+		def sendResult = connectToCDRAndSendConsentForm(nhsNumber, hospitalNumber,{}, consentDetailsMap,true)
 		CDRLogService.save(patientId, nhsNumber, hospitalNumber, consentDetailsMap, sendResult.success,sendResult.log,sendResult.execption, CDRLog.CDRActionType.ADD)
 
 		//// ASSUME THAT ANY CALL TO CDR IS SUCCESSFUL AND THEN WE HANDLE THAT BY CDRLOG
@@ -152,7 +152,7 @@ class CDRService {
 	}
 
 
-	def connectToCDRAndRemoveConsentFrom(String patientNHSNumber,String  patientHospitalNumber,Closure patientAlias, Map consentDetailsMap) {
+	def connectToCDRAndRemoveConsentFrom(String patientNHSNumber,String  patientHospitalNumber,Closure patientAlias, Map consentDetailsMap,boolean checkIsWaitingForResolution) {
 
 		//If it is a generic NHS number, set it to null
 		if(patientService.isGenericNHSNumber(patientNHSNumber)) {
@@ -193,7 +193,7 @@ class CDRService {
 		def consentURL = consentDetailsMap.consentURL //  consentFormService.getAccessGUIDUrl(consentForm).toString()
 
 		//CHECK IF THIS CONSENT HAS ANY WAITING STATUS RECORD IN CRD LOG, so do not send it to CDR Actually
-		if(CDRLogService.isConsentWaitingForResolution(consentDetailsMap?.consentAccessGUID)){
+		if(checkIsWaitingForResolution && CDRLogService.isConsentWaitingForResolution(consentDetailsMap?.consentAccessGUID)){
 			return [success: false, log: "Consent is waiting for resolution by admin in CDRLog", execption:null]
 		}
 
@@ -241,7 +241,7 @@ class CDRService {
 
 
 
-	def connectToCDRAndSendConsentForm(String patientNHSNumber,String  patientHospitalNumber,Closure patientAlias ,Map consentDetailsMap) {
+	def connectToCDRAndSendConsentForm(String patientNHSNumber,String  patientHospitalNumber,Closure patientAlias ,Map consentDetailsMap,boolean checkIsWaitingForResolution) {
 
 //		If it is a generic NHS number, set it to null
 		if(patientService.isGenericNHSNumber(patientNHSNumber)) {
@@ -293,7 +293,7 @@ class CDRService {
 
 
 		//CHECK IF THIS CONSENT HAS ANY WAITING STATUS RECORD IN CRD LOG, so do not send it to CDR Actually
-		if(CDRLogService.isConsentWaitingForResolution(consentDetailsMap?.consentAccessGUID)){
+		if(checkIsWaitingForResolution && CDRLogService.isConsentWaitingForResolution(consentDetailsMap?.consentAccessGUID)){
 			return [success: false, log: "Consent is waiting for resolution by admin in CDRLog", execption:null]
 		}
 

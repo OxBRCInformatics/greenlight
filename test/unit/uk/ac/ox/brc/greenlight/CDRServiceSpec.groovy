@@ -59,7 +59,7 @@ class CDRServiceSpec extends Specification {
 		def consentDetailsMap = service.buildConsentDetailsMap(consentForm,consentForm.template)
 
 		when:
-		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,null,consentDetailsMap);
+		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,null,consentDetailsMap,true);
 
 		then:
 		result.success
@@ -101,7 +101,7 @@ class CDRServiceSpec extends Specification {
 
 		when:
 		1 * service.patientService.isGenericNHSNumber(_) >> {true}
-		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,null,consentDetailsMap);
+		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,null,consentDetailsMap,true);
 
 		then:
 		result.success
@@ -141,7 +141,7 @@ class CDRServiceSpec extends Specification {
 
 		when:
 		1 * service.patientService.isGenericNHSNumber(_) >> {true}
-		def result = service.connectToCDRAndRemoveConsentFrom(nhsNumber,hospitalNumber,null,consentDetailsMap);
+		def result = service.connectToCDRAndRemoveConsentFrom(nhsNumber,hospitalNumber,null,consentDetailsMap,true);
 
 		then:
 		result.success
@@ -170,7 +170,7 @@ class CDRServiceSpec extends Specification {
 		def consentDetailsMap = service.buildConsentDetailsMap(consentForm,consentForm.template)
 
 		when:
-		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,null,consentDetailsMap);
+		def result = service.connectToCDRAndSendConsentForm(nhsNumber,hospitalNumber,null,consentDetailsMap,true);
 
 		then:
 		!result.success

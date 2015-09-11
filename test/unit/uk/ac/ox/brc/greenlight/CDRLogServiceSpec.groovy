@@ -54,7 +54,7 @@ class CDRLogServiceSpec extends spock.lang.Specification {
 		def result = service.resendCDRLogRecordToCDR(record)
 
 		then:"it calls connectToCDRAndSendConsentForm"
-		1 * service.CDRService.connectToCDRAndSendConsentForm(record.nhsNumber,record.hospitalNumber,_,record.properties) >> {
+		1 * service.CDRService.connectToCDRAndSendConsentForm(record.nhsNumber,record.hospitalNumber,_,record.properties,false) >> {
 			[success:true,log:"SUCCESS",exception:null]
 		}
 		record.attemptsCount == 1
