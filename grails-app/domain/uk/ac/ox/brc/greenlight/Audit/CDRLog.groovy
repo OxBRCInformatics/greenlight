@@ -17,6 +17,7 @@ class CDRLog {
 	String consentAccessGUID
 
 	//all details of the patient that needed for CDR
+	String patientId
 	String nhsNumber
 	String hospitalNumber
 
@@ -43,6 +44,7 @@ class CDRLog {
 		comment nullable:true
 		consentStatusLabels nullable: true
 
+		patientId nullable: true
 		nhsNumber nullable:true
 		hospitalNumber nullable:true
 

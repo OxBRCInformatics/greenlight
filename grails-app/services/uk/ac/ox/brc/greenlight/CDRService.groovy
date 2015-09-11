@@ -32,12 +32,12 @@ class CDRService {
 			return [success: true,log:"no operation required"]
 		}else {
 			//Remove it from CDR
-			def removeResult = CDR_Remove_Consent(patient.nhsNumber, patient.hospitalNumber, consentForm, consentForm.template)
+			def removeResult = CDR_Remove_Consent(patient.id, patient.nhsNumber, patient.hospitalNumber, consentForm, consentForm.template)
 			//find latest consent which are the same type of the old consent which is NOT sent to CDR and pass it
 			ConsentForm latestConsent = consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(patient.nhsNumber, patient.hospitalNumber, consentForm, consentForm.template)
 			if (latestConsent) {
 				//Pass it to CDR
-				def sendResult = CDR_Send_Consent(patient.nhsNumber, patient.hospitalNumber, latestConsent, latestConsent?.template)
+				def sendResult = CDR_Send_Consent(patient.id, patient.nhsNumber, patient.hospitalNumber, latestConsent, latestConsent?.template)
 
 				//Persist the status of this latestConsent into DB
 				latestConsent.save(flush: true)
@@ -197,11 +197,11 @@ class CDRService {
 		ConsentForm olderSavedInCDRConsent = consentFormService.findAnyConsentOfSameTypeBeforeThisConsentWhichIsSavedInCDR(patient.nhsNumber,patient.hospitalNumber,consentForm)
 		if(olderSavedInCDRConsent) {
 			//Remove it from CDR
-			def removeResult = CDR_Remove_Consent(patient.nhsNumber, patient.hospitalNumber, olderSavedInCDRConsent, olderSavedInCDRConsent.template)
+			def removeResult = CDR_Remove_Consent(patient.id, patient.nhsNumber, patient.hospitalNumber, olderSavedInCDRConsent, olderSavedInCDRConsent.template)
 		}
 
 		//Pass it to CDR
-		def sendResult = CDR_Send_Consent(patient.nhsNumber, patient.hospitalNumber, consentForm,consentForm.template)
+		def sendResult = CDR_Send_Consent(patient.id, patient.nhsNumber, patient.hospitalNumber, consentForm,consentForm.template)
 		return sendResult
 	}
 
@@ -218,11 +218,12 @@ class CDRService {
 		consentURL: consentFormService.getAccessGUIDUrl(consentForm).toString()]
 	}
 
-	def CDR_Remove_Consent(nhsNumber,hospitalNumber,consentForm,template){
+
+	def CDR_Remove_Consent(patientId, nhsNumber,hospitalNumber, consentForm,template){
 		//Remove it from CDR
 		def consentDetailsMap = buildConsentDetailsMap(consentForm,template)
 		def removeResult = connectToCDRAndRemoveConsentFrom(nhsNumber, hospitalNumber,{},consentDetailsMap)
-		CDRLogService.save(nhsNumber, hospitalNumber, consentDetailsMap, removeResult.success,removeResult.log,removeResult.exception,CDRLog.CDRActionType.REMOVE)
+		CDRLogService.save(patientId,nhsNumber, hospitalNumber, consentDetailsMap, removeResult.success,removeResult.log,removeResult.exception,CDRLog.CDRActionType.REMOVE)
 
 		//update consent status and mention that it is not in CDR
 		consentForm.savedInCDR  = false
@@ -233,12 +234,11 @@ class CDRService {
 		return  removeResult
 	}
 
-	def CDR_Send_Consent(nhsNumber,hospitalNumber,consentForm,template){
+	def CDR_Send_Consent(patientId, nhsNumber,hospitalNumber,consentForm,template){
 		//Pass it to CDR
 		def consentDetailsMap = buildConsentDetailsMap(consentForm,template)
 		def sendResult = connectToCDRAndSendConsentForm(nhsNumber, hospitalNumber,{}, consentDetailsMap)
-		CDRLogService.save(nhsNumber, hospitalNumber, consentDetailsMap, sendResult.success,sendResult.log,sendResult.execption, CDRLog.CDRActionType.ADD)
-
+		CDRLogService.save(patientId, nhsNumber, hospitalNumber, consentDetailsMap, sendResult.success,sendResult.log,sendResult.execption, CDRLog.CDRActionType.ADD)
 
 		//// ASSUME THAT ANY CALL TO CDR IS SUCCESSFUL AND THEN WE HANDLE THAT BY CDRLOG
 		consentForm.savedInCDR  = true //sendResult.success

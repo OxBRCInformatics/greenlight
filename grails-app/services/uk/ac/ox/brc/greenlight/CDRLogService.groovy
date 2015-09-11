@@ -6,7 +6,7 @@ class CDRLogService {
 
 	def CDRService
 
-	def save(String nhsNumber,String hospitalNumber,Map consentDetailsMap,boolean persistedInCDR,String resultDetail,Exception exception, CDRLog.CDRActionType actionType) {
+	def save(Long patientId, String nhsNumber,String hospitalNumber,Map consentDetailsMap,boolean persistedInCDR,String resultDetail,Exception exception, CDRLog.CDRActionType actionType) {
 		def cdr = new CDRLog(
 				consentFormId: consentDetailsMap?.consentFormId,
 				consentAccessGUID: consentDetailsMap?.consentAccessGUID,
@@ -19,6 +19,7 @@ class CDRLogService {
 				namePrefix:consentDetailsMap?.namePrefix,
 				consentURL:consentDetailsMap?.consentURL,
 
+				patientId: patientId?.toString(),
 				nhsNumber: nhsNumber,
 				hospitalNumber: hospitalNumber,
 
