@@ -18,6 +18,7 @@ class ConsentForm {
 
 	boolean passedToCDR
 	boolean savedInCDR
+	boolean persistedInCDR
 	Date dateTimePassedToCDR
 	String savedInCDRStatus
 	

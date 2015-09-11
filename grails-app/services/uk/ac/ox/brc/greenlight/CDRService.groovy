@@ -126,6 +126,7 @@ class CDRService {
 		CDRLogService.save(patientId,nhsNumber, hospitalNumber, consentDetailsMap, removeResult.success,removeResult.log,removeResult.exception,CDRLog.CDRActionType.REMOVE)
 
 		//update consent status and mention that it is not in CDR
+		consentForm.persistedInCDR = false
 		consentForm.savedInCDR  = false
 		consentForm.passedToCDR = false
 		consentForm.savedInCDRStatus = null
@@ -141,6 +142,7 @@ class CDRService {
 		CDRLogService.save(patientId, nhsNumber, hospitalNumber, consentDetailsMap, sendResult.success,sendResult.log,sendResult.execption, CDRLog.CDRActionType.ADD)
 
 		//// ASSUME THAT ANY CALL TO CDR IS SUCCESSFUL AND THEN WE HANDLE THAT BY CDRLOG
+		consentForm.persistedInCDR = sendResult.success
 		consentForm.savedInCDR  = true //sendResult.success
 		consentForm.passedToCDR = true
 		consentForm.dateTimePassedToCDR = new Date()

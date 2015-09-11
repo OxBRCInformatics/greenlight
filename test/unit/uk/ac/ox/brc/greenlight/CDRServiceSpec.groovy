@@ -373,6 +373,7 @@ class CDRServiceSpec extends Specification {
 		1 * service.CDRLogService.save(patient.id, patient.nhsNumber,patient.hospitalNumber,_,true,"Removed_LOG_TEXT",null,CDRLog.CDRActionType.REMOVE) >> {}
 
 		connectToCDRAndRemoveConsentFrom_Called
+		consentForm.persistedInCDR == false
 		consentForm.savedInCDR  == false
 		consentForm.passedToCDR == false
 		consentForm.savedInCDRStatus   == null
@@ -400,6 +401,7 @@ class CDRServiceSpec extends Specification {
 		1 * service.CDRLogService.save(patient.id, patient.nhsNumber,patient.hospitalNumber,_,true,"SAVED_IN_CDR",null,CDRLog.CDRActionType.ADD) >> {}
 		connectToCDRAndSendConsentForm_Called
 		//// ASSUME THAT ANY CALL TO CDR IS SUCCESSFUL AND THEN WE HANDLE THAT BY CDRLOG
+		consentForm.persistedInCDR == true
 		consentForm.savedInCDR  == true
 		consentForm.passedToCDR == true
 		consentForm.savedInCDRStatus == "SAVED_IN_CDR"
