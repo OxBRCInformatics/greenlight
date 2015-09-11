@@ -246,486 +246,113 @@ class CDRServiceSpec extends Specification {
 		"PRODUCTION"	|	KnownFacility.PRODUCTION
 	}
 
-	def "saveOrUpdateConsentForm returns NOP for NEW consent & if NEWER consent already exists"() {
-		given:"Newer saved_in_CDR consent exists"
-		def patient = new Patient(nhsNumber: "1234567890",hospitalNumber: "123").save(failOnError: true,flush: true)
-		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
-		def consentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
-		def newerConsentForm = new ConsentForm(formID: "GEL12345",accessGUID: "456", template:template, patient:patient,consentDate: new Date().plus(1),savedInCDR: true).save(failOnError: true,flush: true)
 
-		when:"Saving a NEW consent which its consentDate is older than that new one"
-		1 * service.consentFormService.findConsentsOfSameTypeAfterThisConsentWhichAreSavedInCDR(_,_,_) >> {[newerConsentForm]}
+	def "saveOrUpdateConsentForm passes consent to CDR if it is a new consent"() {
+		given:"A new consent is added"
+		def patient     = new Patient(nhsNumber: "1234567890",hospitalNumber: "123").save(failOnError: true,flush: true)
+		def template    = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		def consentForm = new ConsentForm(formID: "GEL12345",accessGUID: "456", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
+
+		def addNewConsentCalled = false
+		service.metaClass.addNewConsent = { Patient pan, ConsentForm con->
+			addNewConsentCalled = true
+			return [success:true,log:"Sent_Log_TEXT",exception:null]
+		}
+
+		def removedConsentFormCalled = false
+		service.metaClass.removeConsentForm = { ptn , con -> removedConsentFormCalled=true }
+
+		when:"saveOrUpdateConsentForm called"
 		def result = service.saveOrUpdateConsentForm(patient,consentForm,true)
 
-		then:"It should not pass it to CDR"
-		result.success == true
-		result.log == "no operation required"
-	}
-
-	def "saveOrUpdateConsentForm removes OLDER saved_in_cdr consent from CDR if already exists and passes the new one to CDR"() {
-		given:"Older saved_in_CDR consent exists"
-		def patient = new Patient(nhsNumber: "1234567890",hospitalNumber: "123").save(failOnError: true,flush: true)
-		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
-
-		def newerConsentForm = new ConsentForm(formID: "GEL12345",accessGUID: "456", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
-		def olderConsentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:template, patient:patient,consentDate: new Date().minus(1),savedInCDR: true).save(failOnError: true,flush: true)
-
-		def CDR_Remove_ConsentCalled = false
-		service.metaClass.CDR_Remove_Consent = {
-			nhsNumber, hospitalNumber, consent, temp ->
-				assert patient.nhsNumber 	  == nhsNumber
-				assert patient.hospitalNumber == hospitalNumber
-				assert consent.id == olderConsentForm.id
-				assert temp.id == olderConsentForm.template.id
-				CDR_Remove_ConsentCalled = true
-				return  [success: true, log: "Remove_Log_TEXT"]
-		}
-
-		def CDR_Send_ConsentCalled = false
-		service.metaClass.CDR_Send_Consent = {
-			nhsNumber, hospitalNumber, consent, temp ->
-				assert patient.nhsNumber 	  == nhsNumber
-				assert patient.hospitalNumber == hospitalNumber
-				assert consent.id == newerConsentForm.id
-				assert temp.id == newerConsentForm.template.id
-				CDR_Send_ConsentCalled = true
-				return  [success: true, log: "Sent_Log_TEXT"]
-		}
-
-		when:"Saving a NEW consent which its consentDate is newer than that old one"
-		1 * service.consentFormService.findConsentsOfSameTypeAfterThisConsentWhichAreSavedInCDR(_,_,_) >> {[]}
-		1 * service.consentFormService.findAnyConsentOfSameTypeBeforeThisConsentWhichIsSavedInCDR(_,_,_) >> {olderConsentForm}
-
-		def result = service.saveOrUpdateConsentForm(patient,newerConsentForm,true)
-
-		then:"the old one will be removed from CDR and the new one will be passed to CDR"
-		CDR_Remove_ConsentCalled
-		CDR_Send_ConsentCalled
+		then:"addNewConsent should be called"
+		addNewConsentCalled
+		!removedConsentFormCalled
 		result.success == true
 		result.log == "Sent_Log_TEXT"
 	}
 
-	def "saveOrUpdateConsentForm when patient updated and consent NOT updated and consent was NOT Sent to CDR"(){
-		given:"patient updated and consent NOT updated"
-		def patient = new Patient(nhsNumber: "1234567890",hospitalNumber: "123").save(failOnError: true,flush: true)
-		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
-		def consentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
+	def "saveOrUpdateConsentForm passes consent to CDR and removes the old one if it is an updated consent or patient"() {
+		given:"consent details are updated"
+		def patient     = new Patient(nhsNumber: "1234567890",hospitalNumber: "123").save(failOnError: true,flush: true)
+		def template    = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+
+		def consentForm = new ConsentForm(formID: "GEL12345",accessGUID: "456", template:template, consentStatusLabels: "OLD-VALUE", patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
+		//patient and consent are updated
 		patient.hospitalNumber = "UPDATED"
+		patient.nhsNumber      = "9876543210"
+		consentForm.consentStatus = ConsentForm.ConsentStatus.FULL_CONSENT
+		consentForm.consentStatusLabels = "NEW-VALUE"
 
-		when:"Passing them to saveOrUpdateConsentForm"
-		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
-
-		then:"It should not pass it to CDR"
-		result.success == true
-		result.log == "no operation required"
-	}
-
-	def "saveOrUpdateConsentForm when patient updated and consent NOT updated and consent was Sent to CDR and has older consent"(){
-		given:"patient updated and consent NOT updated"
-		def patient = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
-		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
-		def consentForm = new ConsentForm(formID: "GEL12345",accessGUID: "0123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
-
-		def olderConsentForm  = new ConsentForm(formID: "GEL67890",accessGUID: "456", template:template, patient:patient,consentDate: new Date().minus(1),savedInCDR: false).save(failOnError: true,flush: true)
-		def oldestConsentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:template, patient:patient,consentDate: new Date().minus(2),savedInCDR: false).save(failOnError: true,flush: true)
-
-		patient.hospitalNumber = "UPDATED"
-
-
-		def CDR_Remove_ConsentCalled = false
-		service.metaClass.CDR_Remove_Consent = {
-			nhsNumber, hospitalNumber, consent, temp ->
-				assert patient.nhsNumber 	  == nhsNumber
-				assert "OLD" == hospitalNumber // removes the previous old-patient with its consent
-				assert consent.id == consentForm.id
-				assert temp.id == consentForm.template.id
-				CDR_Remove_ConsentCalled = true
-				return  [success: true, log: "Remove_Log_TEXT"]
-		}
-
-		def CDR_Send_ConsentCalled = false
-		service.metaClass.CDR_Send_Consent = {
-			nhsNumber, hospitalNumber, consent, temp ->
-				assert patient.nhsNumber 	  == nhsNumber
-				assert "OLD" == hospitalNumber // add the previous old-patient with its before latest consent
-				assert consent.id == olderConsentForm.id
-				assert temp.id == olderConsentForm.template.id
-				CDR_Send_ConsentCalled = true
-				return  [success: true, log: "Sent_Log_TEXT"]
-		}
 
 		def addNewConsentCalled = false
-		service.metaClass.addNewConsent = {Patient pat,ConsentForm consent ->
-				assert consent.id == consentForm.id
-				assert pat.id == patient.id
-				assert pat.hospitalNumber == "UPDATED"
-				addNewConsentCalled = true
-				return  [success: true, log: "addNewConsent_Log_TEXT"]
-		}
-
-		when:"Passing them to saveOrUpdateConsentForm"
-		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
-
-		then:"It should remove the old one and add the latest older before and add the new one"
-		1 *  service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(_,_,_,_) >> {olderConsentForm}
-		CDR_Remove_ConsentCalled
-		CDR_Send_ConsentCalled
-		addNewConsentCalled
-		result.success == true
-		result.log == "addNewConsent_Log_TEXT"
-	}
-
-	def "saveOrUpdateConsentForm when patient updated and consent NOT updated and consent was Sent to CDR and does NOT have any older consent"(){
-		given:"patient updated and consent NOT updated"
-		def patient = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
-		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
-		def consentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
-		patient.hospitalNumber = "UPDATED"
-
-
-		def CDR_Remove_ConsentCalled = false
-		service.metaClass.CDR_Remove_Consent = {
-			nhsNumber, hospitalNumber, consent, temp ->
-				assert patient.nhsNumber 	  == nhsNumber
-				assert "OLD" == hospitalNumber // removes the previous old-patient with its consent
-				assert consent.id == consentForm.id
-				assert temp.id == consentForm.template.id
-				CDR_Remove_ConsentCalled = true
-				return  [success: true, log: "Remove_Log_TEXT"]
-		}
-
-		def CDR_Send_ConsentCalled = false
-		service.metaClass.CDR_Send_Consent = { nhsNumber, hospitalNumber, consent, temp -> CDR_Send_ConsentCalled = true }
-
-		def addNewConsentCalled = false
-		service.metaClass.addNewConsent = {Patient pat,ConsentForm consent ->
-			assert consent.id == consentForm.id
-			assert pat.id == patient.id
-			assert pat.hospitalNumber == "UPDATED"
+		service.metaClass.addNewConsent = { Patient ptn, ConsentForm con->
 			addNewConsentCalled = true
-			return  [success: true, log: "addNewConsent_Log_TEXT"]
+			assert ptn.id 		 == patient.id
+			assert ptn.nhsNumber == "9876543210" //should have old value
+			assert ptn.hospitalNumber == "UPDATED"	//should have old value
+			assert con.id == consentForm.id
+			assert con.template    == consentForm.template
+			assert con.accessGUID  == consentForm.accessGUID
+			assert con.consentDate == consentForm.consentDate
+			assert con.consentTakerName == consentForm.consentTakerName
+			assert con.formID == consentForm.formID
+			assert con.formStatus    == consentForm.formStatus
+			assert con.consentStatus == consentForm.consentStatus
+			assert con.comment == consentForm.comment
+			assert con.consentStatusLabels == consentForm.consentStatusLabels
+			assert con.savedInCDR == consentForm.savedInCDR
 		}
 
-		when:"Passing them to saveOrUpdateConsentForm"
-		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
+		def removedConsentFormCalled = false
+		service.metaClass.removeConsentForm = { def  ptn, def  con ->
+			removedConsentFormCalled = true
+			assert ptn.id 		 == patient.id
+			assert ptn.nhsNumber == "1234567890" //should have old value
+			assert ptn.hospitalNumber == "123"	//should have old value
+			assert con.id == consentForm.id
+			assert con.template    == consentForm.getPersistentValue("template")
+			assert con.accessGUID  == consentForm.getPersistentValue("accessGUID")
+			assert con.consentDate == consentForm.getPersistentValue("consentDate")
+			assert con.consentTakerName == consentForm.getPersistentValue("consentTakerName")
+			assert con.formID == consentForm.getPersistentValue("formID")
+			assert con.formStatus    == consentForm.getPersistentValue("formStatus")
+			assert con.consentStatus == consentForm.getPersistentValue("consentStatus")
+			assert con.comment == consentForm.getPersistentValue("comment")
+			assert con.consentStatusLabels == consentForm.getPersistentValue("consentStatusLabels")
+			assert con.savedInCDR == consentForm.getPersistentValue("savedInCDR")
+		}
 
-		then:"It should remove the old one and add the new one"
-		1 *  service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(_,_,_,_) >> {null}
-		CDR_Remove_ConsentCalled
-		!CDR_Send_ConsentCalled
+		when:"saveOrUpdateConsentForm called"
+		service.saveOrUpdateConsentForm(patient,consentForm,false)
+
+		then:"addNewConsent and removeConsentForm should be called"
 		addNewConsentCalled
-		result.success == true
-		result.log == "addNewConsent_Log_TEXT"
+		removedConsentFormCalled
 	}
 
-	def "saveOrUpdateConsentForm when consent template is updated and patient NOT updated and old consent was Sent to CDR and old consent has older consent"(){
-		given:"consent template updated and patient NOT updated"
-		def patient = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+	def "saveOrUpdateConsentForm will not pass message to CDR if consent nad patient details are not changed"() {
+		given:"A new consent is added"
+		def patient     = new Patient(nhsNumber: "1234567890",hospitalNumber: "123").save(failOnError: true,flush: true)
+		def template    = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		def consentForm = new ConsentForm(formID: "GEL12345",accessGUID: "456", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
 
-		def oldTemplate = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
-		def newTemplate = new ConsentFormTemplate(name:"temp2",namePrefix:"TEMP2",templateVersion: "V1" ).save(failOnError: true,flush: true)
-
-		def consentForm = new ConsentForm(formID: "GEL12345",accessGUID: "789", template:oldTemplate, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
-
-		def olderConsentForm  = new ConsentForm(formID: "GEL67890",accessGUID: "456", template:oldTemplate, patient:patient,consentDate: new Date().minus(1),savedInCDR: false).save(failOnError: true,flush: true)
-		def oldestConsentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:oldTemplate, patient:patient,consentDate: new Date().minus(2),savedInCDR: false).save(failOnError: true,flush: true)
-
-		consentForm.template = newTemplate
-
-		def CDR_Remove_ConsentCalled = false
-		service.metaClass.CDR_Remove_Consent = {
-			nhsNumber, hospitalNumber, consent, temp ->
-				assert patient.nhsNumber 	  == nhsNumber
-				assert patient.hospitalNumber == hospitalNumber
-				assert consent.id == consentForm.id
-				assert temp.id == oldTemplate.id // removes the previous old-consent
-				CDR_Remove_ConsentCalled = true
-				return  [success: true, log: "Remove_Log_TEXT"]
-		}
-
-		def CDR_Send_ConsentCalled = false
-		service.metaClass.CDR_Send_Consent = {
-			nhsNumber, hospitalNumber, consent, temp ->
-				assert patient.nhsNumber 	  == nhsNumber
-				assert patient.hospitalNumber == hospitalNumber
-				assert consent.id == olderConsentForm.id
-				assert temp.id == olderConsentForm.template.id 	// send older consent to CDR
-				CDR_Send_ConsentCalled = true
-				return  [success: true, log: "Sent_Log_TEXT"]
-		}
 
 		def addNewConsentCalled = false
-		service.metaClass.addNewConsent = {Patient pat,ConsentForm consent ->
-			assert consent.id == consentForm.id
-			assert consent.template.id == consentForm.template.id
-			assert pat.id == patient.id
-			assert pat.hospitalNumber == patient.hospitalNumber
-			addNewConsentCalled = true
-			return  [success: true, log: "addNewConsent_Log_TEXT"]
-		}
+		service.metaClass.addNewConsent = { Patient pan, ConsentForm con-> addNewConsentCalled = true }
 
-		when:"Passing them to saveOrUpdateConsentForm"
-		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
+		def removedConsentFormCalled = false
+		service.metaClass.removeConsentForm = { ptn, con -> removedConsentFormCalled = true }
 
-		then:"It should remove the old one and add the latest older before and add the new one"
-		1 *  service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(_,_,_,_) >> {olderConsentForm}
-		CDR_Remove_ConsentCalled
-		CDR_Send_ConsentCalled
-		addNewConsentCalled
-		result.success == true
-		result.log == "addNewConsent_Log_TEXT"
-	}
+		when:"saveOrUpdateConsentForm called for updating"
+		service.saveOrUpdateConsentForm(patient,consentForm,false)
 
-	def "saveOrUpdateConsentForm when consent template is updated and patient NOT updated and old consent was NOT Sent to CDR"(){
-		given:"consent template updated and patient NOT updated"
-		def patient = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
-
-		def oldTemplate = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
-		def newTemplate = new ConsentFormTemplate(name:"temp2",namePrefix:"TEMP2",templateVersion: "V1" ).save(failOnError: true,flush: true)
-
-		def consentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:oldTemplate, patient:patient,consentDate: new Date(),savedInCDR: false).save(failOnError: true,flush: true)
-
-		consentForm.template = newTemplate
-
-		def CDR_Remove_ConsentCalled = false
-		service.metaClass.CDR_Remove_Consent = {nhsNumber, hospitalNumber, consent, temp -> CDR_Remove_ConsentCalled = false}
-
-		def CDR_Send_ConsentCalled = false
-		service.metaClass.CDR_Send_Consent = { nhsNumber, hospitalNumber, consent, temp -> CDR_Send_ConsentCalled = false}
-
-		def addNewConsentCalled = false
-		service.metaClass.addNewConsent = {Patient pat,ConsentForm consent -> addNewConsentCalled = false}
-
-		when:"Passing them to saveOrUpdateConsentForm"
-		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
-
-		then:"It should remove the old one and add the latest older before and add the new one"
-		0 *  service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(_,_,_,_) >> {}
-		!CDR_Remove_ConsentCalled
-		!CDR_Send_ConsentCalled
+		then:"addNewConsent should be called"
 		!addNewConsentCalled
-		result.success == true
-		result.log == "no operation required"
+		!removedConsentFormCalled
 	}
 
-	def "saveOrUpdateConsentForm when consent date is updated and patient NOT updated and old consent was NOT Sent to CDR"(){
-		given:"consentDate updated and patient NOT updated"
-		def patient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
-		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
-		def consentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: false).save(failOnError: true,flush: true)
-		consentForm.consentDate = new Date().minus(1)
 
-		def addNewConsentCalled = false
-		service.metaClass.addNewConsent = {Patient pat,ConsentForm consent ->
-			assert consent.id == consentForm.id
-			assert pat.id == patient.id
-			addNewConsentCalled = true
-			return  [success: true, log: "addNewConsent_Log_TEXT"]
-		}
-
-		when:"Passing them to saveOrUpdateConsentForm"
-		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
-
-		then:"It should treat it as a new added consent"
-		addNewConsentCalled
-		result.success == true
-		result.log == "addNewConsent_Log_TEXT"
-	}
-
-	def "saveOrUpdateConsentForm when consent date is updated and patient NOT updated and old consent was Sent to CDR and the new date is after the old date "(){
-		given:"consent date updated and patient NOT updated and the new date is after the old date"
-		def patient = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
-		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
-		def consentForm = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
-		consentForm.consentDate = new Date().plus(1)
-
-		def CDR_Remove_ConsentCalled = false
-		service.metaClass.CDR_Remove_Consent = {nhsNumber, hospitalNumber, consent, temp -> CDR_Remove_ConsentCalled = false}
-
-		def CDR_Send_ConsentCalled = false
-		service.metaClass.CDR_Send_Consent = { nhsNumber, hospitalNumber, consent, temp ->
-			CDR_Send_ConsentCalled = true
-			assert patient.nhsNumber 	  == nhsNumber
-			assert patient.hospitalNumber == hospitalNumber
-			assert consent.id == consentForm.id
-			assert temp.id == consentForm.template.id
-			return  [success: true, log: "Sent_Log_TEXT"]
-		}
-
-		def addNewConsentCalled = false
-		service.metaClass.addNewConsent = {Patient pat,ConsentForm consent -> addNewConsentCalled = false}
-
-		when:"Passing them to saveOrUpdateConsentForm"
-		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
-
-		then:"It should just pass it to CDR"
-		!CDR_Remove_ConsentCalled
-		CDR_Send_ConsentCalled
-		!addNewConsentCalled
-		result.success == true
-		result.log == "Sent_Log_TEXT"
-	}
-
-	def "saveOrUpdateConsentForm when consent date is updated and patient NOT updated and old consent was Sent to CDR and the new date is before the old date "(){
-		given:"consent date updated and patient NOT updated and the new date is before the old date"
-		def patient = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
-		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
-
-
-		def latestConsentForm  = new ConsentForm(formID: "GEL78950",accessGUID: "456", template:template, patient:patient,consentDate: new Date().minus(5),savedInCDR: false).save(failOnError: true,flush: true)
-		def consentForm = new ConsentForm(formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
-		consentForm.consentDate = new Date().minus(10)
-
-
-		def CDR_Send_ConsentCalled = false
-		service.metaClass.CDR_Send_Consent = { nhsNumber, hospitalNumber, consent, temp ->
-			CDR_Send_ConsentCalled = true
-			assert  nhsNumber 	  == patient.nhsNumber
-			assert hospitalNumber == patient.hospitalNumber
-			assert consent.id == latestConsentForm.id
-			assert temp.id    == latestConsentForm.template.id
-			return  [success: true, log: "Sent_Log_TEXT"]
-		}
-
-
-		def CDR_Remove_ConsentCalled = false
-		service.metaClass.CDR_Remove_Consent = {nhsNumber, hospitalNumber, consent, temp -> CDR_Remove_ConsentCalled = false}
-
-
-		def addNewConsentCalled = false
-		service.metaClass.addNewConsent = {Patient pat,ConsentForm consent -> addNewConsentCalled = false}
-
-		when:"Passing them to saveOrUpdateConsentForm"
-		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
-
-		then:"It should just pass the latestConsentForm to CDR and make the new consent as not sent to CDR"
-		1 * service.consentFormService.findLatestConsentOfSameTypeAfterThisConsentWhichIsNotSavedInCDR(_,_,_,_) >> {latestConsentForm}
-
-		!CDR_Remove_ConsentCalled
-		CDR_Send_ConsentCalled
-		!addNewConsentCalled
-
-		//make the new consent as not sent to CDR
-		consentForm.savedInCDR == false
-		consentForm.passedToCDR == false
-		consentForm.savedInCDRStatus == null
-
-		result.success == true
-		result.log == "no operation required"
-	}
-
-	def "saveOrUpdateConsentForm when consent formStatus was NORMAL and now it is changed to UN-NORMAL and patient NOT updated and old consent was Sent to CDR"(){
-		given:"consent formStatus updated from NORMAL to UN-NORMAL and patient NOT updated"
-		def patient = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
-		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
-
-		def consentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
-		consentForm.formStatus = ConsentForm.FormStatus.SPOILED
-
-		def CDR_Remove_ConsentCalled = false
-		service.metaClass.CDR_Remove_Consent = { nhsNumber, hospitalNumber, consent, temp ->
-			CDR_Remove_ConsentCalled = true
-			assert  nhsNumber 	  == patient.nhsNumber
-			assert hospitalNumber == patient.hospitalNumber
-			assert consent.id == consentForm.id
-			assert temp.id    == consentForm.template.id
-			return  [success: true, log: "Remove_Log_TEXT"]
-		}
-
-		def CDR_Send_ConsentCalled = false
-		service.metaClass.CDR_Send_ConsentCalled = {nhsNumber, hospitalNumber, consent, temp -> CDR_Send_ConsentCalled = false}
-
-		def addNewConsentCalled = false
-		service.metaClass.addNewConsent = {Patient pat,ConsentForm consent -> addNewConsentCalled = false}
-
-		when:"Passing them to saveOrUpdateConsentForm"
-		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
-
-		then:"It should just remove the old one from CDR"
-		1 * service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(_,_,_,_) >> {null}
-
-		CDR_Remove_ConsentCalled
-		!CDR_Send_ConsentCalled
-		!addNewConsentCalled
-		result.success == true
-		result.log == "Remove_Log_TEXT"
-	}
-
-	def "saveOrUpdateConsentForm when consent formStatus was NORMAL and now it is changed to UN-NORMAL and patient NOT updated and old consent was Sent to CDR and there is an older not sent consent"(){
-		given:"consent formStatus updated from NORMAL to UN-NORMAL and patient NOT updated"
-		def patient = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
-		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
-
-		def olderConsentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date().minus(1),savedInCDR: true).save(failOnError: true,flush: true)
-		def consentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: "456", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
-		consentForm.formStatus = ConsentForm.FormStatus.SPOILED
-
-		def CDR_Remove_ConsentCalled = false
-		service.metaClass.CDR_Remove_Consent = { nhsNumber, hospitalNumber, consent, temp ->
-			CDR_Remove_ConsentCalled = true
-			assert  nhsNumber 	  == patient.nhsNumber
-			assert hospitalNumber == patient.hospitalNumber
-			assert consent.id == consentForm.id
-			assert temp.id    == consentForm.template.id
-			return  [success: true, log: "Remove_Log_TEXT"]
-		}
-
-		def CDR_Send_ConsentCalled = false
-		service.metaClass.CDR_Send_Consent = {nhsNumber, hospitalNumber, consent, temp ->
-			CDR_Send_ConsentCalled = true
-			assert nhsNumber 	  == patient.nhsNumber
-			assert hospitalNumber == patient.hospitalNumber
-			assert consent.id == olderConsentForm.id
-			assert temp.id    == olderConsentForm.template.id
-			return  [success: true, log: "Send_Log_TEXT"]
-		}
-
-		def addNewConsentCalled = false
-		service.metaClass.addNewConsent = {Patient pat,ConsentForm consent -> addNewConsentCalled = false}
-
-		when:"Passing them to saveOrUpdateConsentForm"
-		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
-
-		then:"It should just remove the old one from CDR and add the older consent"
-		1 * service.consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(_,_,_,_) >> {olderConsentForm}
-
-		CDR_Remove_ConsentCalled
-		CDR_Send_ConsentCalled
-		!addNewConsentCalled
-		result.success == true
-		result.log == "Remove_Log_TEXT"
-	}
-
-	def "saveOrUpdateConsentForm when consent formStatus was UN-NORMAL and now it is changed to NORMAL and patient NOT updated"(){
-		given:"consent formStatus updated from  UN-NORMAL to NORMAL and patient NOT updated"
-		def patient = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
-		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
-
-		def consentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.SPOILED, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
-		consentForm.formStatus = ConsentForm.FormStatus.NORMAL
-
-		def CDR_Remove_ConsentCalled = false
-		service.metaClass.CDR_Remove_Consent = { nhsNumber, hospitalNumber, consent, temp -> CDR_Remove_ConsentCalled = true}
-
-		def CDR_Send_ConsentCalled = false
-		service.metaClass.CDR_Send_Consent = {nhsNumber, hospitalNumber, consent, temp -> CDR_Send_ConsentCalled = true}
-
-		def addNewConsentCalled = false
-		service.metaClass.addNewConsent = {Patient pat,ConsentForm consent ->
-			addNewConsentCalled = true
-			return [success:true,log:"addNewConsent internal log"]
-		}
-
-		when:"Passing them to saveOrUpdateConsentForm"
-		def result = service.saveOrUpdateConsentForm(patient,consentForm,false)
-
-		then:"It should just remove the old one from CDR and add the older consent"
-		!CDR_Remove_ConsentCalled
-		!CDR_Send_ConsentCalled
-		addNewConsentCalled
-		result.success == true
-		result.log == "addNewConsent internal log"
-	}
 
 	def "CDR_Remove_Consent  prepares a consent for removal from CDR and updates its status"(){
 		given:"patient and consent are ready to be removed from CDR"
