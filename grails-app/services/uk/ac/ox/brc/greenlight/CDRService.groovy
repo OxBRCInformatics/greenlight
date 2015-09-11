@@ -27,7 +27,7 @@ class CDRService {
 
 	static transactional = false
 
-	def removeConsentForm(Patient patient, ConsentForm consentForm){
+	def removeConsentForm(patient,consentForm){
 		if(!consentForm.savedInCDR || consentForm.formStatus != ConsentForm.FormStatus.NORMAL){
 			return [success: true,log:"no operation required"]
 		}else {
