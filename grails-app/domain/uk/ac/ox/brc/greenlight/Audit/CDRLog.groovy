@@ -30,6 +30,13 @@ class CDRLog {
 	Date dateTimePersistedInCDR
 	//the result of passing a message to CDR
 	String resultDetail
+	//check if the error is the result of connection? CDR was not accessible?
+	boolean connectionError
+
+	//Logs the resending attempts
+	String attemptsLog
+	int attemptsCount
+
 	static mapping = {
 		comment type:"text"
 		resultDetail type: "text"
