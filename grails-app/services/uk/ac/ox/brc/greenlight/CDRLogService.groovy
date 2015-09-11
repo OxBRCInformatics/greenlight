@@ -7,6 +7,13 @@ class CDRLogService {
 	def CDRService
 
 	def save(Long patientId, String nhsNumber,String hospitalNumber,Map consentDetailsMap,boolean persistedInCDR,String resultDetail,Exception exception, CDRLog.CDRActionType actionType) {
+
+		def dateTimePersistedInCDR
+		if(persistedInCDR){
+			dateTimePersistedInCDR = new Date()
+		}
+
+
 		def cdr = new CDRLog(
 				consentFormId: consentDetailsMap?.consentFormId,
 				consentAccessGUID: consentDetailsMap?.consentAccessGUID,
@@ -26,6 +33,7 @@ class CDRLogService {
 				actionDate: new Date(),
 				action: actionType,
 				persistedInCDR: persistedInCDR,
+				dateTimePersistedInCDR: dateTimePersistedInCDR,
 				resultDetail: resultDetail,
 				//Check if it is a connectionError or mirthResult exception?
 				connectionError: isConnectionError(exception)

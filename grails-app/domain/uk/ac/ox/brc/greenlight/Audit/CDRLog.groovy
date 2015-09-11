@@ -27,6 +27,7 @@ class CDRLog {
 	CDRActionType action
 	//Is the log actually SUCCESSFULLY passed to CDR?
 	boolean persistedInCDR
+	Date dateTimePersistedInCDR
 	//the result of passing a message to CDR
 	String resultDetail
 	static mapping = {
@@ -52,6 +53,7 @@ class CDRLog {
 		attemptsLog nullable:true
 		attemptsCount nullable:true
 		resultDetail nullable: true
+		dateTimePersistedInCDR nullable: true
 	}
 
 
