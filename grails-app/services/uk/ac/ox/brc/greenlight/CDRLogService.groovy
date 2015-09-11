@@ -79,7 +79,7 @@ class CDRLogService {
 
 			//find the corresponding consentForm record and update it
 			def consentForm = consentFormService.searchByAccessGUID(record.consentAccessGUID)
-			//it might have been removed form Greenlight, so it exists then update that
+			//If it exists then update that but it might have been removed from Greenlight
 			if(consentForm){
 				consentForm.persistedInCDR = true
 				consentForm.dateTimePersistedInCDR = new Date()
