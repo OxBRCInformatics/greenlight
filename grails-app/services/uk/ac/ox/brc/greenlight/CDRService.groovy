@@ -71,17 +71,51 @@ class CDRService {
 		return sendResult
 	}
 
-	def buildConsentDetailsMap(ConsentForm consentForm,ConsentFormTemplate template){
+	def saveOrUpdateConsentForm(Patient patient, ConsentForm consentForm, boolean newConsent) {
+
+		//in New mode
+		if (newConsent) {
+			return addNewConsent(patient,consentForm)
+		}
+		//in update mode
+		else if (!newConsent && (patient.NHSOrHospitalNumberChanged() || consentForm.isChanged()) ) {
+			def oldPatient = [id: patient.id,
+							  nhsNumber:patient.getPersistentValue("nhsNumber"),
+						      hospitalNumber:patient.getPersistentValue("hospitalNumber")]
+			def oldConsentForm = [
+					id: consentForm.id,
+					template    : consentForm.getPersistentValue("template"),
+					accessGUID  : consentForm.getPersistentValue("accessGUID"),
+					consentDate : consentForm.getPersistentValue("consentDate"),
+					consentTakerName : consentForm.getPersistentValue("consentTakerName"),
+					formID : consentForm.getPersistentValue("formID"),
+					formStatus    : consentForm.getPersistentValue("formStatus"),
+					consentStatus : consentForm.getPersistentValue("consentStatus"),
+					comment : consentForm.getPersistentValue("comment"),
+					consentStatusLabels : consentForm.getPersistentValue("consentStatusLabels"),
+					savedInCDR:consentForm.getPersistentValue("savedInCDR") ]
+
+			def removeResult =  removeConsentForm(oldPatient,oldConsentForm)
+			def addResult = addNewConsent(patient,consentForm)
+			return addResult
+		}else{
+			return [success: true,log:"no operation required"]
+		}
+	}
+
+
+
+	def buildConsentDetailsMap(consentForm, template){
 		[consentFormId: consentForm.id,
-		consentTemplateId: template.id,
-		consentAccessGUID: consentForm.accessGUID,
-		consentDate: consentForm.consentDate,
-		consentStatus: consentForm.consentStatus,
-		comment:consentForm.comment,
-		consentStatusLabels: consentForm.consentStatusLabels,
-		cdrUniqueId: template.cdrUniqueId,
-		namePrefix: template.namePrefix,
-		consentURL: consentFormService.getAccessGUIDUrl(consentForm).toString()]
+		 consentTemplateId: template.id,
+		 consentAccessGUID: consentForm.accessGUID,
+		 consentDate: consentForm.consentDate,
+		 consentStatus: consentForm.consentStatus,
+		 comment:consentForm.comment,
+		 consentStatusLabels: consentForm.consentStatusLabels,
+		 cdrUniqueId: template.cdrUniqueId,
+		 namePrefix: template.namePrefix,
+		 consentURL: consentFormService.getAccessGUIDUrl(consentForm).toString()]
 	}
 
 
