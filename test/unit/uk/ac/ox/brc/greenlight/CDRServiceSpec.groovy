@@ -566,4 +566,42 @@ class CDRServiceSpec extends Specification {
 		dtf.format(beforeConsentForm.dateTimePassedToCDR) == dtf.format(new Date())
 		beforeConsentForm.savedInCDRStatus == "SUCCESSFULLY PASSED THE CONSENT"
 	}
+
+
+
+	def "addNewConsent will have NOP when consentForm is NOT NORMAL"(){
+		def patient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		def consentForm = new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.SPOILED, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
+
+
+		def CDR_Send_ConsentCalled = false
+		service.metaClass.CDR_Send_Consent = { patientId, nhsNumber,hospitalNumber,con,temp ->
+			CDR_Send_ConsentCalled = true
+		}
+
+		def connectToCDRAndSendConsentForm_Called = false
+		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap->
+			connectToCDRAndSendConsentForm_Called = true
+		}
+
+		def connectToCDRAndRemoveConsentFrom_Called = false
+		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap ->
+			connectToCDRAndRemoveConsentFrom_Called = true
+		}
+
+		when:"addNewConsent called"
+		def result = service.addNewConsent(patient,consentForm)
+
+		then:"it doesn't need to pass any messages to CDR"
+		0 *  service.consentFormService.findConsentsOfSameTypeAfterThisConsentWhichAreSavedInCDR(_,_,_) >> {null}
+		0 *  service.consentFormService.findAnyConsentOfSameTypeBeforeThisConsentWhichIsSavedInCDR(_,_,_) >> {null}
+
+		result.success
+		result.log == "no operation required"
+		!connectToCDRAndSendConsentForm_Called
+		!connectToCDRAndRemoveConsentFrom_Called
+		!CDR_Send_ConsentCalled
+	}
+
 }
