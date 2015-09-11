@@ -5,6 +5,8 @@ import uk.ac.ox.brc.greenlight.Audit.CDRLog
 class CDRLogService {
 
 	def CDRService
+	def springSecurityService
+
 
 	def save(Long patientId, String nhsNumber,String hospitalNumber,Map consentDetailsMap,boolean persistedInCDR,String resultDetail,Exception exception, CDRLog.CDRActionType actionType) {
 
@@ -84,5 +86,66 @@ class CDRLogService {
 		record.save(flush: true,failOnError: true)
 		return [success: true, log: "Successfully passed to CDR", cdrLog:record]
 	}
+
+	def markCDRLogRecordAsPersisted(CDRLogId,comment) {
+		def record = CDRLog.findById(CDRLogId)
+
+		if(!record){
+			return [success: false, log: "CRDLog record not found!", cdrLog:record]
+		}
+
+		def username = springSecurityService.currentUser?.username
+
+		record.persistedInCDR = true
+		record.dateTimePersistedInCDR = null // it is not actually persisted, just manually marked as persisted
+		if(!record.attemptsCount) {
+			record.attemptsCount = 0
+		}
+		record.attemptsCount++
+		//date,Time|callResult|connectionError|callResult.log
+		record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}|True|False	Manually resolved & marked as persisted by Admin(${username})|${comment}"
+		record.save(flush: true,failOnError: true)
+	}
+
+	def unMarkCDRLogRecordIfPersisted(CDRLogId,comment) {
+		def record = CDRLog.findById(CDRLogId)
+
+		if(!record){
+			return [success: false, log: "CRDLog record not found!"]
+		}
+
+		if(!record.persistedInCDR){
+			return [success: false, log: "CRDLog record is not persisted!"]
+		}
+
+		def username = springSecurityService.currentUser?.username
+
+		record.persistedInCDR = false
+		record.dateTimePersistedInCDR = null // it is not actually persisted, just manually marked as persisted
+		if(!record.attemptsCount) {
+			record.attemptsCount = 0
+		}
+		record.attemptsCount++
+		//date,Time|callResult|connectionError|callResult.log
+		record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}	False	False	Manually marked as UnPersisted by Admin(${username})	${comment}"
+		record.save(flush: true,failOnError: true)
+	}
+
+	def isConnectionError(Exception ex){
+		return ex == UnknownHostException ||  ex?.cause == UnknownHostException || ex?.message?.contains("Failed to access the WSDL")
+	}
+
+	/**
+	 * check if a consent having this consentAccessGUID is in the queue and not persisted yet
+ 	 * @param consentAccessGUID consent accessGUID
+	 * @return true if there are any consent having consentAccessGUID which are not persisted yet
+	 */
+	def isConsentWaitingForResolution(consentAccessGUID){
+		 CDRLog.countByConsentAccessGUIDAndPersistedInCDR(consentAccessGUID,false) > 0
+	}
+
+	def countAllNotPersistedBeforeThis(CDRLog record){
+		def count = CDRLog.countByConsentAccessGUIDAndActionDateLessThanAndPersistedInCDR(record.consentAccessGUID,record.actionDate,false)
+		count
 	}
 }
