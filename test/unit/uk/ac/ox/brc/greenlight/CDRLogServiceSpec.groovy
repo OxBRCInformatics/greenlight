@@ -95,6 +95,70 @@ class CDRLogServiceSpec extends spock.lang.Specification {
 		cdrLogSaveCalled
 	}
 
+	def "resendCDRLogRecordToCDR should not pass the message to CDR if there are un-resolved records of the same consent before this record"(){
+
+		setup:"Two record for the same consent exist"
+		def record = createCRDLogRecord()
+		record.persistedInCDR = false
+		record.consentAccessGUID = "123-456-789"
+		record.actionDate = new Date()
+		record.save(flush: true,failOnError: true)
+
+		def beforeRecord = createCRDLogRecord()
+		beforeRecord.persistedInCDR = false
+		beforeRecord.consentAccessGUID = "123-456-789"
+		beforeRecord.actionDate = new Date().minus(1)
+		beforeRecord.save(flush: true,failOnError: true)
+
+		//Mock Gorm Save and make sure that it is NOT called
+		def cdrLogSaveCalled = false
+		CDRLog.metaClass.save = {  Map params ->
+			cdrLogSaveCalled = true
+		}
+
+		when:"resendCDRLogRecordToCDR called"
+		def result = service.resendCDRLogRecordToCDR(record)
+
+		then:"it should NOT call connectToCDRAndSendConsentForm"
+		0 * service.CDRService.connectToCDRAndSendConsentForm(record.nhsNumber,record.hospitalNumber,_,record.properties,false) >> {[]}
+		!cdrLogSaveCalled
+		!result.success
+		result.log ==  "There are older CDRLog records for this consent which are not resolved yet, please resolve those first"
+		result.cdrLog.id == record.id
+	}
+
+	def "countAllNotPersistedBeforeThis finds all CDRLog records which are before this CDRLog and belong to the same consent and are not persisedInCDR yet"(){
+
+		when:
+		def record = createCRDLogRecord()
+		record.persistedInCDR = false
+		record.consentAccessGUID = "123-456-789"
+		record.actionDate = new Date()
+		record.save(flush: true,failOnError: true)
+
+		def afterRecord = createCRDLogRecord()
+		afterRecord.persistedInCDR = false
+		afterRecord.consentAccessGUID = "123-456-789"
+		afterRecord.actionDate = new Date().minus(1)
+		afterRecord.save(flush: true,failOnError: true)
+
+
+		def beforeRecord1 = createCRDLogRecord()
+		beforeRecord1.persistedInCDR = false
+		beforeRecord1.consentAccessGUID = "123-456-789"
+		beforeRecord1.actionDate = new Date().minus(1)
+		beforeRecord1.save(flush: true,failOnError: true)
+
+
+		def beforeRecord2 = createCRDLogRecord()
+		beforeRecord2.persistedInCDR = false
+		beforeRecord2.consentAccessGUID = "123-456-789"
+		beforeRecord2.actionDate = new Date().minus(2)
+		beforeRecord2.save(flush: true,failOnError: true)
+
+
+	}
+
 
 	private def createCRDLogRecord(){
 		new CDRLog(
