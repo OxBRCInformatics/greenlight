@@ -32,5 +32,49 @@ class CDRLogService {
 				)
 		cdr.save(failOnError: true)
 	}
+
+
+	def resendCDRLogRecordToCDR(CDRLog record) {
+
+		if(!record){
+			return [success: false, log: "CRDLog record not found!", cdrLog:null]
+		}
+
+		if(record.persistedInCDR) {
+			return [success: false, log: "This record is persisted in CDR, can not send it again!", cdrLog:record]
+		}
+
+		if(countAllNotPersistedBeforeThis(record)>0){
+			return [sucess: false, log:"There are older CDRLog records for this consent which are not resolved yet, please resolve those first",cdrLog: record]
+		}
+
+		def callResult
+		if(record.action == CDRLog.CDRActionType.ADD) {
+			//consentDetailsMap parameter has the same structure as CDRLog, so passing CDRLog object works fine as well
+			callResult = CDRService.connectToCDRAndSendConsentForm(record.nhsNumber, record.hospitalNumber,{},record.properties,false)
+		}else{
+			callResult = CDRService.connectToCDRAndRemoveConsentFrom(record.nhsNumber, record.hospitalNumber,{},record.properties,false)
+		}
+
+		if(!record.attemptsCount) {
+			record.attemptsCount = 0
+		}
+
+		def log = (callResult?.log ? callResult?.log : "")
+		if(callResult.success) {
+			record.persistedInCDR = true
+			record.dateTimePersistedInCDR = new Date()
+			log = "${log} Successfully sent to CDR"
+		}
+
+		def connectionError = isConnectionError(callResult?.exception)
+		record.attemptsCount++
+		//date,Time|callResult|connectionError|callResult.log
+		record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}|${callResult.success}|${connectionError}|${log}"
+
+
+		record.save(flush: true,failOnError: true)
+		return [success: true, log: "Successfully passed to CDR", cdrLog:record]
+	}
 	}
 }
