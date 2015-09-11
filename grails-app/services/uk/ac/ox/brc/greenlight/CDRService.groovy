@@ -290,6 +290,11 @@ class CDRService {
 
 		def consentURL = consentDetailsMap.consentURL //  consentFormService.getAccessGUIDUrl(consentForm).toString()
 
+		//CHECK IF THIS CONSENT HAS ANY WAITING STATUS RECORD IN CRD LOG, so do not send it to CDR Actually
+		if(CDRLogService.isConsentWaitingForResolution(consentDetailsMap?.consentAccessGUID)){
+			return [success: false, log: "Consent is waiting for resolution by admin in CDRLog", execption:null]
+		}
+
 		ResultModel<PatientModel> resultOfAction
 		try {
 			def client = createCDRClient()
@@ -383,6 +388,13 @@ class CDRService {
 		}
 
 		def consentURL = consentDetailsMap.consentURL // consentFormService.getAccessGUIDUrl(consentForm).toString()
+
+
+		//CHECK IF THIS CONSENT HAS ANY WAITING STATUS RECORD IN CRD LOG, so do not send it to CDR Actually
+		if(CDRLogService.isConsentWaitingForResolution(consentDetailsMap?.consentAccessGUID)){
+			return [success: false, log: "Consent is waiting for resolution by admin in CDRLog", execption:null]
+		}
+
 
 		ResultModel<PatientModel> resultOfAction
 		try {
