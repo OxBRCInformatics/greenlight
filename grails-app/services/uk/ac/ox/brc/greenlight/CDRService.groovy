@@ -143,6 +143,11 @@ class CDRService {
 
 		//// ASSUME THAT ANY CALL TO CDR IS SUCCESSFUL AND THEN WE HANDLE THAT BY CDRLOG
 		consentForm.persistedInCDR = sendResult.success
+		if(sendResult.success){
+			consentForm.dateTimePersistedInCDR = new Date()
+		}else{
+			consentForm.dateTimePersistedInCDR = null
+		}
 		consentForm.savedInCDR  = true //sendResult.success
 		consentForm.passedToCDR = true
 		consentForm.dateTimePassedToCDR = new Date()
