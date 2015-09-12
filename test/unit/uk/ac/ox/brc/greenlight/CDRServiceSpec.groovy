@@ -361,7 +361,7 @@ class CDRServiceSpec extends Specification {
 		def consentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.SPOILED, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date(),savedInCDR: true).save(failOnError: true,flush: true)
 
 		def connectToCDRAndRemoveConsentFrom_Called = false
-		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap ->
+		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap,boolean checkIfWaitingInCDRLog ->
 			connectToCDRAndRemoveConsentFrom_Called = true
 			return [success: true,log:"Removed_LOG_TEXT",exception:null]
 		}
@@ -389,7 +389,7 @@ class CDRServiceSpec extends Specification {
 		def consentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.SPOILED, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date(), savedInCDR: true).save(failOnError: true,flush: true)
 
 		def connectToCDRAndSendConsentForm_Called = false
-		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap ->
+		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap,boolean checkIfWaitingInCDRLog ->
 			connectToCDRAndSendConsentForm_Called = true
 			return [success: true,log:"SAVED_IN_CDR",exception:null]
 		}
@@ -418,7 +418,7 @@ class CDRServiceSpec extends Specification {
 		def consentForm = new ConsentForm(formStatus: ConsentForm.FormStatus.SPOILED, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date(), savedInCDR: true).save(failOnError: true,flush: true)
 
 		def connectToCDRAndSendConsentForm_Called = false
-		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap->
+		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap,boolean checkIfWaitingInCDRLog->
 			connectToCDRAndSendConsentForm_Called = true
 			return [success: false,log:"ERROR_IN_SAVING_IN_CDR",execption:new Exception("ERROR_IN_SAVING_IN_CDR")]
 		}
@@ -507,12 +507,12 @@ class CDRServiceSpec extends Specification {
 		def consentForm = new ConsentForm(savedInCDR: true,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
 
 		def connectToCDRAndSendConsentForm_Called = false
-		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap->
+		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap, boolean checkIfWaitingInCDRLog ->
 			connectToCDRAndSendConsentForm_Called = true
 		}
 
 		def connectToCDRAndRemoveConsentFrom_Called = false
-		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap ->
+		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap, boolean checkIfWaitingInCDRLog ->
 			connectToCDRAndRemoveConsentFrom_Called = true
 			[success: true, log:"SUCCESSFULLY REMOVE THE CONSENT"]
 		}
@@ -537,7 +537,7 @@ class CDRServiceSpec extends Specification {
 		def beforeConsentForm = new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL12345",accessGUID: "456", template:template, patient:patient,consentDate: new Date().minus(10)).save(failOnError: true,flush: true)
 
 		def connectToCDRAndSendConsentForm_Called = false
-		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap ->
+		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap, boolean checkIfWaitingInCDRLog ->
 			connectToCDRAndSendConsentForm_Called = true
 			//check it the right consent is passed
 			assert consentDetailsMap.consentFormId ==  beforeConsentForm.id
@@ -545,7 +545,7 @@ class CDRServiceSpec extends Specification {
 		}
 
 		def connectToCDRAndRemoveConsentFrom_Called = false
-		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap ->
+		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap, boolean checkIfWaitingInCDRLog ->
 			connectToCDRAndRemoveConsentFrom_Called = true
 			//check it the right consent is passed
 			assert consentDetailsMap.consentFormId ==  consentForm.id
