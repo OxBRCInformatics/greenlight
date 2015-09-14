@@ -18,6 +18,7 @@ class DatabaseCleanupService {
 
 	def dataSource
 	def CDRService
+	def consentFormService
 
 	def cleanOrphanResponses() {
 		//have to do this to cleanup the old records,
@@ -463,7 +464,55 @@ class DatabaseCleanupService {
 
 
 	def sendAllLatestConsentsToCDR(){
+		def sentConsents = []
+		def patientChecklist = []
 
+		def successSavedInCDR = 0
+		def failedSavedInCDR = 0
+
+		Patient.list().each { patient ->
+			//if this patient is already processed then continue
+			if(patientChecklist.contains(patient.id)){
+				return
+			}
+			//find all patient objects with the same nhsNumber/mrnNumber
+			def patients
+			if (patientService.isGenericNHSNumber(patient.nhsNumber))
+				patients = Patient.findByHospitalNumber(patient.hospitalNumber)
+			else
+				patients = Patient.findAllByNhsNumber (patient.nhsNumber)
+
+			//get latest consentForms for these patients
+			def latestConsentForms = consentFormService.getLatestConsentForms(patients)
+			latestConsentForms.each { latestConsentForm ->
+				if(latestConsentForm.formStatus == ConsentForm.FormStatus.NORMAL) {
+				  def result =	CDRService.saveOrUpdateConsentForm(latestConsentForm.patient, latestConsentForm, true)
+					//update the consent object as the previous method might have change its values
+					latestConsentForm.save(failOnError: true,flush: true)
+
+					if(result?.success){
+						successSavedInCDR++
+					}else{
+						failedSavedInCDR++
+					}
+
+				    sentConsents << [consentFormId: latestConsentForm?.formID,
+									nhsNumber:latestConsentForm?.patient?.nhsNumber,
+									mrnNumber:latestConsentForm?.patient?.hospitalNumber,
+				   					log:result?.log,
+				   				    success:result?.success]
+				}
+			}
+			//add patient and patients into the checkLis
+			patientChecklist << patient?.id
+			patients.each {
+				patientChecklist << it?.id
+			}
+		}
+		[sentConsents:sentConsents,
+		 totalSentCount:sentConsents.size(),
+		 totalSuccess: successSavedInCDR,
+		 totalFail: failedSavedInCDR,
+		 totalConsentCount : ConsentForm.count()]
 	}
-
 }

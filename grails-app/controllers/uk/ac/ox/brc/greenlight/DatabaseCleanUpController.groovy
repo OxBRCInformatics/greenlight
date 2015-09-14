@@ -150,4 +150,17 @@ class DatabaseCleanUpController {
 		def result = [result: patientResult]
 		respond result as Object, [formats:['xml','json']] as Map
 	}
+
+
+	def sendAllLatestConsentsToCDR(){
+		def consentResult
+		try{
+			consentResult = databaseCleanupService.sendAllLatestConsentsToCDR()
+		}catch(Exception ex){
+			render ex.message
+		}
+		def result = [result: consentResult]
+		respond result as Object, [formats:['xml','json']] as Map
+	}
+
 }

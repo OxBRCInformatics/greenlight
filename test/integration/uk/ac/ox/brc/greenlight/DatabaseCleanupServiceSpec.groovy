@@ -18,6 +18,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 	def setup(){
 		databaseCleanupService.consentEvaluationService = Mock(ConsentEvaluationService)
+		databaseCleanupService.CDRService = Mock(CDRService)
 	}
 
 	def AddOrphanResponses() {
@@ -1130,5 +1131,55 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				CDR_lastName: "BZ",
 				CDR_dob: new Date().minus(100).format("yyyy-MM-dd")]
 		]
+	}
+
+	def "sendAllLatestConsentsToCDR will send just NORMAL consents to CDR"(){
+		given:
+		def patient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
+
+		when:
+		def result = databaseCleanupService.sendAllLatestConsentsToCDR()
+
+		then:
+		result.sentConsents == []
+		result.totalSentCount == 0
+		result.totalSuccess == 0
+		result.totalFail == 0
+		result.totalConsentCount == 1
+	}
+
+	def "sendAllLatestConsentsToCDR will send latest consents for each patient"(){
+		given:
+		def patient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		def latestConsentForm = new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: UUID.randomUUID().toString(), template:template, patient:patient,consentDate: new Date())
+		patient.addToConsents(latestConsentForm)
+		patient.addToConsents(new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56891",accessGUID: UUID.randomUUID().toString(), template:template, patient:patient,consentDate: new Date().minus(1)))
+		patient.save(flush: true,failOnError: true)
+
+		def samePatient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		samePatient.addToConsents(new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56892",accessGUID: UUID.randomUUID().toString(), template:template, patient:samePatient,consentDate: new Date().minus(10)))
+		samePatient.save(flush: true,failOnError: true)
+
+		//mock save method and make sure that save method for consentForm object is called
+		def consentFormShouldBeUpdated = false
+		ConsentForm.metaClass.save = {  Map params ->
+			consentFormShouldBeUpdated = true
+		}
+
+		when:
+		def result = databaseCleanupService.sendAllLatestConsentsToCDR()
+
+		then:
+		1 * databaseCleanupService.CDRService.saveOrUpdateConsentForm(patient, latestConsentForm, true) >> {[success:true,log:"Successfully added"]}
+		result.sentConsents.size() == 1
+		result.sentConsents[0] == [ consentFormId: "GEL56890", nhsNumber: "1234567890",mrnNumber:"OLD",log:"Successfully added", success :true]
+		result.totalSentCount == 1
+		result.totalSuccess == 1
+		result.totalFail == 0
+		result.totalConsentCount == 3
+		consentFormShouldBeUpdated
 	}
 }
