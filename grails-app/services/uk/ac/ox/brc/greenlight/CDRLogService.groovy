@@ -91,7 +91,7 @@ class CDRLogService {
 			def connectionError = isConnectionError(callResult?.exception)
 			record.attemptsCount++
 			//date,Time|callResult|connectionError|callResult.log
-			record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}|${callResult.success}|${connectionError}|${log}"
+			record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}|${callResult.success}|${connectionError}|${log}"
 
 
 			record.save(flush: true,failOnError: true)
@@ -102,7 +102,7 @@ class CDRLogService {
 			def connectionError = isConnectionError(callResult?.exception)
 			record.attemptsCount++
 			//date,Time|callResult|connectionError|callResult.log
-			record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}|${callResult.success}|${connectionError}|${log}"
+			record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}|${callResult.success}|${connectionError}|${log}"
 
 
 			record.save(flush: true,failOnError: true)
@@ -134,7 +134,7 @@ class CDRLogService {
 		}
 		record.attemptsCount++
 		//date,Time|callResult|connectionError|callResult.log
-		record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}|True|False	Manually resolved & marked as persisted by Admin(${username})|${comment}"
+		record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}|True|False|Manually resolved & marked as persisted by Admin(${username})|${comment}"
 		record.save(flush: true,failOnError: true)
 		return [sucess: true,log:"Successfully updated",cdrLog:record]
 	}
@@ -158,7 +158,7 @@ class CDRLogService {
 		}
 		record.attemptsCount++
 		//date,Time|callResult|connectionError|callResult.log
-		record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}|False|False|Manually marked as UnPersisted by Admin(${username})|${comment}"
+		record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}|False|False|Manually marked as UnPersisted by Admin(${username})|${comment}"
 		record.save(flush: true,failOnError: true)
 		return [sucess: true,log:"Successfully updated",cdrLog:record]
 	}
