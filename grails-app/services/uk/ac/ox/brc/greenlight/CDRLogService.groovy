@@ -160,7 +160,7 @@ class CDRLogService {
 		//date,Time|callResult|connectionError|callResult.log
 		record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}|False|False|Manually marked as UnPersisted by Admin(${username})|${comment}"
 		record.save(flush: true,failOnError: true)
-		return [sucess: true,log:"Successfully updated",cdrLog:record]
+		return [success: true,log:"Successfully updated",cdrLog:record]
 	}
 
 	def isConnectionError(Exception ex){
