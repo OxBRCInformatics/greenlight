@@ -375,7 +375,6 @@ class CDRServiceSpec extends Specification {
 		connectToCDRAndRemoveConsentFrom_Called
 		consentForm.persistedInCDR == false
 		consentForm.savedInCDR  == false
-		consentForm.passedToCDR == false
 		consentForm.savedInCDRStatus   == null
 		consentForm.dateTimePassedToCDR == null
 		result.success
@@ -404,7 +403,6 @@ class CDRServiceSpec extends Specification {
 		consentForm.persistedInCDR == true
 		dtf.format(consentForm.dateTimePersistedInCDR) == dtf.format(new Date())
 		consentForm.savedInCDR  == true
-		consentForm.passedToCDR == true
 		consentForm.savedInCDRStatus == "SAVED_IN_CDR"
 		consentForm.dateTimePassedToCDR
 		result.success
@@ -434,7 +432,6 @@ class CDRServiceSpec extends Specification {
 		consentForm.persistedInCDR == false
 		consentForm.dateTimePersistedInCDR == null
 		consentForm.savedInCDR  == true
-		consentForm.passedToCDR == true
 		consentForm.savedInCDRStatus == "ERROR_IN_SAVING_IN_CDR"
 		consentForm.dateTimePassedToCDR
 		!result.success
@@ -535,7 +532,7 @@ class CDRServiceSpec extends Specification {
 		def dtf = new SimpleDateFormat("yyyyMMdd")
 		def patient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
 		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
-		def consentForm 	  = new ConsentForm(savedInCDR: true,passedToCDR: false,savedInCDRStatus: "",dateTimePassedToCDR: null, formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
+		def consentForm 	  = new ConsentForm(savedInCDR: true,savedInCDRStatus: "",dateTimePassedToCDR: null, formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
 
 		def beforeConsentForm = new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL12345",accessGUID: "456", template:template, patient:patient,consentDate: new Date().minus(10)).save(failOnError: true,flush: true)
 
@@ -565,7 +562,6 @@ class CDRServiceSpec extends Specification {
 		connectToCDRAndSendConsentForm_Called
 		connectToCDRAndRemoveConsentFrom_Called
 		beforeConsentForm.savedInCDR  == true
-		beforeConsentForm.passedToCDR == true
 		dtf.format(beforeConsentForm.dateTimePassedToCDR) == dtf.format(new Date())
 		beforeConsentForm.savedInCDRStatus == "SUCCESSFULLY PASSED THE CONSENT"
 	}

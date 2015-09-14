@@ -24,10 +24,10 @@ class ConsentFormMarshaller {
 					comment : consentForm.comment,
 					patient : consentForm.patient,
 					attachment: consentForm.attachedFormImage,
-					passedToCDR: consentForm.passedToCDR,
 					savedInCDR: consentForm.savedInCDR,
 					dateTimePassedToCDR:consentForm?.dateTimePassedToCDR?.format("yyyy-MM-dd hh:mm"),
-					savedInCDRStatus:consentForm.savedInCDRStatus]
+					savedInCDRStatus:consentForm.savedInCDRStatus,
+					persistedInCDR: consentForm.persistedInCDR]
 		}
 	}
 }

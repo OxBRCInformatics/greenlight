@@ -16,11 +16,13 @@ class ConsentForm {
     FormStatus formStatus = FormStatus.NORMAL
 	ConsentStatus consentStatus = ConsentStatus.NON_CONSENT
 
-	boolean passedToCDR
 	boolean savedInCDR
-	boolean persistedInCDR
 	Date dateTimePassedToCDR
 	String savedInCDRStatus
+
+	boolean persistedInCDR  //if it the consent is saved in CDR DB successfully
+	Date dateTimePersistedInCDR
+
 	
     List<Response> responses
     String comment
@@ -44,7 +46,6 @@ class ConsentForm {
     }
 
     static constraints = {
-		passedToCDR nullable:true, defaultValue:false
 		dateTimePassedToCDR nullable: true
 		savedInCDRStatus nullable:true
 		savedInCDR nullable:true
@@ -59,6 +60,8 @@ class ConsentForm {
         comment nullable: true
 		consentStatus nullable: true
 		consentStatusLabels nullable: true
+
+		dateTimePersistedInCDR nullable:true
     }
 
     enum FormStatus {

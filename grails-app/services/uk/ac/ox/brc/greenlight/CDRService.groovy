@@ -128,7 +128,6 @@ class CDRService {
 		//update consent status and mention that it is not in CDR
 		consentForm.persistedInCDR = false
 		consentForm.savedInCDR  = false
-		consentForm.passedToCDR = false
 		consentForm.savedInCDRStatus = null
 		//consentForm.save(flush: true, failOnError: true)
 		consentForm.dateTimePassedToCDR = null
@@ -149,7 +148,6 @@ class CDRService {
 			consentForm.dateTimePersistedInCDR = null
 		}
 		consentForm.savedInCDR  = true //sendResult.success
-		consentForm.passedToCDR = true
 		consentForm.dateTimePassedToCDR = new Date()
 		consentForm.savedInCDRStatus = sendResult.log
 		//consentForm.save(flush: true, failOnError: true)
