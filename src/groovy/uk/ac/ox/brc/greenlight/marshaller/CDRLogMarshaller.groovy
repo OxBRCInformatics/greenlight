@@ -26,7 +26,7 @@ class CDRLogMarshaller {
 					patientId: cdrLog.patientId,
 					nhsNumber: cdrLog.nhsNumber,
 					hospitalNumber: cdrLog.hospitalNumber,
-					actionDate: cdrLog.actionDate?.format("yyyy-MM-dd HH:mm:ss"),
+					actionDate: cdrLog.actionDate?.format("yyyy-MM-dd HH:mm:ss.SSS"),
 					action: cdrLog.action?.toString(),
 					persistedInCDR: (cdrLog.persistedInCDR ? "Yes":"No"),
 					dateTimePersistedInCDR: cdrLog.dateTimePersistedInCDR?.format("yyyy-MM-dd HH:mm:ss"),
