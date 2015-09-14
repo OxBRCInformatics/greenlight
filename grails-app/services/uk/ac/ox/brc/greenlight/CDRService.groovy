@@ -371,7 +371,32 @@ class CDRService {
 		}
 	}
 
+
+	def findPatient(String nhsNumber,String hospitalNumber){
+		PatientModel result
+
+		def patientNHSNumber = nhsNumber
+		def patientMRNNumber = hospitalNumber
+		//pass null to CDR for generic nhsNumber
+		if(patientService.isGenericNHSNumber(patientNHSNumber)){
+			patientNHSNumber = ""
 		}
+
+		try {
+			def client = createCDRClient()
+			result = client?.findPatientByNHSNumberOrMRN(patientNHSNumber,patientMRNNumber)
+		}catch(PatientNotFoundException notFoundException){
+			return [success: true, log: "Not Found",patient:null, execption:notFoundException]
+		}
+		catch (ClientException ex) {
+			//ex.printStackTrace()
+			return [success: false, log: ex.message,patient:null, execption:ex]
+		}
+
+		def patient = [firstName: result.name.first,
+					   lastName: result.name.last,
+					   dateOfBirth: result.dob.toGregorianCalendar().getTime()]
+		return [success: true, log: "",patient:patient,exception:null]
 	}
 
 	def createCDRClient(){
