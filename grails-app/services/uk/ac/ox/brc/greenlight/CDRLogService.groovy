@@ -8,6 +8,7 @@ class CDRLogService {
 	def springSecurityService
 	def consentFormService
 
+	def transactional = false
 
 	def save(Long patientId, String nhsNumber,String hospitalNumber,Map consentDetailsMap,boolean persistedInCDR,String resultDetail,Exception exception, CDRLog.CDRActionType actionType) {
 
