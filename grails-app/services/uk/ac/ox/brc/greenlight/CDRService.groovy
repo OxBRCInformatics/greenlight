@@ -439,6 +439,8 @@ class CDRService {
 
 	 def findKnownOrganisation(String consentFormPrefix) {
 		 switch (consentFormPrefix) {
+			 case "GLM":
+				 return KnownOrganisation.GEL_MAIN
 			 case "GEL":
 				 return KnownOrganisation.GEL_PILOT
 			 case "GEN":

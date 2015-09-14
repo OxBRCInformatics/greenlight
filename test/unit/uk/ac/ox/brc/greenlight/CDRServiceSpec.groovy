@@ -198,38 +198,49 @@ class CDRServiceSpec extends Specification {
 	def "findKnownOrganisation will return Organisation enum value"() {
 		when:
 		def actual = service.findKnownOrganisation(consentPrefix)
-		assert KnownOrganisation.values().size() == 3
+		assert KnownOrganisation.values().size() == 4
 
 		then:
 		actual == expected
 
 		where:
-		consentPrefix|	expected
-		"GEL"		|	KnownOrganisation.GEL_PILOT
-		"GEN"		|	KnownOrganisation.ORB_GEN
-		"CRA"		|	KnownOrganisation.ORB_CRA
-		"UNKNOWN"	|	null
+		consentPrefix | expected
+		"GEL"         | KnownOrganisation.GEL_PILOT
+		"GLM"         | KnownOrganisation.GEL_MAIN
+		"GEN"         | KnownOrganisation.ORB_GEN
+		"CRA"         | KnownOrganisation.ORB_CRA
+		"UNKNOWN"     | null
 
 	}
 
  	def "findPatientGroup will return patientGroup(ConsentTemplateType) enum value"(){
 		when:
 		def actual = service.findPatientGroup(organisationName, consentUniqueId)
-		assert KnownOrganisation.values().size() == 3
+		assert KnownOrganisation.values().size() == 4
 		//assert KnownOrganisation.GEL_PILOT.getPatientGroups()
 
 		then:
 		actual == expected
 
 		where:
-		organisationName			|	consentUniqueId 	|	expected
-		KnownOrganisation.GEL_PILOT	|	"GEL_CSC_V1"		|   "GEL_CSC_V1"
-		KnownOrganisation.GEL_PILOT	|	"GEL_CSC_V2"		|	"GEL_CSC_V2"
-		KnownOrganisation.ORB_GEN	|	"ORB_GEN_V1"	 	|	"ORB_GEN_V1"
-		KnownOrganisation.ORB_GEN	|	"ORB_GEN_V2"	 	|	"ORB_GEN_V2"
-		KnownOrganisation.ORB_GEN	|	"ORB_PRE_V1_2"		|	"ORB_PRE_V1_2"
-		KnownOrganisation.ORB_CRA	|	"ORB_CRA_V1"		|   "ORB_CRA_V1"
-		KnownOrganisation.ORB_CRA	|    "UNKNOWN" 			|    null
+		organisationName            | consentUniqueId | expected
+		KnownOrganisation.GEL_PILOT | "GEL_CSC_V1"    | "GEL_CSC_V1"
+		KnownOrganisation.GEL_PILOT | "GEL_CSC_V2"    | "GEL_CSC_V2"
+		KnownOrganisation.GEL_MAIN  | "GEL_MAN_V2"    | "GEL_MAN_V2"
+		KnownOrganisation.ORB_GEN   | "ORB_GEN_V1"    | "ORB_GEN_V1"
+		KnownOrganisation.ORB_GEN   | "ORB_GEN_V2"    | "ORB_GEN_V2"
+		KnownOrganisation.ORB_GEN   | "ORB_PRE_V1_2"  | "ORB_PRE_V1_2"
+		KnownOrganisation.ORB_CRA   | "ORB_CRA_V1"    | "ORB_CRA_V1"
+		KnownOrganisation.ORB_CRA   | "UNKNOWN"       | null
+	}
+
+	def "Check if Greenlight uses the latest KnownOrganisation"() {
+		expect:
+		assert KnownOrganisation.values().size() == 4
+		assert KnownOrganisation.GEL_PILOT.getPatientGroupIds().sort().toList() == ["GEL_CSC_V1","GEL_CSC_V2"]
+		assert KnownOrganisation.GEL_MAIN.getPatientGroupIds().sort().toList()  == ["GEL_MAN_V2"]
+		assert KnownOrganisation.ORB_GEN.getPatientGroupIds().sort().toList()   == ["ORB_GEN_V1","ORB_GEN_V2","ORB_PRE_V1_2"]
+		assert KnownOrganisation.ORB_CRA.getPatientGroupIds().sort().toList()   == ["ORB_CRA_V1"]
 	}
 
 	def "findKnownFacility will return KnownFacility enum value"(){
