@@ -66,8 +66,30 @@ class CDRLogController {
 
 		if(!order)
 			order = "desc"
+
 		def sortCol = cols.containsKey(sortColIndex) ? cols[sortColIndex] : "actionDate"
-		def data = CDRLog.createCriteria().list([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order]){}
+		def data = CDRLog.createCriteria().list([max: params.iDisplayLength, offset: params.iDisplayStart, sort: sortCol, order: order]){
+
+			if (params['nhsNumber']) {
+				like("nhsNumber", params['nhsNumber'] + "%")
+			}
+
+			if (params['hospitalNumber']) {
+				like("hospitalNumber", params['hospitalNumber'].trim() + "%")
+			}
+
+			if (params['consentFormId']) {
+				like("consentFormId", params['consentFormId'].trim() + "%")
+			}
+
+			if (params['consentAccessGUID']) {
+				like("consentAccessGUID", params['consentAccessGUID'].trim() + "%")
+			}
+
+			if (params['persistedInCDR'] && params['persistedInCDR'].trim().size()>0) {
+				eq("persistedInCDR", params.boolean('persistedInCDR'))
+			}
+		}
 		def result = [sEcho: params.sEcho, iTotalRecords: data.size(), iTotalDisplayRecords: data.totalCount, aaData: data]
 		respond result as Object, [model: result] as Map
 	}
