@@ -157,7 +157,8 @@ class CDRLogService {
 	}
 
 	def countAllNotPersistedBeforeThis(CDRLog record){
-		def count = CDRLog.countByConsentAccessGUIDAndActionDateLessThanAndPersistedInCDR(record.consentAccessGUID,record.actionDate,false)
-		count
+		def result = CDRLog.executeQuery("select count(*) as count from CDRLog as c where c.consentAccessGUID =:consentAccessGUID and c.persistedInCDR=false and c.actionDate < :actionDate",
+				[consentAccessGUID: record.consentAccessGUID,actionDate: record.actionDate])
+		return result[0]
 	}
 }
