@@ -376,76 +376,49 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		Patient.count() == patientBefore + 1
 	}
 
-//	void "Save will save ConsentForm,patient and responses even if CDR is not available or throws exception"(){
-//
-//		given:"An unAnnotated attachment is available & get annotated"
-//		def attachment= new Attachment(id: 200, fileName: 'a.jpg', dateOfUpload: new Date(),
-//				attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush:true)
-//		def template = ConsentFormTemplate.first()
-//
-//		def patient= new Patient(
-//				givenName: "Eric",
-//				familyName: "Clapton",
-//				dateOfBirth: new Date("30/03/1945"),
-//				hospitalNumber: "1002",
-//				nhsNumber: "1234567890",
-//				consents: []
-//		)
-//		def consent = new ConsentForm(
-//				accessGUID: UUID.randomUUID().toString(),
-//				attachedFormImage: attachment,
-//				template: template,
-//				patient: patient,
-//				consentDate: new Date([year:2014,month:01,date:01]),
-//				consentTakerName: "Edward",
-//				formID: "GEN12345",
-//				formStatus: ConsentForm.FormStatus.NORMAL,
-//				comment: "a simple unEscapedComment, with characters \' \" \n "
-//		)
-//		consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: template.questions[0]))
-//		consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: template.questions[1]))
-//		consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: template.questions[2]))
-//		consent.addToResponses(new Response(answer: Response.ResponseValue.YES,question: template.questions[3]))
-//
-//		def consentBefore = ConsentForm.count()
-//		def responseBefore = Response.count()
-//		def patientBefore = Patient.count()
-//
-//		when:"save is called"
-//		def result  = consentFormService.save(patient,consent)
-//
-//		then:"it will save consentForm,patient and responses even if CDR throws exception"
-//		1 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_,_) >> {throw new RuntimeException("Failed to connect to CDR")}
-//		result
-//		ConsentForm.count() == consentBefore + 1
-//		Response.count() == responseBefore + 4
-//		Patient.count() == patientBefore + 1
-//	}
+	void "Save will save ConsentForm and patient even if CDR is not available or throws exception"(){
 
+		given:"An unAnnotated attachment is available & get annotated"
+		def attachment= new Attachment(id: 200, fileName: 'a.jpg',attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush:true)
+		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		def patient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD")
+		def consentForm = new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.SPOILED, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,attachedFormImage: attachment, consentDate: new Date())
+		//they are not saved
+		assert !patient.id
+		assert !consentForm.id
 
+		when:"save is called"
+		def result  = consentFormService.save(patient,consentForm)
 
-//	void "Save will not pass consent to CDR if a new consent is already passed"(){
-//
-//		given:"A consent is saved for a patient"
-//		def patientOld = new Patient(nhsNumber: "4568909873",hospitalNumber: "111",consents: []).save(failOnError: true,flush: true)
-//		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
-//		def consentFormOld = new ConsentForm(formID: "GEL12345",accessGUID: "123", template:template, patient:patientOld,consentDate: new Date().plus(1),passedToCDR: true).save(failOnError: true,flush: true)
-//		patientOld.addToConsents(consentFormOld)
-//		patientOld.save(failOnError: true,flush: true)
-//
-//		def patient = new Patient(nhsNumber: "4568909873",hospitalNumber: "111")
-//		def consentForm = new ConsentForm(formID: "GEL67890",accessGUID: "456", template:template, patient:patient,consentDate: new Date().minus(1))
-//
-//		when:"An older consent of the same type is saved for the same patient"
-//		def result  = consentFormService.save(patient,consentForm)
-//
-//		then:"it will save it but will not pass it to CDR"
-//		0 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_,_) >> {return "success"}
-//		result
-//		consentForm.dateTimePassedToCDR == null
-//		consentForm.passedToCDR == false
-//		consentForm.savedInCDRStatus == "Do not need to pass it to CDR as newer consent form of this type is already saved in CDR"
-//	}
+		then:"it will save consentForm and patient even if CDR throws exception"
+		1 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_,_) >> {throw new RuntimeException("Failed to connect to CDR")}
+		result
+		//they are saved
+		assert patient.id
+		assert consentForm.id
+	}
+
+	void "Save will save ConsentForm and patient and pass consent into CDR"(){
+
+		given:"An unAnnotated attachment is available & get annotated"
+		def attachment= new Attachment(id: 200, fileName: 'a.jpg',attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush:true)
+		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		def patient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD")
+		def consentForm = new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.SPOILED, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,attachedFormImage: attachment, consentDate: new Date())
+		//they are not saved
+		assert !patient.id
+		assert !consentForm.id
+
+		when:"save is called"
+		def result  = consentFormService.save(patient,consentForm)
+
+		then:"it will save consentForm and patient and pass consent into CDR"
+		1 * consentFormService.CDRService.saveOrUpdateConsentForm(_,_,_) >> {[succes:true,log:"Successfully passed to CDR!"]}
+		result
+		//they are saved
+		assert patient.id
+		assert consentForm.id
+	}
 
 	void "Save will calculate and update ConsentStatus attribute of ConsentForm in Save mode"(){
 
