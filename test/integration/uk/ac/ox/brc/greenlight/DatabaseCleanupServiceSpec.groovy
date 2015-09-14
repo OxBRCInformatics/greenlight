@@ -217,10 +217,10 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		def sql = new Sql(dataSource)
 
 		sql.executeUpdate(
-				'insert into CONSENT_FORM (accessGUID,version,formid,form_status,template_id,PASSED_TOCDR,SAVED_INCDR) values(?, ?, ?, ?, ?,?,?)',
+				'insert into CONSENT_FORM (accessGUID,version,formid,form_status,template_id,SAVED_INCDR,PERSISTED_INCDR) values(?, ?, ?, ?, ?,?,?)',
 				["1f91bb5c10d922ce6923b657324a6a4f",0, 'GEL12356',"NORMAL",template.id,false,false])
 		sql.executeUpdate(
-				'insert into CONSENT_FORM (accessGUID,version,formid,form_status,template_id,PASSED_TOCDR,SAVED_INCDR) values(?, ?, ?, ?, ?,?,?)',
+				'insert into CONSENT_FORM (accessGUID,version,formid,form_status,template_id,SAVED_INCDR,PERSISTED_INCDR) values(?, ?, ?, ?, ?,?,?)',
 				["1f91bb5c10d91125524a6a4f",0, 'GEL12356',"NORMAL",template.id,false,false])
 
 	}
