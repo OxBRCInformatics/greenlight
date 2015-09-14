@@ -47,7 +47,8 @@ class CDRLogServiceISpec extends IntegrationSpec {
 
 	private def createCRDLogRecord(){
 		new CDRLog(
-				consentFormId: "1",
+				consentId: "1",
+				consentFormId: "ABC12345",
 				consentAccessGUID: "123-456-789",
 				consentTemplateId: "1",
 				consentDate: Date.parse("dd/MM/yyyy","01/09/2000"),

@@ -12,6 +12,7 @@ class CDRLogMarshaller {
 		JSON.registerObjectMarshaller(CDRLog) { cdrLog ->
 			return [
 					id: cdrLog.id,
+					consentId: cdrLog.consentId,
 					consentFormId: cdrLog.consentFormId,
 					consentTemplateId: cdrLog.consentTemplateId,
 					consentDate: cdrLog.consentDate?.format("yyyy-MM-dd"),

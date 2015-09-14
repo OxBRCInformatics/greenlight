@@ -5,7 +5,9 @@ import uk.ac.ox.brc.greenlight.ConsentForm
 class CDRLog {
 
 	//all details of the consent and the consent template that needed for CDR
+	String consentId
 	String consentFormId
+
 	String consentTemplateId
 	Date consentDate
 	ConsentForm.ConsentStatus consentStatus
@@ -46,7 +48,7 @@ class CDRLog {
 
 	static constraints = {
 
-		consentFormId nullable:true // for New consentForm which do not have Id at first BUT we can refer to them by their accessGUID
+		consentId nullable:true // for New consentForm which do not have Id at first BUT we can refer to them by their accessGUID
 		consentTemplateId nullable:true
 
 		comment nullable:true

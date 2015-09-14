@@ -540,7 +540,7 @@ class CDRServiceSpec extends Specification {
 		service.metaClass.connectToCDRAndSendConsentForm = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap, boolean checkIfWaitingInCDRLog ->
 			connectToCDRAndSendConsentForm_Called = true
 			//check it the right consent is passed
-			assert consentDetailsMap.consentFormId ==  beforeConsentForm.id
+			assert consentDetailsMap.consentId ==  beforeConsentForm.id
 			[success: true, log:"SUCCESSFULLY PASSED THE CONSENT"]
 		}
 
@@ -548,7 +548,7 @@ class CDRServiceSpec extends Specification {
 		service.metaClass.connectToCDRAndRemoveConsentFrom = { String nhsNumber,String  hospitalNumber,Closure patientAlias,Map consentDetailsMap, boolean checkIfWaitingInCDRLog ->
 			connectToCDRAndRemoveConsentFrom_Called = true
 			//check it the right consent is passed
-			assert consentDetailsMap.consentFormId ==  consentForm.id
+			assert consentDetailsMap.consentId ==  consentForm.id
 			[success: true, log:"SUCCESSFULLY REMOVE THE CONSENT"]
 		}
 

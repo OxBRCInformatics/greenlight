@@ -19,6 +19,7 @@ class CDRLogService {
 
 
 		def cdr = new CDRLog(
+				consentId: consentDetailsMap?.consentId,
 				consentFormId: consentDetailsMap?.consentFormId,
 				consentAccessGUID: consentDetailsMap?.consentAccessGUID,
 				consentTemplateId: consentDetailsMap?.consentTemplateId,
