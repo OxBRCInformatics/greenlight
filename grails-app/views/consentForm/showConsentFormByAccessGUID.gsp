@@ -91,7 +91,7 @@ code {
 
         <g:if test="${flash.error}">
             <div class="row">
-                <div class="span6">
+                <div class="span4">
                     <div class="alert alert-danger">${flash.error}</div>
                 </div>
             </div>
