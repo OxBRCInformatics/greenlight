@@ -123,13 +123,81 @@ class ConsentFormService {
 				return false
 			}
 		}
-
 	}
+
+	def findConsentsOfSameTypeAfterThisConsentWhichAreSavedInCDR(nhsNumber, hospitalNumber, consentForm) {
+		def foundConsents = []
+		def patients
+		if (patientService.isGenericNHSNumber(nhsNumber))
+			patients = Patient.findAllByHospitalNumber(hospitalNumber)
+		else
+			patients = Patient.findAllByNhsNumber(nhsNumber)
+
+			patients?.each { patient ->
+				patient.consents.each { consent ->
+					if (consent.template.id == consentForm.template.id &&
+							consent.formStatus == ConsentForm.FormStatus.NORMAL &&
+							consent.id != consentForm.id &&
+							consent.savedInCDR &&
+							consent?.consentDate?.compareTo(consentForm.consentDate) > 0) {
+						foundConsents.add(consent)
+					}
+			}
 		}
-
+		foundConsents
 	}
+
+	def findAnyConsentOfSameTypeBeforeThisConsentWhichIsSavedInCDR(nhsNumber, hospitalNumber, consentForm) {
+		def foundConsent
+		def patients
+		if (patientService.isGenericNHSNumber(nhsNumber))
+			patients = Patient.findAllByHospitalNumber(hospitalNumber)
+		else
+			patients = Patient.findAllByNhsNumber(nhsNumber)
+
+			patients?.each { patient ->
+				patient.consents.each { consent ->
+					if (consent.template.id == consentForm.template.id &&
+							consent.formStatus == ConsentForm.FormStatus.NORMAL &&
+							consent.id != consentForm.id &&
+							consent.savedInCDR &&
+							consent?.consentDate?.compareTo(consentForm.consentDate) < 0) {
+						foundConsent = consent
+						return
+					}
+				}
+			}
+		foundConsent
 	}
 
+	def findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(nhsNumber, hospitalNumber, consentForm, template) {
+		def foundConsent
+		def patients
+		if (patientService.isGenericNHSNumber(nhsNumber))
+			patients = Patient.findAllByHospitalNumber(hospitalNumber)
+		else
+			patients = Patient.findAllByNhsNumber(nhsNumber)
+
+			patients?.each { patient ->
+				patient.consents.each { consent ->
+					if (consent.template.id == template.id &&
+							consent.formStatus == ConsentForm.FormStatus.NORMAL &&
+							consent.id != consentForm.id &&
+							!consent.savedInCDR &&
+							consent?.consentDate?.compareTo(consentForm.consentDate) < 0) {
+
+						if (!foundConsent) {
+							foundConsent = consent
+						} else {
+							if (consent?.consentDate?.compareTo(foundConsent.consentDate) > 0)
+								foundConsent = consent
+						}
+					}
+				}
+			}
+
+		foundConsent
+	}
 
 	@Transactional
 	def delete(ConsentForm consentForm) {

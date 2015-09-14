@@ -562,4 +562,69 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		"A"										|	null
 		null									|	null
 	}
+
+
+	def "findConsentsOfSameTypeAfterThisConsentWhichAreSavedInCDR "(){
+		given:"a patient with several consents exists"
+		def patient  = new Patient(nhsNumber: "0987654321",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		def consentForm = new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: UUID.randomUUID().toString(), template:template, patient:patient,consentDate: new Date())
+		patient.addToConsents(consentForm)
+		patient.save(flush: true,failOnError: true)
+
+		def samePatient = new Patient(nhsNumber: "0987654321",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		samePatient.addToConsents(new ConsentForm(savedInCDR: true,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56891",accessGUID: UUID.randomUUID().toString(), template:template, patient:patient,consentDate: new Date().plus(1)))
+		samePatient.addToConsents(new ConsentForm(savedInCDR: true,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56892",accessGUID: UUID.randomUUID().toString(), template:template, patient:patient,consentDate: new Date().plus(2)))
+		samePatient.addToConsents(new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56893",accessGUID: UUID.randomUUID().toString(), template:template, patient:patient,consentDate: new Date().plus(2)))
+		samePatient.save(flush: true,failOnError: true)
+
+		when:
+		def result = consentFormService.findConsentsOfSameTypeAfterThisConsentWhichAreSavedInCDR(patient.nhsNumber,patient.hospitalNumber,consentForm)
+
+		then:"it returns consentForms of the same type saved in cdr which are newer that ConsentForm"
+		result.size() == 2
+	}
+
+	def "findAnyConsentOfSameTypeBeforeThisConsentWhichIsSavedInCDR "(){
+		given:"a patient with several consents exists"
+		def patient  = new Patient(nhsNumber: "0987654321",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		def consentForm = new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: UUID.randomUUID().toString(), template:template, patient:patient,consentDate: new Date())
+		patient.addToConsents(consentForm)
+		patient.save(flush: true,failOnError: true)
+
+		def samePatient = new Patient(nhsNumber: "0987654321",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		def cons = new ConsentForm(savedInCDR: true,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56891",accessGUID: UUID.randomUUID().toString(), template:template, patient:patient,consentDate: new Date().minus(1))
+		samePatient.addToConsents(cons)
+		samePatient.save(flush: true,failOnError: true)
+
+		when:
+		def result = consentFormService.findAnyConsentOfSameTypeBeforeThisConsentWhichIsSavedInCDR(patient.nhsNumber,patient.hospitalNumber,consentForm)
+
+		then:"it returns any consentForm of the same type saved in cdr which is older that ConsentForm"
+		result.id == cons.id
+	}
+
+
+	def "findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR "(){
+		given:"a patient with several consents exists"
+		def patient  = new Patient(nhsNumber: "0987654321",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		def consentForm = new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: UUID.randomUUID().toString(), template:template, patient:patient,consentDate: new Date())
+		patient.addToConsents(consentForm)
+		patient.save(flush: true,failOnError: true)
+
+		def samePatient = new Patient(nhsNumber: "0987654321",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		def latestCons = new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56891",accessGUID: UUID.randomUUID().toString(), template:template, patient:patient,consentDate: new Date().minus(1))
+		samePatient.addToConsents(latestCons)
+		samePatient.addToConsents(new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56892",accessGUID: UUID.randomUUID().toString(), template:template, patient:patient,consentDate: new Date().minus(2)))
+		samePatient.addToConsents(new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56893",accessGUID: UUID.randomUUID().toString(), template:template, patient:patient,consentDate: new Date().plus(2)))
+		samePatient.save(flush: true,failOnError: true)
+
+		when:"findConsentsOfSameTypeAfterThisConsentWhichAreSavedInCDR called"
+		def result = consentFormService.findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(patient.nhsNumber,patient.hospitalNumber,consentForm,template)
+
+		then:
+		result.id == latestCons.id
+	}
 }
