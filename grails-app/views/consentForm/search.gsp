@@ -39,7 +39,7 @@
 
                                             <div class="form-group">
                                                 <label for="consentDateFrom">Consent Date From</label>
-                                                <br>
+
                                                 <g:datePicker class="form-control" id="consentDateFrom" tabindex="4"
                                                               name="consentDateFrom"
                                                               value="${params.consentDateFrom}"
@@ -49,22 +49,18 @@
 
                                             <div class="form-group">
                                                 <label for="formIdFrom">Consent Form Id From</label>
-                                                <br>
+
                                                 <g:textField  class="form-control" tabindex="7"
                                                               id="formIdFrom" name="formIdFrom"
                                                               value="${params.formIdFrom}"
                                                               placeholder="Form Id like GEN12345"/>
                                             </div>
-
-
-
                                             <div class="form-group">
                                                 %{--<input type="submit"  class="btn btn-primary"  value="Search" tabindex="6">--}%
 
                                                 <g:actionSubmit class="btn btn-primary" value="Search" tabindex="9"
                                                                 action="find" param=""></g:actionSubmit>
-
-                                                <g:actionSubmit class="btn btn-primary" value="Export" tabindex="10"
+                                                <g:actionSubmit class="btn btn-primary" value="Export" tabindex="11"
                                                                 action="findAndExport"></g:actionSubmit>
 
                                             </div>
@@ -84,7 +80,7 @@
 
                                             <div class="form-group">
                                                 <label for="consentDateTo">Consent Date To</label>
-                                                <br>
+
                                                 <g:datePicker class="form-control" id="consentDateTo" tabindex="5"
                                                               name="consentDateTo"
                                                               value="${params.consentDateTo}"
@@ -94,7 +90,7 @@
 
                                             <div class="form-group">
                                                 <label for="formIdTo">Consent Form Id To</label>
-                                                <br>
+
                                                 <g:textField  class="form-control" tabindex="8"
                                                               id="formIdTo" name="formIdTo"
                                                               value="${params.formIdTo}"
@@ -118,7 +114,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="comment">Comment</label>
-                                                <g:textArea rows="6" cols="40"
+                                                <g:textArea rows="4" cols="40"
                                                         class="form-control" tabindex="6"
                                                         name="comment"  id="comment"
                                                         value="${params.comment}"
