@@ -106,8 +106,7 @@
             return false;
         }
 
-        $(document).ready(function () {
-            var grailsContextPath = "${ createLinkTo(dir: '/')}";
+        function loadTable(grailsContextPath){
             $('#example').dataTable({
                 "sDom": "<'row'<'span12'l><'span12'>r>t<'row span15'<ip>>",
                 "oTableTools": {"sRowSelect": "single"},
@@ -166,11 +165,11 @@
                     { "mData": "attemptsLog",
                         "fnRender" : function(oObj) {
                             if(oObj.aData.attemptsLog!=null && oObj.aData.attemptsLog!=undefined) {
-                                return  "<div class='more'>" +  oObj.aData.attemptsLog.replace(/\n/g, '<br>') + "</div>"
+                                return  "<div class='more'>&bull; " +  oObj.aData.attemptsLog.replace(/\n{2}/g, '<br><br>&bull; ') + "</div>"
                             }else if(oObj.aData.attemptsLog==null) {
                                 return  ""
                             }else{
-                                return  "<div class='more'>" +  oObj.aData.attemptsLog + "</div>"
+                                return  "<div class='more'>&bull; " +  oObj.aData.attemptsLog + "</div>"
                             }
                         }
                     },
@@ -179,9 +178,49 @@
                 ],
                 "fnDrawCallback": function (nRow) {
                     applyComment();
+                },
+
+                "fnServerParams": function (aoData) {
+                    aoData.push({
+                        "name": "nhsNumber",
+                        "value": $("#nhsNumber").val()
+                    })
+                    aoData.push({
+                        "name": "hospitalNumber",
+                        "value": $("#hospitalNumber").val()
+                    })
+
+                    aoData.push({
+                        "name": "consentFormId",
+                        "value": $("#consentFormId").val()
+                    })
+
+                    debugger
+                    aoData.push({
+                        "name": "consentAccessGUID",
+                        "value": $("#consentAccessGUID").val()
+                    })
+
+
+                    aoData.push({
+                        "name": "persistedInCDR",
+                        "value": $("#persistedInCDR").val()
+                    })
                 }
+
             });
+        }
+
+        $(document).ready(function () {
+            var grailsContextPath = "${ createLinkTo(dir: '/')}";
+            loadTable(grailsContextPath)
          });
+
+        function reLoad(){
+            $('#example').dataTable().fnDestroy();
+            var grailsContextPath = "${ createLinkTo(dir: '/')}";
+            loadTable(grailsContextPath)
+        }
 
     </script>
 
@@ -196,22 +235,76 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">CDR Log records</h3>
                 </div>
-
                 <div class="panel-body">
+                        <div class="panel-body">
+                            <form method="POST">
+                                <div class="row">
+                                <div class="span4">
+                                    <div class="form-group">
+                                        <label for="nhsNumber">NHS Number</label>
+                                        <g:textField  class="form-control" tabindex="1"
+                                                      id="nhsNumber" name="nhsNumber"
+                                                      value="${params.nhsNumber}"
+                                                      placeholder="NHS number"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="hospitalNumber">Hospital Number</label>
+                                        <g:textField class="form-control" tabindex="2"
+                                                name="hospitalNumber"  id="hospitalNumber"
+                                                value="${params.hospitalNumber}"
+                                                placeholder="Hospital number"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button  tabindex="6" class="btn btn-primary" value="Search" onclick="reLoad();return false;">Search</button>
+                                        <button  tabindex="7" class="btn btn-primary"  type="reset">Reset</button>
+                                    </div>
+                                </div>
+                                <div class="span4 ">
+                                    <div class="form-group">
+                                        <label for="consentFormId">Consent Form Id</label>
+                                        <g:textField  class="form-control" tabindex="3"
+                                                      id="consentFormId" name="consentFormId"
+                                                      value="${params.consentFormId}"
+                                                      placeholder="FormId"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="consentAccessGUID">Consent Access GUID</label>
+                                        <g:textField  class="form-control" tabindex="4"
+                                                      id="consentAccessGUID" name="consentAccessGUID"
+                                                      value="${params.consentAccessGUID}"
+                                                      placeholder="AccessGUID"/>
+                                    </div>
+                                </div>
+                                <div class="span4 ">
+                                    <div class="form-group">
+                                        <label for="persistedInCDR">Saved In CDR</label>
+                                        <g:select class="form-control" tabindex="5"
+                                                     name="persistedInCDR"  id="persistedInCDR"
+                                                     value="${params.savedInCDR}"
+                                                     from="${[' ','Yes', 'No']}"
+                                                     keys="${[' ','true', 'false']}">
+                                                     </g:select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            </form>
+                        </div>
                     <div style="width: 100%;">
                         <div class="dataTables_scroll" style="padding: 10px;">
                             <table class="table table-striped table-bordered" id="example" width="100%">
                                 <thead>
                                 <tr>
-                                    <th></th>
-                                    <th>Date</th>
+                                    <th width="8px"></th>
+                                    <th width="20px">Date</th>
                                     <th>Action</th>
-                                    <th>Saved</th>
+                                    <th width="5px">Saved</th>
                                     <th>Consent</th>
                                     <th>NHS</th>
-                                    <th>MRN</th>
+                                    <th >MRN</th>
                                     <th>Date/Time Saved in CDR</th>
-                                    <th>Consent Date</th>
+                                    <th width="30px">Consent Date</th>
                                     <th>Consent FormId</th>
                                     <th>Consent Status</th>
                                     <th>Detail</th>
