@@ -87,23 +87,42 @@ class CDRLogService {
 				consentForm.dateTimePersistedInCDR = new Date()
 				consentForm.save(flush: true)
 			}
+
+			def connectionError = isConnectionError(callResult?.exception)
+			record.attemptsCount++
+			//date,Time|callResult|connectionError|callResult.log
+			record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}|${callResult.success}|${connectionError}|${log}"
+
+
+			record.save(flush: true,failOnError: true)
+			return [success: true, log: "Successfully passed to CDR", cdrLog:record]
+
+		}else{
+
+			def connectionError = isConnectionError(callResult?.exception)
+			record.attemptsCount++
+			//date,Time|callResult|connectionError|callResult.log
+			record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}|${callResult.success}|${connectionError}|${log}"
+
+
+			record.save(flush: true,failOnError: true)
+			return [success: false, log: "Failed to pass the record to CDR!", cdrLog:record]
 		}
 
-		def connectionError = isConnectionError(callResult?.exception)
-		record.attemptsCount++
-		//date,Time|callResult|connectionError|callResult.log
-		record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}|${callResult.success}|${connectionError}|${log}"
-
-
-		record.save(flush: true,failOnError: true)
-		return [success: true, log: "Successfully passed to CDR", cdrLog:record]
 	}
 
-	def markCDRLogRecordAsPersisted(CDRLogId,comment) {
-		def record = CDRLog.findById(CDRLogId)
+	def markCDRLogRecordAsPersisted(record,comment) {
 
 		if(!record){
 			return [success: false, log: "CRDLog record not found!", cdrLog:record]
+		}
+
+		if(record.persistedInCDR) {
+			return [success: false, log: "This record is persisted in CDR, can not send it again!", cdrLog:record]
+		}
+
+		if(countAllNotPersistedBeforeThis(record)>0){
+			return [sucess: false, log:"There are older CDRLog records for this consent which are not resolved yet, please resolve those first.",cdrLog: record]
 		}
 
 		def username = springSecurityService.currentUser?.username
@@ -117,10 +136,10 @@ class CDRLogService {
 		//date,Time|callResult|connectionError|callResult.log
 		record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}|True|False	Manually resolved & marked as persisted by Admin(${username})|${comment}"
 		record.save(flush: true,failOnError: true)
+		return [sucess: true,log:"Successfully updated",cdrLog:record]
 	}
 
-	def unMarkCDRLogRecordIfPersisted(CDRLogId,comment) {
-		def record = CDRLog.findById(CDRLogId)
+	def unMarkCDRLogRecordIfPersisted(record,comment) {
 
 		if(!record){
 			return [success: false, log: "CRDLog record not found!"]
@@ -139,8 +158,9 @@ class CDRLogService {
 		}
 		record.attemptsCount++
 		//date,Time|callResult|connectionError|callResult.log
-		record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}	False	False	Manually marked as UnPersisted by Admin(${username})	${comment}"
+		record.attemptsLog = "${(record?.attemptsLog ? record?.attemptsLog+"\n" : "")}${new Date().format("dd/MM/yyyy HH:mm:ss")}|False|False|Manually marked as UnPersisted by Admin(${username})|${comment}"
 		record.save(flush: true,failOnError: true)
+		return [sucess: true,log:"Successfully updated",cdrLog:record]
 	}
 
 	def isConnectionError(Exception ex){
