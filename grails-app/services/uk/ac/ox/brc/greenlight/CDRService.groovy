@@ -2,10 +2,12 @@ package uk.ac.ox.brc.greenlight
 
 import com.mirth.results.client.PatientModel
 import com.mirth.results.client.result.ResultModel
+import uk.ac.ox.brc.greenlight.Audit.CDRLog
 import uk.ac.ox.ndm.mirth.datamodel.dsl.MirthModelDsl
 import uk.ac.ox.ndm.mirth.datamodel.dsl.clinical.patient.Consent
 import uk.ac.ox.ndm.mirth.datamodel.dsl.core.Facility
 import uk.ac.ox.ndm.mirth.datamodel.exception.rest.ClientException
+import uk.ac.ox.ndm.mirth.datamodel.exception.rest.PatientNotFoundException
 import uk.ac.ox.ndm.mirth.datamodel.rest.client.KnownFacility
 import uk.ac.ox.ndm.mirth.datamodel.rest.client.KnownOrganisation
 import uk.ac.ox.ndm.mirth.datamodel.rest.client.KnownPatientStatus
@@ -228,11 +230,19 @@ class CDRService {
 
 			resultOfAction = client.removePatientConsent(consent,patient,knownFacility,knownOrganisation,patientGroups)
 		} catch (ClientException ex) {
-			//ex.printStackTrace()
-			return [success: false, log: ex.message, execption:ex]
+			def logMessage = ex?.message
+			log.error(logMessage)
+			if(logMessage?.length() > 300){
+				logMessage = logMessage.substring(0.300) + "..."
+			}
+			return [success: false, log: logMessage, execption:ex]
 		}catch (Exception ex) {
-			//ex.printStackTrace()
-			return [success: false, log: ex.message, execption:ex]
+			def logMessage = ex?.message
+			log.error(logMessage)
+			if(logMessage?.length() > 300){
+				logMessage = logMessage.substring(0.300) + "..."
+			}
+			return [success: false, log: logMessage, execption:ex]
 		}
 
 		if (resultOfAction && resultOfAction?.operationSucceeded) {
@@ -338,11 +348,19 @@ class CDRService {
 			resultOfAction = client.createOrUpdatePatientConsent(consent,patient,knownFacility,knownPatientStatus.toString(),knownOrganisation.toString(),patientGroups)
 
 		}catch (ClientException ex) {
-			//ex.printStackTrace()
-			return [success: false, log: ex.message, execption:ex]
+			def logMessage = ex?.message
+			log.error(logMessage)
+			if(logMessage?.length() > 300){
+				logMessage = logMessage.substring(0.300) + "..."
+			}
+			return [success: false, log: logMessage, execption:ex]
 		}catch (Exception ex) {
-			//ex.printStackTrace()
-			return [success: false, log: ex.message, execption:ex]
+			def logMessage = ex?.message
+			log.error(logMessage)
+			if(logMessage?.length() > 300){
+				logMessage = logMessage.substring(0.300) + "..."
+			}
+			return [success: false, log: logMessage, execption:ex]
 		}
 
 		if (resultOfAction && resultOfAction?.operationSucceeded) {
