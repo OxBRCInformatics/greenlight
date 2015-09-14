@@ -51,6 +51,9 @@ class CDRLogServiceSpec extends spock.lang.Specification {
 		CDRLog.metaClass.save = {  Map params ->
 			cdrLogSaveCalled = true
 		}
+		service.metaClass.countAllNotPersistedBeforeThis = {CDRLog r ->
+			return 0
+		}
 
 		def actualConsentForm = new ConsentForm()
 
@@ -87,6 +90,9 @@ class CDRLogServiceSpec extends spock.lang.Specification {
 		CDRLog.metaClass.save = {  Map params ->
 			cdrLogSaveCalled = true
 		}
+		service.metaClass.countAllNotPersistedBeforeThis = {CDRLog r ->
+			return 0
+		}
 
 		def actualConsentForm = new ConsentForm()
 
@@ -119,16 +125,14 @@ class CDRLogServiceSpec extends spock.lang.Specification {
 		record.actionDate = new Date()
 		record.save(flush: true,failOnError: true)
 
-		def beforeRecord = createCRDLogRecord()
-		beforeRecord.persistedInCDR = false
-		beforeRecord.consentAccessGUID = "123-456-789"
-		beforeRecord.actionDate = new Date().minus(1)
-		beforeRecord.save(flush: true,failOnError: true)
 
 		//Mock Gorm Save and make sure that it is NOT called
 		def cdrLogSaveCalled = false
 		CDRLog.metaClass.save = {  Map params ->
 			cdrLogSaveCalled = true
+		}
+		service.metaClass.countAllNotPersistedBeforeThis = {CDRLog r ->
+			return 1
 		}
 
 		when:"resendCDRLogRecordToCDR called"
