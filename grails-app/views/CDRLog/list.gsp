@@ -85,7 +85,7 @@
 
         function unMarkCDRLogRecordIfPersisted(id,rowIndex){
             var resendURL = grailsContextPath + "CDRLog/unMarkCDRLogRecordIfPersisted/"+ id + ".json"
-            if(confirm("It will mark the record as Saved in CDR, are you sure?"))
+            if(confirm("It will mark the record as UnSaved in CDR, are you sure?"))
             {
                 $.ajax({
                     type: 'POST',
@@ -145,8 +145,8 @@
                     { "mData": "persistedInCDR"},
                     { "mData": "consentAccessGUID",
                         "fnRender" : function(oObj) {
-                            if(oObj.aData.consentFormId)
-                                return "<a href="+grailsContextPath+"consentFormCompletion/show/" + oObj.aData.consentFormId + '>' +  oObj.aData.consentAccessGUID + '</a>'
+                            if(oObj.aData.consentId)
+                                return "<a href="+grailsContextPath+"consentFormCompletion/show/" + oObj.aData.consentId + '>' +  oObj.aData.consentAccessGUID + '</a>'
                             else
                                 return oObj.aData.consentAccessGUID
                         }
@@ -155,16 +155,8 @@
                     { "mData": "hospitalNumber"},
                     { "mData": "dateTimePersistedInCDR"},
                     { "mData": "consentDate" },
+                    { "mData": "consentFormId" },
                     { "mData": "consentStatus" },
-                    { "mData": "consentStatusLabels",
-                    "fnRender" : function(oObj) {
-                        if(oObj.aData.consentStatusLabels!=null && oObj.aData.consentStatusLabels!=undefined) {
-                            return oObj.aData.consentStatusLabels.replace(/\n/g, '<br>')
-                        }else{
-                            return oObj.aData.consentStatusLabels
-                        }
-                    }
-                    },
                     { "mData": "resultDetail",
                         "fnRender": function (oObj) {
                             return "<div class='more'>"+ oObj.aData.resultDetail    + "</div>"
@@ -175,6 +167,8 @@
                         "fnRender" : function(oObj) {
                             if(oObj.aData.attemptsLog!=null && oObj.aData.attemptsLog!=undefined) {
                                 return  "<div class='more'>" +  oObj.aData.attemptsLog.replace(/\n/g, '<br>') + "</div>"
+                            }else if(oObj.aData.attemptsLog==null) {
+                                return  ""
                             }else{
                                 return  "<div class='more'>" +  oObj.aData.attemptsLog + "</div>"
                             }
@@ -218,8 +212,8 @@
                                     <th>MRN</th>
                                     <th>Date/Time Saved in CDR</th>
                                     <th>Consent Date</th>
+                                    <th>Consent FormId</th>
                                     <th>Consent Status</th>
-                                    <th>Consent Labels</th>
                                     <th>Detail</th>
                                     <th>Con Error</th>
                                     <th>Attempts Log</th>
