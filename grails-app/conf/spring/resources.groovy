@@ -6,8 +6,8 @@ beans = {
 				new   uk.ac.ox.brc.greenlight.marshaller.ConsentFormMarshaller(),
 				new   uk.ac.ox.brc.greenlight.marshaller.ResponseMarshaller(),
 				new	  uk.ac.ox.brc.greenlight.marshaller.QuestionMarshaller(),
-				new	  uk.ac.ox.brc.greenlight.marshaller.ConsentFormTemplateMarshaller()
-
+				new	  uk.ac.ox.brc.greenlight.marshaller.ConsentFormTemplateMarshaller(),
+				new	  uk.ac.ox.brc.greenlight.marshaller.CDRLogMarshaller()
 		]
 	}
 
