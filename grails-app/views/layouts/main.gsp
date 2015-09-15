@@ -77,9 +77,8 @@
         <a href="${createLink(uri: '/')}" class="brand">Oxford BioResource Consent Form</a>
 
         <ul class="nav">
+          <sec:ifAnyGranted roles="ROLE_ADMIN,ROLE_USER">
             <li class="active"><a href="${createLink(uri: '/')}">Home</a></li>
-
-        <sec:ifAnyGranted roles="ROLE_ADMIN,ROLE_USER">
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Consent Forms <b class="caret"></b></a>
                 <ul class="dropdown-menu">
