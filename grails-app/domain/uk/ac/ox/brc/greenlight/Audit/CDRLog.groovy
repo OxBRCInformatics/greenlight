@@ -1,7 +1,9 @@
 package uk.ac.ox.brc.greenlight.Audit
 
 import uk.ac.ox.brc.greenlight.ConsentForm
+import org.codehaus.groovy.grails.plugins.orm.auditable.Stamp
 
+@Stamp
 class CDRLog {
 
 	//all details of the consent and the consent template that needed for CDR
