@@ -214,10 +214,10 @@ code {
         </g:else>
     </div>
 </div>
-<footer class="footer">
-    <div class="container">
-        <p class="text-muted">&copy;&nbsp${new Date()[Calendar.YEAR]} &nbspv<g:meta name="app.version"/>  BRC</p>
-    </div>
-</footer>
+%{--<footer class="footer">--}%
+    %{--<div class="container">--}%
+        %{--<p class="text-muted">&copy;&nbsp${new Date()[Calendar.YEAR]} &nbspv<g:meta name="app.version"/>  BRC</p>--}%
+    %{--</div>--}%
+%{--</footer>--}%
 </body>
 </html>
