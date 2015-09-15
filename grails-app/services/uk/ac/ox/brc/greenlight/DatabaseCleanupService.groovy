@@ -1,14 +1,7 @@
 package uk.ac.ox.brc.greenlight
 
-import com.mirth.results.client.PatientAliasModel
-import com.mirth.results.client.PatientAliasType
-import com.mirth.results.client.PatientModel
 import grails.transaction.Transactional
 import groovy.sql.Sql
-
-import javax.xml.datatype.DatatypeFactory
-import javax.xml.datatype.XMLGregorianCalendar
-import java.text.SimpleDateFormat
 
 @Transactional
 class DatabaseCleanupService {
