@@ -49,6 +49,8 @@ class ConsentForm {
 		dateTimePassedToCDR nullable: true
 		savedInCDRStatus nullable:true
 		savedInCDR nullable:true
+		persistedInCDR  nullable:true
+		dateTimePersistedInCDR  nullable:true
 
 		accessGUID nullable: false , unique: true
 
