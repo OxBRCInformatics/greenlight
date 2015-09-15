@@ -93,7 +93,7 @@
                 <ul class="dropdown-menu">
                     <li><g:link  controller="consentForm" action="reportPatientConsentCount">Participants<span style="font-weight: bold;font-size: 12px;"> (consented to more than one type of Consent Form)</span></g:link></li>
                     <li><g:link  controller="report" action="databaseStatusReports">Database Status</g:link></li>
-                    <li><g:link  controller="CDRLog" action="list">CDR Logs Status</g:link></li>
+                    <li><g:link  controller="CDRLog" action="list">CDR Logs</g:link></li>
                 </ul>
             </li>
             <li><g:link  controller="consentForm" action="cuttingRoom">Cut-Up Room</g:link></li>
