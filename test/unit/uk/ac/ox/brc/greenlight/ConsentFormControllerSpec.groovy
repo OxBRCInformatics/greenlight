@@ -142,12 +142,12 @@ class ConsentFormControllerSpec extends Specification{
 		controller.modelAndView.model.consent.patient == [
 			givenName: "MrA",
 			familyName: "MrB",
-			dateOfBirth: DateTimeFormat.forPattern("dd/MM/yyyy").print(new DateTime(1980,12,25,0,0)),
+			dateOfBirth: DateTimeFormat.forPattern("dd.MM.yyyy").print(new DateTime(1980,12,25,0,0)),
 			hospitalNumber: "1002",
 			nhsNumber: "1234567890"
 		]
 		controller.modelAndView.model.consent.attachment == [
-				dateOfUpload:DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss").print(new DateTime(2015,8,19,0,0)),
+				dateOfUpload:DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss").print(new DateTime(2015,8,19,0,0)),
 				fileName:"1.jpg"
 		]
 		controller.modelAndView.model.consent.consentFormType == [
@@ -157,7 +157,7 @@ class ConsentFormControllerSpec extends Specification{
 		]
 
 		controller.modelAndView.model.consent.formID == "GEN12345"
-		controller.modelAndView.model.consent.consentDate == DateTimeFormat.forPattern("dd/MM/yyyy").print(new DateTime(2015,1,25,0,0))
+		controller.modelAndView.model.consent.consentDate == DateTimeFormat.forPattern("dd.MM.yyyy").print(new DateTime(2015,1,25,0,0))
 		controller.modelAndView.model.consent.consentTakerName == "ABC"
 		controller.modelAndView.model.consent.formStatus      == ConsentForm.FormStatus.NORMAL.toString()
 		controller.modelAndView.model.consent.consentStatus   == ConsentForm.ConsentStatus.FULL_CONSENT.toString()
