@@ -151,7 +151,7 @@ body.wait *, body.wait
                     { "mData": "consentAccessGUID",
                         "fnRender" : function(oObj) {
                             if(oObj.aData.consentId)
-                                return "<a href="+grailsContextPath+"consentFormCompletion/show/" + oObj.aData.consentId + '>' +  oObj.aData.consentAccessGUID + '</a>'
+                                return "<a target='blank' href="+grailsContextPath+"consentFormCompletion/show/" + oObj.aData.consentId + '>' +  oObj.aData.consentAccessGUID + '</a>'
                             else
                                 return oObj.aData.consentAccessGUID
                         }
