@@ -303,7 +303,7 @@ body.wait *, body.wait
                                 </div>
                                 <div class="span4 ">
 
-                                    <span class="label label-primary">Consent Forms Status</span> <br>
+                                    <span  style="margin-bottom: 5px;" class="label label-primary">Consent Forms Status</span> <br>
                                     <span style="font-style: italic">Total : ${consentsStatus.total}</span> <br>
                                     <span style="font-style: italic">Normal : ${consentsStatus.normal}</span><br>
                                     <span style="font-style: italic">Saved In CDR : ${consentsStatus.persistedInCDR}</span><br>
