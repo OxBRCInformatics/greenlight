@@ -122,7 +122,7 @@ class CDRLogService {
 		}
 
 		if(countAllNotPersistedBeforeThis(record)>0){
-			return [sucess: false, log:"There are older CDRLog records for this consent which are not resolved yet, please resolve those first.",cdrLog: record]
+			return [success: false, log:"There are older CDRLog records for this consent which are not resolved yet, please resolve those first.",cdrLog: record]
 		}
 
 		def username = springSecurityService.currentUser?.username
