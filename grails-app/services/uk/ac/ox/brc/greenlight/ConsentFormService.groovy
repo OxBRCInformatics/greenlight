@@ -63,7 +63,11 @@ class ConsentFormService {
 			//this feature is just for IT_SUPPORT admins
 			if(formIdFrom && formIdFrom.size() > 10){
 				like('accessGUID', formIdFrom + "%")
-			}else if (formIdFrom && formIdTo && formIdFrom.size() > 0 && formIdTo.size() > 0) {
+			}else if(formIdFrom && formIdFrom.size() > 0 && formIdTo.size() == 0){
+				//just search for formId
+				like('formID', formIdFrom + "%")
+			}
+			else if (formIdFrom && formIdTo && formIdFrom.size() > 0 && formIdTo.size() > 0) {
 				if (formIdFrom.compareTo(formIdTo) <= 0)
 					between('formID', formIdFrom, formIdTo)
 			}
