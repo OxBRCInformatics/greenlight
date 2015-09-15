@@ -45,6 +45,7 @@ class ConsentForm {
         responses cascade: 'all-delete-orphan'
         comment type: "text"
 		savedInCDRStatus type: "text"
+		consentStatusLabels type:"text"
 		savedInCDR defaultValue: false
 		persistedInCDR defaultValue: false
     }
