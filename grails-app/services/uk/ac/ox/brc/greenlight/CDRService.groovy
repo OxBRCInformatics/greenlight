@@ -130,6 +130,7 @@ class CDRService {
 
 		//update consent status and mention that it is not in CDR
 		consentForm.persistedInCDR = false
+		consentForm.dateTimePersistedInCDR = null
 		consentForm.savedInCDR  = false
 		consentForm.savedInCDRStatus = null
 		//consentForm.save(flush: true, failOnError: true)

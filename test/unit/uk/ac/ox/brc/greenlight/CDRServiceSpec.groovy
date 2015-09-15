@@ -385,6 +385,7 @@ class CDRServiceSpec extends Specification {
 
 		connectToCDRAndRemoveConsentFrom_Called
 		consentForm.persistedInCDR == false
+		consentForm.dateTimePersistedInCDR == null
 		consentForm.savedInCDR  == false
 		consentForm.savedInCDRStatus   == null
 		consentForm.dateTimePassedToCDR == null
