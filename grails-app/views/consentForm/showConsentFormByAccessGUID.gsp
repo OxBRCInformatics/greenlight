@@ -76,6 +76,14 @@ code {
 <div role="navigation" class="navbar">
     <div class="navbar-inner">
         <a href="${createLink(uri: '/')}" class="brand">Oxford BioResource Consent Form</a>
+        <ul class="nav pull-right">
+            <sec:ifLoggedIn>
+                <li><g:link data-placement="bottom" data-original-title="Logout" rel="tooltip" controller="logout"> Logout </g:link></li>
+            </sec:ifLoggedIn>
+            <sec:ifNotLoggedIn>
+                <li><g:link data-placement="bottom" data-original-title="Login" rel="tooltip" controller="login"> Login </g:link></li>
+            </sec:ifNotLoggedIn>
+        </ul>
     </div>
 </div>
 
