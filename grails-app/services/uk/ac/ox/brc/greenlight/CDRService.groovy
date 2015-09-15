@@ -414,14 +414,21 @@ class CDRService {
 			return [success:false,errors: "cdr.access Config is not defined in config file"]
 		}
 
+		def result = [success:true,errors:null]
+
 		try {
-			new MirthRestClient(cdrAccessConfig.username, cdrAccessConfig.password)
+			MirthRestClient client = new MirthRestClient(cdrAccessConfig.username, cdrAccessConfig.password)
+			def patient = findPatient('TESTTES_','TESTTES_')
 		}
 		catch(Exception ex){
 			log.error(ex)
-			return [success:false,errors:ex.message]
+			result =  [success:false,errors:ex.message]
 		}
-		return [success:true,errors:null]
+		catch(ClientException ex){
+			log.error(ex)
+			result =  [success:false,errors:ex.message]
+		}
+		return result
 	}
 
 	def createCDRFacility(){
