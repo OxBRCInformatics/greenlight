@@ -22,6 +22,7 @@ class RequestLogService {
 					requestType: requestType).save(failOnError: true)
 		}catch (Exception ex){
 			//Ignore the exception as this is a RequestLog and it should not effect the main process
+			log.error(ex.message)
 		}
 	}
 }

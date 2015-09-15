@@ -53,7 +53,7 @@ class RequestLogServiceSpec extends Specification {
 		service.add(requestString,responseString,RequestLog.RequestType.REST_API)
 
 		then:
-		1 * service.springSecurityService.getCurrentUser() >> {return null}
+		0 * service.springSecurityService.getCurrentUser() >> {return null}
 		RequestLog.count() == 0
 	}
 }
