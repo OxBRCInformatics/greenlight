@@ -69,6 +69,9 @@ class BootStrap {
         AppRole.findByAuthority('ROLE_ADMIN') ?: new AppRole(authority: 'ROLE_ADMIN').save(failOnError: true)
         AppRole.findByAuthority('ROLE_USER') ?: new AppRole(authority: 'ROLE_USER').save(failOnError: true)
         AppRole.findByAuthority('ROLE_API') ?: new AppRole(authority: 'ROLE_API').save(failOnError: true)
+
+		//for just reading consents by AccessGUID
+		AppRole.findByAuthority('ROLE_ACCESSGUID') ?: new AppRole(authority: 'ROLE_ACCESSGUID').save(failOnError: true)
     }
 
     def createAdminUser(String username, String password, String email){
