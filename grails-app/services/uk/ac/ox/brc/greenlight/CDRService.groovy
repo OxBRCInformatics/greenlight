@@ -341,9 +341,9 @@ class CDRService {
 					//mimeType AttachmentModel.MimeType.PNG
 					//id attachmentService.getAttachmentFileName(consentForm.attachedFormImage)
 					// Any notes on the consent
-					notes consentDetailsMap.comment
+					notes "\n${consentDetailsMap?.consentStatusLabels}" //consentDetailsMap.comment
 					//note "\n${consentForm?.consentStatusLabels.join['\n']}"
-					note "\n${consentDetailsMap?.consentStatusLabels}"
+					//note "\n${consentDetailsMap?.consentStatusLabels}"
 					url consentURL
 				}
 			} as Consent
