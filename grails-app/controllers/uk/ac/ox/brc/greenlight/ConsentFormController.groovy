@@ -87,7 +87,8 @@ class ConsentFormController {
 		render(contentType: "text/csv;charset=utf-8", text: csvString.toString());
     }
 
-	@Secured(['permitAll'])
+
+	@Secured(['ROLE_ACCESSGUID','ROLE_ADMIN','ROLE_USER'])
 	def showConsentFormByAccessGUID() {
 		def accessGUID = params["accessGUID"]
 		def consent = consentFormService.searchByAccessGUID(accessGUID)
