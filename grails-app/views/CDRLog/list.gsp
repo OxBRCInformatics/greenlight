@@ -4,6 +4,12 @@
     <meta name="layout" content="main">
     <title>Consent Forms</title>
 
+<style>
+body.wait *, body.wait
+{
+    cursor: progress !important;
+}
+</style>
 
     <script type="text/javascript">
 
@@ -195,7 +201,6 @@
                         "value": $("#consentFormId").val()
                     })
 
-                    debugger
                     aoData.push({
                         "name": "consentAccessGUID",
                         "value": $("#consentAccessGUID").val()
@@ -214,6 +219,14 @@
         $(document).ready(function () {
             var grailsContextPath = "${ createLinkTo(dir: '/')}";
             loadTable(grailsContextPath)
+
+            //add cursor waiting after calling ajax
+            $(document).ajaxStart(function ()
+            {
+                $('body').addClass('wait');
+            }).ajaxComplete(function () {
+                $('body').removeClass('wait');
+            });
          });
 
         function reLoad(){
