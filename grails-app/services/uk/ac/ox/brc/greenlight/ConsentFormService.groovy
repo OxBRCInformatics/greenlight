@@ -51,6 +51,15 @@ class ConsentFormService {
 
 		def comment = params["comment"]?.trim();
 
+		//if they are all empty, just return nothing
+		if(nhsNumber.size() == 0        && hospitalNumber.size() == 0 &&
+		   consentTakerName.size() == 0 &&
+		   !consentDateFrom  && !consentDateTo &&
+		   formIdFrom.size() == 0 && formIdTo.size() == 0 &&
+				comment.size() == 0 ){
+			return  []
+		}
+
 		def criteria = ConsentForm.createCriteria()
 		def results = criteria.list {
 			if (consentDateFrom && consentDateTo) {
