@@ -232,8 +232,11 @@
     <div class="row">
         <div class="col-md-12 PageMainPanel">
             <div class="panel panel-primary">
+                <h3 class="panel-title">CDR Log records</h3>
+
+                <br>
+                <br>
                 <div class="panel-heading">
-                    <h3 class="panel-title">CDR Log records</h3>
                 </div>
                 <div class="panel-body">
                         <div class="panel-body">
@@ -253,6 +256,15 @@
                                                 name="hospitalNumber"  id="hospitalNumber"
                                                 value="${params.hospitalNumber}"
                                                 placeholder="Hospital number"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="persistedInCDR">Saved In CDR</label>
+                                        <g:select class="form-control" tabindex="5"
+                                                  name="persistedInCDR"  id="persistedInCDR"
+                                                  value="${params.savedInCDR}"
+                                                  from="${[' ','Yes', 'No']}"
+                                                  keys="${[' ','true', 'false']}">
+                                        </g:select>
                                     </div>
 
                                     <div class="form-group">
@@ -277,15 +289,11 @@
                                     </div>
                                 </div>
                                 <div class="span4 ">
-                                    <div class="form-group">
-                                        <label for="persistedInCDR">Saved In CDR</label>
-                                        <g:select class="form-control" tabindex="5"
-                                                     name="persistedInCDR"  id="persistedInCDR"
-                                                     value="${params.savedInCDR}"
-                                                     from="${[' ','Yes', 'No']}"
-                                                     keys="${[' ','true', 'false']}">
-                                                     </g:select>
-                                    </div>
+
+                                    <span class="label label-primary">Consent Forms Status</span> <br>
+                                    <span style="font-style: italic">Total : ${consentsStatus.total}</span> <br>
+                                    <span style="font-style: italic">Normal : ${consentsStatus.normal}</span><br>
+                                    <span style="font-style: italic">Saved In CDR : ${consentsStatus.persistedInCDR}</span><br>
                                 </div>
 
                             </div>
@@ -318,6 +326,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

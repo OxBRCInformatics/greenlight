@@ -42,7 +42,12 @@ class CDRLogController {
 
 
 	def list(){
+		def total  = ConsentForm.count()
+		def normal = ConsentForm.countByFormStatus(ConsentForm.FormStatus.NORMAL)
+		def persistedInCDR = ConsentForm.countByFormStatusAndPersistedInCDR(ConsentForm.FormStatus.NORMAL,true)
 
+		Map consentsStatus =  [total :total,normal:normal,persistedInCDR:persistedInCDR]
+		render view:"list", model:[consentsStatus:consentsStatus]
 	}
 
 	def fetchRecords(){
