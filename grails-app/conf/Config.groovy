@@ -198,9 +198,6 @@ grails{
 					'/consentForm/checkConsent':	['permitAll'],
 					'/consentForm/cuttingRoom': 	['permitAll'],
 
-					//Allow anonymous access to consentForm and attachment by accessGUID
-					"/consent/**": 	['permitAll'],
-
 					//just admin access
 					'/securityInfo/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
 					'/role': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
@@ -217,6 +214,8 @@ grails{
 					'/aclEntry/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
 					'/aclObjectIdentity': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
 					'/testConnection/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/CDRLog/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/CDRLog/*/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
 
 					// Need to be logged in for anything else!
                     '/**':         			["hasAnyRole('ROLE_USER', 'ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY']
