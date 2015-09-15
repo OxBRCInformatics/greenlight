@@ -41,11 +41,15 @@ class CDRLog {
 	String attemptsLog
 	int attemptsCount
 
+	boolean sentEmail
+	Date dateTimeSentEmail
+
 	static mapping = {
 		comment type:"text"
 		resultDetail type: "text"
 		consentStatusLabels type:"text"
 		attemptsLog type:"text"
+		sentEmail defaultValue: false
 	}
 
 	static constraints = {
@@ -60,6 +64,8 @@ class CDRLog {
 		nhsNumber nullable:true
 		hospitalNumber nullable:true
 
+		sentEmail nullable:true
+		dateTimeSentEmail nullable: true
 
 		attemptsLog nullable:true
 		attemptsCount nullable:true
