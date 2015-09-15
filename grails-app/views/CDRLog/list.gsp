@@ -165,7 +165,7 @@
                     { "mData": "attemptsLog",
                         "fnRender" : function(oObj) {
                             if(oObj.aData.attemptsLog!=null && oObj.aData.attemptsLog!=undefined) {
-                                return  "<div class='more'>&bull; " +  oObj.aData.attemptsLog.replace(/\n{2}/g, '<br><br>&bull; ') + "</div>"
+                                return  "<div class='more'>&bull; " +  oObj.aData.attemptsLog.replace(/\n{2}/g, '<br><br> &bull; ') + "</div>"
                             }else if(oObj.aData.attemptsLog==null) {
                                 return  ""
                             }else{
