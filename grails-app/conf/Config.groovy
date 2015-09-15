@@ -115,18 +115,25 @@ log4j = {
 
 // Audit logging - grab user ID as well as changes
 auditLog {
-    actorClosure = { request, session ->
-        if (request.applicationContext.springSecurityService.principal instanceof java.lang.String){
-            return request.applicationContext.springSecurityService.principal
-        }
-        def username = request.applicationContext.springSecurityService.principal?.username
-        if (SpringSecurityUtils.isSwitched()){
-            username = SpringSecurityUtils.switchedUserOriginalUsername+" AS "+username
-        }
-        return username
-    }
-}
+	actorClosure = { request, session ->
+		if (request.applicationContext.springSecurityService.principal instanceof java.lang.String) {
+			return request.applicationContext.springSecurityService.principal
+		}
+		def username = request.applicationContext.springSecurityService.principal?.username
+		if (SpringSecurityUtils.isSwitched()) {
+			username = SpringSecurityUtils.switchedUserOriginalUsername + " AS " + username
+		}
+		return username
+	}
 
+	cacheDisabled = true
+	stampCreatedBy = 'createdBy' // fieldname
+	stampLastUpdatedBy = 'lastUpdatedBy' // fieldname
+	//verbose = true // verbosely log all changed values to db
+	//nonVerboseDelete = true
+	logIds = true  // log db-ids of associated objects.}
+	largeValueColumnTypes = false // NOT use large column db types for oldValue/newValue.
+}
 
 grails{
     plugin{

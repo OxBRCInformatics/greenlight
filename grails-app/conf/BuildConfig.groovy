@@ -123,7 +123,7 @@ grails.project.dependency.resolution = {
 
 
 		// Audit logging
-        //compile ":audit-logging:0.5.5.3"
+		compile ":audit-logging:1.0.5"
 
         test ":geb:$gebVersion"
     }

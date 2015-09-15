@@ -5,6 +5,8 @@ import greenlight.Study
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import spock.lang.Specification
+import uk.ac.ox.brc.greenlight.Audit.RequestLog
+import uk.ac.ox.brc.greenlight.Audit.RequestLogService
 
 /**
  * Created by soheil on 01/04/2014.
@@ -16,6 +18,8 @@ class ConsentFormControllerSpec extends Specification{
     {
         controller.consentFormService = Mock(ConsentFormService)
 		controller.attachmentService = Mock(AttachmentService)
+
+		controller.requestLogService = Mock(RequestLogService)
 
 
         controller.patientService = Mock(PatientService)
@@ -96,6 +100,7 @@ class ConsentFormControllerSpec extends Specification{
 		 controller.modelAndView.model.consents[0].form.version == "12"
 		 controller.modelAndView.model.consents[0].form.namePrefix == "fm1"
 	 }
+
 
 	def "showConsentFormByAccessGUID returns NOT FOUND if can't find consentForm based on accessGUID"(){
 
@@ -233,22 +238,22 @@ class ConsentFormControllerSpec extends Specification{
 		!controller.modelAndView.model.consent
 	}
 
-	private def createConsent(){
-		def attachment= new Attachment(fileUrl: '1.jpg', dateOfUpload: new DateTime(2015,8,19,0,0),attachmentType: Attachment.AttachmentType.IMAGE, content: [])
+	private def createConsent() {
+		def attachment = new Attachment(fileUrl: '1.jpg', dateOfUpload: new DateTime(2015, 8, 19, 0, 0), attachmentType: Attachment.AttachmentType.IMAGE, content: [])
 		attachment.id = 1
 
-		def question1 =  new Question(name: 'I read1...',optional: false,defaultResponse: Response.ResponseValue.YES,validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO])
-		def question2 =  new Question(name: 'I read2...',optional: true,defaultResponse: Response.ResponseValue.YES,validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO])
+		def question1 = new Question(name: 'I read1...', optional: false, defaultResponse: Response.ResponseValue.YES, validResponses: [Response.ResponseValue.YES, Response.ResponseValue.NO])
+		def question2 = new Question(name: 'I read2...', optional: true, defaultResponse: Response.ResponseValue.YES, validResponses: [Response.ResponseValue.YES, Response.ResponseValue.NO])
 
 		def template = new ConsentFormTemplate(
 				name: "ORB1",
 				templateVersion: "1.1",
-				namePrefix: "GNR",questions: [question1,question2])
+				namePrefix: "GNR", questions: [question1, question2])
 
-		def patient= new Patient(
+		def patient = new Patient(
 				givenName: "MrA",
 				familyName: "MrB",
-				dateOfBirth: new org.joda.time.DateTime(1980,12,25,0,0),
+				dateOfBirth: new org.joda.time.DateTime(1980, 12, 25, 0, 0),
 				hospitalNumber: "1002",
 				nhsNumber: "1234567890",
 				consents: []
@@ -258,17 +263,42 @@ class ConsentFormControllerSpec extends Specification{
 				attachedFormImage: attachment,
 				template: template,
 				patient: patient,
-				consentDate: new org.joda.time.DateTime(2015,1,25,0,0),
+				consentDate: new org.joda.time.DateTime(2015, 1, 25, 0, 0),
 				consentTakerName: "ABC",
 				formID: "GEN12345",
 				formStatus: ConsentForm.FormStatus.NORMAL,
 				consentStatus: ConsentForm.ConsentStatus.FULL_CONSENT,
 				comment: "TestComment",
 				responses: [
-						new Response(answer: Response.ResponseValue.YES,question: question1),
-						new Response(answer: Response.ResponseValue.NO,question: question2)
+						new Response(answer: Response.ResponseValue.YES, question: question1),
+						new Response(answer: Response.ResponseValue.NO, question: question2)
 				]
 		)
 		consent
+	}
+	def "checkConsent will call RequestLogService to save details of the request"()
+	{
+		given:
+		def formTemplates = [
+				new ConsentFormTemplate(name: "FORM1", namePrefix: "fm1", templateVersion: "12", questions: []),
+				new ConsentFormTemplate(name: "FORM2", namePrefix: "fm2", templateVersion: "12", questions: [])
+		]
+
+		def now = new Date()
+		def completedForms = [
+				new ConsentForm(template: formTemplates[0], consentDate: now-14), // 2 weeks ago
+				new ConsentForm(template: formTemplates[1], consentDate: now-1 ), // 1 day ago
+		]
+
+		def lookupId = "nhsNumber"
+
+		when:"available nhsNumber is provided"
+		controller.params.searchInput = lookupId
+		controller.checkConsent()
+
+		then:"patient consent forms are returned"
+		1 * controller.consentFormService.getLatestConsentForms(_) >> {return completedForms}
+		1 * controller.requestLogService.add("nhsNumber",_,RequestLog.RequestType.CutUpRoom) >> { }
+		controller.modelAndView.model.consents.size() == 2
 	}
 }

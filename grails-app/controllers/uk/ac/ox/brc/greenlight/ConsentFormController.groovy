@@ -1,6 +1,7 @@
 package uk.ac.ox.brc.greenlight
 
 import grails.plugin.springsecurity.annotation.Secured
+import uk.ac.ox.brc.greenlight.Audit.RequestLog
 
 class ConsentFormController {
 
@@ -9,6 +10,7 @@ class ConsentFormController {
 	def patientService
 	def studyService
 	def attachmentService
+	def requestLogService
 
 
     def find()
@@ -74,6 +76,7 @@ class ConsentFormController {
 			}
 		}
 		model.studies =  studyService.getStudy()?.description
+		requestLogService.add(lookupId,model,RequestLog.RequestType.CutUpRoom)
 		render view:"cuttingRoom", model: model
 	}
 

@@ -1,8 +1,10 @@
 package uk.ac.ox.brc.greenlight
 
 import groovy.transform.EqualsAndHashCode
+import org.codehaus.groovy.grails.plugins.orm.auditable.Stamp
 
 @EqualsAndHashCode
+@Stamp
 class ConsentForm {
 
     Attachment attachedFormImage
@@ -29,7 +31,7 @@ class ConsentForm {
 
 	String consentStatusLabels
 
-    //static auditable = true
+	static auditable =  [ignore:['version','lastUpdated','lastUpdatedBy','createdBy','dateCreated']]
 
     static belongsTo = [
             patient: Patient
