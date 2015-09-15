@@ -6,6 +6,7 @@ class TestConnectionController {
 
 	def demographicService
 	def CDRService
+	def grailsLinkGenerator
 
 	@Secured("ROLE_ADMIN")
 	def index() {
@@ -16,6 +17,7 @@ class TestConnectionController {
 	@Secured("ROLE_ADMIN")
 	def cdr() {
 		def result = CDRService.testConnection()
+		result['serverLink'] = "${grailsLinkGenerator.serverBaseURL}"
 		render model:[result:result],view:"cdr"
 	}
 }

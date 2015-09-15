@@ -17,12 +17,16 @@
                     <div class="alert alert-error alert-block">
                         <h4>Error!</h4>
                         <p>"${result.errors}"</p>
+                        <br>
+                        <div>Greenlight App URL: ${result?.serverLink}</div>
                     </div>
                 </g:if>
                 <g:else>
                     <div class="alert alert-success alert-block" style="text-align: left" >
                         <h4>Success</h4>
                         <p>Successfully connected to Mirth CDR</p>
+                        <br>
+                        <div>Greenlight App URL: ${result?.serverLink}</div>
                     </div>
                 </g:else>
 
