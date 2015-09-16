@@ -542,6 +542,23 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		"1234567890"	|	 "simple unEscapedComment"	|	1
 	}
 
+
+	def "search will also search on accessGUID if it is passed to formIdFrom" () {
+
+		given:"consentForm has accessGUID"
+		def aConsent = ConsentForm.list()[0]
+		aConsent.accessGUID = "c3a25672-cd1f-4ad5-886c-6916572a8ae7"
+		aConsent.save(failOnError: true)
+
+		when: "search is called to search for a formId with a value longer than 10 charachter"
+		def param = [:]
+		param.formIdFrom = "c3a25672-cd1f-4ad5-886c-6916572a8ae7"
+		def result  = consentFormService.search(param)
+
+		then:"it will search for accessGUID"
+		result.size() == 1
+	}
+
 	@Unroll
 	def "searchByAccessGUID returns consentForm based on accessGUID for #accessGUID"(){
 
