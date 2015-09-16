@@ -393,6 +393,10 @@ class CDRService {
 			//ex.printStackTrace()
 			return [success: false, log: ex.message,patient:null, execption:ex]
 		}
+		catch (Exception ex) {
+			//ex.printStackTrace()
+			return [success: false, log: ex.message,patient:null, execption:ex]
+		}
 
 		def patient = [firstName: result.name.first,
 					   lastName: result.name.last,
