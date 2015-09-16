@@ -291,7 +291,7 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		where:
 		nhsNmber		|	count
 		"1234567890"	|	  1
-		""				|	  2
+		""				|	  0
 	}
 
 
@@ -537,8 +537,8 @@ class ConsentFormServiceISpec extends IntegrationSpec {
 		""				|	  "31/07/2015"				|	1
 		""				|	  "with characters ' \""	|	2
 		""				|		"happy!"				|   0
-		""				|		""						|   2
-		""				|		null					|   2
+		""				|		""						|   0
+		""				|		null					|   0
 		"1234567890"	|	 "simple unEscapedComment"	|	1
 	}
 

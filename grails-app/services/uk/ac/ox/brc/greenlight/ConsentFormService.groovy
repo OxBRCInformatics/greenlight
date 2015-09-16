@@ -52,12 +52,14 @@ class ConsentFormService {
 		def comment = params["comment"]?.trim();
 
 		//if they are all empty, just return nothing
-		if(nhsNumber.size() == 0        && hospitalNumber.size() == 0 &&
-		   consentTakerName.size() == 0 &&
-		   !consentDateFrom  && !consentDateTo &&
-		   formIdFrom.size() == 0 && formIdTo.size() == 0 &&
-				comment.size() == 0 ){
-			return  []
+		if( (!nhsNumber        || nhsNumber.size()       == 0) &&
+			(!hospitalNumber   || hospitalNumber.size()  == 0) &&
+			(!consentTakerName || consentTakerName.size()== 0) &&
+		     !consentDateFrom  && !consentDateTo &&
+			(!formIdFrom || formIdFrom?.size() == 0) &&
+			(!formIdTo   || formIdTo.size() == 0) &&
+			(!comment    || comment?.size() == 0) ){
+				return []
 		}
 
 		def criteria = ConsentForm.createCriteria()
@@ -72,11 +74,14 @@ class ConsentFormService {
 			//this feature is just for IT_SUPPORT admins
 			if(formIdFrom && formIdFrom.size() > 10){
 				like('accessGUID', formIdFrom + "%")
-			}else if(formIdFrom && formIdFrom.size() > 0 && formIdTo.size() == 0){
+			}else if(formIdFrom && formIdFrom.size() > 0 && formIdTo?.size() == 0){
 				//just search for formId
 				like('formID', formIdFrom + "%")
+			}else if(formIdTo && formIdTo?.size() > 0 && formIdFrom?.size() == 0){
+				//just search for formId
+				like('formID', formIdTo + "%")
 			}
-			else if (formIdFrom && formIdTo && formIdFrom.size() > 0 && formIdTo.size() > 0) {
+			else if (formIdFrom && formIdTo && formIdFrom?.size() > 0 && formIdTo?.size() > 0) {
 				if (formIdFrom.compareTo(formIdTo) <= 0)
 					between('formID', formIdFrom, formIdTo)
 			}
