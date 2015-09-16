@@ -408,29 +408,6 @@ class CDRService {
 		return new MirthRestClient(cdrAccessConfig.username, cdrAccessConfig.password)
 	}
 
-	def testConnection(){
-		def cdrAccessConfig  = grailsApplication.config?.cdr?.access
-		if(!cdrAccessConfig){
-			return [success:false,errors: "cdr.access Config is not defined in config file"]
-		}
-
-		def result = [success:true,errors:null]
-
-		try {
-			MirthRestClient client = new MirthRestClient(cdrAccessConfig.username, cdrAccessConfig.password)
-			def patient = findPatient('TESTTES_','TESTTES_')
-		}
-		catch(Exception ex){
-			log.error(ex)
-			result =  [success:false,errors:ex.message]
-		}
-		catch(ClientException ex){
-			log.error(ex)
-			result =  [success:false,errors:ex.message]
-		}
-		return result
-	}
-
 	def createCDRFacility(){
 		def cdrFacilityConfig  = grailsApplication.config?.cdr?.facility
 		if(!cdrFacilityConfig){
