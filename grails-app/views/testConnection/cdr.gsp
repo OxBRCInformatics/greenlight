@@ -15,13 +15,13 @@
 
     <script type="text/javascript">
         var grailsContextPath = "${ createLinkTo(dir: '/')}";
-        function findPatient(){
+        function findPatientInCDR(){
 
             $("span#firstName").text("")
             $("span#lastName").text("")
             $("span#dob").text("")
             $("span#status").text("")
-            var findPatientURL = grailsContextPath + "testConnection/findPatient.json"
+            var findPatientURL = grailsContextPath + "testConnection/findPatientInCDR.json"
                 $.ajax({
                     type: 'POST',
                     data:{
@@ -109,7 +109,7 @@
                                 name="hospitalNumber"  id="hospitalNumber"
                                 placeholder="Hospital Number"/>
                     </div>
-                    <button class="btn btn-primary" onclick="findPatient();return false;">Search</button>
+                    <button class="btn btn-primary" onclick="findPatientInCDR();return false;">Search</button>
                 </form>
             </div>
             <div class="span5">

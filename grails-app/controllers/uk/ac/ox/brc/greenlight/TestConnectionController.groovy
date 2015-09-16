@@ -22,7 +22,7 @@ class TestConnectionController {
 	}
 
 	@Secured("ROLE_ADMIN")
-	def findPatient(){
+	def findPatientInCDR(){
 		def nhsNumber = params["nhsNumber"]
 		def hospitalNumber = params["hospitalNumber"]
 		def result = CDRService.findPatient(nhsNumber,hospitalNumber)
