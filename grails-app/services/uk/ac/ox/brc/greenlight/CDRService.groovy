@@ -166,6 +166,10 @@ class CDRService {
 			patientNHSNumber = ""
 		}
 
+		def passToCDRConfig = grailsApplication.config?.cdr?.passToCDR
+		if(passToCDRConfig == "false"){
+			return [success: false, log: "Passing consent into CDR is disabled in config file!", execption:null]
+		}
 		def cdrKnownFacilityConfig = grailsApplication.config?.cdr?.knownFacility
 
 		if (!cdrKnownFacilityConfig) {
@@ -258,6 +262,10 @@ class CDRService {
 			patientNHSNumber = ""
 		}
 
+		def passToCDRConfig = grailsApplication.config?.cdr?.passToCDR
+		if(passToCDRConfig == "false"){
+			return [success: false, log: "Passing consent into CDR is disabled in config file!", execption:null]
+		}
 		def cdrKnownFacilityConfig = grailsApplication.config?.cdr?.knownFacility
 
 		if (!cdrKnownFacilityConfig) {
