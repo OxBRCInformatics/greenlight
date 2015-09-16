@@ -233,15 +233,15 @@ class CDRService {
 		} catch (ClientException ex) {
 			def logMessage = ex?.message
 			log.error(logMessage)
-			if(logMessage?.length() > 300){
-				logMessage = logMessage.substring(0.300) + "..."
+			if(logMessage?.length() > 400){
+				logMessage = logMessage.substring(0,400) + "..."
 			}
 			return [success: false, log: logMessage, execption:ex]
 		}catch (Exception ex) {
 			def logMessage = ex?.message
 			log.error(logMessage)
-			if(logMessage?.length() > 300){
-				logMessage = logMessage.substring(0.300) + "..."
+			if(logMessage?.length() > 400){
+				logMessage = logMessage.substring(0,400) + "..."
 			}
 			return [success: false, log: logMessage, execption:ex]
 		}
@@ -350,15 +350,15 @@ class CDRService {
 		}catch (ClientException ex) {
 			def logMessage = ex?.message
 			log.error(logMessage)
-			if(logMessage?.length() > 300){
-				logMessage = logMessage.substring(0.300) + "..."
+			if(logMessage?.length() > 400){
+				logMessage = logMessage.substring(0,400) + "..."
 			}
 			return [success: false, log: logMessage, execption:ex]
 		}catch (Exception ex) {
 			def logMessage = ex?.message
 			log.error(logMessage)
-			if(logMessage?.length() > 300){
-				logMessage = logMessage.substring(0.300) + "..."
+			if(logMessage?.length() > 400){
+				logMessage = logMessage.substring(0,400) + "..."
 			}
 			return [success: false, log: logMessage, execption:ex]
 		}
