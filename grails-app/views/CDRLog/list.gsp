@@ -136,7 +136,7 @@ body.wait *, body.wait
                             var buttons = ""
                             if(oObj.aData.persistedInCDR == "No"){
                                 //reTry
-                                buttons = buttons + "<span class='icon-repeat' title='reTry' style='cursor: pointer;' onclick='reSendCDRLog("+reSendParam +")'></span>";
+                                buttons = buttons + "<span class='icon-repeat' title='Retry' style='cursor: pointer;' onclick='reSendCDRLog("+reSendParam +")'></span>";
                                 //markAsPersisted
                                 buttons = buttons + "<span class='icon-ok' title='Mark as Saved' style='cursor: pointer;' onclick='markAsPersisted("+reSendParam +")'></span>";
                             }else{
