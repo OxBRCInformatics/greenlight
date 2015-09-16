@@ -73,6 +73,9 @@ class BootStrap {
         AppRole.findByAuthority('ROLE_ADMIN') ?: new AppRole(authority: 'ROLE_ADMIN').save(failOnError: true)
         AppRole.findByAuthority('ROLE_USER') ?: new AppRole(authority: 'ROLE_USER').save(failOnError: true)
         AppRole.findByAuthority('ROLE_API') ?: new AppRole(authority: 'ROLE_API').save(failOnError: true)
+
+		//for just reading consents by AccessGUID
+		AppRole.findByAuthority('ROLE_ACCESSGUID') ?: new AppRole(authority: 'ROLE_ACCESSGUID').save(failOnError: true)
     }
 
     def createAdminUser(String username, String password, String email){
@@ -352,37 +355,4 @@ class BootStrap {
     }
 
 
-	private def addConsentFormForDevelopment(){
-		def attachment = new Attachment(fileName: '1a.jpg', dateOfUpload: new Date([year: 2014, month: 2, date: 4]), attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flash: true)
-
-		def template = new ConsentFormTemplate(
-				id: 1,
-				name: "ORB1",
-				templateVersion: "1.1",
-				namePrefix: "ABC",
-		).addToQuestions(new Question(name: 'I read1...')
-		).save()
-
-
-		def consent = new ConsentForm(
-				accessGUID: UUID.randomUUID().toString(),
-				attachedFormImage: attachment,
-				template: template,
-				consentDate: new Date([year: 2014, month: 01, date: 01]),
-				consentTakerName: "Edmin",
-				formID: "ABC12345",
-				formStatus: ConsentForm.FormStatus.NORMAL,
-				consentStatus: ConsentForm.ConsentStatus.CONSENT_WITH_LABELS.CONSENT_WITH_LABELS
-		).save();
-
-		new Patient(
-				givenName: "Patient1",
-				familyName: "Clapton",
-				dateOfBirth: new Date("30/03/1945"),
-				hospitalNumber: "1002",
-				nhsNumber: "1234567892",
-				consents: []
-		).addToConsents(consent).save()
-
-	}
 }

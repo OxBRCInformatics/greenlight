@@ -77,8 +77,8 @@
         <a href="${createLink(uri: '/')}" class="brand">Oxford BioResource Consent Form</a>
 
         <ul class="nav">
+          <sec:ifAnyGranted roles="ROLE_ADMIN,ROLE_USER">
             <li class="active"><a href="${createLink(uri: '/')}">Home</a></li>
-
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Consent Forms <b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -93,57 +93,66 @@
                 <ul class="dropdown-menu">
                     <li><g:link  controller="consentForm" action="reportPatientConsentCount">Participants<span style="font-weight: bold;font-size: 12px;"> (consented to more than one type of Consent Form)</span></g:link></li>
                     <li><g:link  controller="report" action="databaseStatusReports">Database Status</g:link></li>
+                    <sec:ifAnyGranted roles="ROLE_ADMIN">
+                        <li><g:link  controller="CDRLog" action="list">CDR Logs</g:link></li>
+                    </sec:ifAnyGranted>
                 </ul>
             </li>
             <li><g:link  controller="consentForm" action="cuttingRoom">Cut-Up Room</g:link></li>
             <li><g:link  controller="study" action="index">Cut-Up room Text</g:link></li>
+        </sec:ifAnyGranted>
+        <sec:ifAnyGranted roles="ROLE_ADMIN">
+            <!-- Admin menu -->
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#"> Administration <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a><b>Roles</b></a></li>
+                    <li><g:link controller="role" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
+                    <li><g:link controller="role" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
+                    <li><a><b>Users</b></a></li>
+                    <li><g:link controller="user" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
+                    <li><g:link controller="user" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
+                    <li class="divider"></li>
+                    <g:if test='${SpringSecurityUtils.securityConfig.securityConfigType == SecurityConfigType.Requestmap}'>
+                        <li><a><b><g:message code="spring.security.ui.menu.requestmaps"/></b></a></li>
+                        <li><g:link controller="requestmap" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
+                        <li><g:link controller="requestmap" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
+                    </g:if>
+                    <g:if test='${SpringSecurityUtils.securityConfig.rememberMe.persistent}'>
+                        <li><a><b><g:message code="spring.security.ui.menu.persistentLogins"/></b></a></li>
+                        <li><g:link controller="persistentLogin" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
+                    </g:if>
+                    <li><a><b><g:message code="spring.security.ui.menu.registrationCode"/></b></a></li>
+                    <li><g:link controller="registrationCode" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
 
-            <sec:ifAnyGranted roles="ROLE_ADMIN">
-                <!-- Admin menu -->
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#"> Administration <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a><b>Roles</b></a></li>
-                        <li><g:link controller="role" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
-                        <li><g:link controller="role" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
-                        <li><a><b>Users</b></a></li>
-                        <li><g:link controller="user" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
-                        <li><g:link controller="user" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
-                        <li class="divider"></li>
-                        <g:if test='${SpringSecurityUtils.securityConfig.securityConfigType == SecurityConfigType.Requestmap}'>
-                            <li><a><b><g:message code="spring.security.ui.menu.requestmaps"/></b></a></li>
-                            <li><g:link controller="requestmap" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
-                            <li><g:link controller="requestmap" action='create'><g:message code="spring.security.ui.create"/></g:link></li>
-                        </g:if>
-                        <g:if test='${SpringSecurityUtils.securityConfig.rememberMe.persistent}'>
-                            <li><a><b><g:message code="spring.security.ui.menu.persistentLogins"/></b></a></li>
-                            <li><g:link controller="persistentLogin" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
-                        </g:if>
-                        <li><a><b><g:message code="spring.security.ui.menu.registrationCode"/></b></a></li>
-                        <li><g:link controller="registrationCode" action='search'><g:message code="spring.security.ui.search"/></g:link></li>
+                    <li class="divider"></li>
+                    <li><a><b>EPDS</b></a></li>
+                    <li><g:link controller="testConnection" action='index'>Connection Test</g:link></li>
 
-                        <li class="divider"></li>
-                        <li><a><b>EPDS</b></a></li>
-                        <li><g:link controller="testConnection" action='index'>Connection Test</g:link></li>
 
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <g:message code="spring.security.ui.menu.appinfo"/> <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><g:link action='config' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.config'/></g:link></li>
-                        <li><g:link action='mappings' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.mappings'/></g:link></li>
-                        <li><g:link action='currentAuth' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.auth'/></g:link></li>
-                        <li><g:link action='usercache' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.usercache'/></g:link></li>
-                        <li><g:link action='filterChain' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.filters'/></g:link></li>
-                        <li><g:link action='logoutHandler' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.logout'/></g:link></li>
-                        <li><g:link action='voters' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.voters'/></g:link></li>
-                        <li><g:link action='providers' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.providers'/></g:link></li>
-                    </ul>
-                </li>
-            </sec:ifAnyGranted>
+                    <li class="divider"></li>
+                    <li><a><b>Mirth CDR</b></a></li>
+                    <li><g:link controller="testConnection" action='cdr'>Connection Test</g:link></li>
+
+
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <g:message code="spring.security.ui.menu.appinfo"/> <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><g:link action='config' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.config'/></g:link></li>
+                    <li><g:link action='mappings' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.mappings'/></g:link></li>
+                    <li><g:link action='currentAuth' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.auth'/></g:link></li>
+                    <li><g:link action='usercache' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.usercache'/></g:link></li>
+                    <li><g:link action='filterChain' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.filters'/></g:link></li>
+                    <li><g:link action='logoutHandler' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.logout'/></g:link></li>
+                    <li><g:link action='voters' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.voters'/></g:link></li>
+                    <li><g:link action='providers' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.providers'/></g:link></li>
+                </ul>
+            </li>
+        </sec:ifAnyGranted>
         </ul>
-        <ul class="nav">
+        <ul class="nav pull-right">
             <sec:ifLoggedIn>
                 <li><g:link data-placement="bottom" data-original-title="Logout" rel="tooltip" controller="logout"> Logout </g:link></li>
             </sec:ifLoggedIn>

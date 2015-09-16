@@ -167,4 +167,31 @@ class ConsentEvaluationServiceSpec extends Specification {
 		NO_CONSENT       | ["A", "B"]            | [BLANK, BLANK, BLANK, BLANK, BLANK]   | [0,3,4] | [null, null, null, "A", "B"]
 
 	}
+
+	def "getConsentLabelsAsString returns consentStatusLabels as new line separated strings"(){
+
+		given:"A consent already exists"
+		ConsentForm consentForm = new ConsentForm()
+
+		when:"getConsentLabelsAsString is called"
+		//mock getConsentLabels method
+		service.metaClass.getConsentLabels = { ConsentForm cntForm ->
+			return ["Label2","Label3","Label1"]
+		}
+		def result = service.getConsentLabelsAsString(consentForm)
+
+		then:"it will create a string of result separated by new line"
+		result == "Label1\nLabel2\nLabel3"
+
+
+		when:"getConsentLabelsAsString is called for empty labels"
+		//mock getConsentLabels method
+		service.metaClass.getConsentLabels = { ConsentForm cntForm ->
+			return []
+		}
+		result = service.getConsentLabelsAsString(consentForm)
+
+		then:"it will return null"
+		result == ""
+	}
 }

@@ -74,4 +74,14 @@ class ConsentEvaluationService {
 		}
 		return labels
 	}
+
+	/**
+	 * Get the consentLabel as a string in which labels have separated by \n
+	 * @param consentForm
+	 * @return
+	 */
+	def getConsentLabelsAsString(ConsentForm consentForm){
+		def labels =  getConsentLabels(consentForm).sort()
+		return labels?.join("\n")
+	}
 }

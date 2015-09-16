@@ -16,6 +16,11 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 	def databaseCleanupService
 	def dataSource
 
+	def setup(){
+		databaseCleanupService.consentEvaluationService = Mock(ConsentEvaluationService)
+		databaseCleanupService.CDRService = Mock(CDRService)
+	}
+
 	def AddOrphanResponses() {
 
 		def attachment= new Attachment(id: 1, fileName: 'a.jpg', dateOfUpload: new Date(),
@@ -50,6 +55,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		).save(flush: true)
 
 		def consent = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment,
 				template: template,
 				patient: patient,
@@ -134,6 +140,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 
 		def consent1 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment1,
 				template: template,
 				patient: patient1,
@@ -150,6 +157,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		consent1.save(flush: true , failOnError:true )
 
 		def consent2 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment1,
 				template: template,
 				patient: patient1,
@@ -167,6 +175,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 
 		def consent3 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template,
 				patient: patient2,
@@ -181,6 +190,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		consent3.save(flush: true , failOnError:true )
 
 		def consent4 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template,
 				patient: patient2,
@@ -196,6 +206,84 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 	}
 
+	def AddConsentWithoutAccessGUID(){
+
+		def template=new ConsentFormTemplate(
+				name: "ORB1",
+				templateVersion: "1.1",
+				namePrefix: "GNR")
+				.save(flush: true , failOnError:true )
+
+		//add 2 consentForms without using GORM as it will generate accessGUID for ConsentForm objects in domain beforeInsert method
+		def sql = new Sql(dataSource)
+
+		sql.executeUpdate(
+				'insert into CONSENT_FORM (accessGUID,version,formid,form_status,template_id,SAVED_INCDR,PERSISTED_INCDR) values(?, ?, ?, ?, ?,?,?)',
+				["1f91bb5c10d922ce6923b657324a6a4f",0, 'GEL12356',"NORMAL",template.id,false,false])
+		sql.executeUpdate(
+				'insert into CONSENT_FORM (accessGUID,version,formid,form_status,template_id,SAVED_INCDR,PERSISTED_INCDR) values(?, ?, ?, ?, ?,?,?)',
+				["1f91bb5c10d91125524a6a4f",0, 'GEL12356',"NORMAL",template.id,false,false])
+
+	}
+
+
+	def AddConsentWitNullConsentStatusLabels(){
+
+		def attachment1 = new Attachment(fileName: 'a.jpg', dateOfUpload: new Date(),attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush: true , failOnError:true )
+		def attachment2 = new Attachment(fileName: 'a.jpg', dateOfUpload: new Date(),attachmentType: Attachment.AttachmentType.IMAGE, content: []).save(flush: true , failOnError:true )
+
+		def questions = [
+				new Question(name: 'I read1...'),
+				new Question(name: 'I read2...'),
+				new Question(name: 'I read3...'),
+				new Question(name: 'I read4...')
+		];
+
+		def template = new ConsentFormTemplate(namePrefix: "GNR",name:"GEL TEST",templateVersion:"1.1")
+				.addToQuestions(questions[0])
+				.addToQuestions(questions[1])
+				.addToQuestions(questions[2])
+				.addToQuestions(questions[3])
+				.save(flush: true , failOnError:true )
+
+		def patient1 = new Patient(givenName: "A",familyName: "B",consents: []).save(flush: true , failOnError:true)
+		def patient2 = new Patient(givenName: "C",familyName: "D",consents: []).save(flush: true , failOnError:true)
+
+		def consent1 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
+				attachedFormImage: attachment1,
+				template: template,
+				patient: patient1,
+				consentDate: new Date([year:2014,month:01,date:01]),
+				consentTakerName: "Edward",
+				formID: "GEN12345",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				comment: "a simple unEscapedComment, with characters \' \" \n "
+		).save(flush: true , failOnError:true )
+		consent1.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[0]))
+		consent1.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[1]))
+		consent1.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[2]))
+		consent1.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[3]))
+		consent1.save(flush: true , failOnError:true )
+
+		def consent2 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
+				attachedFormImage: attachment2,
+				template: template,
+				patient: patient2,
+				consentDate: new Date([year:2014,month:01,date:01]),
+				consentTakerName: "Edward",
+				formID: "GEN99999",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				comment: "a simple unEscapedComment, with characters \' \" \n "
+		).save(flush: true , failOnError:true )
+		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[0]))
+		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[1]))
+		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[2]))
+		consent2.addToResponses(new Response(answer: Response.ResponseValue.YES,question: questions[3]))
+		consent2.save(flush: true , failOnError:true )
+
+	}
 
 
 
@@ -313,6 +401,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 
 		def consent1 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment1,
 				template: template,
 				consentDate: new Date([year:2014,month:01,date:01]),
@@ -328,6 +417,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 
 		def consent2 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template,
 				consentDate: new Date([year:2014,month:01,date:01]),
@@ -347,7 +437,6 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 		given:"all consent objects have null/NONE_CONSENT in consentStatus attribute"
 
-		databaseCleanupService.consentEvaluationService = Mock(ConsentEvaluationService)
 
 		AddConsentFormWithoutConsentStatus()
 		Attachment.count()	 == 2
@@ -401,6 +490,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				.addToQuestions(questions1[3])
 				.save(flush: true , failOnError:true )
 		def consent11 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment1,
 				template: template1,
 				consentDate: new Date([year:2014,month:01,date:01]),
@@ -415,6 +505,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		consent11.save(flush: true , failOnError:true )
 
 		def consent12 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment1,
 				template: template1,
 				consentDate: new Date([year:2014,month:01,date:01]),
@@ -448,6 +539,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 
 		def consent2 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year:2014,month:01,date:01]),
@@ -528,6 +620,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		def con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -551,6 +644,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -572,6 +666,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				.save(flush: true , failOnError:true )
 
 		 new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: GELTemp1,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -580,6 +675,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				formStatus: ConsentForm.FormStatus.NORMAL,
 				patient: patientTest).save(flush: true, failOnError: true)
 		new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: GELTemp2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -601,6 +697,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -622,6 +719,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -643,6 +741,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -667,6 +766,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -692,6 +792,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -717,6 +818,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -739,6 +841,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -762,6 +865,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -785,6 +889,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -810,6 +915,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -832,6 +938,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				consents: []
 		).save(flush: true, failOnError: true)
 		con = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -972,5 +1079,140 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		ConsentFormTemplate.findByCdrUniqueId("GEL_CSC_V1")
 		ConsentFormTemplate.findByCdrUniqueId("GEL_CSC_V2")
 		ConsentFormTemplate.findByCdrUniqueId("ORB_GEN_V2")
+	}
+
+	def "addAccessGUIDtoConsentForms will add GUID into ConsentForm if they do not have"(){
+
+		given:"two consent already exists"
+		AddConsentWithoutAccessGUID()
+
+		when:"addAccessGUIDtoConsentForms is called"
+		def result = databaseCleanupService.addAccessGUIDtoConsentForms()
+
+		then:"records are updated"
+		result.total   == 2
+		result.updated == 2
+
+
+		when:"addAccessGUIDtoConsentForms is called again"
+		result = databaseCleanupService.addAccessGUIDtoConsentForms()
+
+		then:"it doesn't have any effect"
+		result.total   == 2
+		result.updated == 0
+
+	}
+
+	def "addConsentStatusLabelToConsentForms will update consentStatusLabels for all consentForms"(){
+
+		given:"two consent already exists"
+		AddConsentWitNullConsentStatusLabels()
+
+		when:"addConsentStatusLabelToConsentForms is called"
+		def result = databaseCleanupService.addConsentStatusLabelToConsentForms()
+
+		then:"records are updated"
+		2 * databaseCleanupService.consentEvaluationService.getConsentLabelsAsString(_) >> {"Label1\nLabel2"}
+		result.total   == 2
+		result.consentsWithNullConsentStatusLabelBefore == 2
+		result.consentsWithNullConsentStatusLabelAfter  == 0
+		result.updated == 2
+	}
+
+	def "verifyAllPatientsDemographicAgainstCDR checks all patients demographics against CDR"() {
+
+		given:
+		new Patient(nhsNumber: "1234567890", hospitalNumber: "1", givenName: "A", familyName: "B", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+		new Patient(nhsNumber: "1234567891", hospitalNumber: "2", givenName: "A", familyName: "B", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+		new Patient(nhsNumber: "1234567892", hospitalNumber: "3", givenName: "A", familyName: "B", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+		new Patient(nhsNumber: "1234567893", hospitalNumber: "4", givenName: "A", familyName: "B", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+		new Patient(nhsNumber: "1111111111", hospitalNumber: "5", givenName: "C", familyName: "D", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+		databaseCleanupService.CDRService.metaClass.findPatient =  { String nhs, String mrn ->
+			switch (nhs) {
+				case "1234567890": //found and matched
+					return [success: true, log: "", patient: [firstName: "A", lastName: "B", dateOfBirth: new Date()]]
+				case "1234567891": //found and not matched
+					return [success: true, log: "", patient: [firstName: "AZ", lastName: "BZ", dateOfBirth: new Date().minus(100)]]
+				case "1234567892": //not Found
+					return [success: true, log: "Not Found", patient: null]
+				case "1234567893": //Error
+					return [success: false, log: "Error", patient: null]
+				case "1111111111"://found
+					return [success: true, log: "", patient: [firstName: "C", lastName: "D", dateOfBirth: new Date()]]
+			}
+		}
+
+		when:
+		def result = databaseCleanupService.verifyAllPatientsDemographicAgainstCDR()
+
+		then:
+		result.report.totalCount == 5
+		result.report.misMatched == 1
+		result.report.notFound == 1
+		result.report.matched  == 2
+		result.report.error    == 1
+		result.records[0] == [
+				nhsNumber:"1234567891",
+				mrnNumber:"2",
+				foundInCDR:true,
+				demographicMatched:false,
+				log : [
+				Greenlight_firstName:"A",
+				Greenlight_lastName: "B",
+				Greenlight_dob: new Date().format("yyyy-MM-dd"),
+				CDR_firstName: "AZ",
+				CDR_lastName: "BZ",
+				CDR_dob: new Date().minus(100).format("yyyy-MM-dd")]
+		]
+	}
+
+	def "sendAllLatestConsentsToCDR will send just NORMAL consents to CDR"(){
+		given:
+		def patient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: "123", template:template, patient:patient,consentDate: new Date()).save(failOnError: true,flush: true)
+
+		when:
+		def result = databaseCleanupService.sendAllLatestConsentsToCDR()
+
+		then:
+		result.sentConsents == []
+		result.totalSentCount == 0
+		result.totalSuccess == 0
+		result.totalFail == 0
+		result.totalConsentCount == 1
+	}
+
+	def "sendAllLatestConsentsToCDR will send latest consents for each patient"(){
+		given:
+		def patient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		def template = new ConsentFormTemplate(name:"temp1",namePrefix:"TEMP",templateVersion: "V1" ).save(failOnError: true,flush: true)
+		def latestConsentForm = new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56890",accessGUID: UUID.randomUUID().toString(), template:template, patient:patient,consentDate: new Date())
+		patient.addToConsents(latestConsentForm)
+		patient.addToConsents(new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56891",accessGUID: UUID.randomUUID().toString(), template:template, patient:patient,consentDate: new Date().minus(1)))
+		patient.save(flush: true,failOnError: true)
+
+		def samePatient  = new Patient(nhsNumber: "1234567890",hospitalNumber: "OLD").save(failOnError: true,flush: true)
+		samePatient.addToConsents(new ConsentForm(savedInCDR: false,formStatus: ConsentForm.FormStatus.NORMAL, formID: "GEL56892",accessGUID: UUID.randomUUID().toString(), template:template, patient:samePatient,consentDate: new Date().minus(10)))
+		samePatient.save(flush: true,failOnError: true)
+
+		//mock save method and make sure that save method for consentForm object is called
+		def consentFormShouldBeUpdated = false
+		ConsentForm.metaClass.save = {  Map params ->
+			consentFormShouldBeUpdated = true
+		}
+
+		when:
+		def result = databaseCleanupService.sendAllLatestConsentsToCDR()
+
+		then:
+		1 * databaseCleanupService.CDRService.saveOrUpdateConsentForm(patient, latestConsentForm, true) >> {[success:true,log:"Successfully added"]}
+		result.sentConsents.size() == 1
+		result.sentConsents[0] == [ consentFormId: "GEL56890", nhsNumber: "1234567890",mrnNumber:"OLD",log:"Successfully added", success :true]
+		result.totalSentCount == 1
+		result.totalSuccess == 1
+		result.totalFail == 0
+		result.totalConsentCount == 3
+		consentFormShouldBeUpdated
 	}
 }

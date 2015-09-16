@@ -235,6 +235,9 @@
                     regex: /^\d{10}$/,
                     required:true
                 },
+                'commandInstance.patient.hospitalNumber':{
+                    required:true
+                },
                 'commandInstance.consentForm.formID':{
                     required:true,
                     regex:/^[a-zA-Z]{3}\d{5}$/,

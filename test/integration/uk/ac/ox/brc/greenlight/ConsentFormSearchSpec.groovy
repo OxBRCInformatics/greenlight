@@ -31,6 +31,7 @@ class ConsentFormSearchSpec extends  IntegrationSpec{
         ).save()
 
         def consent1 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
                 attachedFormImage: attachment,
                 template: template,
                 consentDate: new Date([year:2014,month:01,date:01]),
@@ -53,6 +54,7 @@ class ConsentFormSearchSpec extends  IntegrationSpec{
 
 
         def consent2 = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
                 attachedFormImage: attachment,
                 template: template,
                 consentDate: new Date([year:2014,month:01,date:20]),
@@ -191,7 +193,7 @@ class ConsentFormSearchSpec extends  IntegrationSpec{
         new Date([year:2014,month:1,date:5])  |    new Date([year:2014,month:2,date:1]) |    1
         null                                  |    new Date([year:2014,month:2,date:1]) |    2
         new Date([year:2014,month:1,date:1])  |    null                                 |    2
-        null                                  |    null                                 |    2
+        null                                  |    null                                 |    0
 
     }
 
@@ -219,8 +221,8 @@ class ConsentFormSearchSpec extends  IntegrationSpec{
         "GEN12345"   | "GEN12345"   | 1
         "GEN12345"   | "GEN12365"   | 1
         "GEN12370"   | "GEN12345"   | 2
-        "GEN12345"   | ""           | 2
-        ""           | "GEN12345"   | 2
+        "GEN12345"   | ""           | 1
+        ""           | "GEN12345"   | 1
     }
 
 

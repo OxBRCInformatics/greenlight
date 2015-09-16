@@ -7,8 +7,16 @@ class UrlMappings {
             }
         }
 
+		//API CALL mapping @@@@@@@@@@@@@@@@@@
 		"/api/consents/${lookupId}?(.${format})?"(controller: "consentStatus",action: "getStatus")
+		//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
         "/consentForm/search" (view:"consentForm/search")
+
+		//ACCESS-GUID mapping @@@@@@@@@@@@@@@@@@
+		"/consent/${accessGUID}?(.${format})" (controller:"consentForm",action:"showConsentFormByAccessGUID")
+		//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
         "/consentForm/cuttingRoom" (view:"consentForm/cuttingRoom")
 		"/consentForm/reportPatientConsentCount"(view:"consentForm/reportPatientConsentCount")
 		"/attachment/unAnnotatedList" (view:"attachment/unAnnotatedList")

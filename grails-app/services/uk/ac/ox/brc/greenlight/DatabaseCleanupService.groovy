@@ -10,6 +10,8 @@ class DatabaseCleanupService {
 	def patientService
 
 	def dataSource
+	def CDRService
+	def consentFormService
 
 
 	def removePatientsWithoutAnyConsent(){
@@ -369,6 +371,166 @@ class DatabaseCleanupService {
 		}
 	}
 
+
+	def addAccessGUIDtoConsentForms(){
+
+		def total = ConsentForm.count()
+		//check if consentForms don't have accessGUID (a proper GUID), then update them
+		def consentsWithAccessGUID = ConsentForm.executeQuery("from ConsentForm as c where c.accessGUID like '%-%-%-%'")
+		if(consentsWithAccessGUID.size() != 0){
+			return [total:total,updated:0]
+		}
+
+		//update all accessGUIDs
+		def updated = 0
+		ConsentForm.list().each { consent ->
+			consent.accessGUID = UUID.randomUUID().toString()
+			consent.save(flush:true,failOnError: true)
+			updated++
+		}
+		return [total:total,updated:updated]
+	}
+
+
+	def addConsentStatusLabelToConsentForms(){
+
+		def total = ConsentForm.count()
+		def consentsWithNullConsentStatusLabelBefore = ConsentForm.countByConsentStatusLabelsIsNull()
+
+		//update all consentStatusLabels
+		def updated = 0
+		ConsentForm.list().each { consent ->
+			consent.consentStatusLabels = consentEvaluationService.getConsentLabelsAsString(consent)
+			consent.save(flush:true,failOnError: true)
+			updated++
+		}
+
+		def consentsWithNullConsentStatusLabelAfter = ConsentForm.countByConsentStatusLabelsIsNull()
+		[total:total,consentsWithNullConsentStatusLabelBefore:consentsWithNullConsentStatusLabelBefore,consentsWithNullConsentStatusLabelAfter:consentsWithNullConsentStatusLabelAfter,updated: updated]
+	}
+
+
+	def verifyAllPatientsDemographicAgainstCDR(){
+		def records = []
+
+		def totalCount = 0
+		def misMatched = 0
+		def notFound   = 0
+		def matched = 0
+		def error 	= 0
+
+		Patient.list().each { patient ->
+			totalCount++
+
+			def result = CDRService.findPatient(patient.nhsNumber, patient.hospitalNumber)
+			if(result?.success){
+				if(!result?.patient){
+					//not found, can not find patient by NHSNumber or MRNNumber in CDR!!!!
+					notFound++
+					records << [
+					        nhsNumber: patient?.nhsNumber,
+							mrnNumber: patient?.hospitalNumber,
+							foundInCDR: false,
+							demographicMatched:false,
+							log:""]
+				}
+				else
+				{
+					if(patient?.givenName?.toLowerCase()?.trim() == result?.patient?.firstName?.toLowerCase()?.trim() &&
+					   patient?.familyName?.toLowerCase()?.trim() == result?.patient?.lastName?.toLowerCase()?.trim() &&
+					   patient?.dateOfBirth?.format("yyyyMMdd") == result?.patient?.dateOfBirth?.format("yyyyMMdd")){
+						matched++
+						//verified, DO NOTHING then
+					}else{
+						//patient found but demographic does not match
+						misMatched++
+						records << [
+								nhsNumber: patient?.nhsNumber,
+								mrnNumber: patient?.hospitalNumber,
+								foundInCDR: true,
+								demographicMatched:false,
+								log: [
+								        Greenlight_firstName: patient?.givenName,
+										Greenlight_lastName: patient?.familyName,
+										Greenlight_dob: patient?.dateOfBirth?.format("yyyy-MM-dd"),
+										CDR_firstName: result?.patient?.firstName,
+										CDR_lastName: result?.patient?.lastName,
+										CDR_dob: result?.patient?.dateOfBirth?.format("yyyy-MM-dd")]]
+					}
+				}
+			}else{
+				error++
+				records << [
+						nhsNumber: patient?.nhsNumber,
+						mrnNumber: patient?.hospitalNumber,
+						foundInCDR: false,
+						demographicMatched:false,
+						log:"Exception in calling CDR: ${result?.log}"]
+			}
+		}
+
+		[report:[ totalCount:totalCount,
+				  misMatched:misMatched,
+				  notFound:notFound,
+				  matched:matched,
+				  error:error],
+		 records:records
+		]
+	}
+
+
+	def sendAllLatestConsentsToCDR(){
+		def sentConsents = []
+		def patientChecklist = []
+
+		def successSavedInCDR = 0
+		def failedSavedInCDR = 0
+
+		Patient.list().each { patient ->
+			//if this patient is already processed then continue
+			if(patientChecklist.contains(patient.id)){
+				return
+			}
+			//find all patient objects with the same nhsNumber/mrnNumber
+			def patients
+			if (patientService.isGenericNHSNumber(patient.nhsNumber))
+				patients = Patient.findByHospitalNumber(patient.hospitalNumber)
+			else
+				patients = Patient.findAllByNhsNumber (patient.nhsNumber)
+
+			//get latest consentForms for these patients
+			def latestConsentForms = consentFormService.getLatestConsentForms(patients)
+			latestConsentForms.each { latestConsentForm ->
+				if(latestConsentForm.formStatus == ConsentForm.FormStatus.NORMAL) {
+				  def result =	CDRService.saveOrUpdateConsentForm(latestConsentForm.patient, latestConsentForm, true)
+					//update the consent object as the previous method might have change its values
+					latestConsentForm.save(failOnError: true,flush: true)
+
+					if(result?.success){
+						successSavedInCDR++
+					}else{
+						failedSavedInCDR++
+					}
+
+				    sentConsents << [consentFormId: latestConsentForm?.formID,
+									nhsNumber:latestConsentForm?.patient?.nhsNumber,
+									mrnNumber:latestConsentForm?.patient?.hospitalNumber,
+				   					log:result?.log,
+				   				    success:result?.success]
+				}
+			}
+			//add patient and patients into the checkLis
+			patientChecklist << patient?.id
+			patients.each {
+				patientChecklist << it?.id
+			}
+		}
+		[sentConsents:sentConsents,
+		 totalSentCount:sentConsents.size(),
+		 totalSuccess: successSavedInCDR,
+		 totalFail: failedSavedInCDR,
+		 totalConsentCount : ConsentForm.count()]
+	}
 	def listAllMrnNhsNumbers(){
 		def allMrnNhsNumbers= []
 		Patient.list().each { patient ->

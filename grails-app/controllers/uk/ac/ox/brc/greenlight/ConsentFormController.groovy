@@ -1,11 +1,16 @@
 package uk.ac.ox.brc.greenlight
 
+import grails.plugin.springsecurity.annotation.Secured
+import uk.ac.ox.brc.greenlight.Audit.RequestLog
+
 class ConsentFormController {
 
 	def consentEvaluationService
     def consentFormService
 	def patientService
 	def studyService
+	def attachmentService
+	def requestLogService
 
 
     def find()
@@ -71,6 +76,7 @@ class ConsentFormController {
 			}
 		}
 		model.studies =  studyService.getStudy()?.description
+		requestLogService.add(lookupId,model,RequestLog.RequestType.CutUpRoom)
 		render view:"cuttingRoom", model: model
 	}
 
@@ -80,4 +86,79 @@ class ConsentFormController {
         response.setHeader("Content-disposition", "attachment; filename=${fileName}.csv");
 		render(contentType: "text/csv;charset=utf-8", text: csvString.toString());
     }
+
+
+	@Secured(['ROLE_ACCESSGUID','ROLE_ADMIN','ROLE_USER'])
+	def showConsentFormByAccessGUID() {
+		def accessGUID = params["accessGUID"]
+		def consent = consentFormService.searchByAccessGUID(accessGUID)
+		if(!consent){
+			flash.error = "Not Found"
+			def result = [success: false, error: "Not Found", consent: null]
+			respond result as Object, [model: result] as Map
+			return
+		}
+
+		def responses = []
+		consent?.responses?.each{ response ->
+			responses.add(
+					[
+						question: response?.question?.name,
+						answer: response?.answer?.toString(),
+						optional: response?.question?.optional
+					]
+			)
+		}
+
+		def consentModel = [
+				patient         : [
+						nhsNumber     : consent?.patient?.nhsNumber,
+						hospitalNumber: consent?.patient?.hospitalNumber,
+						givenName     : consent?.patient?.givenName,
+						familyName    : consent?.patient?.familyName,
+						dateOfBirth   : consent?.patient?.dateOfBirth?.format("dd.MM.yyyy")
+				],
+				consentFormType: [
+						name: consent?.template?.name,
+						version: consent?.template?.templateVersion,
+						namePrefix:consent?.template?.namePrefix,
+				],
+				formID          : consent?.formID,
+				consentDate     : consent?.consentDate?.format("dd.MM.yyyy"),
+				consentTakerName: consent?.consentTakerName,
+				formStatus      : consent?.formStatus?.toString(),
+				consentStatus   : consent?.consentStatus?.toString(),
+				consentStatusLabels: consentEvaluationService.getConsentLabels(consent),
+				comment         : consent?.comment,
+				responses       : responses,
+				attachment      : [
+						dateOfUpload: consent?.attachedFormImage?.dateOfUpload.format("dd.MM.yyyy HH:mm:ss"),
+						fileName    : attachmentService.getAttachmentFileName(consent?.attachedFormImage)
+				]
+		]
+
+		/**
+		 * if 'attachment' parameter is provided then return the Attachment file
+		 */
+		if(params["attachment"] != null){
+			def filePath = attachmentService.getAttachmentFilePath(consent?.attachedFormImage)
+			File file = new File(filePath)
+			if (!file.exists()){
+				flash.error = "Attachment not found"
+				def result = [success: false, error: "Attachment not found", consent: null]
+				respond result as Object, [model: result] as Map
+				return
+			}
+			response.setContentType("application/octet-stream")
+			response.setHeader("Content-disposition", "attachment; filename=\"${file.name}\"")
+			response.outputStream << file.bytes
+			response.outputStream.flush()
+			response.outputStream.close()
+			return null
+		}else {
+			def result = [success: true, error: null, consent: consentModel]
+			respond result as Object, [model: result] as Map
+			return
+		}
+	}
 }

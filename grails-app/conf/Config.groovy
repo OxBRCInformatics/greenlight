@@ -115,18 +115,25 @@ log4j = {
 
 // Audit logging - grab user ID as well as changes
 auditLog {
-    actorClosure = { request, session ->
-        if (request.applicationContext.springSecurityService.principal instanceof java.lang.String){
-            return request.applicationContext.springSecurityService.principal
-        }
-        def username = request.applicationContext.springSecurityService.principal?.username
-        if (SpringSecurityUtils.isSwitched()){
-            username = SpringSecurityUtils.switchedUserOriginalUsername+" AS "+username
-        }
-        return username
-    }
-}
+	actorClosure = { request, session ->
+		if (request.applicationContext.springSecurityService.principal instanceof java.lang.String) {
+			return request.applicationContext.springSecurityService.principal
+		}
+		def username = request.applicationContext.springSecurityService.principal?.username
+		if (SpringSecurityUtils.isSwitched()) {
+			username = SpringSecurityUtils.switchedUserOriginalUsername + " AS " + username
+		}
+		return username
+	}
 
+	cacheDisabled = true
+	stampCreatedBy = 'createdBy' // fieldname
+	stampLastUpdatedBy = 'lastUpdatedBy' // fieldname
+	//verbose = true // verbosely log all changed values to db
+	//nonVerboseDelete = true
+	logIds = true  // log db-ids of associated objects.}
+	largeValueColumnTypes = false // NOT use large column db types for oldValue/newValue.
+}
 
 grails{
     plugin{
@@ -208,6 +215,8 @@ grails{
 					'/aclEntry/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
 					'/aclObjectIdentity': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
 					'/testConnection/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/CDRLog/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
+					'/CDRLog/*/**': ["hasRole('ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY'],
 
 					// Need to be logged in for anything else!
                     '/**':         			["hasAnyRole('ROLE_USER', 'ROLE_ADMIN')",'IS_AUTHENTICATED_FULLY']
@@ -247,3 +256,16 @@ grails.assets.minifyJs = false
 epds.conString.username = "USERNAME"
 epds.conString.password = "PASSWORD"
 epds.conString.url='jdbc:oracle:thin:@serverName:1521:SIDName'
+
+cdr.access.username = "CDR_USERNAME"
+cdr.access.password = "CDR_PASSWORD"
+
+cdr.facility.id   = 'CDR_FACILITY_ID' 		//id 'TEST-BRC-GREENLIGHT'
+cdr.facility.name = 'CDR_FACILITY_NAME'		//name 'Test Greenlight System'
+cdr.facility.description  = 'CDR_FACILITY_DESC' //description 'Test facility for Greenlight Consent management'
+
+
+cdr.organisation.id = "TEST-OUH" //appliesToOrganisation when passing consent
+
+cdr.knownFacility.name = "TEST" //PRODUCTION("OXONCDRPROD", "PROD Oxford Clinical Data Repository", "PRODUCTION environment for Oxford Results Repository"),
+								//TEST("OXONCDRTEST", "TEST Oxfordshire Clinical Data Repository", "TEST environment for Oxford Results Repository.")

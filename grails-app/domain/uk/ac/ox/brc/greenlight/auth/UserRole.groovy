@@ -1,11 +1,16 @@
 package uk.ac.ox.brc.greenlight.auth
 
 import org.apache.commons.lang.builder.HashCodeBuilder
+import org.codehaus.groovy.grails.plugins.orm.auditable.Stamp
 
+
+@Stamp
 class UserRole implements Serializable {
 
 	AppUser appUser
 	AppRole appRole
+
+	static auditable =  [ignore:['version','lastUpdated','lastUpdatedBy','createdBy','dateCreated']]
 
 	boolean equals(other) {
 		if (!(other instanceof UserRole)) {

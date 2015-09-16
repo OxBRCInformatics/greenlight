@@ -6,6 +6,8 @@ import grails.test.mixin.TestFor
 import groovy.json.JsonBuilder
 import org.codehaus.groovy.grails.web.json.JSONObject
 import spock.lang.*
+import uk.ac.ox.brc.greenlight.Audit.RequestLog
+import uk.ac.ox.brc.greenlight.Audit.RequestLogService
 import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
 
 /**
@@ -18,6 +20,7 @@ class ConsentStatusControllerSpec extends Specification {
 		controller.patientService = Mock(PatientService)
 		controller.consentFormService = Mock(ConsentFormService)
 		controller.consentEvaluationService = Mock(ConsentEvaluationService)
+		controller.requestLogService = Mock(RequestLogService)
 	}
 
 	def "getStatus returns valid consent status responses for valid patient IDs"(){
@@ -233,6 +236,34 @@ class ConsentStatusControllerSpec extends Specification {
 		controller.response.text == "<?xml version=\"1.0\" encoding=\"UTF-8\"?><map><entry key=\"_self\">/api/aNiceURL</entry><entry key=\"errors\">false</entry><entry key=\"nhsNumber\">12345</entry><entry key=\"hospitalNumber\">NHSOXHOSP1</entry><entry key=\"firstName\">John Doe</entry><entry key=\"lastName\">Doe</entry><entry key=\"dateOfBirth\">25-01-2015 02:10:00</entry><entry key=\"consents\"><map><entry key=\"form\"><entry key=\"name\">form type 1</entry><entry key=\"version\">1.0</entry><entry key=\"namePrefix\">GEN</entry></entry><entry key=\"lastCompleted\" /><entry key=\"consentStatus\">FULL_CONSENT</entry><entry key=\"consentTakerName\">User1</entry><entry key=\"consentFormId\">GEL123</entry><entry key=\"consentStatusLabels\"></entry></map><map><entry key=\"form\"><entry key=\"name\">form type 2</entry><entry key=\"version\">2.0</entry><entry key=\"namePrefix\">CRA</entry></entry><entry key=\"lastCompleted\" /><entry key=\"consentStatus\">NON_CONSENT</entry><entry key=\"consentTakerName\">User2</entry><entry key=\"consentFormId\">GEL456</entry><entry key=\"consentStatusLabels\"></entry></map></entry></map>"
 
 	}
+	def "getStatus will call RequestLogService to save details of the request"(){
+
+		given:
+		String requestURL = "/api/aNiceURL"
+		String lookupId = "12345"
+		Patient patient = new Patient(givenName: "John Doe", nhsNumber: "12345", hospitalNumber: "NHSOXHOSP1",familyName: "Doe",dateOfBirth: Date.parse("yyy-MM-dd HH:mm:ss","2015-01-25 02:10:00"))
 
 
+		def formTypes = [
+				new ConsentFormTemplate(id: 100, name: "form type 1", namePrefix: "GEN", templateVersion: "1.0", questions: [new Question(name: "q1")]),
+				new ConsentFormTemplate(id: 231, name: "form type 2", namePrefix: "CRA", templateVersion: "2.0", questions: [new Question(name: "q2"),new Question(name: "q3")])
+		]
+
+		def latestConsentForms = [
+				new ConsentForm(formID: "GEL123", consentStatus: ConsentStatus.FULL_CONSENT,consentDate: Date.parse("yyy-MM-dd HH:mm:ss","2015-05-25 14:10:00"), template: formTypes[0], responses: [new Response(question: formTypes[0].questions[0], answer: Response.ResponseValue.YES)],consentTakerName: "User1"),
+				new ConsentForm(formID: "GEL456", consentStatus: ConsentStatus.NON_CONSENT ,consentDate: Date.parse("yyy-MM-dd HH:mm:ss","2015-04-12 14:10:00"),template: formTypes[1], responses: [new Response(question: formTypes[1].questions[0], answer: Response.ResponseValue.YES), new Response(question: formTypes[1].questions[1], answer: Response.ResponseValue.NO)],consentTakerName: "User2")
+		]
+
+
+
+		when: "The request contains a valid ID"
+		request.forwardURI = requestURL
+		params.lookupId = lookupId
+		controller.getStatus()
+
+		then: "The controller responds with the consent status"
+		1 * controller.patientService.findAllByNHSOrHospitalNumber(lookupId) >> [patient]
+		1 * controller.consentFormService.getLatestConsentForms([patient]) >> latestConsentForms
+		1 * controller.requestLogService.add("12345",_,RequestLog.RequestType.REST_API) >> { }
+	}
 }

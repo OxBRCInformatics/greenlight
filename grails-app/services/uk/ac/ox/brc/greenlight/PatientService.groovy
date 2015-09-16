@@ -49,4 +49,8 @@ class PatientService {
  		}
 	}
 
+	def isGenericNHSNumber(nhsNumber){
+		return (nhsNumber == "1111111111" || nhsNumber == "0000000000" || nhsNumber == null || nhsNumber?.isEmpty())
+	}
+
 }

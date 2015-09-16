@@ -1,5 +1,8 @@
 package uk.ac.ox.brc.greenlight
 
+import org.codehaus.groovy.grails.plugins.orm.auditable.Stamp
+
+@Stamp
 class Question {
 
     String name
@@ -10,7 +13,7 @@ class Question {
 	// If the response is "no", apply this label
 	String labelIfNotYes
 
-//    static auditable = true
+	static auditable =  [ignore:['version','lastUpdated','lastUpdatedBy','createdBy','dateCreated']]
     static belongsTo = [
             studyForm:ConsentFormTemplate]
 

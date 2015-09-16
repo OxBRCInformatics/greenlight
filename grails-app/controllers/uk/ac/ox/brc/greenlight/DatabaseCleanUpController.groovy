@@ -133,6 +133,52 @@ class DatabaseCleanUpController {
 		respond result as Object, [formats:['xml','json']] as Map
 	}
 
+	def addAccessGUIDtoConsentForms(){
+		def recordUpdated
+		try{
+			recordUpdated = databaseCleanupService.addAccessGUIDtoConsentForms()
+		}catch(Exception ex){
+			render ex.message
+		}
+		def result = [recordUpdated: recordUpdated]
+		respond result as Object, [formats:['xml','json']] as Map
+	}
+
+	def addConsentStatusLabelsToConsentForms(){
+		def recordUpdated
+		try{
+			recordUpdated = databaseCleanupService.addConsentStatusLabelToConsentForms()
+		}catch(Exception ex){
+			render ex.message
+		}
+		def result = [recordUpdated: recordUpdated]
+		respond result as Object, [formats:['xml','json']] as Map
+	}
+
+
+	def verifyAllPatientsDemographicAgainstCDR(){
+		def patientResult
+		try{
+			patientResult = databaseCleanupService.verifyAllPatientsDemographicAgainstCDR()
+		}catch(Exception ex){
+			render ex.message
+		}
+		def result = [result: patientResult]
+		respond result as Object, [formats:['xml','json']] as Map
+	}
+
+
+	def sendAllLatestConsentsToCDR(){
+		def consentResult
+		try{
+			consentResult = databaseCleanupService.sendAllLatestConsentsToCDR()
+		}catch(Exception ex){
+			render ex.message
+		}
+		def result = [result: consentResult]
+		respond result as Object, [formats:['xml','json']] as Map
+	}
+
 
 	def listAllMrnNHSNumbers(){
 		def  records
@@ -147,4 +193,5 @@ class DatabaseCleanUpController {
 		def result = [records: records]
 		respond result as Object, [formats:['xml','json']] as Map
 	}
+
 }

@@ -1,6 +1,8 @@
 package uk.ac.ox.brc.greenlight
 
 import grails.test.mixin.TestFor
+import org.codehaus.groovy.grails.web.mapping.LinkGenerator
+import org.joda.time.DateTime
 import spock.lang.Specification
 import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
 
@@ -8,9 +10,14 @@ import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
  * Created by rb on 01/04/2014.
  */
 @TestFor(ConsentFormService)
-@grails.test.mixin.Mock([ConsentForm, ConsentFormTemplate])
+@grails.test.mixin.Mock([ConsentForm, ConsentFormTemplate,Patient])
 class ConsentFormServiceUnitSpec extends Specification {
 
+	def setup(){
+		service.consentEvaluationService = Mock(ConsentEvaluationService)
+		service.CDRService = Mock(CDRService)
+		service.grailsLinkGenerator = Mock(LinkGenerator)
+	}
 	static Date now = new Date();
     static final String DBL_QUOTE = '\"'
 	def "getLatestConsentForms Get the latest consent forms for a patient"() {
@@ -87,7 +94,6 @@ class ConsentFormServiceUnitSpec extends Specification {
 
 		given:
 		service.patientService 	   = Mock(PatientService)
-		service.consentFormService = Mock(ConsentFormService)
 		service.consentEvaluationService = Mock(ConsentEvaluationService)
 
 
@@ -115,6 +121,14 @@ class ConsentFormServiceUnitSpec extends Specification {
 				new ConsentForm(consentDate:Date.parse("yyy-MM-dd HH:mm:ss","2015-05-21 14:10:00") ,consentStatus: ConsentStatus.FULL_CONSENT,template: new ConsentFormTemplate(namePrefix: "DEF"),formID:"DEF123")
 		]
 
+		service.metaClass.getLatestConsentForms = { param ->
+			if(param[0].givenName == 'A')
+				return consentsPatient1
+			else if(param[0].givenName == 'Z')
+				return consentsPatient2
+			else if(param[0].givenName == 'Mr0')
+				return consentsPatient0
+		}
 
 		when:
 		def result = service.getPatientWithMoreThanOneConsentForm()
@@ -129,14 +143,6 @@ class ConsentFormServiceUnitSpec extends Specification {
 			}else {
 				return [patients[3]]
 			}
-		}
-		3 * service.consentFormService.getLatestConsentForms(_) >>{
-			if(it[0][0].givenName == 'A')
-				return consentsPatient1
-			else if(it[0][0].givenName == 'Z')
-				return consentsPatient2
-			else if(it[0][0].givenName == 'Mr0')
-				return consentsPatient0
 		}
 
 		result.size() == 2
@@ -169,5 +175,55 @@ class ConsentFormServiceUnitSpec extends Specification {
 		returnedForms.size() == 2
 		returnedForms.containsAll(latestForms)
 		latestForms.containsAll(returnedForms)
+	}
+
+	def "save will set consentStatus, consentStatusLabels and accessGUID for a consent"(){
+		given:
+		def patient = new Patient()
+		def consent = new ConsentForm(accessGUID: "TEST")
+
+		when:
+		service.save(patient,consent)
+
+		then:
+		1 * service.consentEvaluationService.getConsentStatus(consent) >> {ConsentStatus.NON_CONSENT}
+		1 * service.consentEvaluationService.getConsentLabelsAsString(consent) >> {"Label1\nLabel2"}
+		1 * service.CDRService.saveOrUpdateConsentForm(patient,consent,_) >> {return "success_TEST"}
+		consent.consentStatus       == ConsentStatus.NON_CONSENT
+		consent.consentStatusLabels == "Label1\nLabel2"
+		consent.accessGUID != "TEST"
+	}
+
+	def "save will not update accessGUID for a consent if it is already saved"(){
+		given:
+		def patient = new Patient().save(failOnError: true,flush: true)
+		def template = new ConsentFormTemplate(name:"ABC",namePrefix: "ABC",templateVersion: "v1").save(failOnError: true,flush: true)
+		def consent = new ConsentForm(accessGUID: "HAS_VALUE_SO_SHOULD_NOT_BE_UPDATED",patient:patient,template:template,formID: "ABC12345").save(failOnError: true,flush: true)
+
+		when:
+		service.save(patient,consent)
+
+		then:
+		1 * service.consentEvaluationService.getConsentStatus(consent) >> {ConsentStatus.NON_CONSENT}
+		1 * service.consentEvaluationService.getConsentLabelsAsString(consent) >> {"Label1\nLabel2"}
+		1 * service.CDRService.saveOrUpdateConsentForm(patient,consent,_) >> {return "success_TEST"}
+		consent.consentStatus       == ConsentStatus.NON_CONSENT
+		consent.consentStatusLabels == "Label1\nLabel2"
+		consent.accessGUID == "HAS_VALUE_SO_SHOULD_NOT_BE_UPDATED"
+	}
+
+
+	def "getAccessGUIDUrl returns URL to consentForm by accessGUID"(){
+
+		given:
+		def consentForm = new ConsentForm(accessGUID: "1234-5678-0000")
+
+		when:
+		def url = service.getAccessGUIDUrl(consentForm)
+
+		then:
+		1 * service.grailsLinkGenerator.getServerBaseURL() >> {"HTTP-BASE-URL://APP-URL"}
+		url == "HTTP-BASE-URL://APP-URL/consent/1234-5678-0000"
+
 	}
 }

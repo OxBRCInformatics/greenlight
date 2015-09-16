@@ -1,15 +1,16 @@
 package uk.ac.ox.brc.greenlight
 
+import grails.orm.PagedResultList
 import grails.transaction.Transactional
 import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
-
 
 class ConsentFormService {
 
 	def consentEvaluationService
 	def patientService
-	def consentFormService
+	def CDRService
 
+	def grailsLinkGenerator
 	/**
 	 * Get the latest consent form for these patient objects.
 	 * They should actually be several patient objects with the same NHS or hospital number
@@ -50,6 +51,17 @@ class ConsentFormService {
 
 		def comment = params["comment"]?.trim();
 
+		//if they are all empty, just return nothing
+		if( (!nhsNumber        || nhsNumber.size()       == 0) &&
+			(!hospitalNumber   || hospitalNumber.size()  == 0) &&
+			(!consentTakerName || consentTakerName.size()== 0) &&
+		     !consentDateFrom  && !consentDateTo &&
+			(!formIdFrom || formIdFrom?.size() == 0) &&
+			(!formIdTo   || formIdTo.size() == 0) &&
+			(!comment    || comment?.size() == 0) ){
+				return []
+		}
+
 		def criteria = ConsentForm.createCriteria()
 		def results = criteria.list {
 			if (consentDateFrom && consentDateTo) {
@@ -58,7 +70,18 @@ class ConsentFormService {
 			}
 
 
-			if (formIdFrom && formIdTo && formIdFrom.size() > 0 && formIdTo.size() > 0) {
+			//user can put fromAccessGUID and search for that,
+			//this feature is just for IT_SUPPORT admins
+			if(formIdFrom && formIdFrom.size() > 10){
+				like('accessGUID', formIdFrom + "%")
+			}else if(formIdFrom && formIdFrom.size() > 0 && formIdTo?.size() == 0){
+				//just search for formId
+				like('formID', formIdFrom + "%")
+			}else if(formIdTo && formIdTo?.size() > 0 && formIdFrom?.size() == 0){
+				//just search for formId
+				like('formID', formIdTo + "%")
+			}
+			else if (formIdFrom && formIdTo && formIdFrom?.size() > 0 && formIdTo?.size() > 0) {
 				if (formIdFrom.compareTo(formIdTo) <= 0)
 					between('formID', formIdFrom, formIdTo)
 			}
@@ -85,31 +108,150 @@ class ConsentFormService {
 
 	@Transactional
 	def save(Patient patient, ConsentForm consentForm) {
-		try {
 
-			patient.save()
-
-			//calculate and save consentStatus
-			def status = consentEvaluationService.getConsentStatus(consentForm)
-			consentForm.consentStatus = status
-
-			consentForm.save(flush: true)
-			return true
+		def isNew = false
+		if(!patient.id && !consentForm.id) {
+			isNew = true
 		}
-		catch (Exception ex) {
-			return false
+
+		//calculate and save consentStatus
+		consentForm.consentStatus = consentEvaluationService.getConsentStatus(consentForm)
+		//calculate and save consentStatusLabels as well
+		consentForm.consentStatusLabels = consentEvaluationService.getConsentLabelsAsString(consentForm)
+		//Assign accessGUID to the consentForm if it is not assigned yet (it is in NEW mode)
+		if(!consentForm.id) {
+			consentForm.accessGUID = UUID.randomUUID().toString()
+		}
+
+		//first send it to CDR
+		try {
+			//Save consentFrom into Database after saveOrUpdateConsentForm as it does NOT persist changes of the consentForm into DB
+			CDRService.saveOrUpdateConsentForm(patient, consentForm, isNew)
+		} catch (Exception ex) {
+			//it actually should not stop the whole save process
+			log.error(ex.message)
+		}
+
+
+		//save consent and patient in a transaction
+		ConsentForm.withTransaction { status ->
+			try {
+				patient.save(failOnError: true)
+				consentForm.save(failOnError: true,flush: true)
+				return true
+			}
+			catch (Exception exp) {
+				status.setRollbackOnly()
+				return false
+			}
 		}
 	}
 
+	def findConsentsOfSameTypeAfterThisConsentWhichAreSavedInCDR(nhsNumber, hospitalNumber, consentForm) {
+		def foundConsents = []
+		def patients
+		if (patientService.isGenericNHSNumber(nhsNumber))
+			patients = Patient.findAllByHospitalNumber(hospitalNumber)
+		else
+			patients = Patient.findAllByNhsNumber(nhsNumber)
+
+			patients?.each { patient ->
+				patient.consents.each { consent ->
+					if (consent.template.id == consentForm.template.id &&
+							consent.formStatus == ConsentForm.FormStatus.NORMAL &&
+							consent.id != consentForm.id &&
+							consent.savedInCDR &&
+							consent?.consentDate?.compareTo(consentForm.consentDate) > 0) {
+						foundConsents.add(consent)
+					}
+			}
+		}
+		foundConsents
+	}
+
+	def findAnyConsentOfSameTypeBeforeThisConsentWhichIsSavedInCDR(nhsNumber, hospitalNumber, consentForm) {
+		def foundConsent
+		def patients
+		if (patientService.isGenericNHSNumber(nhsNumber))
+			patients = Patient.findAllByHospitalNumber(hospitalNumber)
+		else
+			patients = Patient.findAllByNhsNumber(nhsNumber)
+
+			patients?.each { patient ->
+				patient.consents.each { consent ->
+					if (consent.template.id == consentForm.template.id &&
+							consent.formStatus == ConsentForm.FormStatus.NORMAL &&
+							consent.id != consentForm.id &&
+							consent.savedInCDR &&
+							consent?.consentDate?.compareTo(consentForm.consentDate) < 0) {
+						foundConsent = consent
+						return
+					}
+				}
+			}
+		foundConsent
+	}
+
+	def findLatestConsentOfSameTypeBeforeThisConsentWhichIsNotSavedInCDR(nhsNumber, hospitalNumber, consentForm, template) {
+		def foundConsent
+		def patients
+		if (patientService.isGenericNHSNumber(nhsNumber))
+			patients = Patient.findAllByHospitalNumber(hospitalNumber)
+		else
+			patients = Patient.findAllByNhsNumber(nhsNumber)
+
+			patients?.each { patient ->
+				patient.consents.each { consent ->
+					if (consent.template.id == template.id &&
+							consent.formStatus == ConsentForm.FormStatus.NORMAL &&
+							consent.id != consentForm.id &&
+							!consent.savedInCDR &&
+							consent?.consentDate?.compareTo(consentForm.consentDate) < 0) {
+
+						if (!foundConsent) {
+							foundConsent = consent
+						} else {
+							if (consent?.consentDate?.compareTo(foundConsent.consentDate) > 0)
+								foundConsent = consent
+						}
+					}
+				}
+			}
+
+		foundConsent
+	}
 
 	@Transactional
 	def delete(ConsentForm consentForm) {
+
 		try {
-			consentForm.delete(flush: true)
-			return true
+			//remove it from CDR before deleting it from DB
+			CDRService.removeConsentForm(consentForm.patient, consentForm)
+		} catch (Exception ex) {
+			//it actually should not stop the whole save process
+			log.error(ex.message)
 		}
-		catch (Exception ex) {
-			return false
+
+		//save consent and patient in a transaction
+		ConsentForm.withTransaction { status ->
+			try {
+				def patient = consentForm.patient
+				if(patient.consents.size() == 1) {
+					//if this is the only consent for the patient, then remove the patient and the consent
+					//and it will also remove the attachment
+					patient.delete(flush: true)
+				}else {
+					//else, just remove the consent from the patient and then delete the consent
+					patient.removeFromConsents(consentForm)
+					patient.save(flush: true)
+					consentForm.delete(flush: true)
+				}
+				return true
+			}
+			catch (Exception exp) {
+				status.setRollbackOnly()
+				return false
+			}
 		}
 	}
 
@@ -221,7 +363,7 @@ class ConsentFormService {
 				// Attempt to find all patient objects having this hospitalNumber
 				def patients = patientService.findAllByNHSOrHospitalNumber(hospitalNumber)
 				//Find all consent objects related to this patient (these patient objects)
-				def consents = consentFormService.getLatestConsentForms(patients)
+				def consents = getLatestConsentForms(patients)
 
 				//if it has equal/more than 2 consents,
 				//so there might be the possibility that there are more than 2 FULL_CONSENTED forms
@@ -288,5 +430,23 @@ class ConsentFormService {
 			sb.append("\n")
 		}
 		return sb.toString()
+	}
+
+
+	def searchByAccessGUID(accessGUID){
+		if(!accessGUID) {
+			return null
+		}
+		def consent = ConsentForm.findByAccessGUID(accessGUID)
+		if(!consent){
+			return null
+		}
+		consent
+	}
+
+	def getAccessGUIDUrl(consentForm){
+		//make sure that the consentForm has 'accessGUID' and it is not null or empty
+		assert consentForm.accessGUID && !consentForm.accessGUID.isEmpty()
+		"${grailsLinkGenerator.serverBaseURL}/consent/${consentForm.accessGUID}"
 	}
 }

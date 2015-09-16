@@ -24,6 +24,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
 		//so we need to add the following line
 		consentFormController.demographicService = Mock(DemographicService)
 		consentFormController.GELBarcodeParserService = Mock(GELBarcodeParserService)
+		consentFormController.consentFormService.CDRService = Mock(CDRService)
 
 		def template1=new ConsentFormTemplate(
                 name: "ORB1",
@@ -60,6 +61,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
 
 
         def consentForm = new ConsentForm([
+				accessGUID: UUID.randomUUID().toString(),
                 attachedFormImage: attachment1,
                 template:template1,
                 consentDate: new Date(),
@@ -152,7 +154,8 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         consentFormController.save()
 
         then:
-        consentFormController.response.redirectedUrl == "/attachment/annotatedList"
+		1 * consentFormController.consentFormService.CDRService.saveOrUpdateConsentForm(_,_,_) >>{return "success"}
+		consentFormController.response.redirectedUrl == "/attachment/annotatedList"
         Patient.count() == patientCountBefore + 1
     }
 
@@ -167,6 +170,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         consentFormController.save()
 
         then:
+		1 * consentFormController.consentFormService.CDRService.saveOrUpdateConsentForm(_,_,_) >>{return "success"}
         consentFormController.response.redirectedUrl == "/attachment/annotatedList"
         ConsentForm.count() == consentFormCountBefore + 1
 
@@ -191,6 +195,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
 				consents: []
 		)
 		def consent = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
 				attachedFormImage: attachment,
 				template: template,
 				patient: patient,
@@ -237,6 +242,7 @@ class ConsentFormCompletionControllerSpec extends IntegrationSpec {
         consentFormController.save()
 
         then:
+		1 * consentFormController.consentFormService.CDRService.saveOrUpdateConsentForm(_,_,_) >>{return "success"}
         consentFormController.response.redirectedUrl == "/attachment/annotatedList"
         attachment.consentForm!=null
 

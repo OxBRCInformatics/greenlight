@@ -16,15 +16,18 @@ class ConsentFormMarshaller {
 			return [
 					id : consentForm.id,
 					template : consentForm.template,
-					consentDate : consentForm.consentDate.format("yyyy-MM-dd"),
+					consentDate : consentForm.consentDate?.format("yyyy-MM-dd"),
 					consentTakerName : consentForm.consentTakerName,
 					formID : consentForm.formID,
 					formStatus : consentForm.formStatus.toString(),
 					consentStatus: consentForm.consentStatus.toString(),
 					comment : consentForm.comment,
 					patient : consentForm.patient,
-					attachment: consentForm.attachedFormImage
-					]
+					attachment: consentForm.attachedFormImage,
+					savedInCDR: consentForm.savedInCDR,
+					dateTimePassedToCDR:consentForm?.dateTimePassedToCDR?.format("yyyy-MM-dd hh:mm"),
+					savedInCDRStatus:consentForm.savedInCDRStatus,
+					persistedInCDR: consentForm.persistedInCDR]
 		}
 	}
 }
