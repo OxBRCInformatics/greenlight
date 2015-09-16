@@ -13,6 +13,29 @@ class DatabaseCleanupService {
 	def CDRService
 	def consentFormService
 
+
+	def removePatientsWithoutAnyConsent(){
+
+		def patientsWithoutConsentBefore = 0
+		try {
+			def patients = Patient.executeQuery("from Patient as p where p.consents is empty")
+			patientsWithoutConsentBefore = patients.size()
+			patients.each { patient ->
+				patient.delete(flush: true)
+			}
+		}catch (Exception ex){
+			return [success:false,
+					log:ex.message,
+					patientsWithoutConsentBefore:patientsWithoutConsentBefore,
+					patientsWithoutConsentAfter:patientsWithoutConsentBefore]
+		}
+		def patients = Patient.executeQuery("from Patient as p where p.consents is empty")
+		[success:true,
+		 log:"",
+		 patientsWithoutConsentBefore:patientsWithoutConsentBefore,
+		 patientsWithoutConsentAfter:patients.size()]
+	}
+
 	def cleanOrphanResponses() {
 		//have to do this to cleanup the old records,
 		//as we forgot to set all-delete-orphan in ConsentForm class
@@ -508,4 +531,12 @@ class DatabaseCleanupService {
 		 totalFail: failedSavedInCDR,
 		 totalConsentCount : ConsentForm.count()]
 	}
+	def listAllMrnNhsNumbers(){
+		def allMrnNhsNumbers= []
+		Patient.list().each { patient ->
+			allMrnNhsNumbers << "${patient.nhsNumber};${patient.hospitalNumber}"
+		}
+		allMrnNhsNumbers
+	}
+
 }

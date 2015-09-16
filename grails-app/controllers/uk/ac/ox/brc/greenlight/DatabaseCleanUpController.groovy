@@ -1,5 +1,6 @@
 package uk.ac.ox.brc.greenlight
 
+import grails.plugin.springsecurity.annotation.Secured
 import groovy.json.JsonBuilder
 import groovy.json.JsonOutput
 
@@ -10,10 +11,25 @@ import groovy.json.JsonOutput
  * cleanOrphanResponses action will remove orphan responses
  * and update latest responses for each consentForm
  */
+@Secured(["ROLE_ADMIN"])
 class DatabaseCleanUpController {
 
 	def databaseCleanupService
 	def patientService
+
+
+
+	def removePatientsWithoutAnyConsent(){
+		def patientResult
+		try{
+			patientResult = databaseCleanupService.removePatientsWithoutAnyConsent()
+		}catch(Exception ex){
+			render ex.message
+		}
+		def result = [result: patientResult]
+		respond result as Object, [formats:['xml','json']] as Map
+	}
+
 
 	def cleanOrphanResponses() {
 		def responseStr = getResponsesStatusStr()
@@ -160,6 +176,21 @@ class DatabaseCleanUpController {
 			render ex.message
 		}
 		def result = [result: consentResult]
+		respond result as Object, [formats:['xml','json']] as Map
+	}
+
+
+	def listAllMrnNHSNumbers(){
+		def  records
+		try {
+			records = databaseCleanupService.listAllMrnNhsNumbers()
+		}
+		catch (Exception exception) {
+			render exception.message
+			return
+		}
+
+		def result = [records: records]
 		respond result as Object, [formats:['xml','json']] as Map
 	}
 
