@@ -20,4 +20,14 @@ class TestConnectionController {
 		result['serverLink'] = "${grailsLinkGenerator.serverBaseURL}"
 		render model:[result:result],view:"cdr"
 	}
+
+	@Secured("ROLE_ADMIN")
+	def findPatient(){
+		def nhsNumber = params["nhsNumber"]
+		def hospitalNumber = params["hospitalNumber"]
+		def result = CDRService.findPatient(nhsNumber,hospitalNumber)
+		result.execption = null
+		respond result as Object, [model: result] as Map
+	}
+
 }
