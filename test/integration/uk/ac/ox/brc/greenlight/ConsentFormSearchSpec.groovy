@@ -222,7 +222,7 @@ class ConsentFormSearchSpec extends  IntegrationSpec{
         "GEN12345"   | "GEN12365"   | 1
         "GEN12370"   | "GEN12345"   | 2
         "GEN12345"   | ""           | 1
-        ""           | "GEN12345"   | 2
+        ""           | "GEN12345"   | 1
     }
 
 
