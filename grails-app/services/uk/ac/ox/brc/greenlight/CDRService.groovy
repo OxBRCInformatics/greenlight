@@ -167,14 +167,9 @@ class CDRService {
 		}
 
 		def cdrKnownFacilityConfig = grailsApplication.config?.cdr?.knownFacility
-		def cdrOrganisationConfig = grailsApplication.config?.cdr?.organisation
 
 		if (!cdrKnownFacilityConfig) {
 			return [success: false, log: "cdr KnownFacility Config is not defined in config file", execption:null]
-		}
-
-		if (!cdrOrganisationConfig) {
-			return [success: false, log: "cdr Organisation Config is not defined in config file", execption:null]
 		}
 
 		def knownOrganisation = findKnownOrganisation(consentDetailsMap?.namePrefix)
@@ -212,7 +207,7 @@ class CDRService {
 
 			def consent = mirthModelDsl.consent {
 				authoringFacility greenlight
-				appliesToOrganisation { id cdrOrganisationConfig?.id }
+				appliesToOrganisation { id knownOrganisation.getId() }
 				effectiveOn consentDetailsMap.consentDate
 				attachment {
 					assert consentURL
@@ -264,14 +259,9 @@ class CDRService {
 		}
 
 		def cdrKnownFacilityConfig = grailsApplication.config?.cdr?.knownFacility
-		def cdrOrganisationConfig  = grailsApplication.config?.cdr?.organisation
 
 		if (!cdrKnownFacilityConfig) {
 			return [success: false, log: "cdr KnownFacility Config is not defined in config file", execption:null]
-		}
-
-		if (!cdrOrganisationConfig) {
-			return [success: false, log: "cdr Organisation Config is not defined in config file", execption:null]
 		}
 
 		def knownOrganisation = findKnownOrganisation(consentDetailsMap?.namePrefix)
@@ -332,7 +322,7 @@ class CDRService {
 
 			def consent =  mirthModelDsl.consent {
 				authoringFacility greenlight
-				appliesToOrganisation {id cdrOrganisationConfig?.id}
+				appliesToOrganisation { id knownOrganisation.getId() }
 				effectiveOn consentDetailsMap.consentDate
 				consentType { code consentStatusCode }
 				attachment {
