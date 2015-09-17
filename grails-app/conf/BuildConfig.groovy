@@ -83,7 +83,7 @@ grails.project.dependency.resolution = {
 
 		compile "uk.ac.ox.ndm.mirth:mirth-datamodel:2.0-SNAPSHOT"
 
-		compile 'joda-time:joda-time:2.8'
+		compile 'joda-time:joda-time:2.7'
 
     }
 
