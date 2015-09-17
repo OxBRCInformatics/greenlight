@@ -452,6 +452,23 @@ class CDRService {
 		 }
 	 }
 
+
+	def findKnownOrganisationString(String consentFormPrefix) {
+		switch (consentFormPrefix) {
+			case "GLM":
+				return "GEL_MAIN"
+			case "GEL":
+				return "GEL_PILOT"
+			case "GEN":
+			case "PRE":
+				return "ORB_GEN"
+			case "CRA":
+				return "ORB_CRA"
+			default:
+				return null
+		}
+	}
+
 	def findPatientGroup(KnownOrganisation knownOrganisation,String patientGroup){
 		def patientGrp = knownOrganisation.getPatientGroupIds().find {it == patientGroup }
 		if(!patientGrp) {
