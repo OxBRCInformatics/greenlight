@@ -274,6 +274,11 @@ class CDRService {
 			return [success: false, log: "cdr KnownFacility Config is not defined in config file", execption:null]
 		}
 
+		def knownOrganisationString = findKnownOrganisationString(consentDetailsMap?.namePrefix)
+		if (!knownOrganisationString) {
+			return [success: false, log: "Can not find KnownOrganisation(Consent Form Prefix name) '${consentDetailsMap?.namePrefix}' in CDR KnownOrganisations", execption:null]
+		}
+
 		def knownOrganisation = findKnownOrganisation(consentDetailsMap?.namePrefix)
 		if (!knownOrganisation) {
 			return [success: false, log: "Can not find KnownOrganisation(Consent Form Prefix name) '${consentDetailsMap?.namePrefix}' in CDR KnownOrganisations", execption:null]
@@ -347,7 +352,7 @@ class CDRService {
 					}
 					url consentURL
 					code {
-						code "Greenlight Consent"  // Document Name in document window
+						code knownOrganisationString  // Document Name in document window
 						label "${consentVersionDetail}"	// Document Code in document window
 						codeSystem "Greenlight v1" // System version which made the code
 						description 'BRC Greenlight Consent Form' // Description of the code
@@ -357,7 +362,7 @@ class CDRService {
 
 				}
 			} as Consent
-			resultOfAction = client.createOrUpdatePatientConsent(consent,patient,knownFacility,knownPatientStatus.toString(),knownOrganisation.toString(),patientGroups)
+			resultOfAction = client.createOrUpdatePatientConsent(consent,patient,knownFacility,knownPatientStatus.toString(),knownOrganisationString,patientGroups)
 
 		}catch (ClientException ex) {
 			def logMessage = ex?.message
