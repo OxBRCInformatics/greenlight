@@ -224,13 +224,13 @@ class CDRServiceSpec extends Specification {
 
 		where:
 		organisationName            | consentUniqueId | expected
-		KnownOrganisation.GEL_PILOT | "GEL_CSC_V1"    | "GEL_CSC_V1"
-		KnownOrganisation.GEL_PILOT | "GEL_CSC_V2"    | "GEL_CSC_V2"
-		KnownOrganisation.GEL_MAIN  | "GEL_MAN_V2"    | "GEL_MAN_V2"
-		KnownOrganisation.ORB_GEN   | "ORB_GEN_V1"    | "ORB_GEN_V1"
-		KnownOrganisation.ORB_GEN   | "ORB_GEN_V2"    | "ORB_GEN_V2"
-		KnownOrganisation.ORB_GEN   | "ORB_PRE_V1_2"  | "ORB_PRE_V1_2"
-		KnownOrganisation.ORB_CRA   | "ORB_CRA_V1"    | "ORB_CRA_V1"
+		KnownOrganisation.GEL_PILOT | "GEL_CSC_V1"    | [patientGroup:"GEL_CSC_V1", consentDetail:"GeL - Pilot[Version 1.0 dated 25.08.2014]"]
+		KnownOrganisation.GEL_PILOT | "GEL_CSC_V2"    | [patientGroup:"GEL_CSC_V2", consentDetail:"GeL - Pilot[Version 2 dated 14.10.2014]"]
+		KnownOrganisation.GEL_MAIN  | "GEL_MAN_V2"    | [patientGroup:"GEL_MAN_V2", consentDetail:"GeL - Main[Version 2.0 dated 20.01.2015]"]
+		KnownOrganisation.ORB_GEN   | "ORB_GEN_V1"    | [patientGroup:"ORB_GEN_V1", consentDetail:"ORB General[v1 October 2013]"]
+		KnownOrganisation.ORB_GEN   | "ORB_GEN_V2"    | [patientGroup:"ORB_GEN_V2", consentDetail:	"ORB General[v2 April 2014]"]
+		KnownOrganisation.ORB_GEN   | "ORB_PRE_V1_2"  | [patientGroup:"ORB_PRE_V1_2", consentDetail:"ORB General[Version 1.2 dated 03.03.2009]"]
+		KnownOrganisation.ORB_CRA   | "ORB_CRA_V1"    | [patientGroup:"ORB_CRA_V1", consentDetail:"ORB Oncology for Adults[v1 October 2013]"]
 		KnownOrganisation.ORB_CRA   | "UNKNOWN"       | null
 	}
 

@@ -187,10 +187,12 @@ class CDRService {
 		}
 
 		//PatientGroup is actually the consentType in CDR definition
-		def patientGroup = findPatientGroup(knownOrganisation,consentDetailsMap?.cdrUniqueId)
-		if (!patientGroup) {
+		def patientGroupDetail = findPatientGroup(knownOrganisation,consentDetailsMap?.cdrUniqueId)
+		if (!patientGroupDetail) {
 			return [success: false, log: "Can not find consent form template (PatientGroup) '${consentDetailsMap?.cdrUniqueId}' in CDR PatientGroup", execption:null]
 		}
+		def patientGroup =  patientGroupDetail?.patientGroup
+		def consentVersionDetail =  patientGroupDetail?.consentDetail
 		//create a collection of patientGroups
 		Collection<String> patientGroups = []
 		patientGroups << patientGroup
@@ -288,10 +290,12 @@ class CDRService {
 		}
 
 		//PatientGroup is actually the consentType in CDR definition
-		def patientGroup = findPatientGroup(knownOrganisation,consentDetailsMap?.cdrUniqueId)
-		if (!patientGroup) {
-			return [success: false, log: "Can not find consent(PatientGroup) '${consentDetailsMap?.cdrUniqueId}' in CDR PatientGroup", execption:null]
+		def patientGroupDetail = findPatientGroup(knownOrganisation,consentDetailsMap?.cdrUniqueId)
+		if (!patientGroupDetail) {
+			return [success: false, log: "Can not find consent form template (PatientGroup) '${consentDetailsMap?.cdrUniqueId}' in CDR PatientGroup", execption:null]
 		}
+		def patientGroup =  patientGroupDetail?.patientGroup
+		def consentVersionDetail =  patientGroupDetail?.consentDetail
 		//create a collection of patientGroups
 		Collection<String> patientGroups = []
 		patientGroups << patientGroup
@@ -436,7 +440,14 @@ class CDRService {
 	 }
 
 	def findPatientGroup(KnownOrganisation knownOrganisation,String patientGroup){
-		knownOrganisation.getPatientGroupIds().find {it == patientGroup }
+		def patientGrp = knownOrganisation.getPatientGroupIds().find {it == patientGroup }
+		if(!patientGrp) {
+			return null
+		}
+		def consentDetail = knownOrganisation.getPatientGroups().find {
+			it.model.id == patientGroup
+		}
+		[patientGroup:patientGrp,consentDetail:consentDetail.getModel().getDescription()]
 	}
 
 	 def findKnownFacility(name){
