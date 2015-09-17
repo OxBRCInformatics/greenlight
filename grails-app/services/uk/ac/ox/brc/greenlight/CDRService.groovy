@@ -353,7 +353,7 @@ class CDRService {
 						description 'BRC Greenlight Consent Form' // Description of the code
 						codeSystemLabel 'BRC Greenlight Consent Form Management System' // Longer label for the system version whic made the code
 					}
-					activityTime consentDetailsMap.consentDate // Shows as date in documents window
+					activityTime new Date() // Shows as date in documents window
 
 				}
 			} as Consent
