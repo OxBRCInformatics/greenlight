@@ -257,15 +257,20 @@ epds.conString.username = "USERNAME"
 epds.conString.password = "PASSWORD"
 epds.conString.url='jdbc:oracle:thin:@serverName:1521:SIDName'
 
-cdr.access.username = "CDR_USERNAME"
-cdr.access.password = "CDR_PASSWORD"
 
-cdr.facility.id   = 'CDR_FACILITY_ID' 		//id 'TEST-BRC-GREENLIGHT'
-cdr.facility.name = 'CDR_FACILITY_NAME'		//name 'Test Greenlight System'
-cdr.facility.description  = 'CDR_FACILITY_DESC' //description 'Test facility for Greenlight Consent management'
-
-
-cdr.organisation.id = "TEST-OUH" //appliesToOrganisation when passing consent
-
-cdr.knownFacility.name = "TEST" //PRODUCTION("OXONCDRPROD", "PROD Oxford Clinical Data Repository", "PRODUCTION environment for Oxford Results Repository"),
-								//TEST("OXONCDRTEST", "TEST Oxfordshire Clinical Data Repository", "TEST environment for Oxford Results Repository.")
+//@@@@ CDR TEST @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+cdr.access.username 	= "USER"
+cdr.access.password 	= "PASSWORD"
+cdr.facility.id     	= 'TEST-BRC-GREENLIGHT'
+cdr.facility.name   	= 'Test BRC Greenlight Consent Management System'
+cdr.facility.description= 'Test BRC facility for Greenlight Consent management'
+cdr.knownFacility.name  = "TEST" //TEST("OXONCDRTEST", "TEST Oxfordshire Clinical Data Repository", "TEST environment for Oxford Results Repository.")
+cdr.passToCDR = "true" //we can temporarily disable sending consents to CDR, but they still will be logged in CDRLog
+//@@@@ CDR PROD @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+//cdr.access.username 	= "USER"
+//cdr.access.password 	= "PASSWORD"
+//cdr.facility.id     	= 'PROD-BRC-GREENLIGHT'
+//cdr.facility.name   	= 'Prod BRC Greenlight Consent Management System'
+//cdr.facility.description= 'Prod BRC facility for Greenlight Consent Management System'
+//cdr.knownFacility.name  = "PRODUCTION" //PRODUCTION("OXONCDRPROD", "PROD Oxford Clinical Data Repository", "PRODUCTION environment for Oxford Results Repository"),
+//cdr.passToCDR = "true" //we can temporarily disable sending consents to CDR, but they still will be logged in CDRLog
