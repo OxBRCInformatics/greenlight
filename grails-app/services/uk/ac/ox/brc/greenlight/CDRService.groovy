@@ -340,15 +340,15 @@ class CDRService {
 				attachment {
 					description 'Greenlight Consent Form' // Shows in document pop up window
 					sourceFacility greenlight
-					note "Consent form:${consentVersionDetail}\n"
-					note "Consent attachment URL:${consentURL}\n" //consentDetailsMap.comment
+					note "Consent form: Greenlight ${consentVersionDetail}\n"
+					note "Consent attachment URL: ${consentURL}\n" //consentDetailsMap.comment
 					if(consentDetailsMap?.consentStatusLabels && consentDetailsMap?.consentStatusLabels?.trim()?.size()>0) {
 						note "Consent form Status Label: ${consentDetailsMap?.consentStatusLabels}\n"
 					}
 					url consentURL
 					code {
-						label "Greenlight Consent"  // Document Name in document window
-						code "${consentVersionDetail}" 			// Document Code in document window
+						code "Greenlight Consent"  // Document Name in document window
+						label "${consentVersionDetail}"	// Document Code in document window
 						codeSystem "Greenlight v1" // System version which made the code
 						description 'BRC Greenlight Consent Form' // Description of the code
 						codeSystemLabel 'BRC Greenlight Consent Form Management System' // Longer label for the system version whic made the code
