@@ -336,12 +336,7 @@ class CDRService {
 				attachment {
 					description 'Greenlight Consent Form'
 					sourceFacility greenlight
-					//mimeType AttachmentModel.MimeType.PNG
-					//id attachmentService.getAttachmentFileName(consentForm.attachedFormImage)
-					// Any notes on the consent
-					notes "\n${consentDetailsMap?.consentStatusLabels}" //consentDetailsMap.comment
-					//note "\n${consentForm?.consentStatusLabels.join['\n']}"
-					//note "\n${consentDetailsMap?.consentStatusLabels}"
+					notes "${consentDetailsMap?.consentStatusLabels}" //consentDetailsMap.comment
 					url consentURL
 				}
 			} as Consent
