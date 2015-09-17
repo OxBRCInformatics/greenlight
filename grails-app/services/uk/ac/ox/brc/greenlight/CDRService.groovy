@@ -342,7 +342,9 @@ class CDRService {
 					sourceFacility greenlight
 					note "Consent form:${consentVersionDetail}\n"
 					note "Consent attachment URL:${consentURL}\n" //consentDetailsMap.comment
-					note "Consent form Status Label: ${consentDetailsMap?.consentStatusLabels}\n" //consentDetailsMap.comment
+					if(consentDetailsMap?.consentStatusLabels && consentDetailsMap?.consentStatusLabels?.trim()?.size()>0) {
+						note "Consent form Status Label: ${consentDetailsMap?.consentStatusLabels}\n"
+					}
 					url consentURL
 					code {
 						label "Greenlight Consent"  // Document Name in document window
