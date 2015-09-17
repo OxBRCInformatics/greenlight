@@ -350,7 +350,7 @@ class CDRService {
 						label "Greenlight Consent"  // Document Name in document window
 						code "${consentVersionDetail}" 			// Document Code in document window
 						codeSystem "Greenlight v1" // System version which made the code
-						description 'BRC Greenlight Consent Form Management System' // Description of the code
+						description 'BRC Greenlight Consent Form' // Description of the code
 						codeSystemLabel 'BRC Greenlight Consent Form Management System' // Longer label for the system version whic made the code
 					}
 					activityTime consentDetailsMap.consentDate // Shows as date in documents window
