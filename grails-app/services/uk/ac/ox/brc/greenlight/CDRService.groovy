@@ -338,10 +338,21 @@ class CDRService {
 				effectiveOn consentDetailsMap.consentDate
 				consentType { code consentStatusCode }
 				attachment {
-					description 'Greenlight Consent Form'
+					description 'Greenlight Consent Form' // Shows in document pop up window
 					sourceFacility greenlight
-					notes "${consentDetailsMap?.consentStatusLabels}" //consentDetailsMap.comment
+					note "Consent form:${consentVersionDetail}\n"
+					note "Consent attachment URL:${consentURL}\n" //consentDetailsMap.comment
+					note "Consent form Status Label: ${consentDetailsMap?.consentStatusLabels}\n" //consentDetailsMap.comment
 					url consentURL
+					code {
+						label "Greenlight Consent"  // Document Name in document window
+						code "${consentVersionDetail}" 			// Document Code in document window
+						codeSystem "Greenlight v1" // System version which made the code
+						description 'BRC Greenlight Consent Form Management System' // Description of the code
+						codeSystemLabel 'BRC Greenlight Consent Form Management System' // Longer label for the system version whic made the code
+					}
+					activityTime consentDetailsMap.consentDate // Shows as date in documents window
+
 				}
 			} as Consent
 			resultOfAction = client.createOrUpdatePatientConsent(consent,patient,knownFacility,knownPatientStatus.toString(),knownOrganisation.toString(),patientGroups)
