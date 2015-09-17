@@ -52,6 +52,7 @@ class CDRServiceSpec extends Specification {
 		}
 		service.metaClass.createCDRFacility = {new Facility()}
 		service.metaClass.findKnownOrganisation = {return KnownOrganisation.GEL_PILOT}
+		service.metaClass.findKnownOrganisationString = {return "GEL_PILOT"}
 		service.metaClass.findPatientGroup = {return "GEL_CSC_V1"}
 		service.metaClass.findKnownFacility = {return KnownFacility.TEST}
 		service.metaClass.grailsApplication.getConfig = { [cdr:[knownFacility:"TEST",organisation:"Greenlight"] ]  }
@@ -92,6 +93,7 @@ class CDRServiceSpec extends Specification {
 		}
 		service.metaClass.createCDRFacility = {new Facility()}
 		service.metaClass.findKnownOrganisation = {return KnownOrganisation.GEL_PILOT}
+		service.metaClass.findKnownOrganisationString = {return "GEL_PILOT"}
 		service.metaClass.findPatientGroup = {return "GEL_CSC_V1"}
 		service.metaClass.findKnownFacility = {return KnownFacility.TEST}
 		service.metaClass.grailsApplication.getConfig = { [cdr:[knownFacility:"TEST",organisation:"Greenlight"] ]  }
@@ -163,6 +165,7 @@ class CDRServiceSpec extends Specification {
 		}
 		service.metaClass.createCDRFacility = {new Facility()}
 		service.metaClass.findKnownOrganisation = { return KnownOrganisation.GEL_PILOT}
+		service.metaClass.findKnownOrganisationString = {return "GEL_PILOT"}
 		service.metaClass.findPatientGroup = {return "GEL_CSC_V1"}
 		service.metaClass.findKnownFacility = {return KnownFacility.TEST}
 		service.metaClass.grailsApplication.getConfig = { [cdr:[knownFacility:"TEST",organisation:"Greenlight"] ]  }
