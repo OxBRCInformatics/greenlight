@@ -173,7 +173,12 @@ class CDRLogService {
 	 * @return true if there are any consent having consentAccessGUID which are not persisted yet
 	 */
 	def isConsentWaitingForResolution(consentAccessGUID){
-		 CDRLog.countByConsentAccessGUIDAndPersistedInCDR(consentAccessGUID,false) > 0
+		def result = CDRLog.executeQuery("select count(*) from CDRLog as c where c.consentAccessGUID=:consentAccessGUID and c.persistedInCDR=false",[consentAccessGUID:consentAccessGUID])
+		if(result && result[0]>0){
+			return true
+		}
+		return false;
+		//CDRLog.countByConsentAccessGUIDAndPersistedInCDR(consentAccessGUID,false) > 0
 	}
 
 	def countAllNotPersistedBeforeThis(CDRLog record){
