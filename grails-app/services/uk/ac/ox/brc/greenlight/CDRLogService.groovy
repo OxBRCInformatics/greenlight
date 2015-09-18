@@ -43,7 +43,7 @@ class CDRLogService {
 				//Check if it is a connectionError or mirthResult exception?
 				connectionError: isConnectionError(exception)
 				)
-		cdr.save(failOnError: true)
+		cdr.save(flush:true,failOnError: true)
 	}
 
 
