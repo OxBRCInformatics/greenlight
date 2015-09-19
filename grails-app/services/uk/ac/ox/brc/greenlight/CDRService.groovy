@@ -353,7 +353,7 @@ class CDRService {
 					note "Consent form: Greenlight ${consentVersionDetail}\n"
 					note "Consent attachment URL: ${consentURL}\n" //consentDetailsMap.comment
 					if(consentDetailsMap?.consentStatusLabels && consentDetailsMap?.consentStatusLabels?.trim()?.size()>0) {
-						note "Consent form Status Label: ${consentDetailsMap?.consentStatusLabels}\n"
+						note "Consent form Status Label: \n${consentDetailsMap?.consentStatusLabels}\n"
 					}
 					url consentURL
 					code {
