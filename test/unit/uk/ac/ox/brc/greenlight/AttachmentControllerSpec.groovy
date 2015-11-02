@@ -144,7 +144,7 @@ class AttachmentControllerSpec extends Specification {
 		1 * controller.PDFService.convertPDFToSinglePNGImage(_,_) >> { throw new OutOfMemoryError("OutOfMemory in processing the PDF file")}
 		0 * controller.attachmentService.create(_)  >> {new Attachment();}
 		controller.modelAndView.model.attachments.size() > 0
-		controller.modelAndView.model.attachments[0].uploadStatus  == "Failed"
+		controller.modelAndView.model.attachments[0].uploadStatus  == "Failed (Processing the pages)"
 		controller.modelAndView.model.attachments[0].uploadMessage == "OutOfMemory in processing the PDF file"
 		controller.modelAndView.model.attachments[0].fileName == "multiPagePDF.pdf"
 	}
@@ -173,7 +173,7 @@ class AttachmentControllerSpec extends Specification {
 		2 * controller.attachmentService.create(_)  >> {throw new Exception("Exception in creating the attachment");}
 		controller.modelAndView.model.attachments.size() > 0
 		controller.modelAndView.model.attachments.eachWithIndex  { Attachment attachment, int index ->
-			assert attachment.uploadStatus  == "Failed"
+			assert attachment.uploadStatus  == "Failed (Processing the pages)"
 			assert attachment.uploadMessage == "Exception in creating the attachment"
 			assert attachment.fileName == "multiPagePDF.pdf[Page:${index+1}]"
 		}
@@ -227,7 +227,7 @@ class AttachmentControllerSpec extends Specification {
 		controller.modelAndView.model.attachments
 		controller.modelAndView.model.attachments.size() > 0
 		controller.modelAndView.model.attachments.eachWithIndex  { Attachment attachment, int index ->
-			assert attachment.uploadStatus  == "Failed"
+			assert attachment.uploadStatus  == "Failed (Reading the file)"
 			assert attachment.uploadMessage == "Error: Expected a long type at offset 310147, instead got '>'"
 			assert attachment.fileName == "corruptedPDFFile.pdf"
 		}
