@@ -20,6 +20,8 @@ class ConsentEvaluationServiceSpec extends Specification {
 	static final NO = Response.ResponseValue.NO
 	static final BLANK = Response.ResponseValue.BLANK
 	static final AMBIGUOUS = Response.ResponseValue.AMBIGUOUS
+	static final NOT_RELEVANT = Response.ResponseValue.NOT_RELEVANT
+
     def setup() {
     }
 
@@ -69,10 +71,12 @@ class ConsentEvaluationServiceSpec extends Specification {
 		NO				| NO_CONSENT		| [YES, NO, NO, NO]
 		BLANK			| NO_CONSENT		| [YES, NO, NO, NO]
 		AMBIGUOUS		| NO_CONSENT		| [YES, NO, NO, NO]
+		NOT_RELEVANT	| NO_CONSENT		| [YES, NO, NO, NO]
 		YES				| CONSENT			| [YES, YES, YES, YES]
 		NO				| CONSENT			| [YES, YES, YES, YES]
 		BLANK			| CONSENT			| [YES, YES, YES, YES]
 		AMBIGUOUS		| CONSENT			| [YES, YES, YES, YES]
+		NOT_RELEVANT	| CONSENT			| [YES, YES, YES, YES]
 	}
 
 	@Unroll
@@ -101,6 +105,7 @@ class ConsentEvaluationServiceSpec extends Specification {
 		CONSENT			| [NO, YES, NO, YES, YES]		| [0, 2]
 		CONSENT			| [YES, YES, YES, YES, YES]		| [0, 2]
 		CONSENT			| [NO, YES, NO, YES, YES]		| [0, 2]
+		CONSENT			| [NOT_RELEVANT, YES, NO, YES, YES]	| [0, 2]
 
 		// Sparse arrays are fine
 		NO_CONSENT		| [NO, YES, NO, NO, NO]		| [0, 2, 4]
@@ -146,9 +151,11 @@ class ConsentEvaluationServiceSpec extends Specification {
 		NO_CONSENT		| []					| [YES, YES, NO, YES, YES]   		| [] 		|["A", null, null, null, null]
 		NO_CONSENT		| ["A"]					| [NO, YES, YES, YES, YES]   		| [] 		|["A", null, "B", null, null]
 		NO_CONSENT		| ["A", "B"]			| [NO, YES, NO, YES, YES]  			| [] 		|["A", null, "B", null, null]
+		NO_CONSENT		| ["A", "B"]			| [NO, YES, NOT_RELEVANT, YES, YES]  			| [] 		|["A", null, "B", null, null]
 		NO_CONSENT		| ["B"]					| [YES, YES, NO, YES, YES]  		| [] 		|["A", null, "B", null, null]
 		NO_CONSENT		| ["A"]					| [NO, YES, NO, YES, YES]  			| [] 		|["A", null, "A", null, null]
 		NO_CONSENT		| ["A"]					| [YES, YES, NO, YES, YES]  		| [] 		|["A", null, "A", null, null]
+		NO_CONSENT		| ["Not-Rel"]			| [YES, YES, NOT_RELEVANT, YES, YES]| [] 		|["A", null, "Not-Rel", null, null]
 
 		// Extended support for labels making questions have a partial level of consent CONSENT_WITH_LABELS
 		CONSENT			| []					| [YES, YES, YES, YES, YES]   		| [] 		| [null, null, null, null, null]
@@ -156,6 +163,7 @@ class ConsentEvaluationServiceSpec extends Specification {
 		CONSENT_LABELS	| ["A"]					| [NO, YES, YES, YES, YES]   		| [0] 		| ["A", null, null, null, null]
 		NO_CONSENT		| ["A"]					| [NO, YES, NO, YES, YES]   		| [] 		| ["A", null, null, null, null]
 		CONSENT			| []					| [YES, YES, YES, YES, YES]   		| [] 		| ["A", null, null, null, null]
+		CONSENT			| []					| [YES, YES, NOT_RELEVANT, YES, YES]| [2] 		| ["A", null, null, null, null]
 		NO_CONSENT		| []					| [YES, YES, NO, YES, YES]   		| [] 		| ["A", null, null, null, null]
 		CONSENT_LABELS	| ["A"]					| [NO, YES, YES, YES, YES]   		| [0,2]		| ["A", null, "B", null, null]
 		CONSENT_LABELS	| ["A", "B"]			| [NO, YES, NO, YES, YES]  			| [0,2] 	| ["A", null, "B", null, null]

@@ -16,7 +16,7 @@ class Response {
 
 
     enum ResponseValue {
-        YES("Yes"), NO("No"),BLANK("Blank"),AMBIGUOUS("Ambiguous");
+        YES("Yes"), NO("No"),BLANK("Blank"),AMBIGUOUS("Ambiguous"),NOT_RELEVANT("Not relevant");
         final String value;
         ResponseValue(String value) { this.value = value; }
         String toString() { value; }
