@@ -140,7 +140,7 @@
                               style="font-size:12px;width: 250px;"
                               name="commandInstance.consentFormTemplateId" class="form-control"
                               value="${commandInstance?.consentForm?.template?.id}"
-                              from="${ConsentFormTemplate.list()}"
+                              from="${ConsentFormTemplate.findAll("from ConsentFormTemplate as c order by c.name,c.templateVersion")}"
                               optionKey="id"
                               optionValue="${name}"
                               noSelection="${['-1': 'Select one ...']}"

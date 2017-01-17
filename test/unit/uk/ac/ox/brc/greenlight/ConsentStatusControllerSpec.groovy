@@ -3,6 +3,8 @@ package uk.ac.ox.brc.greenlight
 import grails.converters.JSON
 import grails.converters.XML
 import grails.test.mixin.TestFor
+import groovy.json.JsonBuilder
+import org.codehaus.groovy.grails.web.json.JSONObject
 import spock.lang.*
 import uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus
 
@@ -187,8 +189,16 @@ class ConsentStatusControllerSpec extends Specification {
 		1 * controller.patientService.findAllByNHSOrHospitalNumber(lookupId) >> [patient]
 		1 * controller.consentFormService.getLatestConsentForms([patient]) >> latestConsentForms
 
-		controller.response.json.toString() == "{\"dateOfBirth\":\"25-01-2015 02:10:00\",\"consents\":[{\"consentTakerName\":\"User1\",\"form\":{\"name\":\"form type 1\",\"namePrefix\":\"GEN\",\"version\":\"1.0\"},\"consentFormId\":\"GEL123\",\"consentStatusLabels\":\"\",\"consentStatus\":\"FULL_CONSENT\",\"lastCompleted\":null},{\"consentTakerName\":\"User2\",\"form\":{\"name\":\"form type 2\",\"namePrefix\":\"CRA\",\"version\":\"2.0\"},\"consentFormId\":\"GEL456\",\"consentStatusLabels\":\"\",\"consentStatus\":\"NON_CONSENT\",\"lastCompleted\":null}],\"lastName\":\"Doe\",\"errors\":false,\"hospitalNumber\":\"NHSOXHOSP1\",\"nhsNumber\":\"12345\",\"firstName\":\"John Doe\",\"_self\":\"/api/aNiceURL\"}"
 
+		def expected = new groovy.json.JsonSlurper().parseText ("""
+		 {"dateOfBirth":"25-01-2015 02:10:00",
+		  "consents":[{"consentTakerName":"User1","form":{"name":"form type 1","namePrefix":"GEN","version":"1.0"},"consentFormId":"GEL123","consentStatusLabels":"","consentStatus":"FULL_CONSENT","lastCompleted":null},
+		  			  {"consentTakerName":"User2","form":{"name":"form type 2","namePrefix":"CRA","version":"2.0"},"consentFormId":"GEL456","consentStatusLabels":"","consentStatus":"NON_CONSENT","lastCompleted":null}],
+		  "lastName":"Doe","errors":false,"hospitalNumber":"NHSOXHOSP1","nhsNumber":"12345","firstName":"John Doe","_self":"/api/aNiceURL"}"
+		""");
+		def actualJsonString = controller.response.json.toString()
+		def actual = new groovy.json.JsonSlurper().parseText (actualJsonString)
+		assert actual == expected
 	}
 	def "Check if XML marshaller will return the dates in a proper format"() {
 

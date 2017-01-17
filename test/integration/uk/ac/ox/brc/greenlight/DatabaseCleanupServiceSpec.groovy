@@ -196,6 +196,39 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 
 	}
 
+
+
+
+	def "removePatientsWithoutAnyConsent removes patients that do not have any consents"() {
+		given: "There are patients that do not have any consents"
+		new Patient(nhsNumber: "1234567890", hospitalNumber: "1", givenName: "A", familyName: "B", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+		new Patient(nhsNumber: "1234567890", hospitalNumber: "1", givenName: "A", familyName: "B", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+		new Patient(nhsNumber: "1234567890", hospitalNumber: "1", givenName: "A", familyName: "B", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+		def patient = new Patient(nhsNumber: "1234567890", hospitalNumber: "1", givenName: "A", familyName: "B", dateOfBirth: new Date()).save(failOnError: true, flush: true)
+
+
+		def attachment= new Attachment(attachmentType: Attachment.AttachmentType.IMAGE, content: [],dateOfUpload:new Date(),fileName:"1.jpg").save(flush: true,failOnError: true)
+		def consent = new ConsentForm(
+				accessGUID: UUID.randomUUID().toString(),
+				attachedFormImage: attachment,
+				template: ConsentFormTemplate.first(),
+				consentDate: new Date([year:2014,month:01,date:01]),
+				consentTakerName: "Edward",
+				formID: "GEN12345"
+		)
+		patient.addToConsents(consent).save(flush:true)
+
+		when:
+		assert Patient.count() == 4
+		databaseCleanupService.removePatientsWithoutAnyConsent()
+
+		then:
+		assert Patient.count() == 1
+		assert ConsentForm.count() == 1
+
+	}
+
+
 	void "DatabaseCleanup removes orphan responses"() {
 
 		given:"A number of orphan responses already exists"
@@ -473,6 +506,88 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				nhsNumber: "8529637410",
 				consents: []
 		).save(flush: true , failOnError:true )
+
+
+
+		def patientTest = new Patient(
+				givenName: "B",
+				familyName: "B",
+				dateOfBirth: new Date("01/03/1930"),
+				hospitalNumber: "12388",
+				nhsNumber: "8529007410",
+				consents: []
+		).save(flush: true , failOnError:true )
+
+
+		def patientWithGenericFormID1 = new Patient(
+				givenName: "A",
+				familyName: "A",
+				dateOfBirth: new Date("04/01/1940"),
+				hospitalNumber: "18809",
+				nhsNumber: "7410009630",
+				consents: []
+		).save(flush: true, failOnError: true)
+		def con = new ConsentForm(
+				attachedFormImage: attachment2,
+				template: template2,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edward",
+				formID: "CDR00000",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patientTest).save(flush: true, failOnError: true)
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[0]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[1]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[2]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[3]))
+		con.save(flush: true, failOnError: true)
+
+
+		def patientWithGenericFormID2 = new Patient(
+				givenName: "A",
+				familyName: "A",
+				dateOfBirth: new Date("04/01/1940"),
+				hospitalNumber: "18809",
+				nhsNumber: "7410009630",
+				consents: []
+		).save(flush: true, failOnError: true)
+		con = new ConsentForm(
+				attachedFormImage: attachment2,
+				template: template2,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edward",
+				formID: "GEL00000",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patientTest).save(flush: true, failOnError: true)
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[0]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[1]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[2]))
+		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[3]))
+		con.save(flush: true, failOnError: true)
+
+
+		//ADD GEL consentTemplate
+		def GELTemp1 = new ConsentFormTemplate(name: "GEL1",templateVersion: "Version 1.0 dated  25.08.2014",namePrefix: "GEL")
+				.save(flush: true , failOnError:true )
+		def GELTemp2 = new ConsentFormTemplate(name: "GEL1",templateVersion: "Version 2 dated 14.10.14",namePrefix: "GEL")
+				.save(flush: true , failOnError:true )
+
+		 new ConsentForm(
+				attachedFormImage: attachment2,
+				template: GELTemp1,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edward",
+				formID: "GEL11000",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patientTest).save(flush: true, failOnError: true)
+		new ConsentForm(
+				attachedFormImage: attachment2,
+				template: GELTemp2,
+				consentDate: new Date([year: 2014, month: 01, date: 01]),
+				consentTakerName: "Edward",
+				formID: "GEL12000",
+				formStatus: ConsentForm.FormStatus.NORMAL,
+				patient: patientTest).save(flush: true, failOnError: true)
+
 		//@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 		def result = databaseCleanupService.patientDBReport()
@@ -485,7 +600,7 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 				nhsNumber: "1010101010",
 				consents: []
 		).save(flush: true, failOnError: true)
-		def con = new ConsentForm(
+		con = new ConsentForm(
 				attachedFormImage: attachment2,
 				template: template2,
 				consentDate: new Date([year: 2014, month: 01, date: 01]),
@@ -730,14 +845,16 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		con.addToResponses(new Response(answer: Response.ResponseValue.YES, question: questions2[3]))
 		con.save(flush: true, failOnError: true)
 
-
-
 		def databaseStatusReport = databaseCleanupService.databaseStatusReports()
 
 		then: ""
 		result
+		result['consentWithGenericFormID'].size() == 2
+		result['GELConsentsV1'].size() == 1
+		result['GELConsentsV2'].size() == 1
+
 		databaseStatusReport.size() == 5
-		databaseStatusReport['ConsentFormCount'] == 14
+		databaseStatusReport['ConsentFormCount'] == 18
 		databaseStatusReport['consentFormsWithEmptyFields'].size() == 3
 		databaseStatusReport['consentFormWithGenericIDs'].size()   == 4
 		databaseStatusReport['nhsNumberWithMoreThanOneDOB'].size() == 1
@@ -761,5 +878,99 @@ class DatabaseCleanupServiceSpec extends IntegrationSpec {
 		then:
 		recordsUpdated   == expectedCount
 		afterUpdateCount == 0
+	}
+
+	void "updateConsentTemplateVersion will update consentTemplate version"(){
+
+		given:"default consent form template exist"
+		//remove all consentFormTemplates
+		ConsentFormTemplate.deleteAll(ConsentFormTemplate.list())
+		new ConsentFormTemplate(
+				name: "Pre-2014 ORB consent form",
+				namePrefix: "PRE",
+				templateVersion: "Version 1.2 dated 3rd March 2009"
+		).save(failOnError: true)
+
+		new ConsentFormTemplate(
+				name: "100,000 Genomes Project – Cancer Sequencing Consent Form",
+				namePrefix: "GEL",
+				templateVersion: "Version 2 dated 14.10.14"
+		).save(failOnError: true)
+
+		new ConsentFormTemplate(
+				name: "100,000 Genomes Project – Cancer Sequencing Consent Form",
+				namePrefix: "GEL",
+				templateVersion: "Version 1.0 dated  25.08.2014"
+		).save(failOnError: true)
+
+		assert !ConsentFormTemplate.findByNameAndTemplateVersion("Pre-2014 ORB consent form","Version 1.2 dated 03.03.2009")
+		assert !ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form","Version 2 dated 14.10.2014")
+		assert !ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form","Version 1.0 dated 25.08.2014")
+
+
+		when: "updateConsentTemplateVersion called"
+		databaseCleanupService.updateConsentTemplateVersion()
+
+		then:"consentTemplate version will be updated"
+		ConsentFormTemplate.findByNameAndTemplateVersion("Pre-2014 ORB consent form","Version 1.2 dated 03.03.2009")
+		ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form","Version 2 dated 14.10.2014")
+		ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form","Version 1.0 dated 25.08.2014")
+	}
+
+	void "updateCDRUniqueId will add uniqueId to consentFormTemplate"(){
+
+		given:"Default consentFormTemplates are available"
+		//remove all consentFormTemplates
+		ConsentFormTemplate.deleteAll(ConsentFormTemplate.list())
+		new ConsentFormTemplate(
+				name: "ORB General Consent Form",
+				namePrefix: "GEN",
+				templateVersion: "v1 October 2013").save(failOnError: true)
+
+		new ConsentFormTemplate(
+				name: "ORB Specific Programme Clinically Relevant Genomics - Oncology Consent Form for Adults",
+				namePrefix: "CRA",
+				templateVersion: "v1 October 2013").save(failOnError: true)
+
+		new ConsentFormTemplate(
+				name: "100,000 Genomes Project – Cancer Sequencing Consent Form",
+				namePrefix: "GEL",
+				templateVersion: "Version 1.0 dated 25.08.2014" //"Version 1.0 dated  25.08.2014"
+						).save(failOnError: true)
+
+		new ConsentFormTemplate(
+				name: "100,000 Genomes Project – Cancer Sequencing Consent Form",
+				namePrefix: "GEL",
+				templateVersion: "Version 2 dated 14.10.2014"//"Version 2 dated 14.10.14"
+				).save(failOnError: true)
+
+		new ConsentFormTemplate(
+				name: "Pre-2014 ORB consent form",
+				namePrefix: "PRE",
+				templateVersion: "Version 1.2 dated 03.03.2009" //"Version 1.2 dated 3rd March 2009"
+				).save(failOnError: true)
+
+		new ConsentFormTemplate(
+				name: "ORB General Consent Form",
+				namePrefix: "GEN",
+				templateVersion: "v2 April 2014").save(failOnError: true)
+
+		assert !ConsentFormTemplate.findByCdrUniqueId("ORB_PRE_V1_2")
+		assert !ConsentFormTemplate.findByCdrUniqueId("ORB_GEN_V1")
+		assert !ConsentFormTemplate.findByCdrUniqueId("ORB_CRA_V1")
+		assert !ConsentFormTemplate.findByCdrUniqueId("GEL_CSC_V1")
+		assert !ConsentFormTemplate.findByCdrUniqueId("GEL_CSC_V2")
+		assert !ConsentFormTemplate.findByCdrUniqueId("ORB_GEN_V2")
+
+		when:
+		databaseCleanupService.updateCDRUniqueId()
+
+		then:
+		ConsentFormTemplate.findByCdrUniqueId("ORB_PRE_V1_2")
+		ConsentFormTemplate.findByCdrUniqueId("ORB_GEN_V1")
+		ConsentFormTemplate.findByCdrUniqueId("ORB_CRA_V1")
+		ConsentFormTemplate.findByCdrUniqueId("GEL_CSC_V1")
+		ConsentFormTemplate.findByCdrUniqueId("GEL_CSC_V2")
+		ConsentFormTemplate.findByCdrUniqueId("ORB_GEN_V2")
 	}
 }

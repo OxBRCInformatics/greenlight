@@ -11,6 +11,29 @@ class DatabaseCleanupService {
 
 	def dataSource
 
+
+	def removePatientsWithoutAnyConsent(){
+
+		def patientsWithoutConsentBefore = 0
+		try {
+			def patients = Patient.executeQuery("from Patient as p where p.consents is empty")
+			patientsWithoutConsentBefore = patients.size()
+			patients.each { patient ->
+				patient.delete(flush: true)
+			}
+		}catch (Exception ex){
+			return [success:false,
+					log:ex.message,
+					patientsWithoutConsentBefore:patientsWithoutConsentBefore,
+					patientsWithoutConsentAfter:patientsWithoutConsentBefore]
+		}
+		def patients = Patient.executeQuery("from Patient as p where p.consents is empty")
+		[success:true,
+		 log:"",
+		 patientsWithoutConsentBefore:patientsWithoutConsentBefore,
+		 patientsWithoutConsentAfter:patients.size()]
+	}
+
 	def cleanOrphanResponses() {
 		//have to do this to cleanup the old records,
 		//as we forgot to set all-delete-orphan in ConsentForm class
@@ -200,6 +223,20 @@ class DatabaseCleanupService {
 		result.put('patientObjectsWithEmptyConsent', patientObjectsWithEmptyConsent)
 
 
+		def consentWithGenericFormID = ConsentForm.createCriteria().list {
+			like("formID","%00000")
+			projections {
+				property('id', 'id')
+			}
+		}
+		result.put('consentWithGenericFormID', consentWithGenericFormID)
+
+
+		def GELConsentsV1 = ConsentForm.executeQuery("select c.id,c.formStatus from ConsentForm as c where c.template.namePrefix='GEL' and c.template.templateVersion='Version 1.0 dated  25.08.2014'")
+		def GELConsentsV2 = ConsentForm.executeQuery("select c.id,c.formStatus from ConsentForm as c where c.template.namePrefix='GEL' and c.template.templateVersion='Version 2 dated 14.10.14'")
+		result.put('GELConsentsV1', GELConsentsV1)
+		result.put('GELConsentsV2', GELConsentsV2)
+
 		result
 	}
 
@@ -246,6 +283,7 @@ class DatabaseCleanupService {
 			}
 		}
 		result.put('hospitalNumberWithMoreThanOneDOB', hospitalNumberWithMoreThanOneDOB)
+
 		result
 	}
 
@@ -267,6 +305,76 @@ class DatabaseCleanupService {
 			}
 		}
 		updatedCount
+	}
+
+
+	def updateConsentTemplateVersion(){
+
+		def orbTemplate = ConsentFormTemplate.findByNameAndTemplateVersion("Pre-2014 ORB consent form","Version 1.2 dated 3rd March 2009")
+		if(orbTemplate){
+			orbTemplate.templateVersion = "Version 1.2 dated 03.03.2009"
+			orbTemplate.save(flush: true)
+		}
+
+		def gelTemp = ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form","Version 2 dated 14.10.14")
+		if(gelTemp){
+			gelTemp.templateVersion = "Version 2 dated 14.10.2014"
+			gelTemp.save(flush: true)
+		}
+
+		def gelTemp2 = ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form","Version 1.0 dated  25.08.2014")
+		if(gelTemp2){
+			gelTemp2.templateVersion = "Version 1.0 dated 25.08.2014"
+			gelTemp2.save(flush: true)
+		}
+	}
+
+
+	def updateCDRUniqueId() {
+
+		def formTemplate = ConsentFormTemplate.findByNameAndTemplateVersion("ORB General Consent Form", "v1 October 2013")
+		if (formTemplate) {
+			formTemplate.cdrUniqueId = "ORB_GEN_V1"
+			formTemplate.save(flush: true)
+		}
+
+		formTemplate = ConsentFormTemplate.findByNameAndTemplateVersion("ORB Specific Programme Clinically Relevant Genomics - Oncology Consent Form for Adults", "v1 October 2013")
+		if (formTemplate) {
+			formTemplate.cdrUniqueId = "ORB_CRA_V1"
+			formTemplate.save(flush: true)
+		}
+
+		formTemplate = ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form", "Version 1.0 dated 25.08.2014")
+		if (formTemplate) {
+			formTemplate.cdrUniqueId = "GEL_CSC_V1"
+			formTemplate.save(flush: true)
+		}
+
+		formTemplate = ConsentFormTemplate.findByNameAndTemplateVersion("100,000 Genomes Project – Cancer Sequencing Consent Form", "Version 2 dated 14.10.2014")
+		if (formTemplate) {
+			formTemplate.cdrUniqueId = "GEL_CSC_V2"
+			formTemplate.save(flush: true)
+		}
+
+		formTemplate = ConsentFormTemplate.findByNameAndTemplateVersion("Pre-2014 ORB consent form", "Version 1.2 dated 03.03.2009")
+		if (formTemplate) {
+			formTemplate.cdrUniqueId = "ORB_PRE_V1_2"
+			formTemplate.save(flush: true)
+		}
+
+		formTemplate = ConsentFormTemplate.findByNameAndTemplateVersion("ORB General Consent Form", "v2 April 2014")
+		if (formTemplate) {
+			formTemplate.cdrUniqueId = "ORB_GEN_V2"
+			formTemplate.save(flush: true)
+		}
+	}
+
+	def listAllMrnNhsNumbers(){
+		def allMrnNhsNumbers= []
+		Patient.list().each { patient ->
+			allMrnNhsNumbers << "${patient.nhsNumber};${patient.hospitalNumber}"
+		}
+		allMrnNhsNumbers
 	}
 
 }
