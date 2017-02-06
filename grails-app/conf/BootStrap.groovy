@@ -105,7 +105,7 @@ class BootStrap {
                     namePrefix: "GEN",
                     templateVersion: "v1 October 2013",
 					cdrUniqueId : "ORB_GEN_V1"
-            ).addToQuestions(new Question(optional: true, name: 'I have read and understood the information sheet for this study (Version 1 dated December 2013). I have had the opportunity to ask questions and have had these answered satisfactorily.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
+            ).addToQuestions(new Question(name: 'I have read and understood the information sheet for this study (Version 1 dated December 2013). I have had the opportunity to ask questions and have had these answered satisfactorily.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
             ).addToQuestions(new Question(name: 'I agree to give samples for research and/or allow samples already collected as part of my medical care to be used by the biobank.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
             ).addToQuestions(new Question(name: 'I agree that further blood and/or tissue samples may be taken for the biobank during the course of my hospital care.  I understand that I will be asked for permission each time.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
             ).addToQuestions(new Question(name: 'I understand that my participation is voluntary and that I am free at any time to withdraw my permission for the storage and distribution of any of my samples that have not already been used in research.  Withdrawing from the biobank will not affect my present and future medical care and legal rights in any way.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
@@ -283,7 +283,7 @@ class BootStrap {
 					namePrefix: "GEN",
 					templateVersion: "v2 April 2014",
 					cdrUniqueId : "ORB_GEN_V2"
-			).addToQuestions(new Question(optional: true, name: 'I have read and understood the information sheet for this study (Version 1 dated December 2013). I have had the opportunity to ask questions and have had these answered satisfactorily.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
+			).addToQuestions(new Question(name: 'I have read and understood the information sheet for this study (Version 1 dated December 2013). I have had the opportunity to ask questions and have had these answered satisfactorily.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
 			).addToQuestions(new Question(name: 'I agree to give samples for research and/or allow samples already collected as part of my medical care to be used by the biobank.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
 			).addToQuestions(new Question(name: 'I agree that further blood and/or tissue samples may be taken for the biobank during the course of my hospital care.  I understand that I will be asked for permission each time.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
 			).addToQuestions(new Question(name: 'I understand that my participation is voluntary and that I am free at any time to withdraw my permission for the storage and distribution of any of my samples that have not already been used in research.  Withdrawing from the biobank will not affect my present and future medical care and legal rights in any way.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
@@ -398,6 +398,54 @@ class BootStrap {
 
 		}
 
+		//add new consentForm ORB Specific Programme Clinically Relevant Genomics - Oncology Parental Consent Form
+		if (ConsentFormTemplate.count() == 9) {
+
+			new ConsentFormTemplate(
+					name: "ORB Specific Programme Clinically Relevant Genomics - Oncology Parental Consent Form",
+					namePrefix: "CRP",
+					templateVersion: "Version 2 dated April 2014",
+					cdrUniqueId: "ORB_CRP_V2_0"
+					/* 1 */).addToQuestions(new Question(name: 'I have read and understood the information sheet for this study (Version 1 dated October 2013). I have had the opportunity to ask questions and have had these answered satisfactorily.', validResponses: [Response.ResponseValue.YES, Response.ResponseValue.NO, Response.ResponseValue.BLANK, Response.ResponseValue.AMBIGUOUS], defaultResponse: Response.ResponseValue.BLANK)
+					/* 2 */).addToQuestions(new Question(name: 'I agree to my child giving samples for research and/or allow samples already collected as part of my child’s medical care to be used by the biobank.', validResponses: [Response.ResponseValue.YES, Response.ResponseValue.NO, Response.ResponseValue.BLANK, Response.ResponseValue.AMBIGUOUS], defaultResponse: Response.ResponseValue.BLANK)
+					/* 3 */).addToQuestions(new Question(name: 'I agree that further blood and/or tissue samples may be taken for the biobank during the course of my child’s hospital care. I understand that permission with be asked each time.', validResponses: [Response.ResponseValue.YES, Response.ResponseValue.NO, Response.ResponseValue.BLANK, Response.ResponseValue.AMBIGUOUS], defaultResponse: Response.ResponseValue.BLANK)
+					/* 4 */).addToQuestions(new Question(name: 'I understand that my child’s participation is voluntary and that I am free at any time to withdraw my permission for the storage and distribution of any of their samples that have not already been used in research. Withdrawing from the biobank will not affect my child’s present and future medical care and legal rights in any way.', validResponses: [Response.ResponseValue.YES, Response.ResponseValue.NO, Response.ResponseValue.BLANK, Response.ResponseValue.AMBIGUOUS], defaultResponse: Response.ResponseValue.BLANK)
+					/* 5 */).addToQuestions(new Question(name: 'I agree that biobank staff can collect and store information from my child’s health care records for research that uses their samples. I understand that the biobank will keep my child’s information confidential. Information will only be passed on to researchers in a form that protects my child’s identity.', validResponses: [Response.ResponseValue.YES, Response.ResponseValue.NO, Response.ResponseValue.BLANK, Response.ResponseValue.AMBIGUOUS], defaultResponse: Response.ResponseValue.BLANK)
+					/* 6 */).addToQuestions(new Question(name: 'I understand and agree that my child’s samples will be considered a gift to the University of Oxford. If a commercial product were developed as a result of research in which my sample was used, neither my child nor I would profit financially.', validResponses: [Response.ResponseValue.YES, Response.ResponseValue.NO, Response.ResponseValue.BLANK, Response.ResponseValue.AMBIGUOUS], defaultResponse: Response.ResponseValue.BLANK)
+					/* 7 */).addToQuestions(new Question(name: 'I give permission for the biobank to store my child’s samples and distribute them for use in any medical research that has research ethics committee approval. I understand that future laboratory research may use new tests or techniques that are not yet known.', validResponses: [Response.ResponseValue.YES, Response.ResponseValue.NO, Response.ResponseValue.BLANK, Response.ResponseValue.AMBIGUOUS], defaultResponse: Response.ResponseValue.BLANK)
+					/* 8 */).addToQuestions(new Question(name: 'I understand that relevant sections of my child’s medical notes and data collected by the biobank may be looked at by authorised individuals from The University of Oxford, NHS organisations, funding agencies and research governance monitors. I permit these individuals to access my child’s research records.', validResponses: [Response.ResponseValue.YES, Response.ResponseValue.NO, Response.ResponseValue.BLANK, Response.ResponseValue.AMBIGUOUS], defaultResponse: Response.ResponseValue.BLANK)
+					/* 9 */).addToQuestions(new Question(name: 'Genetic research: I understand and agree that my child’s samples may be used in genetic research aimed at understanding the genetic influences on disease.', validResponses: [Response.ResponseValue.YES, Response.ResponseValue.NO, Response.ResponseValue.BLANK, Response.ResponseValue.AMBIGUOUS], defaultResponse: Response.ResponseValue.BLANK)
+					/* 10 */).addToQuestions(new Question(optional: true, labelIfNotYes: "Do not return clinically relevant results to patient's clinician.", name: "Clinically relevant results: I agree that findings from genetic and other testing related to the reason my child is currently undergoing investigations will be fed back to my child’s clinician so that they may be used in decisions about my child’s treatment.", validResponses: [Response.ResponseValue.YES, Response.ResponseValue.NO], defaultResponse: Response.ResponseValue.NO)
+					/* 11 */).addToQuestions(new Question(optional: true, labelIfNotYes: "Do not return incidental findings to parents.", name: "Incidental findings: I understand and agree that I will be informed of any results of genetic analysis of my child’s sample where they are NOT relevant to the condition being investigated, but are judged to be important for my/my family’s health care, and can be acted upon medically.", validResponses: [Response.ResponseValue.YES, Response.ResponseValue.NO], defaultResponse: Response.ResponseValue.NO)
+					/* 12 */).addToQuestions(new Question(optional: true, name: 'I agree to be contacted about ethically approved research studies for which my child may be suitable. I understand that agreeing to be contacted does not oblige my child to participate in any further studies.', validResponses: [Response.ResponseValue.YES, Response.ResponseValue.NO, Response.ResponseValue.BLANK, Response.ResponseValue.AMBIGUOUS], defaultResponse: Response.ResponseValue.BLANK)
+			).save(failOnError: true)
+
+			//Update GENV1 consent first question and make it non-Optional as requested on 30,Jan,2017 by S.J
+			def GENConsentV1 = ConsentFormTemplate.findByCdrUniqueId("ORB_GEN_V1")
+			if (GENConsentV1 != null) {
+				Question q1 = GENConsentV1.questions.find {
+					it.name == "I have read and understood the information sheet for this study (Version 1 dated December 2013). I have had the opportunity to ask questions and have had these answered satisfactorily."
+				}
+				if (q1) {
+					q1.optional = false
+					q1.save(flush: true)
+				}
+			}
+
+			//Update GENV1 consent first question and make it non-Optional as requested on 30,Jan,2017 by S.J
+			def GENConsentV2 = ConsentFormTemplate.findByCdrUniqueId("ORB_GEN_V2")
+			if (GENConsentV2 != null) {
+				Question q1 = GENConsentV2.questions.find {
+					it.name == "I have read and understood the information sheet for this study (Version 1 dated December 2013). I have had the opportunity to ask questions and have had these answered satisfactorily."
+				}
+				if (q1) {
+					q1.optional = false
+					q1.save(flush: true)
+				}
+			}
+
+
+		}
 
 
 	}
