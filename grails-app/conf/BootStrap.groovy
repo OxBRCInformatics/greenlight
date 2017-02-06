@@ -105,7 +105,7 @@ class BootStrap {
                     namePrefix: "GEN",
                     templateVersion: "v1 October 2013",
 					cdrUniqueId : "ORB_GEN_V1"
-            ).addToQuestions(new Question(optional: true, name: 'I have read and understood the information sheet for this study (Version 1 dated December 2013). I have had the opportunity to ask questions and have had these answered satisfactorily.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
+            ).addToQuestions(new Question(name: 'I have read and understood the information sheet for this study (Version 1 dated December 2013). I have had the opportunity to ask questions and have had these answered satisfactorily.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
             ).addToQuestions(new Question(name: 'I agree to give samples for research and/or allow samples already collected as part of my medical care to be used by the biobank.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
             ).addToQuestions(new Question(name: 'I agree that further blood and/or tissue samples may be taken for the biobank during the course of my hospital care.  I understand that I will be asked for permission each time.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
             ).addToQuestions(new Question(name: 'I understand that my participation is voluntary and that I am free at any time to withdraw my permission for the storage and distribution of any of my samples that have not already been used in research.  Withdrawing from the biobank will not affect my present and future medical care and legal rights in any way.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
@@ -283,7 +283,7 @@ class BootStrap {
 					namePrefix: "GEN",
 					templateVersion: "v2 April 2014",
 					cdrUniqueId : "ORB_GEN_V2"
-			).addToQuestions(new Question(optional: true, name: 'I have read and understood the information sheet for this study (Version 1 dated December 2013). I have had the opportunity to ask questions and have had these answered satisfactorily.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
+			).addToQuestions(new Question(name: 'I have read and understood the information sheet for this study (Version 1 dated December 2013). I have had the opportunity to ask questions and have had these answered satisfactorily.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
 			).addToQuestions(new Question(name: 'I agree to give samples for research and/or allow samples already collected as part of my medical care to be used by the biobank.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
 			).addToQuestions(new Question(name: 'I agree that further blood and/or tissue samples may be taken for the biobank during the course of my hospital care.  I understand that I will be asked for permission each time.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
 			).addToQuestions(new Question(name: 'I understand that my participation is voluntary and that I am free at any time to withdraw my permission for the storage and distribution of any of my samples that have not already been used in research.  Withdrawing from the biobank will not affect my present and future medical care and legal rights in any way.',validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],defaultResponse: Response.ResponseValue.BLANK)
@@ -419,6 +419,33 @@ class BootStrap {
 					/* 11 */).addToQuestions(new Question(optional: true, labelIfNotYes: "Do not return incidental findings to parents.", name: "Incidental findings: I understand and agree that I will be informed of any results of genetic analysis of my child’s sample where they are NOT relevant to the condition being investigated, but are judged to be important for my/my family’s health care, and can be acted upon medically.", validResponses: [Response.ResponseValue.YES, Response.ResponseValue.NO], defaultResponse: Response.ResponseValue.NO)
 					/* 12 */).addToQuestions(new Question(optional: true, name: 'I agree to be contacted about ethically approved research studies for which my child may be suitable. I understand that agreeing to be contacted does not oblige my child to participate in any further studies.', validResponses: [Response.ResponseValue.YES, Response.ResponseValue.NO, Response.ResponseValue.BLANK, Response.ResponseValue.AMBIGUOUS], defaultResponse: Response.ResponseValue.BLANK)
 			).save(failOnError: true)
+
+			//Update GENV1 consent first question and make it non-Optional as requested on 30,Jan,2017 by S.J
+			def GENConsentV1 = ConsentFormTemplate.findByCdrUniqueId("ORB_GEN_V1")
+			if (GENConsentV1 != null) {
+				Question q1 = GENConsentV1.questions.find {
+					it.name == "I have read and understood the information sheet for this study (Version 1 dated December 2013). I have had the opportunity to ask questions and have had these answered satisfactorily."
+				}
+				if (q1) {
+					q1.optional = false
+					q1.save(flush: true)
+				}
+			}
+
+			//Update GENV1 consent first question and make it non-Optional as requested on 30,Jan,2017 by S.J
+			def GENConsentV2 = ConsentFormTemplate.findByCdrUniqueId("ORB_GEN_V2")
+			if (GENConsentV2 != null) {
+				Question q1 = GENConsentV2.questions.find {
+					it.name == "I have read and understood the information sheet for this study (Version 1 dated December 2013). I have had the opportunity to ask questions and have had these answered satisfactorily."
+				}
+				if (q1) {
+					q1.optional = false
+					q1.save(flush: true)
+				}
+			}
+
+
+		}
 
 
 	}
