@@ -56,6 +56,7 @@
                         <thead>
                             <tr>
                                 <th class="form-name">Consent Form</th>
+                                <th class="consent-form-id">Form Id</th>
                                 <th class="consent-date">Date consented</th>
                                 <th class="consent-status">Consent status</th>
                             </tr>
@@ -65,6 +66,7 @@
                                 <g:if test="${consent.consentStatus == uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus.FULL_CONSENT}" >
                                     <tr class="alert alert-info alert-block">
                                         <td>${consent.form.name} <small>(version: ${consent.form.version})</small></td>
+                                        <td>${consent.formID}</td>
                                         <td><g:formatDate format="dd-MM-yyyy" date="${consent.lastCompleted}"/></td>
                                         <td><h1>Full Consent</h1></td>
                                     </tr>
@@ -72,6 +74,7 @@
                                 <g:elseif test="${consent.consentStatus == uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus.CONSENT_WITH_LABELS}">
                                     <tr class="alert alert-info alert-block">
                                         <td>${consent.form.name} <small>(version: ${consent.form.version})</small></td>
+                                        <td>${consent.formID}</td>
                                         <td><g:formatDate format="dd-MM-yyyy" date="${consent.lastCompleted}"/></td>
                                         <td><h1>Full Consent</h1>
                                             <h3 class="alert-error text-center"><strong>With Restrictions</strong></h3>
@@ -88,6 +91,7 @@
                                <g:else>
                                    <tr class="alert alert-danger alert-block">
                                         <td>${consent.form.name} <small>(version: ${consent.form.version})</small></td>
+                                        <td>${consent.formID}</td>
                                         <td><g:formatDate format="dd-MM-yyyy" date="${consent.lastCompleted}"/></td>
                                         <td><h1>${consent.consentStatus.label}</h1></td>
                                    </tr>

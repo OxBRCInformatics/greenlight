@@ -63,6 +63,7 @@ class ConsentFormController {
 									version: consentForm.template.templateVersion,
 									namePrefix: consentForm.template.namePrefix
 							],
+							formID: consentForm.formID,
 							lastCompleted: consentForm.consentDate,
 							consentStatus: consentForm.consentStatus,
 							labels: consentEvaluationService.getConsentLabels(consentForm)
