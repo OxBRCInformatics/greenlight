@@ -119,6 +119,9 @@ select{
 .consent-status-table .form-name{
     width: 25%;
 }
+.consent-status-table .consent-form-id{
+	width: 10%;
+}
 
 .consent-status-table .consent-date{
     width: 15%;
