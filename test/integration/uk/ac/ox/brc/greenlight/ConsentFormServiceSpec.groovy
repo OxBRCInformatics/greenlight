@@ -236,7 +236,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
 
 		then:"returns result"
 		lines[0].contains("consentId,consentDate,uploadDate,consentformID,consentTakerName,formStatus,patientNHS,patientMRN,patientName,patientSurName,patientDateOfBirth,templateName,consentResult,responses,comments")
-		lines[1].contains("171,01-02-3914,03-03-2017,GEN12345,Edward,Normal,1234567890,1002,Eric,Clapton,03-06-1947,GNR,No consent,Yes|Yes|Yes|Yes,\"a simple unEscapedComment, with characters ' \"\"\"")
+		lines[1].contains("01-02-3914,03-03-2017,GEN12345,Edward,Normal,1234567890,1002,Eric,Clapton,03-06-1947,GNR,No consent,Yes|Yes|Yes|Yes,\"a simple unEscapedComment, with characters ' \"\"\"")
 	}
 
 
