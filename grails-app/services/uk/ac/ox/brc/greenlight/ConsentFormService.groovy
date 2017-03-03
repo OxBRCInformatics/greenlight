@@ -145,6 +145,7 @@ class ConsentFormService {
 		def headers = [
 				"consentId",
 				"consentDate",
+				"uploadDate",
 				"consentformID",
 				"consentTakerName",
 				"formStatus",
@@ -165,6 +166,7 @@ class ConsentFormService {
 			sb.append([
 					consent.id as String,
 					consent.consentDate.format("dd-MM-yyyy"),
+					consent?.attachedFormImage?.dateOfUpload?.format("dd-MM-yyyy"),
 					consent.formID as String,
 					(consent.consentTakerName ? consent.consentTakerName : ""),
 					consent.formStatus as String,

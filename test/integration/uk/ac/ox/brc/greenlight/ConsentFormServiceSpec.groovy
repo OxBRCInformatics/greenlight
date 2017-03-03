@@ -12,7 +12,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
     def   consentEvaluationService
 
     def setup() {
-        def attachment= new Attachment(id: 1, fileName: 'a.jpg', dateOfUpload: new Date(),
+        def attachment= new Attachment(id: 1, fileName: 'a.jpg', dateOfUpload: new Date("03/03/2017"),
                 attachmentType: Attachment.AttachmentType.IMAGE, content: []).save()
 
 		def question1 =  new Question(name: 'I read1...')
@@ -147,21 +147,22 @@ class ConsentFormServiceSpec extends IntegrationSpec {
         def headers=csv.readLines()[0].tokenize(",")
 
         then:"the first row is header"
-        headers.size() == 14
+        headers.size() == 15
         headers[0] == "consentId"
         headers[1] == "consentDate"
-        headers[2] == "consentformID"
-        headers[3] == "consentTakerName"
-        headers[4] == "formStatus"
-        headers[5] == "patientNHS"
-        headers[6] == "patientMRN"
-        headers[7] == "patientName"
-        headers[8] == "patientSurName"
-        headers[9] =="patientDateOfBirth"
-        headers[10] == "templateName"
-        headers[11] == "consentResult"
-        headers[12] == "responses"
-        headers[13] == "comments"
+        headers[2] == "uploadDate"
+        headers[3] == "consentformID"
+        headers[4] == "consentTakerName"
+        headers[5] == "formStatus"
+        headers[6] == "patientNHS"
+        headers[7] == "patientMRN"
+        headers[8] == "patientName"
+        headers[9] == "patientSurName"
+        headers[10] =="patientDateOfBirth"
+        headers[11] == "templateName"
+        headers[12] == "consentResult"
+        headers[13] == "responses"
+        headers[14] == "comments"
     }
 
 
@@ -172,6 +173,7 @@ class ConsentFormServiceSpec extends IntegrationSpec {
             expectedConsents.add([
                     consentForm.id as String,
                     consentForm.consentDate.format("dd-MM-yyyy"),
+					consentForm?.attachedFormImage?.dateOfUpload?.format("dd-MM-yyyy"),
                     consentForm.formID as String,
                     consentForm.consentTakerName,
                     consentForm.formStatus as String,
@@ -233,8 +235,8 @@ class ConsentFormServiceSpec extends IntegrationSpec {
 		def lines = resultCSVString.split("\n")
 
 		then:"returns result"
-		lines[0].contains("consentId,consentDate,consentformID,consentTakerName,formStatus,patientNHS,patientMRN,patientName,patientSurName,patientDateOfBirth,templateName,consentResult,responses,comments")
-		lines[1].contains("01-02-3914,GEN12345,Edward,Normal,1234567890,1002,Eric,Clapton,03-06-1947,GNR,No consent,Yes|Yes|Yes|Yes,\"a simple unEscapedComment, with characters ' \"\"\"")
+		lines[0].contains("consentId,consentDate,uploadDate,consentformID,consentTakerName,formStatus,patientNHS,patientMRN,patientName,patientSurName,patientDateOfBirth,templateName,consentResult,responses,comments")
+		lines[1].contains("171,01-02-3914,03-03-2017,GEN12345,Edward,Normal,1234567890,1002,Eric,Clapton,03-06-1947,GNR,No consent,Yes|Yes|Yes|Yes,\"a simple unEscapedComment, with characters ' \"\"\"")
 	}
 
 
