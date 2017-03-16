@@ -447,6 +447,52 @@ class BootStrap {
 
 		}
 
+		//add new consentForm GEL MAIN V2.3
+		if (ConsentFormTemplate.count() == 10){
+
+			new ConsentFormTemplate(
+					name: "100,000 Genomes Project (Main) – Cancer Sequencing Consent Form",
+					namePrefix: "GLM",
+					templateVersion: "Version 2.3 dated 01.01.2017",
+					cdrUniqueId : "GEL_MAN_V2_3"
+					/* 1 */ ).addToQuestions(new Question(name: '(Taking part) I have read and understood the participant information sheet ‘for Personal or Nominated Consultees of patients with cancer (or suspected cancer)’ dated  /  /  (version   ). I have been able to ask questions and have these answered.',
+							validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],
+							defaultResponse: Response.ResponseValue.BLANK)
+					/* 2 */ ).addToQuestions(new Question(name: '''(Samples) I agree to donate to the project: - a sample of blood;	- other samples, such as saliva, if needed; and	- samples already collected as part of my medical care. This includes samples of my tumour or bone marrow depending on the type of cancer I have.
+																	My samples can be used for:	- collecting DNA for whole genome sequencing; and studying my blood to  nd out how the DNA is working. I understand that there might be new ways of doing this in the future.
+																	My samples or DNA could be sent to approved organisations outside the UK for processing or analysis.''',
+							validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],
+							defaultResponse: Response.ResponseValue.BLANK)
+					/* 3 */ ).addToQuestions(new Question(name: '(Data) I agree that the project can access and collect electronic copies of my past and future health records...',
+							validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],
+							defaultResponse: Response.ResponseValue.BLANK)
+					/* 4 */ ).addToQuestions(new Question(name: '(My Result) I agree that: -tests can be run on my samples and health information to look for the cause of my cancer and may also help to  nd ways to manage my cancer; and -the results can be reported to my clinical team for them to discuss with me...',
+							validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.BLANK,Response.ResponseValue.AMBIGUOUS],
+							defaultResponse: Response.ResponseValue.BLANK)
+					/* 5 */).addToQuestions(new Question(optional: true,
+							labelIfNotYes: "I do not want additional findings to be looked for and given to my clinical team.",
+							name: '''Additional findings (optional): I understand the following.
+										- I can choose if I want certain other conditions that might a ect me to be looked for in my samples (‘additional findings’).
+										- These conditions are not connected to my cancer.
+										- All the conditions can potentially be treated or prevented.
+										- My results might also be important to other members of my family.
+										- Even if my results seem to show that I don’t have one of the condi ons, I could s ll get it in the future.
+										- We may add to or change which conditions we look for. This means I might get other results in the future.
+										- I can change my mind about receiving additional findings at any  me.''',
+							validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO],defaultResponse: Response.ResponseValue.NO)
+					/* 6 */).addToQuestions(new Question(optional: true,
+							labelIfNotYes: "I do not want reproductive additional results (carrier findings) to be looked for and fed back to my clinical team.",
+							name: '''Carrier testing (optional): The next section is unlikely to be relevant to people who are not planning to have children in future. 
+							 You can initial the box below and move to the next section.
+							 I understand that:
+								- I can decide to be tested to see if I ‘carry’ a risk of passing on serious genetic conditions to my future children or grandchildren;
+								- these conditions may or may not be able to be cured, made less severe, or prevented using standard NHS treatment;
+								- I may s ll have a child with one of the conditions, even if the result doesn’t identify the conditions in my genome data; and
+								- you will regularly update the conditions looked for. This means I could get further reports about different conditions in the future.''',
+							validResponses: [Response.ResponseValue.YES,Response.ResponseValue.NO,Response.ResponseValue.NOT_RELEVANT],defaultResponse: Response.ResponseValue.NO)
+			).save(failOnError: true)
+
+		}
 
 	}
 
