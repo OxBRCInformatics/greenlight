@@ -15,7 +15,8 @@ class ConsentFormService {
 	 * They should actually be several patient objects with the same NHS or hospital number
 	 * @param patients
 	 */
-	Collection getLatestConsentForms(patients) {
+	Collection getLatestConsentForms(patients, formStatus) {
+
 
 		// Store as a map of ConsentFormTemplate:ConsentForm pairs
 		Map<ConsentFormTemplate, ConsentForm> latestTests = [:]
@@ -23,8 +24,16 @@ class ConsentFormService {
 		patients.each { patient ->
 			// Find the max date for each form template
 			patient.consents.each { consent ->
-				// Only if the formStatus is NORMAL
-				if(consent?.formStatus == ConsentForm.FormStatus.NORMAL) {
+				// If formStatus is provided
+				if(formStatus != null) {
+					//Just if it has the formStatus
+					if(consent?.formStatus == formStatus){
+						// Only update the map if the key doesn't exist or the new value is newer than the old value
+						if (!latestTests.containsKey(consent.template) || consent.consentDate > latestTests[consent.template].consentDate) {
+							latestTests[consent.template] = consent
+						}
+					}
+				}else{
 					// Only update the map if the key doesn't exist or the new value is newer than the old value
 					if (!latestTests.containsKey(consent.template) || consent.consentDate > latestTests[consent.template].consentDate) {
 						latestTests[consent.template] = consent
@@ -223,7 +232,7 @@ class ConsentFormService {
 				// Attempt to find all patient objects having this hospitalNumber
 				def patients = patientService.findAllByNHSOrHospitalNumber(hospitalNumber)
 				//Find all consent objects related to this patient (these patient objects)
-				def consents = consentFormService.getLatestConsentForms(patients)
+				def consents = consentFormService.getLatestConsentForms(patients, ConsentForm.FormStatus.NORMAL)
 
 				//if it has equal/more than 2 consents,
 				//so there might be the possibility that there are more than 2 FULL_CONSENTED forms
