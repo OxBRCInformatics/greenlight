@@ -55,17 +55,17 @@ class ConsentFormServiceUnitSpec extends Specification {
 
 				new ConsentForm(template: formTemplates[1], formStatus: ConsentForm.FormStatus.NORMAL,   consentDate: now-2 ),
 				new ConsentForm(template: formTemplates[1], formStatus: ConsentForm.FormStatus.DECLINED, consentDate: now-2 ),
-				new ConsentForm(template: formTemplates[1], formStatus: ConsentForm.FormStatus.DECLINED, consentDate: now-2 ),
+				new ConsentForm(template: formTemplates[1], formStatus: ConsentForm.FormStatus.DECLINED, consentDate: now-3 ),
 				new ConsentForm(template: formTemplates[1], formStatus: ConsentForm.FormStatus.NORMAL, consentDate: now-2 ),
 				new ConsentForm(template: formTemplates[1], formStatus: ConsentForm.FormStatus.NORMAL, consentDate: now-2 )
 		]
-		def latestForms = [completedForms[0], completedForms[3], completedForms[4]]
+		def latestForms = [completedForms[0], completedForms[3]]
 
 		when: "we get the list of latest forms from the service"
 		def returnedForms = service.getLatestConsentForms(new Patient(consents: completedForms), ConsentForm.FormStatus.DECLINED)
 
 		then: "the most recent Declined form for each type is returned"
-		returnedForms.size() == 3
+		returnedForms.size() == 2
 		returnedForms.containsAll(latestForms)
 		latestForms.containsAll(returnedForms)
 	}
