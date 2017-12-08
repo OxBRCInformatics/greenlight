@@ -54,7 +54,7 @@ class ConsentStatusController{
 			response.dateOfBirth = patients[0]?.dateOfBirth?.format("dd-MM-yyyy HH:mm:ss")
 			response.consents = []
 
-			def consents = consentFormService.getLatestConsentForms(patients)
+			def consents = consentFormService.getLatestConsentForms(patients, ConsentForm.FormStatus.NORMAL)
 			consents.each{ consentForm ->
 				def consentStatusLabel = consentEvaluationService.getConsentLabels(consentForm)
 
