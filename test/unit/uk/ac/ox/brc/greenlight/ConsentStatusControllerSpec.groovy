@@ -47,7 +47,7 @@ class ConsentStatusControllerSpec extends Specification {
 
 		then: "The controller responds with the consent status"
 		1 * controller.patientService.findAllByNHSOrHospitalNumber(lookupId) >> [patient]
-		1 * controller.consentFormService.getLatestConsentForms([patient]) >> latestConsentForms
+		1 * controller.consentFormService.getLatestConsentForms([patient], ConsentForm.FormStatus.NORMAL) >> latestConsentForms
 
 		model.stringInstanceMap == [
 				_self: requestURL,
@@ -142,7 +142,7 @@ class ConsentStatusControllerSpec extends Specification {
 
 		then: "The controller responds with the consent status"
 		1 * controller.patientService.findAllByNHSOrHospitalNumber(lookupId) >> [patient]
-		1 * controller.consentFormService.getLatestConsentForms([patient]) >> latestConsentForms
+		1 * controller.consentFormService.getLatestConsentForms([patient], ConsentForm.FormStatus.NORMAL) >> latestConsentForms
 
 		model.stringInstanceMap == [
 				_self: requestURL,
@@ -187,7 +187,7 @@ class ConsentStatusControllerSpec extends Specification {
 
 		then: "The controller responds with the consent status"
 		1 * controller.patientService.findAllByNHSOrHospitalNumber(lookupId) >> [patient]
-		1 * controller.consentFormService.getLatestConsentForms([patient]) >> latestConsentForms
+		1 * controller.consentFormService.getLatestConsentForms([patient], ConsentForm.FormStatus.NORMAL) >> latestConsentForms
 
 
 		def expected = new groovy.json.JsonSlurper().parseText ("""
@@ -228,7 +228,7 @@ class ConsentStatusControllerSpec extends Specification {
 
 		then: "The controller responds with the consent status"
 		1 * controller.patientService.findAllByNHSOrHospitalNumber(lookupId) >> [patient]
-		1 * controller.consentFormService.getLatestConsentForms([patient]) >> latestConsentForms
+		1 * controller.consentFormService.getLatestConsentForms([patient], ConsentForm.FormStatus.NORMAL) >> latestConsentForms
 
 		controller.response.text == "<?xml version=\"1.0\" encoding=\"UTF-8\"?><map><entry key=\"_self\">/api/aNiceURL</entry><entry key=\"errors\">false</entry><entry key=\"nhsNumber\">12345</entry><entry key=\"hospitalNumber\">NHSOXHOSP1</entry><entry key=\"firstName\">John Doe</entry><entry key=\"lastName\">Doe</entry><entry key=\"dateOfBirth\">25-01-2015 02:10:00</entry><entry key=\"consents\"><map><entry key=\"form\"><entry key=\"name\">form type 1</entry><entry key=\"version\">1.0</entry><entry key=\"namePrefix\">GEN</entry></entry><entry key=\"lastCompleted\" /><entry key=\"consentStatus\">FULL_CONSENT</entry><entry key=\"consentTakerName\">User1</entry><entry key=\"consentFormId\">GEL123</entry><entry key=\"consentStatusLabels\"></entry></map><map><entry key=\"form\"><entry key=\"name\">form type 2</entry><entry key=\"version\">2.0</entry><entry key=\"namePrefix\">CRA</entry></entry><entry key=\"lastCompleted\" /><entry key=\"consentStatus\">NON_CONSENT</entry><entry key=\"consentTakerName\">User2</entry><entry key=\"consentFormId\">GEL456</entry><entry key=\"consentStatusLabels\"></entry></map></entry></map>"
 

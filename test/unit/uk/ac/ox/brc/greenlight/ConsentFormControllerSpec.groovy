@@ -86,7 +86,7 @@ class ConsentFormControllerSpec extends Specification{
 
 		 then:"patient consent forms are returned"
 		 1 * controller.patientService.findAllByNHSOrHospitalNumber(_) >> {return [new Patient(nhsNumber: lookupId)]}
-		 1 * controller.consentFormService.getLatestConsentForms(_) >> {return completedForms}
+		 1 * controller.consentFormService.getLatestConsentForms(_,null) >> {return completedForms}
 		 1 * controller.studyService.getStudy() >> {return new Study(description:"New Study")}
 		 controller.modelAndView.model.consents.size() == 2
 		 controller.modelAndView.model.consents[0].form.name == "FORM1"

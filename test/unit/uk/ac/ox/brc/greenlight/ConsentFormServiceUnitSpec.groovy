@@ -33,10 +33,39 @@ class ConsentFormServiceUnitSpec extends Specification {
 		def latestForms = [completedForms[1], completedForms[2]]
 
 		when: "we get the list of latest forms from the service"
-		def returnedForms = service.getLatestConsentForms(new Patient(consents: completedForms))
+		def returnedForms = service.getLatestConsentForms(new Patient(consents: completedForms), ConsentForm.FormStatus.NORMAL)
 
 		then: "the most recent form for each type is returned"
 		returnedForms.size() == latestForms.size()
+		returnedForms.containsAll(latestForms)
+		latestForms.containsAll(returnedForms)
+	}
+
+	def "getLatestConsentForms Get the latest consent forms for a patient with specific FormStatus"() {
+
+		given:
+		def formTemplates = [
+				new ConsentFormTemplate(name: "FORM1", namePrefix: "fm1", templateVersion: "1", questions: []),
+				new ConsentFormTemplate(name: "FORM2", namePrefix: "fm2", templateVersion: "1", questions: [])
+		]
+
+		def completedForms = [
+				new ConsentForm(template: formTemplates[0], formStatus: ConsentForm.FormStatus.DECLINED, consentDate: now-7),
+				new ConsentForm(template: formTemplates[0], formStatus: ConsentForm.FormStatus.NORMAL,   consentDate: now-7 ),
+
+				new ConsentForm(template: formTemplates[1], formStatus: ConsentForm.FormStatus.NORMAL,   consentDate: now-2 ),
+				new ConsentForm(template: formTemplates[1], formStatus: ConsentForm.FormStatus.DECLINED, consentDate: now-2 ),
+				new ConsentForm(template: formTemplates[1], formStatus: ConsentForm.FormStatus.DECLINED, consentDate: now-2 ),
+				new ConsentForm(template: formTemplates[1], formStatus: ConsentForm.FormStatus.NORMAL, consentDate: now-2 ),
+				new ConsentForm(template: formTemplates[1], formStatus: ConsentForm.FormStatus.NORMAL, consentDate: now-2 )
+		]
+		def latestForms = [completedForms[0], completedForms[3], completedForms[4]]
+
+		when: "we get the list of latest forms from the service"
+		def returnedForms = service.getLatestConsentForms(new Patient(consents: completedForms), ConsentForm.FormStatus.DECLINED)
+
+		then: "the most recent Declined form for each type is returned"
+		returnedForms.size() == 3
 		returnedForms.containsAll(latestForms)
 		latestForms.containsAll(returnedForms)
 	}
@@ -64,7 +93,7 @@ class ConsentFormServiceUnitSpec extends Specification {
 		def patients = [new Patient(nhsNumber: "1234567890", consents: latestForms1),new Patient(consents: latestForms2,nhsNumber: "1234567890")]
 
 		when: "we get the list of latest forms from the service"
-		def returnedForms = service.getLatestConsentForms(patients)
+		def returnedForms = service.getLatestConsentForms(patients, ConsentForm.FormStatus.NORMAL)
 
 		then: "the most recent form for each type is returned"
 		returnedForms.size() == 2
@@ -130,7 +159,7 @@ class ConsentFormServiceUnitSpec extends Specification {
 				return [patients[3]]
 			}
 		}
-		3 * service.consentFormService.getLatestConsentForms(_) >>{
+		3 * service.consentFormService.getLatestConsentForms(_, ConsentForm.FormStatus.NORMAL) >>{
 			if(it[0][0].givenName == 'A')
 				return consentsPatient1
 			else if(it[0][0].givenName == 'Z')
@@ -163,7 +192,7 @@ class ConsentFormServiceUnitSpec extends Specification {
 		def latestForms = [completedForms[1],completedForms[4]]
 
 		when: "we get the list of latest NORMAL forms from the service"
-		def returnedForms = service.getLatestConsentForms(new Patient(consents: completedForms))
+		def returnedForms = service.getLatestConsentForms(new Patient(consents: completedForms), ConsentForm.FormStatus.NORMAL)
 
 		then: "the most recent NORMAL form for each type is returned"
 		returnedForms.size() == 2
