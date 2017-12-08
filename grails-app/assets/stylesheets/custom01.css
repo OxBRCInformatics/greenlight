@@ -179,3 +179,19 @@ a.morelink {
 }
 .comment {
  }
+
+.greenStatus{
+    color: #5cb85c;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.redStatus{
+    color: red;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.unNormalFormStatus{
+    text-decoration: line-through;
+}

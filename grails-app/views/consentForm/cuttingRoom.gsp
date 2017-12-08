@@ -57,6 +57,7 @@
                             <tr>
                                 <th class="form-name">Consent Form</th>
                                 <th class="consent-form-id">Form Id</th>
+                                <th class="consent-form-id">Form Status</th>
                                 <th class="consent-date">Date consented</th>
                                 <th class="consent-status">Consent status</th>
                             </tr>
@@ -67,16 +68,25 @@
                                     <tr class="alert alert-info alert-block">
                                         <td>${consent.form.name} <small>(version: ${consent.form.version})</small></td>
                                         <td>${consent.formID}</td>
+                                        <td>
+                                            <div class="${consent.formStatus == uk.ac.ox.brc.greenlight.ConsentForm.FormStatus.NORMAL ? 'greenStatus': 'redStatus'}">${consent.formStatus}</div>
+                                        </td>
                                         <td><g:formatDate format="dd-MM-yyyy" date="${consent.lastCompleted}"/></td>
-                                        <td><h1>Full Consent</h1></td>
+                                        <td class="${consent.formStatus == uk.ac.ox.brc.greenlight.ConsentForm.FormStatus.NORMAL ? '' : 'unNormalFormStatus'}">
+                                            <h1>Full Consent</h1>
+                                        </td>
                                     </tr>
                                 </g:if>
                                 <g:elseif test="${consent.consentStatus == uk.ac.ox.brc.greenlight.ConsentForm.ConsentStatus.CONSENT_WITH_LABELS}">
                                     <tr class="alert alert-info alert-block">
                                         <td>${consent.form.name} <small>(version: ${consent.form.version})</small></td>
                                         <td>${consent.formID}</td>
+                                        <td>
+                                            <div class="${consent.formStatus == uk.ac.ox.brc.greenlight.ConsentForm.FormStatus.NORMAL ? 'greenStatus': 'redStatus'}">${consent.formStatus}</div>
+                                        </td>
                                         <td><g:formatDate format="dd-MM-yyyy" date="${consent.lastCompleted}"/></td>
-                                        <td><h1>Full Consent</h1>
+                                        <td class="${consent.formStatus == uk.ac.ox.brc.greenlight.ConsentForm.FormStatus.NORMAL ? '' : 'unNormalFormStatus'}">
+                                            <h1>Full Consent</h1>
                                             <h3 class="alert-error text-center"><strong>With Restrictions</strong></h3>
                                             <h5 class="alert-error text-center">
                                                 <ul class="alert-error text-left">
@@ -92,8 +102,13 @@
                                    <tr class="alert alert-danger alert-block">
                                         <td>${consent.form.name} <small>(version: ${consent.form.version})</small></td>
                                         <td>${consent.formID}</td>
+                                        <td>
+                                           <div class="${consent.formStatus == uk.ac.ox.brc.greenlight.ConsentForm.FormStatus.NORMAL ? 'greenStatus': 'redStatus'}">${consent.formStatus}</div>
+                                        </td>
                                         <td><g:formatDate format="dd-MM-yyyy" date="${consent.lastCompleted}"/></td>
-                                        <td><h1>${consent.consentStatus.label}</h1></td>
+                                       <td class="${consent.formStatus == uk.ac.ox.brc.greenlight.ConsentForm.FormStatus.NORMAL ? '' : 'unNormalFormStatus'}">
+                                            <h1>${consent.consentStatus.label}</h1>
+                                        </td>
                                    </tr>
                                </g:else>
                            </g:each>
