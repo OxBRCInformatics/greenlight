@@ -53,8 +53,8 @@ class ConsentFormController {
 			if(patients?.size() == 0){
 				model.errormsg = "The lookup ID "+ lookupId +" could not be found"
 			}else{
-				// Patient exists, let's get the consents
-				def consents = consentFormService.getLatestConsentForms(patients)
+				// Patient exists, let's get the consents, return all contents (normal, declined, spoiled)
+				def consents = consentFormService.getLatestConsentForms(patients, null)
 				model.consents = []
 				consents.each{ consentForm ->
 					model.consents.push([
